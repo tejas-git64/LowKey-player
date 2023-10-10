@@ -1,6 +1,6 @@
 # LowKey
 A Spotify inspired music player
-<a href="https://guileless-llama-7f01e2.netlify.app/">Check it out</a>
+<a href="https://funny-pudding-8b37aa.netlify.app/">Check it out</a>
 
 <h2>Features</h2>
 
