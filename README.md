@@ -20,6 +20,7 @@ v1 can be found here: https://funny-pudding-8b37aa.netlify.app/
 - <a href="https://www.typescriptlang.org/">Typescript</a>
 - <a href="https://tanstack.com/query/v4/docs/adapters/react-query">Tanstack Query</a>
 - <a href="https://wavesurfer.xyz/">Wavesurfer.js</a>
+- <a href="https://docs.pmnd.rs/zustand"/>Zustand</a>
 
 ## APIs
 
