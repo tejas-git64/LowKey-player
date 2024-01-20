@@ -1,30 +1,31 @@
-# React + TypeScript + Vite
+# Lowkey Music v2
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Lowkey is a music player app inspired by Spotify and Soundcloud
 
-Currently, two official plugins are available:
+v1 can be found here: https://funny-pudding-8b37aa.netlify.app/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- Pause, Play and Shuffle tracks/playlists/albums
+- Add tracks/playlists/albums to favorites
+- Custom playlist creation
+- Add albums/playlists/artists to library
+- Search all of the above categories
+- Waveform track progress
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Frameworks and Libraries used
 
-- Configure the top-level `parserOptions` property like this:
+- <a href="https://reactjs.org">React</a>
+- <a href="https://tailwindcss.com">Tailwindcss</a>
+- <a href="https://www.typescriptlang.org/">Typescript</a>
+- <a href="https://tanstack.com/query/v4/docs/adapters/react-query">Tanstack Query</a>
+- <a href="https://wavesurfer.xyz/">Wavesurfer.js</a>
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+## APIs
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- <a href="https://saavn.me/">JioSaavn api</a>
+
+### Minor bugs
+
+- Initial track on Playlist play might not switch to the next track
+- Error on playlist/album page load sometimes from type error
