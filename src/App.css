@@ -1,0 +1,80 @@
+#root {
+  width: 100%;
+  margin: 0 auto;
+  height: 100dvh;
+  font-family: "Outfit", sans-serif;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: -webkit-filter 300ms;
+  transition:
+    filter 300ms,
+    -webkit-filter 300ms;
+}
+.logo:hover {
+  -webkit-filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  -webkit-filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+::-webkit-scrollbar {
+  width: 0px;
+  height: 2px;
+}
+
+button {
+  border: none;
+  outline: none;
+}
+
+::-webkit-scrollbar-thumb {
+  height: 2px;
+  background-color: transparent;
+}
+
+#menu::-webkit-scrollbar,
+#artist-songs-list::-webkit-scrollbar,
+#widget-container::-webkit-scrollbar {
+  width: 2px;
+}
+
+@media screen and (min-width: 640px) {
+  ::-webkit-scrollbar {
+    width: 3px;
+    height: 2px;
+    background-color: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    height: 2px;
+    background-color: #000;
+  }
+}
+
+#volumeSlider {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  height: 12px;
+  width: 100%;
+  background: #181818;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+#volumeSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background-color: #000;
+  border-radius: 100%;
+  box-shadow: -113px 0 0 107px #00ffaa;
+  border: 2px solid #00ffaa;
+}
