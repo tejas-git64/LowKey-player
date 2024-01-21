@@ -4,19 +4,22 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from "react-router-dom";
-import "./App.css";
-import Intro from "./pages/Intro/Intro";
-import Home from "./pages/Home/Home";
-import Layout from "./pages/Layout/Layout";
+import { Suspense, lazy } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Search from "./pages/Search/Search";
-import AlbumPage from "./pages/Album/AlbumPage";
-import PlaylistPage from "./pages/Playlist/PlaylistPage";
-import Library from "./pages/Library/Library";
-import Favorites from "./pages/Favorites/Favorites";
-import ArtistPage from "./pages/Artist/ArtistPage";
-import UserPlaylistPage from "./pages/UserPlaylist/UserPlaylist";
-import NotFound from "./pages/NotFound/NotFound";
+import "./App.css";
+import Layout from "./pages/Layout/Layout";
+const Intro = lazy(() => import("./pages/Intro/Intro"));
+const Home = lazy(() => import("./pages/Home/Home"));
+const Search = lazy(() => import("./pages/Search/Search"));
+const AlbumPage = lazy(() => import("./pages/Album/AlbumPage"));
+const PlaylistPage = lazy(() => import("./pages/Playlist/PlaylistPage"));
+const Library = lazy(() => import("./pages/Library/Library"));
+const Favorites = lazy(() => import("./pages/Favorites/Favorites"));
+const ArtistPage = lazy(() => import("./pages/Artist/ArtistPage"));
+const UserPlaylistPage = lazy(
+  () => import("./pages/UserPlaylist/UserPlaylist"),
+);
+const NotFound = lazy(() => import("./pages/NotFound/NotFound"));
 
 export default function App() {
   const queryClient = new QueryClient();
@@ -37,10 +40,20 @@ export default function App() {
     ),
   );
 
+  const MainFallback = () => {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <p className="text-xl font-semibold">Loading (∩^o^)⊃━☆...</p>
+      </div>
+    );
+  };
+
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <Suspense fallback={<MainFallback />}>
+          <RouterProvider router={router} />
+        </Suspense>
       </QueryClientProvider>
     </>
   );
