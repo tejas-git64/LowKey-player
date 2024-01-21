@@ -109,8 +109,8 @@ export default function NowPlaying() {
       // eslint-disable-next-line react-hooks/exhaustive-deps
       wavesurfer.current = WaveSurfer.create({
         container: "#desktopWave",
-        autoScroll: true,
         autoplay: true,
+        autoScroll: true,
         backend: "WebAudio",
         dragToSeek: true,
         hideScrollbar: true,
@@ -177,6 +177,7 @@ export default function NowPlaying() {
         <div className="flex w-[250px] items-center justify-around pt-0.5">
           {isShuffling ? (
             <button
+              type="button"
               style={{
                 border: "none",
                 outline: "none",
@@ -196,6 +197,7 @@ export default function NowPlaying() {
             </button>
           ) : (
             <button
+              type="button"
               style={{
                 border: "none",
                 outline: "none",
@@ -215,6 +217,7 @@ export default function NowPlaying() {
             </button>
           )}
           <button
+            type="button"
             onClick={() =>
               songIndex === 0
                 ? setNowPlaying(nowPlaying.queue.songs[0])
@@ -273,6 +276,7 @@ export default function NowPlaying() {
             </button>
           )}
           <button
+            type="button"
             className="border-none bg-transparent p-0 outline-none disabled:cursor-not-allowed disabled:invert-[0.5]"
             style={{
               border: "none",
@@ -292,6 +296,7 @@ export default function NowPlaying() {
             />
           </button>
           <button
+            type="button"
             className="border-none bg-transparent p-0 outline-none disabled:cursor-not-allowed disabled:invert-[0.5]"
             disabled={true}
           >
@@ -304,14 +309,14 @@ export default function NowPlaying() {
         </div>
         {/*Progress */}
         <div className="mt-1 flex h-5 w-[350px] items-center justify-between lg:w-[500px] xl:w-[700px]">
-          <p className="h-full w-[5%] text-[12px] text-white">
+          <p className="h-full w-[50px] text-center text-[12px] text-white">
             {currentTime ? formatTime(currentTime) : "0:00"}
           </p>
           {/*Waveform*/}
-          <div className="flex h-auto w-[80%] items-center justify-center overflow-hidden lg:w-[90%]">
+          <div className="mx-auto mb-0.5 flex h-auto w-[85%] items-center justify-center overflow-hidden">
             <div id="desktopWave" className="h-full w-full"></div>
           </div>
-          <p className="-ml-4 h-full w-[5%] text-[12px] text-white">
+          <p className="h-full w-[50px] text-center text-[12px] text-white">
             {nowPlaying.track?.duration
               ? secondsToHMS(Number(nowPlaying.track?.duration))
               : ""}
@@ -321,6 +326,7 @@ export default function NowPlaying() {
       <div className="flex h-full w-[30%] max-w-[290px] flex-col items-end justify-between p-2 pb-1">
         <div className="flex w-auto max-w-32 items-center">
           <button
+            type="button"
             style={{
               border: "none",
               outline: "none",
@@ -352,6 +358,7 @@ export default function NowPlaying() {
           )}
           {favorites.songs?.some((song) => song.id === nowPlaying.track?.id) ? (
             <button
+              type="button"
               onClick={() => removeFavorite(nowPlaying.track?.id)}
               style={{
                 border: "none",
@@ -367,6 +374,7 @@ export default function NowPlaying() {
             </button>
           ) : (
             <button
+              type="button"
               onClick={() => setFavoriteSong(nowPlaying.track)}
               style={{
                 border: "none",

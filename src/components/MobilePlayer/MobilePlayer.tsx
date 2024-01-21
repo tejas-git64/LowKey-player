@@ -90,6 +90,7 @@ export default function MobilePlayer() {
         </div>
         {library.followings.some((following) => following.id === artist.id) ? (
           <button
+            type="button"
             style={{
               outline: "none",
               border: "none",
@@ -102,6 +103,7 @@ export default function MobilePlayer() {
           </button>
         ) : (
           <button
+            type="button"
             style={{
               outline: "none",
               border: "none",
@@ -183,8 +185,8 @@ export default function MobilePlayer() {
       // eslint-disable-next-line react-hooks/exhaustive-deps
       wavesurfer.current = WaveSurfer.create({
         container: "#mobileWave",
-        autoScroll: true,
         autoplay: true,
+        autoScroll: true,
         backend: "WebAudio",
         dragToSeek: true,
         hideScrollbar: true,
@@ -193,8 +195,9 @@ export default function MobilePlayer() {
         progressColor: "#10B981",
         fillParent: true,
         barGap: 2,
-        barWidth: 2,
-        minPxPerSec: 1,
+        barWidth: 3,
+        minPxPerSec: 3,
+        normalize: true,
         height: 50,
         barRadius: 10,
       });
@@ -266,6 +269,7 @@ export default function MobilePlayer() {
           </div>
           <div className="flex h-14 w-[20%] items-center justify-evenly">
             <button
+              type="button"
               style={{
                 border: "none",
                 outline: "none",
@@ -298,6 +302,7 @@ export default function MobilePlayer() {
               (song) => song.id === nowPlaying.track?.id,
             ) ? (
               <button
+                type="button"
                 onClick={() => removeFavorite(nowPlaying.track?.id)}
                 style={{
                   border: "none",
@@ -313,6 +318,7 @@ export default function MobilePlayer() {
               </button>
             ) : (
               <button
+                type="button"
                 onClick={() => setFavoriteSong(nowPlaying.track)}
                 style={{
                   border: "none",
@@ -348,6 +354,7 @@ export default function MobilePlayer() {
       <div className="mx-auto flex w-[85%] items-center justify-around py-4 transition-all ease-out">
         {isShuffling ? (
           <button
+            type="button"
             style={{
               border: "none",
               outline: "none",
@@ -367,6 +374,7 @@ export default function MobilePlayer() {
           </button>
         ) : (
           <button
+            type="button"
             style={{
               border: "none",
               outline: "none",
@@ -386,6 +394,7 @@ export default function MobilePlayer() {
           </button>
         )}
         <button
+          type="button"
           onClick={() =>
             songIndex === 0
               ? setNowPlaying(nowPlaying.queue.songs[0])
@@ -452,6 +461,7 @@ export default function MobilePlayer() {
           )}
         </div>
         <button
+          type="button"
           className="border-none bg-transparent p-0 outline-none disabled:cursor-not-allowed disabled:invert-[0.7]"
           style={{
             border: "none",
@@ -471,6 +481,7 @@ export default function MobilePlayer() {
           />
         </button>
         <button
+          type="button"
           className="border-none bg-transparent p-0 outline-none disabled:cursor-not-allowed disabled:invert-[0.7]"
           style={{
             border: "none",
