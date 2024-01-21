@@ -35,6 +35,7 @@ export default function MobilePlayer() {
     removeFollowing,
     isShuffling,
     setIsShuffling,
+    setHistory,
   } = useBoundStore();
   const wavesurfer = useRef<WaveSurfer | null>(null);
   // const [volume, setVolume] = useState(1);
@@ -174,6 +175,7 @@ export default function MobilePlayer() {
 
   useEffect(() => {
     if (innerWidth < 640) {
+      nowPlaying.track && setHistory(nowPlaying.track);
       // eslint-disable-next-line react-hooks/exhaustive-deps
       songIndex = nowPlaying.queue.songs?.findIndex(
         (song: TrackDetails) => song.id === nowPlaying.track?.id,

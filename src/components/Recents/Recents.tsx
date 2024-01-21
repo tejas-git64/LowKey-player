@@ -50,35 +50,36 @@ export default function Recents() {
           <img src={history} alt="history" className="h-[20px] w-[20px]" />
         </div>
         <ul className="flex h-full w-full list-none flex-col items-center justify-start overflow-y-scroll bg-neutral-900">
-          {recents.history?.map((song: TrackDetails) => (
-            <RecentSong
-              key={song.id}
-              id={song.id}
-              name={song.name}
-              type={""}
-              album={{
-                id: song.album.id,
-                name: song.album.name,
-                url: song.album.url,
-              }}
-              year={song.year}
-              releaseDate={song.releaseDate}
-              duration={song.duration}
-              label={song.label}
-              primaryArtists={song.primaryArtists}
-              primaryArtistsId={song.primaryArtistsId}
-              featuredArtists={song.featuredArtists}
-              featuredArtistsId={song.featuredArtistsId}
-              explicitContent={song.explicitContent}
-              playCount={song.playCount}
-              language={song.language}
-              hasLyrics={song.hasLyrics}
-              url={song.url}
-              copyright={song.copyright}
-              image={song.image}
-              downloadUrl={song.downloadUrl}
-            />
-          ))}
+          {recents.history.length > 1 &&
+            recents.history.map((song: TrackDetails) => (
+              <RecentSong
+                key={song.id}
+                id={song.id}
+                name={song.name}
+                type={""}
+                album={{
+                  id: song.album.id,
+                  name: song.album.name,
+                  url: song.album.url,
+                }}
+                year={song.year}
+                releaseDate={song.releaseDate}
+                duration={song.duration}
+                label={song.label}
+                primaryArtists={song.primaryArtists}
+                primaryArtistsId={song.primaryArtistsId}
+                featuredArtists={song.featuredArtists}
+                featuredArtistsId={song.featuredArtistsId}
+                explicitContent={song.explicitContent}
+                playCount={song.playCount}
+                language={song.language}
+                hasLyrics={song.hasLyrics}
+                url={song.url}
+                copyright={song.copyright}
+                image={song.image}
+                downloadUrl={song.downloadUrl}
+              />
+            ))}
         </ul>
       </div>
       <div className="flex h-[49.8vh] w-full flex-col items-start justify-start overflow-hidden rounded-r-lg border-l-[3px] border-t-[3px] border-neutral-950 bg-neutral-800">

@@ -18,7 +18,6 @@ export default function Song(track: TrackDetails) {
     setFavoriteSong,
     favorites,
     removeFavorite,
-    setHistory,
     library,
     setRevealCreation,
     setCreationTrack,
@@ -81,7 +80,6 @@ export default function Song(track: TrackDetails) {
     e.preventDefault();
     setNowPlaying(song);
     setIsPlaying(true);
-    setHistory(track);
   }
   function revealTrackMenu(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.stopPropagation();

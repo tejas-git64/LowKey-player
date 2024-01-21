@@ -76,12 +76,12 @@ export default function Creation() {
               <button
                 type="button"
                 onClick={() => setRevealCreation(false)}
-                className="flex-shrink-0 whitespace-nowrap rounded-full p-0 transition-all ease-out hover:bg-white"
+                className="flex-shrink-0 whitespace-nowrap rounded-full p-0 transition-all ease-out hover:invert"
               >
                 <img
                   src={close}
                   alt="close"
-                  className="h-[25px] w-[25px] flex-shrink-0 rounded-full invert-[0.2]"
+                  className="h-[25px] w-[25px] flex-shrink-0 rounded-full invert-0"
                 />
               </button>
             </div>

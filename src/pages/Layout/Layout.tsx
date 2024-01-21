@@ -23,7 +23,7 @@ export default function Layout() {
       >
         {path !== "/" && <Menu />}
         <div
-          className={`relative h-full w-full overflow-x-hidden ${
+          className={`h-full w-full overflow-x-hidden ${
             path !== "/" ? "sm:h-[95vh]" : "sm:h-full"
           }`}
         >

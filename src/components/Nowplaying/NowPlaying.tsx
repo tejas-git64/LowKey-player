@@ -36,6 +36,7 @@ export default function NowPlaying() {
     setNowPlaying,
     setShowPlayer,
     setIsShuffling,
+    setHistory,
   } = useBoundStore();
   const [volume, setVolume] = useState<number>(1);
   const [currentTime, setCurrentTime] = useState(0);
@@ -106,6 +107,7 @@ export default function NowPlaying() {
 
   useEffect(() => {
     if (innerWidth > 640) {
+      nowPlaying.track && setHistory(nowPlaying.track);
       // eslint-disable-next-line react-hooks/exhaustive-deps
       wavesurfer.current = WaveSurfer.create({
         container: "#desktopWave",
