@@ -325,7 +325,7 @@ export default function Home() {
                         : fallback
                     }
                     alt="user-profile"
-                    className="h-36 w-36 rounded-full shadow-xl shadow-neutral-950"
+                    className="h-[150px] w-[150px] rounded-full shadow-xl shadow-neutral-950"
                     onError={(e) => (e.currentTarget.src = fallback)}
                   />
                   <p className="mt-1 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-xs font-semibold text-neutral-400">
@@ -413,7 +413,7 @@ export default function Home() {
                   <img
                     src={chart.image ? chart.image[1].link : fallback}
                     alt="user-profile"
-                    className="h-[150px] w-[155px] rounded-xl shadow-md shadow-black"
+                    className="h-[150px] w-[150px] rounded-xl shadow-md shadow-black"
                     onError={(e) => (e.currentTarget.src = fallback)}
                   />
                   <p className="mt-1 line-clamp-1 h-auto text-ellipsis whitespace-pre-line text-center text-xs font-semibold text-neutral-400">

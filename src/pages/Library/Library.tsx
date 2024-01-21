@@ -141,7 +141,7 @@ export default function Library() {
             )}
             <button
               type="button"
-              className="ml-2 rounded-full bg-black p-0"
+              className="ml-2 rounded-full bg-white p-0"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -217,7 +217,7 @@ export default function Library() {
             )}
             <button
               type="button"
-              className="ml-2 rounded-full bg-black p-0"
+              className="ml-2 rounded-full bg-white p-0"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -289,7 +289,7 @@ export default function Library() {
             )}
             <button
               type="button"
-              className="ml-2 rounded-full bg-black p-0"
+              className="ml-2 rounded-full bg-white p-0"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();

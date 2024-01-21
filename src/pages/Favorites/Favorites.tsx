@@ -68,7 +68,7 @@ export default function Favorites() {
               : fallback
           }
           alt="user-profile"
-          className="h-36 w-36 rounded-full shadow-xl shadow-neutral-950"
+          className="h-[150px] w-[150px] rounded-full shadow-xl shadow-neutral-950"
           onError={(e) => (e.currentTarget.src = fallback)}
         />
         <p className="mt-1 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-xs font-semibold text-neutral-400">
@@ -82,18 +82,26 @@ export default function Favorites() {
           {nowPlaying.isPlaying && nowPlaying.queue.id === props.album.id ? (
             <button
               type="button"
-              className="rounded-full bg-emerald-400 p-2"
+              style={{
+                border: "none",
+                outline: "none",
+              }}
+              className="rounded-full bg-emerald-400"
               onClick={(e) => pauseAlbum(e)}
             >
               <img
                 src={pause}
                 alt="pause album"
-                className="h-[25px] w-[25px]"
+                className="h-[25px] w-[25px] p-0"
               />
             </button>
           ) : (
             <button
               type="button"
+              style={{
+                border: "none",
+                outline: "none",
+              }}
               className="rounded-full bg-emerald-400 p-2"
               onClick={(e) => playAlbum(e, props.album)}
             >
@@ -106,7 +114,11 @@ export default function Favorites() {
           )}
           <button
             type="button"
-            className="ml-2 rounded-full bg-black p-0"
+            style={{
+              border: "none",
+              outline: "none",
+            }}
+            className="ml-2 h-auto w-auto rounded-full bg-white p-0"
             onClick={(e) => {
               e.stopPropagation();
               removeFavoriteAlbum(props.album.id);
@@ -178,7 +190,7 @@ export default function Favorites() {
               : fallback
           }
           alt="user-profile"
-          className="h-36 w-36 rounded-lg shadow-xl shadow-neutral-950"
+          className="h-[150px] w-[150px] rounded-lg shadow-xl shadow-neutral-950"
           onError={(e) => (e.currentTarget.src = fallback)}
         />
         <p className="mt-1 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-xs font-semibold text-neutral-400">
@@ -192,6 +204,10 @@ export default function Favorites() {
           {nowPlaying.isPlaying && nowPlaying.queue.id === props.playlist.id ? (
             <button
               type="button"
+              style={{
+                border: "none",
+                outline: "none",
+              }}
               className="rounded-full bg-emerald-400 p-2"
               onClick={(e) => pausePlaylist(e)}
             >
@@ -204,6 +220,10 @@ export default function Favorites() {
           ) : (
             <button
               type="button"
+              style={{
+                border: "none",
+                outline: "none",
+              }}
               className="rounded-full bg-emerald-400 p-2"
               onClick={(e) => playPlaylist(e, props.playlist)}
             >
@@ -216,7 +236,11 @@ export default function Favorites() {
           )}
           <button
             type="button"
-            className="ml-2 rounded-full bg-black p-0"
+            style={{
+              border: "none",
+              outline: "none",
+            }}
+            className="ml-2 rounded-full bg-white p-0"
             onClick={(e) => {
               e.stopPropagation();
               removeFavoritePlaylist(props.playlist.id);
