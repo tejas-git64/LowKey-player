@@ -33,7 +33,7 @@ export default function Song(track: TrackDetails) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const playlist = library.userPlaylists.find((obj) => {
     return obj.songs.find((song) => {
-      return song.id === track.id;
+      return song.id === track?.id;
     });
   });
 
@@ -118,7 +118,7 @@ export default function Song(track: TrackDetails) {
             onError={(e) => (e.currentTarget.src = fallback)}
           />
           <p className="line-clamp-1 w-[35%] text-ellipsis text-xs font-normal capitalize text-white sm:text-sm md:w-[30%]">
-            {track.name !== ""
+            {track?.name !== ""
               ? track.name.replace("&quot;", "").replace("&amp;", "")
               : ""}
           </p>

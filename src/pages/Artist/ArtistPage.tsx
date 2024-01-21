@@ -79,7 +79,7 @@ export default function ArtistPage() {
             <img
               src={
                 artist.details.image
-                  ? artist.details.image[1].link
+                  ? artist.details.image[1]?.link
                   : artistfallback
               }
               alt="artist-img"
