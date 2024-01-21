@@ -43,7 +43,7 @@ export default function Song(track: TrackDetails) {
   ) {
     e.preventDefault();
     e.stopPropagation();
-    removeFromUserPlaylist(playlistid, track.id);
+    removeFromUserPlaylist(playlistid, track?.id);
   }
 
   function navigateToArtist(
@@ -63,7 +63,7 @@ export default function Song(track: TrackDetails) {
   ) {
     e.preventDefault();
     e.stopPropagation();
-    setFavoriteSong(track);
+    track && setFavoriteSong(track);
   }
   function unFavorite(
     e:
@@ -71,7 +71,7 @@ export default function Song(track: TrackDetails) {
       | React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) {
     e.stopPropagation();
-    removeFavorite(track.id);
+    removeFavorite(track?.id);
   }
   function setPlay(
     e: React.MouseEvent<HTMLLIElement, MouseEvent>,
@@ -94,7 +94,7 @@ export default function Song(track: TrackDetails) {
     <>
       <li
         id={track?.id}
-        onClick={(e) => setPlay(e, track)}
+        onClick={(e) => track && setPlay(e, track)}
         className="mb-0.5 h-12 w-full flex-shrink-0 overflow-hidden rounded-sm text-sm"
       >
         <div
@@ -108,18 +108,14 @@ export default function Song(track: TrackDetails) {
           onMouseLeave={() => setIsHovered(false)}
         >
           <img
-            src={
-              track.image || track.image !== false
-                ? track.image[0].link
-                : fallback
-            }
+            src={track.image ? track.image[0]?.link : fallback}
             alt="img"
             className="mr-4 h-[50px] w-[50px] bg-black md:mr-[5%]"
             onError={(e) => (e.currentTarget.src = fallback)}
           />
           <p className="line-clamp-1 w-[35%] text-ellipsis text-xs font-normal capitalize text-white sm:text-sm md:w-[30%]">
-            {track?.name !== ""
-              ? track.name.replace("&quot;", "").replace("&amp;", "")
+            {track.name !== ""
+              ? track.name?.replace("&quot;", "").replace("&amp;", "")
               : ""}
           </p>
           <div className="mx-2 flex h-[20px] w-[20px] items-center justify-start">

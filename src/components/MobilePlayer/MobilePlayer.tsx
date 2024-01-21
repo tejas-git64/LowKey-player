@@ -79,23 +79,23 @@ export default function MobilePlayer() {
       <li className="mb-1 flex h-[50px] w-full flex-shrink-0 items-center justify-between bg-transparent">
         <div className="flex h-full w-[80%] items-center justify-center">
           <img
-            src={artist.image ? artist.image[0]?.link : artistfallback}
+            src={artist ? artist.image[0]?.link : artistfallback}
             onError={(e) => (e.currentTarget.src = artistfallback)}
             alt="artist-img"
             className="h-[50px] w-[50px] rounded-md"
           />
           <h2 className="mx-4 line-clamp-1 w-[270px] overflow-hidden text-ellipsis text-sm">
-            {artist.name}
+            {artist?.name || ""}
           </h2>
         </div>
-        {library.followings.some((following) => following.id === artist.id) ? (
+        {library.followings.some((following) => following.id === artist?.id) ? (
           <button
             type="button"
             style={{
               outline: "none",
               border: "none",
             }}
-            onClick={() => removeFollowing(artist.id)}
+            onClick={() => removeFollowing(artist?.id)}
             className={`ease w-auto rounded-lg bg-transparent p-1 px-3 text-center text-xs font-semibold text-white transition-all ease-in-out sm:mx-0 sm:mt-1.5
                 `}
           >
@@ -108,7 +108,7 @@ export default function MobilePlayer() {
               outline: "none",
               border: "none",
             }}
-            onClick={(e) => followArtist(e, artist)}
+            onClick={(e) => artist && followArtist(e, artist)}
             className={`ease w-auto rounded-lg bg-white p-1 px-3 text-center text-xs font-semibold text-black transition-all ease-in-out sm:mx-0
                 sm:mt-1.5`}
           >
@@ -166,7 +166,7 @@ export default function MobilePlayer() {
       songIndex && setNowPlaying(nowPlaying.queue.songs[songIndex + 1]);
     } else {
       const randomIndex = Math.floor(
-        Math.random() * nowPlaying.queue.songs.length,
+        Math.random() * nowPlaying.queue.songs?.length,
       );
       setNowPlaying(nowPlaying.queue.songs[randomIndex]);
     }
@@ -252,7 +252,7 @@ export default function MobilePlayer() {
         <img src={down} alt="down" className="h-[28px] w-[28px]" />
       </button>
       <img
-        src={nowPlaying.track ? nowPlaying.track?.image[2]?.link : songfallback}
+        src={nowPlaying.track ? nowPlaying.track.image[2]?.link : songfallback}
         onError={(e) => (e.currentTarget.src = songfallback)}
         alt="image"
         className="mx-auto h-[500px] w-[500px] rounded-xl rounded-t-lg bg-fixed"
@@ -299,11 +299,13 @@ export default function MobilePlayer() {
               </button>
             )}
             {favorites.songs?.some(
-              (song) => song.id === nowPlaying.track?.id,
+              (song) => song?.id === nowPlaying.track?.id,
             ) ? (
               <button
                 type="button"
-                onClick={() => removeFavorite(nowPlaying.track?.id)}
+                onClick={() =>
+                  nowPlaying.track && removeFavorite(nowPlaying.track?.id)
+                }
                 style={{
                   border: "none",
                   outline: "none",
@@ -319,7 +321,9 @@ export default function MobilePlayer() {
             ) : (
               <button
                 type="button"
-                onClick={() => setFavoriteSong(nowPlaying.track)}
+                onClick={() =>
+                  nowPlaying.track && setFavoriteSong(nowPlaying.track)
+                }
                 style={{
                   border: "none",
                   outline: "none",
@@ -364,7 +368,7 @@ export default function MobilePlayer() {
               e.stopPropagation();
               setIsShuffling(false);
             }}
-            disabled={nowPlaying.queue.songs.length === 0}
+            disabled={nowPlaying.queue.songs?.length === 0}
           >
             <img
               src={shuffling}
@@ -384,7 +388,7 @@ export default function MobilePlayer() {
               e.stopPropagation();
               setIsShuffling(true);
             }}
-            disabled={nowPlaying.queue.songs.length === 0}
+            disabled={nowPlaying.queue.songs?.length === 0}
           >
             <img
               src={shuffle}
@@ -405,7 +409,7 @@ export default function MobilePlayer() {
             border: "none",
             outline: "none",
           }}
-          disabled={nowPlaying.queue.songs.length === 0 || isReady === false}
+          disabled={nowPlaying.queue.songs?.length === 0 || isReady === false}
         >
           <img
             src={previous}
@@ -468,7 +472,7 @@ export default function MobilePlayer() {
             outline: "none",
           }}
           onClick={() =>
-            songIndex === nowPlaying.queue.songs.length - 1
+            songIndex === nowPlaying.queue.songs?.length - 1
               ? setNowPlaying(nowPlaying.queue.songs[0])
               : setNowPlaying(nowPlaying.queue.songs[songIndex + 1])
           }
@@ -499,9 +503,10 @@ export default function MobilePlayer() {
       <div className="mx-auto mt-6 w-[90%]">
         <h2 className="mb-2 text-lg font-semibold">Primary artists</h2>
         <ul className="mx-auto flex h-auto w-full flex-shrink-0 flex-col items-start justify-center rounded-xl bg-neutral-950 px-4 py-2">
-          {artists?.map((artist: ArtistType) => (
-            <SongArtist key={artist.id} artist={artist} />
-          ))}
+          {artists &&
+            artists.map((artist: ArtistType) => (
+              <SongArtist key={artist?.id || ""} artist={artist} />
+            ))}
         </ul>
       </div>
     </div>

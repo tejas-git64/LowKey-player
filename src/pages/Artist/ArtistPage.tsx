@@ -203,7 +203,7 @@ export default function ArtistPage() {
                 className="mr-4 h-[180px] w-[150px] flex-shrink-0"
               >
                 <img
-                  src={album.image ? album.image[1].link : songfallback}
+                  src={album.image ? album.image[1]?.link : songfallback}
                   alt="artist-album"
                   className="h-[150px] w-[150px]"
                 />
