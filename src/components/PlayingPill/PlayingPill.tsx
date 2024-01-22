@@ -54,7 +54,7 @@ export default function PlayingPill() {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                removeFavorite(nowPlaying.track?.id);
+                nowPlaying.track && removeFavorite(nowPlaying.track?.id);
               }}
               style={{
                 border: "none",
@@ -72,7 +72,7 @@ export default function PlayingPill() {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setFavoriteSong(nowPlaying.track);
+                nowPlaying.track && setFavoriteSong(nowPlaying.track);
               }}
               style={{
                 border: "none",

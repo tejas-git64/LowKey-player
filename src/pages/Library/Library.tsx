@@ -351,12 +351,16 @@ export default function Library() {
       <div className="absolute right-2 top-2 h-auto w-auto">
         <RouteNav />
       </div>
-      <h2 className="font p-2 px-2 text-2xl font-semibold">Your Library</h2>
+      <h2 className="font p-2 px-2 text-2xl font-semibold text-white">
+        Your Library
+      </h2>
       <div className="mt-8 flex h-full w-full flex-col items-center justify-start px-3 py-2">
         <div className="h-auto w-full overflow-x-hidden overflow-y-scroll">
           <div className="mb-3 h-[215px] w-full overflow-x-hidden">
             <div className="mb-2 flex h-[28px] w-full items-center justify-between">
-              <h2 className="text-md w-auto font-semibold">Your playlists</h2>
+              <h2 className="text-md w-auto font-semibold text-white">
+                Your playlists
+              </h2>
               <button
                 type="button"
                 style={{
@@ -380,7 +384,9 @@ export default function Library() {
             </ul>
           </div>
           <div className="mb-3 h-[215px] w-full overflow-x-hidden">
-            <h2 className="text-md mb-2 w-full font-semibold">Playlists</h2>
+            <h2 className="text-md mb-2 w-full font-semibold text-white">
+              Playlists
+            </h2>
             <ul className="flex h-[180px] w-full items-center justify-start overflow-y-hidden overflow-x-scroll">
               {library.playlists.map(
                 (playlist: PlaylistById | UserPlaylist) => (
@@ -390,7 +396,9 @@ export default function Library() {
             </ul>
           </div>
           <div className="mb-3 h-[215px] w-full overflow-x-hidden">
-            <h2 className="text-md mb-2 w-full font-semibold">Albums</h2>
+            <h2 className="text-md mb-2 w-full font-semibold text-white">
+              Albums
+            </h2>
             <ul className="flex h-[180px] w-full items-center justify-start overflow-y-hidden overflow-x-scroll">
               {library.albums.map((album: AlbumById) => (
                 <LibraryAlbum key={album.id} album={album} />
@@ -398,7 +406,9 @@ export default function Library() {
             </ul>
           </div>
           <div className="mb-3 h-auto w-full overflow-x-hidden">
-            <h2 className="text-md mb-3 w-full font-semibold">Followings</h2>
+            <h2 className="text-md mb-[30dvh] w-full font-semibold text-white">
+              Followings
+            </h2>
             <ul className="h-auto max-h-fit w-full overflow-x-scroll">
               {library.followings.map((following: ArtistType) => (
                 <Following

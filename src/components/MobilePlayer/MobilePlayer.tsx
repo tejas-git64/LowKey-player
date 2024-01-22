@@ -62,7 +62,8 @@ export default function MobilePlayer() {
   ) {
     e.preventDefault();
     e.stopPropagation();
-    removeFromUserPlaylist(playlistid, nowPlaying.track?.id);
+    nowPlaying.track &&
+      removeFromUserPlaylist(playlistid, nowPlaying.track?.id);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -136,7 +137,7 @@ export default function MobilePlayer() {
   function revealTrackMenu(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.stopPropagation();
     e.preventDefault();
-    setCreationTrack(nowPlaying.track);
+    nowPlaying.track && setCreationTrack(nowPlaying.track);
     setRevealCreation(true);
   }
 
@@ -203,7 +204,8 @@ export default function MobilePlayer() {
         height: 50,
         barRadius: 10,
       });
-      wavesurfer.current?.load(nowPlaying.track?.downloadUrl[4].link);
+      nowPlaying.track &&
+        wavesurfer.current?.load(nowPlaying.track?.downloadUrl[4].link);
       wavesurfer.current?.seekTo(0);
     }
     wavesurfer.current?.on("seeking", () => {

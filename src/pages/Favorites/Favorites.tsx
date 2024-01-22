@@ -303,7 +303,7 @@ export default function Favorites() {
             </button>
           )}
           {nowPlaying.isPlaying &&
-          favorites.songs?.some((song) => song.id === nowPlaying.track.id) ? (
+          favorites.songs?.some((song) => song.id === nowPlaying.track?.id) ? (
             <button
               type="button"
               style={{
@@ -336,7 +336,7 @@ export default function Favorites() {
         <div className="h-auto min-h-[80dvh] w-full bg-neutral-900">
           {favorites.albums.length > 0 && (
             <>
-              <h2 className="p-4 py-2 font-semibold">Albums</h2>
+              <h2 className="p-4 py-2 font-semibold text-white">Albums</h2>
               <ul className="bg-neutral-900w-full flex h-[200px] overflow-y-hidden overflow-x-scroll whitespace-nowrap p-4 py-2">
                 {favorites.albums?.map((album: AlbumById) => (
                   <FavoriteAlbum key={album.id} album={album} />
@@ -346,7 +346,7 @@ export default function Favorites() {
           )}
           {favorites.playlists.length > 0 && (
             <>
-              <h2 className="p-4 py-2 font-semibold">Playlists</h2>
+              <h2 className="p-4 py-2 font-semibold text-white">Playlists</h2>
               <ul className="flex h-[200px] max-h-fit w-full overflow-y-hidden overflow-x-scroll whitespace-nowrap p-4 py-2">
                 {favorites.playlists?.map((playlist: PlaylistById) => (
                   <FavoritePlaylist playlist={playlist} />
@@ -356,7 +356,7 @@ export default function Favorites() {
           )}
           {favorites.songs.length > 0 && (
             <>
-              <h2 className="p-4 py-2 font-semibold">Songs</h2>
+              <h2 className="p-4 py-2 font-semibold text-white">Songs</h2>
               <ul className="flex max-h-fit min-h-[23dvh] w-full flex-col items-start justify-start px-3 py-2 pb-28 sm:pb-20">
                 {favorites.songs?.map((song: TrackDetails) => (
                   <Song
@@ -392,7 +392,7 @@ export default function Favorites() {
           )}
         </div>
       ) : (
-        <div className="flex h-[70vh] w-full flex-col items-center justify-center">
+        <div className="flex h-[70vh] w-full flex-col items-center justify-center bg-neutral-800">
           <img
             src={brokenheart}
             alt="broken"

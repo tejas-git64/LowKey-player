@@ -38,7 +38,7 @@ export default function NowPlaying() {
     setIsShuffling,
     setHistory,
   } = useBoundStore();
-  const [volume, setVolume] = useState<number>(1);
+  const [volume, setVolume] = useState<number>(0);
   const [currentTime, setCurrentTime] = useState(0);
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const songIndex = nowPlaying.queue.songs?.findIndex(
@@ -59,7 +59,8 @@ export default function NowPlaying() {
   ) {
     e.preventDefault();
     e.stopPropagation();
-    removeFromUserPlaylist(playlistid, nowPlaying.track?.id);
+    nowPlaying.track &&
+      removeFromUserPlaylist(playlistid, nowPlaying.track?.id);
   }
   function handlePlay(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
@@ -76,7 +77,7 @@ export default function NowPlaying() {
   function revealTrackMenu(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.stopPropagation();
     e.preventDefault();
-    setCreationTrack(nowPlaying.track);
+    nowPlaying.track && setCreationTrack(nowPlaying.track);
     setRevealCreation(true);
   }
 
@@ -90,6 +91,26 @@ export default function NowPlaying() {
       );
       setNowPlaying(nowPlaying.queue.songs[randomIndex]);
     }
+  }
+
+  function handlePrevious(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    e.preventDefault();
+    e.stopPropagation();
+    setNowPlaying(null);
+    if (songIndex === 0) {
+      setNowPlaying(nowPlaying.queue.songs[0]);
+    } else {
+      setNowPlaying(nowPlaying.queue.songs[songIndex - 1]);
+    }
+  }
+
+  function handleNext(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    e.preventDefault();
+    e.stopPropagation();
+    setNowPlaying(null);
+    songIndex === nowPlaying.queue.songs.length - 1
+      ? setNowPlaying(nowPlaying.queue.songs[0])
+      : setNowPlaying(nowPlaying.queue.songs[songIndex + 1]);
   }
 
   useEffect(() => {
@@ -125,7 +146,8 @@ export default function NowPlaying() {
         minPxPerSec: 1,
         height: 12,
       });
-      wavesurfer.current?.load(nowPlaying.track?.downloadUrl[4].link);
+      nowPlaying.track &&
+        wavesurfer.current?.load(nowPlaying.track.downloadUrl[4].link);
       wavesurfer.current?.seekTo(0);
       wavesurfer.current?.setVolume(volume);
     }
@@ -154,7 +176,7 @@ export default function NowPlaying() {
   }, [nowPlaying.track?.id]);
 
   return (
-    <div className="absolute bottom-0 hidden h-[70px] w-full justify-between bg-black sm:flex">
+    <div className="absolute bottom-0 hidden h-fit w-full justify-between bg-black sm:flex">
       <div className="flex h-full w-[30%] max-w-[300px] items-center justify-center p-2.5">
         <img
           src={
@@ -174,7 +196,7 @@ export default function NowPlaying() {
           </p>
         </div>
       </div>
-      <div className="mb-1 flex h-full w-auto flex-col items-center justify-evenly p-1.5 sm:w-[40%]">
+      <div className="flex h-full w-auto flex-col items-center justify-evenly p-1.5 sm:w-[40%]">
         {/*Controls */}
         <div className="flex w-[250px] items-center justify-around pt-0.5">
           {isShuffling ? (
@@ -220,11 +242,7 @@ export default function NowPlaying() {
           )}
           <button
             type="button"
-            onClick={() =>
-              songIndex === 0
-                ? setNowPlaying(nowPlaying.queue.songs[0])
-                : setNowPlaying(nowPlaying.queue.songs[songIndex - 1])
-            }
+            onClick={(e) => handlePrevious(e)}
             style={{
               border: "none",
               outline: "none",
@@ -284,11 +302,7 @@ export default function NowPlaying() {
               border: "none",
               outline: "none",
             }}
-            onClick={() =>
-              songIndex === nowPlaying.queue.songs.length - 1
-                ? setNowPlaying(nowPlaying.queue.songs[0])
-                : setNowPlaying(nowPlaying.queue.songs[songIndex + 1])
-            }
+            onClick={(e) => handleNext(e)}
             disabled={nowPlaying.queue.songs.length === 0}
           >
             <img
@@ -325,8 +339,8 @@ export default function NowPlaying() {
           </p>
         </div>
       </div>
-      <div className="flex h-full w-[30%] max-w-[290px] flex-col items-end justify-between p-2 pb-1">
-        <div className="flex w-auto max-w-32 items-center">
+      <div className="flex h-full w-[30%] max-w-[290px] flex-col items-end justify-between p-2">
+        <div className="flex h-auto w-auto max-w-32 items-center">
           <button
             type="button"
             style={{
@@ -361,7 +375,9 @@ export default function NowPlaying() {
           {favorites.songs?.some((song) => song.id === nowPlaying.track?.id) ? (
             <button
               type="button"
-              onClick={() => removeFavorite(nowPlaying.track?.id)}
+              onClick={() =>
+                nowPlaying.track && removeFavorite(nowPlaying.track?.id)
+              }
               style={{
                 border: "none",
                 outline: "none",
@@ -377,7 +393,9 @@ export default function NowPlaying() {
           ) : (
             <button
               type="button"
-              onClick={() => setFavoriteSong(nowPlaying.track)}
+              onClick={() =>
+                nowPlaying.track && setFavoriteSong(nowPlaying.track)
+              }
               style={{
                 border: "none",
                 outline: "none",
@@ -400,7 +418,7 @@ export default function NowPlaying() {
             />
           </div>
         </div>
-        <div className="flex w-auto items-center justify-end pb-1">
+        <div className="mt-1.5 flex h-fit w-auto items-center justify-end">
           <input
             type="range"
             name="song-volume"
@@ -416,7 +434,7 @@ export default function NowPlaying() {
           <img
             src={volume > 0.1 ? (volume < 0.7 ? vol : high) : mute}
             alt="volume"
-            className={`ml-1 h-[28px] w-[28px] bg-transparent ${
+            className={`-mr-1 ml-1 h-[28px] w-[28px] bg-transparent ${
               nowPlaying.track?.id === "" ? "invert-[0.4]" : ""
             } ${
               volume === 0 && "invert-[0.5]"

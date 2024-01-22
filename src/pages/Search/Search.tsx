@@ -45,7 +45,7 @@ export default function Search() {
               {/* Top query */}
               <ul className="h-auto w-full list-none sm:w-full sm:px-10">
                 {search.topQuery.results.length > 0 && (
-                  <p className="my-2">Top results</p>
+                  <p className="my-2 text-white">Top results</p>
                 )}
                 {search.topQuery.results.map((res: QueryResult) => (
                   <li
@@ -68,7 +68,7 @@ export default function Search() {
               {/* Top Songs */}
               <ul className="my-2 h-auto w-full list-none sm:px-10">
                 {search.songs.results.length > 0 && (
-                  <p className="my-2">Songs</p>
+                  <p className="my-2 text-white">Songs</p>
                 )}
                 {search.songs.results.map((song: SongAlbumResult) => (
                   <li
@@ -99,7 +99,7 @@ export default function Search() {
               {/* Playlists */}
               <div className="mb-2 h-auto w-full list-none sm:px-10">
                 {search.playlists.results.length > 0 && (
-                  <p className="my-2">Playlists</p>
+                  <p className="my-2 text-white">Playlists</p>
                 )}
                 <ul
                   className={`${
@@ -131,7 +131,7 @@ export default function Search() {
               {/* Artists */}
               <div className="mb-2 h-auto w-full list-none sm:px-10">
                 {search.artists.results.length > 0 && (
-                  <p className="my-2">Artists</p>
+                  <p className="my-2 text-white">Artists</p>
                 )}
                 <ul
                   className={`${
@@ -165,7 +165,7 @@ export default function Search() {
               {/* Albums */}
               <div className="mb-2 h-auto w-full list-none pb-24 sm:px-10 sm:pb-0">
                 {search.albums.results.length > 0 && (
-                  <p className="my-2">Albums</p>
+                  <p className="my-2 text-white">Albums</p>
                 )}
                 <ul
                   className={`${

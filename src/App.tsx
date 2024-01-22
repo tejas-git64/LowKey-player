@@ -42,8 +42,8 @@ export default function App() {
 
   const MainFallback = () => {
     return (
-      <div className="flex h-full w-full items-center justify-center">
-        <p className="text-xl font-semibold">Loading (∩^o^)⊃━☆...</p>
+      <div className="flex h-full w-full items-center justify-center bg-neutral-800">
+        <p className="text-xl font-semibold text-white">Loading (∩^o^)⊃━☆...</p>
       </div>
     );
   };

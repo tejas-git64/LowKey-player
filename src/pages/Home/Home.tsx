@@ -139,6 +139,7 @@ export default function Home() {
                   src={notif}
                   alt="notification"
                   className="h-[25px] w-[25px]"
+                  loading="lazy"
                 />
                 {recents.activity.length > 0 && !notifications && (
                   <p className="absolute -top-0.5 right-0 h-2 w-2 rounded-full bg-emerald-400"></p>
@@ -160,7 +161,12 @@ export default function Home() {
                   </div>
                 )}
               </ul>
-              <img src={logo} alt="logo" className="-mb-0.5 rounded-full" />
+              <img
+                loading="lazy"
+                src={logo}
+                alt="logo"
+                className="-mb-0.5 rounded-full"
+              />
             </div>
           </div>
           <div className="h-auto max-h-max w-full px-3.5">
@@ -168,6 +174,7 @@ export default function Home() {
               <img
                 src={widget.image ? widget.image[2].link : songfallback}
                 alt="img"
+                loading="lazy"
                 className="h-auto w-auto bg-neutral-700 sm:z-10 sm:h-[320px] sm:w-[320px] sm:rounded-xl"
                 onClick={() =>
                   widget.id !== "" && navigate(`/playlists/${widget.id}`)
@@ -181,12 +188,14 @@ export default function Home() {
                   <button
                     style={{
                       outline: "none",
+                      border: "1px solid #000",
                     }}
                     onClick={() => setIsPlaying(false)}
-                    className="rounded-full border-2 border-black bg-emerald-500 p-2"
+                    className="rounded-full bg-emerald-500 p-2"
                   >
                     <img
                       src={pause}
+                      loading="lazy"
                       alt="pause"
                       className="h-[28px] w-[28px]"
                     />
@@ -195,13 +204,15 @@ export default function Home() {
                   <button
                     style={{
                       outline: "none",
+                      border: "1px solid #000",
                     }}
                     onClick={(e) => setNowPlayingQueue(e)}
-                    className="rounded-full border-2 border-black bg-emerald-500 p-2"
+                    className="rounded-full bg-emerald-500 p-2"
                   >
                     <img
                       src={play}
                       alt="play"
+                      loading="lazy"
                       className="h-[28px] w-[28px] pl-0.5"
                     />
                   </button>
@@ -254,6 +265,7 @@ export default function Home() {
               <img
                 src={today.image ? today.image[0].link : fallbacktoday}
                 alt="img"
+                loading="lazy"
                 className="h-full w-12 sm:w-14"
                 onError={(e) => (e.currentTarget.src = fallbacktoday)}
               />
@@ -268,6 +280,7 @@ export default function Home() {
               <img
                 src={weekly.image ? weekly.image[0].link : fallbackweekly}
                 alt="img"
+                loading="lazy"
                 className="h-full w-12 sm:w-14"
                 onError={(e) => (e.currentTarget.src = fallbackweekly)}
               />
@@ -282,6 +295,7 @@ export default function Home() {
               <img
                 src={monthly.image ? monthly.image[0].link : fallbackmonthly}
                 alt="img"
+                loading="lazy"
                 className="h-full w-12 sm:w-14"
                 onError={(e) => (e.currentTarget.src = fallbackmonthly)}
               />
@@ -296,6 +310,7 @@ export default function Home() {
               <img
                 src={yearly.image ? yearly.image[0].link : fallbackyearly}
                 alt="img"
+                loading="lazy"
                 className="h-full w-12 sm:w-14"
                 onError={(e) => (e.currentTarget.src = fallbackyearly)}
               />
@@ -325,6 +340,7 @@ export default function Home() {
                         : fallback
                     }
                     alt="user-profile"
+                    loading="lazy"
                     className="h-[150px] w-[150px] rounded-full shadow-xl shadow-neutral-950"
                     onError={(e) => (e.currentTarget.src = fallback)}
                   />
@@ -356,6 +372,7 @@ export default function Home() {
                         : fallback
                     }
                     alt="user-profile"
+                    loading="lazy"
                     className="h-[150px] w-[150px] rounded-3xl shadow-xl shadow-neutral-950"
                     onError={(e) => (e.currentTarget.src = fallback)}
                   />
@@ -387,6 +404,7 @@ export default function Home() {
                         : fallback
                     }
                     alt="user-profile"
+                    loading="lazy"
                     className="h-[150px] w-[150px] rounded-br-3xl rounded-tl-3xl shadow-xl shadow-neutral-950"
                     onError={(e) => (e.currentTarget.src = fallback)}
                   />
@@ -413,6 +431,7 @@ export default function Home() {
                   <img
                     src={chart.image ? chart.image[1].link : fallback}
                     alt="user-profile"
+                    loading="lazy"
                     className="h-[150px] w-[150px] rounded-xl shadow-md shadow-black"
                     onError={(e) => (e.currentTarget.src = fallback)}
                   />

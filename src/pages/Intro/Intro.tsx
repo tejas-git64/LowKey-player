@@ -74,13 +74,19 @@ export default function Intro() {
             </h2>
           </div>
           <ul className="my-1 h-auto w-full list-disc border-neutral-900 px-10 text-left text-sm font-medium">
-            <li className="my-2">
+            <li className="my-2 text-white">
               Tracks from diverse artists/albums/playlists
             </li>
-            <li className="my-2">Multi search artists/albums/playlists</li>
-            <li className="my-2">Add favorites and playlist creation</li>
-            <li className="my-2">Recent listening history support</li>
-            <li className="my-2">Activity support</li>
+            <li className="my-2 text-white">
+              Multi search artists/albums/playlists
+            </li>
+            <li className="my-2 text-white">
+              Add favorites and playlist creation
+            </li>
+            <li className="my-2 text-white">
+              Recent listening history support
+            </li>
+            <li className="my-2 text-white">Activity support</li>
           </ul>
           <div className="h-auto w-full px-6">
             <h2 className="mb-3 w-min whitespace-nowrap border-b border-purple-600 text-left text-lg font-bold text-white md:text-xl">

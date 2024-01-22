@@ -130,7 +130,7 @@ export type StoreType = {
   };
   search: SearchType;
   nowPlaying: {
-    track: TrackDetails;
+    track: TrackDetails | null;
     isPlaying: boolean;
     isMobilePlayer: boolean;
     isFavorite: boolean;
@@ -168,7 +168,7 @@ export type StoreType = {
   setArtistDetails: (data: ArtistType) => void;
   setArtistAlbums: (data: AlbumType[]) => void;
   setArtistSongs: (data: TrackDetails[]) => void;
-  setNowPlaying: (data: TrackDetails) => void;
+  setNowPlaying: (data: TrackDetails | null) => void;
   setIsPlaying: (status: boolean) => void;
   setShowPlayer: (isShow: boolean) => void;
   setIsShuffling: (isShuffled: boolean) => void;
@@ -667,7 +667,7 @@ export const useBoundStore = create<StoreType>()(
         set((state) => {
           state.artist.songs = data;
         }),
-      setNowPlaying: (data: TrackDetails) =>
+      setNowPlaying: (data: TrackDetails | null) =>
         set((state) => {
           state.nowPlaying.track = data;
         }),

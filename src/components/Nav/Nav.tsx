@@ -67,7 +67,7 @@ export default function Nav() {
             )}
           </ul>
           {greeting && (
-            <p className="whitespace-nowrap text-sm font-semibold">
+            <p className="whitespace-nowrap text-sm font-semibold text-white">
               {greeting}
             </p>
           )}

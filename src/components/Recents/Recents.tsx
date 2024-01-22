@@ -46,7 +46,7 @@ export default function Recents() {
     <div className="hidden h-[95vh] flex-col items-center justify-start overflow-hidden border-r-[3px] border-black bg-neutral-950 xl:flex xl:w-[380px] 2xl:w-96">
       <div className="flex h-[45vh] w-full flex-col items-start justify-start overflow-hidden rounded-r-lg border-l-[3px] border-neutral-950 bg-neutral-800">
         <div className="flex h-12 w-full items-center justify-between border-b-2 border-neutral-900 bg-neutral-700 px-3">
-          <h2 className="w-full font-semibold">Listening History</h2>
+          <h2 className="w-full font-semibold text-white">Listening History</h2>
           <img src={history} alt="history" className="h-[20px] w-[20px]" />
         </div>
         <ul className="flex h-full w-full list-none flex-col items-center justify-start overflow-y-scroll bg-neutral-900">
@@ -84,7 +84,7 @@ export default function Recents() {
       </div>
       <div className="flex h-[49.8vh] w-full flex-col items-start justify-start overflow-hidden rounded-r-lg border-l-[3px] border-t-[3px] border-neutral-950 bg-neutral-800">
         <div className="flex h-12 w-full items-center justify-between border-b-2 border-neutral-900 bg-neutral-700 px-3">
-          <h2 className="w-full font-semibold">Activity</h2>
+          <h2 className="w-full font-semibold text-white">Activity</h2>
           <img src={activity} alt="activity" className="h-[25px] w-[25px]" />
         </div>
         <ul className="h-[38dvh] w-full list-none overflow-y-scroll bg-neutral-900">

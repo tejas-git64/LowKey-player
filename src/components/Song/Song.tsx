@@ -78,6 +78,7 @@ export default function Song(track: TrackDetails) {
   ) {
     e.stopPropagation();
     e.preventDefault();
+    setNowPlaying(null);
     setNowPlaying(song);
     setIsPlaying(true);
   }

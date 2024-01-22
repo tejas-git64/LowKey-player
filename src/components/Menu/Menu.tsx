@@ -51,7 +51,7 @@ export default function Menu() {
       id="menu"
       className="hidden h-full max-h-screen overflow-hidden border-r-2 border-black bg-neutral-950 sm:block sm:w-[60px] lg:w-72 xl:w-80 2xl:w-96"
     >
-      <div className="flex w-full flex-col items-start justify-evenly overflow-hidden rounded-l-lg border-l-[3px] border-neutral-950 bg-neutral-800 sm:h-[11%] lg:h-[11.5%]">
+      <div className="flex h-auto w-full flex-col items-start justify-evenly overflow-hidden rounded-l-lg border-l-[3px] border-neutral-950 bg-neutral-800">
         <Link
           to={"/home"}
           className="flex w-full items-center justify-start p-3 hover:bg-neutral-600"
@@ -84,7 +84,7 @@ export default function Menu() {
             to={"/favorites"}
             className="flex w-full items-center justify-start p-3 pl-2.5 hover:bg-neutral-600"
           >
-            <img src={heart} alt="library" className="mr-4 w-auto xl:mr-6" />
+            <img src={heart} alt="favorites" className="mr-4 w-auto xl:mr-6" />
             <p className="hidden text-white sm:block">Favorites</p>
           </Link>
           <div
@@ -92,7 +92,7 @@ export default function Menu() {
             className="flex w-full items-center justify-start p-3 py-0 pl-2.5 hover:bg-neutral-600 lg:py-3"
             onClick={showCreationMenu}
           >
-            <img src={add} alt="library" className="mr-4 w-auto xl:mr-6" />
+            <img src={add} alt="new-playlist" className="mr-4 w-auto xl:mr-6" />
             <p className="hidden text-white sm:block">New Playlist</p>
           </div>
         </div>
@@ -105,7 +105,7 @@ export default function Menu() {
             >
               <img
                 src={album.image[0]?.link || ""}
-                alt="library"
+                alt="album"
                 onError={(e) => (e.currentTarget.src = userplaylist)}
                 className="mr-4 h-[35px] w-[35px] rounded-md shadow-md shadow-black xl:mr-6"
               />
@@ -122,7 +122,7 @@ export default function Menu() {
             >
               <img
                 src={playlist.image[0]?.link || ""}
-                alt="library"
+                alt="playlist"
                 onError={(e) => (e.currentTarget.src = userplaylist)}
                 className="mr-4 h-[35px] w-[35px] rounded-md shadow-md shadow-black xl:mr-6"
               />
@@ -139,7 +139,7 @@ export default function Menu() {
             >
               <img
                 src={userplaylist}
-                alt="library"
+                alt="userplaylist"
                 className="mr-4 h-[35px] w-[35px] rounded-md bg-emerald-500 shadow-md shadow-black xl:mr-6"
               />
               <p className="line-clamp-1 hidden text-ellipsis whitespace-nowrap text-sm text-neutral-200 sm:block">
@@ -152,7 +152,7 @@ export default function Menu() {
           <img
             src={status ? online : offline}
             alt="library"
-            className="mr-4 w-auto xl:mr-6"
+            className="mr-4 h-[28px] w-[28px] xl:mr-6"
           />
           <p
             className={`hidden ${
