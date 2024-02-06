@@ -17,6 +17,7 @@ import secondsToHMS from "../../utils/utils";
 import { ArtistType, TrackDetails } from "../../types/GlobalTypes";
 import tick from "../../assets/icons8-tick.svg";
 import artistfallback from "../../assets/icons8-artist-fallback.png";
+import { useNavigate } from "react-router-dom";
 
 export default function MobilePlayer() {
   const {
@@ -38,7 +39,7 @@ export default function MobilePlayer() {
     setHistory,
   } = useBoundStore();
   const wavesurfer = useRef<WaveSurfer | null>(null);
-  // const [volume, setVolume] = useState(1);
+  const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(0);
   const [artists, setArtists] = useState<ArtistType[]>([]);
   let songIndex = nowPlaying.queue.songs?.findIndex(
@@ -77,16 +78,28 @@ export default function MobilePlayer() {
       setTimeout(() => setFollowing(artist), 300);
     }
 
+    const navigateToArtist = (id: string) => {
+      navigate(`/artists/${id}`, {
+        replace: true,
+        preventScrollReset: true,
+      });
+      setShowPlayer(false);
+    };
+
     return (
-      <li className="mb-1 flex h-[50px] w-full flex-shrink-0 items-center justify-between bg-transparent">
-        <div className="flex h-full w-[80%] items-center justify-center">
+      <div className="mb-1 flex h-[50px] w-full flex-shrink-0 items-center justify-between bg-transparent">
+        <div
+          role="button"
+          onClick={() => navigateToArtist(artist.id)}
+          className="flex h-full w-[80%] items-center justify-center"
+        >
           <img
             src={artist ? artist.image[0]?.link : artistfallback}
             onError={(e) => (e.currentTarget.src = artistfallback)}
             alt="artist-img"
             className="h-[50px] w-[50px] rounded-md"
           />
-          <h2 className="mx-4 line-clamp-1 w-[270px] overflow-hidden text-ellipsis text-sm">
+          <h2 className="mx-4 line-clamp-1 w-[270px] overflow-hidden text-ellipsis text-sm text-white">
             {artist?.name || ""}
           </h2>
         </div>
@@ -117,7 +130,7 @@ export default function MobilePlayer() {
             Follow{" "}
           </button>
         )}
-      </li>
+      </div>
     );
   };
 
@@ -142,7 +155,9 @@ export default function MobilePlayer() {
   }
 
   async function getArtistDetails(id: string) {
-    const res = await fetch(`https://saavn.me/artists?id=${id}`);
+    const res = await fetch(
+      `https://jiosaavn-api-lowkey.vercel.app/artists?id=${id}`,
+    );
     const artistInfo = await res.json();
     setArtists((prev) => {
       return [...prev, artistInfo.data];
@@ -434,7 +449,7 @@ export default function MobilePlayer() {
                 outline: "none",
               }}
               className={`h-auto w-auto rounded-full border-none bg-neutral-100 p-2.5 outline-none transition-all ease-in disabled:cursor-not-allowed disabled:bg-neutral-600`}
-              disabled={isReady === false}
+              disabled={!nowPlaying.track?.id}
             >
               <img
                 src={pause}
@@ -456,7 +471,7 @@ export default function MobilePlayer() {
                 outline: "none",
               }}
               className={`h-auto w-auto rounded-full border-none bg-neutral-100 p-2.5 outline-none transition-all ease-in disabled:cursor-not-allowed disabled:bg-neutral-600`}
-              disabled={isReady === false}
+              disabled={!nowPlaying.track?.id}
             >
               <img
                 src={play}

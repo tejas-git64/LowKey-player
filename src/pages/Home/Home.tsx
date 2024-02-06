@@ -222,35 +222,41 @@ export default function Home() {
                 id="widget-container"
                 className="absolute bottom-1.5 left-1.5 mx-auto h-[158px] w-[96.5%] list-none overflow-x-hidden overflow-y-scroll rounded-xl bg-neutral-900 p-2 sm:static sm:ml-1 sm:mt-0 sm:h-full sm:w-full sm:pl-2 sm:pr-2"
               >
-                {widget.songs.map((song: TrackDetails) => (
-                  <Song
-                    key={song.id}
-                    id={song.id}
-                    name={song.name}
-                    type={song.type}
-                    album={{
-                      id: song.album.id,
-                      name: song.album.name,
-                      url: song.album.url,
-                    }}
-                    year={song.year}
-                    releaseDate={song.releaseDate}
-                    duration={song.duration}
-                    label={song.label}
-                    primaryArtists={song.primaryArtists}
-                    primaryArtistsId={song.primaryArtistsId}
-                    featuredArtists={song.featuredArtists}
-                    featuredArtistsId={song.featuredArtistsId}
-                    explicitContent={song.explicitContent}
-                    playCount={song.playCount}
-                    language={song.language}
-                    hasLyrics={song.hasLyrics}
-                    url={song.url}
-                    copyright={song.copyright}
-                    image={song.image}
-                    downloadUrl={song.downloadUrl}
-                  />
-                ))}
+                {widget.songs.length > 0 ? (
+                  widget.songs.map((song: TrackDetails) => (
+                    <Song
+                      key={song.id}
+                      id={song.id}
+                      name={song.name}
+                      type={song.type}
+                      album={{
+                        id: song.album.id,
+                        name: song.album.name,
+                        url: song.album.url,
+                      }}
+                      year={song.year}
+                      releaseDate={song.releaseDate}
+                      duration={song.duration}
+                      label={song.label}
+                      primaryArtists={song.primaryArtists}
+                      primaryArtistsId={song.primaryArtistsId}
+                      featuredArtists={song.featuredArtists}
+                      featuredArtistsId={song.featuredArtistsId}
+                      explicitContent={song.explicitContent}
+                      playCount={song.playCount}
+                      language={song.language}
+                      hasLyrics={song.hasLyrics}
+                      url={song.url}
+                      copyright={song.copyright}
+                      image={song.image}
+                      downloadUrl={song.downloadUrl}
+                    />
+                  ))
+                ) : (
+                  <p className="m-auto my-[12.5%] text-center text-xl text-neutral-500 sm:my-[135px]">
+                    No songs here...T_T
+                  </p>
+                )}
               </ul>
             </section>
           </div>

@@ -220,35 +220,41 @@ export default function ArtistPage() {
             id="artist-songs-list"
             className="max-h-auto mx-auto mt-1 h-auto w-full overflow-x-hidden overflow-y-scroll bg-neutral-900 pb-28 sm:pb-20"
           >
-            {artist.songs.map((song: TrackDetails) => (
-              <Song
-                id={song.id}
-                key={song.id}
-                name={song.name}
-                type={song.type}
-                album={{
-                  id: song.album.id,
-                  name: song.album.name,
-                  url: song.album.url,
-                }}
-                year={song.year}
-                releaseDate={song.releaseDate}
-                duration={song.duration}
-                label={song.label}
-                primaryArtists={song.primaryArtists}
-                primaryArtistsId={song.featuredArtistsId}
-                featuredArtists={song.featuredArtists}
-                featuredArtistsId={song.featuredArtistsId}
-                explicitContent={song.explicitContent}
-                playCount={song.playCount}
-                language={song.language}
-                hasLyrics={song.hasLyrics}
-                url={song.url}
-                copyright={song.copyright}
-                image={song.image}
-                downloadUrl={song.downloadUrl}
-              />
-            ))}
+            {artist.songs.length > 0 ? (
+              artist.songs.map((song: TrackDetails) => (
+                <Song
+                  id={song.id}
+                  key={song.id}
+                  name={song.name}
+                  type={song.type}
+                  album={{
+                    id: song.album.id,
+                    name: song.album.name,
+                    url: song.album.url,
+                  }}
+                  year={song.year}
+                  releaseDate={song.releaseDate}
+                  duration={song.duration}
+                  label={song.label}
+                  primaryArtists={song.primaryArtists}
+                  primaryArtistsId={song.featuredArtistsId}
+                  featuredArtists={song.featuredArtists}
+                  featuredArtistsId={song.featuredArtistsId}
+                  explicitContent={song.explicitContent}
+                  playCount={song.playCount}
+                  language={song.language}
+                  hasLyrics={song.hasLyrics}
+                  url={song.url}
+                  copyright={song.copyright}
+                  image={song.image}
+                  downloadUrl={song.downloadUrl}
+                />
+              ))
+            ) : (
+              <p className="m-auto text-xl text-neutral-500">
+                No songs here...T_T
+              </p>
+            )}
           </ul>
         </div>
       </div>
