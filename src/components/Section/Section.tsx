@@ -29,6 +29,7 @@ export default function Section({ genre }: SectionType) {
     return () => {
       if (observer) observer.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const PlaylistComponent = () => {

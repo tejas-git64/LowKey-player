@@ -59,7 +59,7 @@ export default function UserPlaylistPage() {
               {playlist?.name}
             </p>
           </div>
-          <div className="flex w-[115px] items-center justify-between">
+          <div className="flex w-[100px] items-center justify-between">
             {isShuffling ? (
               <button
                 type="button"
@@ -68,7 +68,7 @@ export default function UserPlaylistPage() {
                   border: "none",
                 }}
                 onClick={() => setIsShuffling(false)}
-                className="border border-white p-0"
+                className="border border-white bg-transparent p-0"
               >
                 <img src={random} alt="shuffle" className="h-[28px] w-[28px]" />
               </button>
@@ -80,7 +80,7 @@ export default function UserPlaylistPage() {
                   border: "none",
                 }}
                 onClick={() => setIsShuffling(true)}
-                className="border border-white p-0"
+                className="border border-white bg-transparent p-0"
               >
                 <img
                   src={shuffle}
@@ -117,10 +117,10 @@ export default function UserPlaylistPage() {
             )}
           </div>
         </div>
-        <div className="h-auto min-h-[80dvh] w-full bg-neutral-900">
-          <ul className="flex max-h-fit min-h-[23dvh] w-full flex-col items-start justify-start bg-transparent px-4 py-2 pb-28 sm:pb-20">
-            {playlist?.songs ? (
-              playlist?.songs.map((song: TrackDetails) => (
+        <div className="mx-auto h-auto min-h-[80dvh] w-full bg-neutral-900">
+          {playlist?.songs?.length ? (
+            <ul className="flex max-h-fit min-h-[23dvh] w-full flex-col items-start justify-start bg-transparent px-4 py-2 pb-28 sm:pb-20">
+              {playlist?.songs.map((song: TrackDetails) => (
                 <Song
                   key={song.id}
                   id={song.id}
@@ -135,10 +135,7 @@ export default function UserPlaylistPage() {
                   releaseDate={song.releaseDate}
                   duration={song.duration}
                   label={song.label}
-                  primaryArtists={song.primaryArtists}
-                  primaryArtistsId={song.primaryArtistsId}
-                  featuredArtists={song.featuredArtists}
-                  featuredArtistsId={song.featuredArtistsId}
+                  artists={song.artists}
                   explicitContent={song.explicitContent}
                   playCount={song.playCount}
                   language={song.language}
@@ -147,14 +144,15 @@ export default function UserPlaylistPage() {
                   copyright={song.copyright}
                   image={song.image}
                   downloadUrl={song.downloadUrl}
+                  lyricsId={undefined}
                 />
-              ))
-            ) : (
-              <p className="m-auto text-xl text-neutral-500">
-                No songs here...T_T
-              </p>
-            )}
-          </ul>
+              ))}
+            </ul>
+          ) : (
+            <p className="m-auto w-full py-40 text-center text-xl text-neutral-400">
+              No songs here...T_T
+            </p>
+          )}
         </div>
       </div>
     </>

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Playlist from "../../components/Playlist/Playlist";
 import RouteNav from "../../components/RouteNav/RouteNav";
 import { useBoundStore } from "../../store/store";
@@ -319,9 +319,9 @@ export default function Library() {
       >
         <div className="flex h-full w-[80%] items-center justify-start">
           <img
-            src={image ? image[0].link : artistfallback}
+            src={image ? image[0].url : artistfallback}
             alt="artist"
-            className="mr-4 h-[50px] w-[50px] rounded-lg"
+            className="mr-4 h-[40px] w-[40px] rounded-lg"
           />
           <p className="text-sm font-medium text-white">{name}</p>
         </div>
@@ -346,6 +346,10 @@ export default function Library() {
     );
   };
 
+  useEffect(() => {
+    console.log(library.followings);
+  }, [library.followings]);
+
   return (
     <div className="relative h-[95vh] w-full overflow-y-scroll scroll-smooth bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700">
       <div className="absolute right-2 top-2 h-auto w-auto">
@@ -368,7 +372,7 @@ export default function Library() {
                   border: "none",
                 }}
                 onClick={(e) => createNewPlaylist(e)}
-                className="h-auto w-auto p-0"
+                className="h-auto w-auto bg-transparent p-0"
               >
                 <img
                   src={add}
@@ -405,11 +409,11 @@ export default function Library() {
               ))}
             </ul>
           </div>
-          <div className="mb-3 h-auto w-full overflow-x-hidden">
-            <h2 className="text-md mb-[30dvh] w-full font-semibold text-white">
+          <div className="mb-[30dvh] h-auto w-full overflow-hidden">
+            <h2 className="text-md w-full font-semibold text-white">
               Followings
             </h2>
-            <ul className="h-auto max-h-fit w-full overflow-x-scroll">
+            <ul className="h-auto w-full p-2">
               {library.followings.map((following: ArtistType) => (
                 <Following
                   key={following.id}

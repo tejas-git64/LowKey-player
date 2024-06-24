@@ -14,7 +14,11 @@ import songfallback from "../../assets/icons8-song-fallback.png";
 import { useState, useEffect, useRef } from "react";
 import WaveSurfer from "wavesurfer.js";
 import secondsToHMS from "../../utils/utils";
-import { ArtistType, TrackDetails } from "../../types/GlobalTypes";
+import {
+  ArtistInSong,
+  ArtistType,
+  TrackDetails,
+} from "../../types/GlobalTypes";
 import tick from "../../assets/icons8-tick.svg";
 import artistfallback from "../../assets/icons8-artist-fallback.png";
 import { useNavigate } from "react-router-dom";
@@ -68,14 +72,14 @@ export default function MobilePlayer() {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const SongArtist = ({ artist }: any) => {
+  const SongArtist = ({ artist }: { artist: ArtistType }) => {
     function followArtist(
       e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
       artist: ArtistType,
     ) {
       e.preventDefault();
       e.stopPropagation();
-      setTimeout(() => setFollowing(artist), 300);
+      setTimeout(() => setFollowing(artist), 200);
     }
 
     const navigateToArtist = (id: string) => {
@@ -87,19 +91,19 @@ export default function MobilePlayer() {
     };
 
     return (
-      <div className="mb-1 flex h-[50px] w-full flex-shrink-0 items-center justify-between bg-transparent">
+      <div className="mx-auto mb-1 flex h-[50px] w-full flex-shrink-0 items-center justify-between bg-transparent">
         <div
           role="button"
           onClick={() => navigateToArtist(artist.id)}
-          className="flex h-full w-[80%] items-center justify-center"
+          className="mx-auto flex h-full w-full items-center justify-center"
         >
           <img
-            src={artist ? artist.image[0]?.link : artistfallback}
+            src={artist ? artist.image[0]?.url : artistfallback}
             onError={(e) => (e.currentTarget.src = artistfallback)}
             alt="artist-img"
-            className="h-[50px] w-[50px] rounded-md"
+            className="w-[40px] rounded-md"
           />
-          <h2 className="mx-4 line-clamp-1 w-[270px] overflow-hidden text-ellipsis text-sm text-white">
+          <h2 className="line-clamp-1 w-[270px] overflow-hidden text-ellipsis px-4 text-sm text-white">
             {artist?.name || ""}
           </h2>
         </div>
@@ -111,8 +115,7 @@ export default function MobilePlayer() {
               border: "none",
             }}
             onClick={() => removeFollowing(artist?.id)}
-            className={`ease w-auto rounded-lg bg-transparent p-1 px-3 text-center text-xs font-semibold text-white transition-all ease-in-out sm:mx-0 sm:mt-1.5
-                `}
+            className={`ease w-auto rounded-lg bg-transparent p-1 px-3 text-center text-xs font-semibold text-white transition-all ease-in-out sm:mx-0 sm:mt-1.5`}
           >
             Following
           </button>
@@ -124,8 +127,7 @@ export default function MobilePlayer() {
               border: "none",
             }}
             onClick={(e) => artist && followArtist(e, artist)}
-            className={`ease w-auto rounded-lg bg-white p-1 px-3 text-center text-xs font-semibold text-black transition-all ease-in-out sm:mx-0
-                sm:mt-1.5`}
+            className={`ease w-auto rounded-lg bg-white p-1 px-3 text-center text-xs font-semibold text-black transition-all ease-in-out sm:mx-0 sm:mt-1.5`}
           >
             Follow{" "}
           </button>
@@ -156,7 +158,7 @@ export default function MobilePlayer() {
 
   async function getArtistDetails(id: string) {
     const res = await fetch(
-      `https://jiosaavn-api-lowkey.vercel.app/artists?id=${id}`,
+      `https://lowkey-backend-pa4je3yio-tejas-projects-5a8c5787.vercel.app/api/artists/${id}`,
     );
     const artistInfo = await res.json();
     setArtists((prev) => {
@@ -197,8 +199,8 @@ export default function MobilePlayer() {
         (song: TrackDetails) => song.id === nowPlaying.track?.id,
       );
       setArtists([]);
-      nowPlaying.track?.primaryArtistsId
-        .split(",")
+      nowPlaying.track?.artists.primary
+        .map((artist: ArtistInSong) => artist.id)
         .forEach((id: string) => getArtistDetails(id.trim()));
       // eslint-disable-next-line react-hooks/exhaustive-deps
       wavesurfer.current = WaveSurfer.create({
@@ -220,7 +222,7 @@ export default function MobilePlayer() {
         barRadius: 10,
       });
       nowPlaying.track &&
-        wavesurfer.current?.load(nowPlaying.track?.downloadUrl[4].link);
+        wavesurfer.current?.load(nowPlaying.track?.downloadUrl[4].url);
       wavesurfer.current?.seekTo(0);
     }
     wavesurfer.current?.on("seeking", () => {
@@ -271,7 +273,7 @@ export default function MobilePlayer() {
         <img src={down} alt="down" className="h-[28px] w-[28px]" />
       </button>
       <img
-        src={nowPlaying.track ? nowPlaying.track.image[2]?.link : songfallback}
+        src={nowPlaying.track ? nowPlaying.track.image[2]?.url : songfallback}
         onError={(e) => (e.currentTarget.src = songfallback)}
         alt="image"
         className="mx-auto h-[500px] w-[500px] rounded-xl rounded-t-lg bg-fixed"
@@ -283,7 +285,9 @@ export default function MobilePlayer() {
               {nowPlaying.track?.name}
             </h2>
             <p className="text-md line-clamp-1 w-full overflow-hidden whitespace-nowrap text-neutral-500">
-              {nowPlaying.track?.primaryArtists}
+              {nowPlaying.track?.artists.primary.map(
+                (artist: ArtistInSong) => artist.name,
+              )}
             </p>
           </div>
           <div className="flex h-14 w-[20%] items-center justify-evenly">
@@ -520,7 +524,9 @@ export default function MobilePlayer() {
         </button>
       </div>
       <div className="mx-auto mt-6 w-[90%]">
-        <h2 className="mb-2 text-lg font-semibold">Primary artists</h2>
+        <h2 className="mb-2 text-base font-normal text-white">
+          Primary artists
+        </h2>
         <ul className="mx-auto flex h-auto w-full flex-shrink-0 flex-col items-start justify-center rounded-xl bg-neutral-950 px-4 py-2">
           {artists &&
             artists.map((artist: ArtistType) => (

@@ -35,7 +35,7 @@ export default function PlayingPill() {
       } ml-0.5 h-[50px] w-[95%] items-center justify-start overflow-hidden rounded-lg bg-black sm:hidden`}
     >
       <img
-        src={nowPlaying.track ? nowPlaying.track.image[0]?.link : songfallback}
+        src={nowPlaying.track ? nowPlaying.track.image[0]?.url : songfallback}
         alt="song-img"
         onError={(e) => (e.currentTarget.src = songfallback)}
         className="h-[50px] w-[50px] rounded-md"
@@ -46,7 +46,7 @@ export default function PlayingPill() {
             {nowPlaying.track?.name}
           </p>
           <p className="line-clamp-1 h-auto w-full text-ellipsis whitespace-nowrap text-xs text-neutral-400">
-            {nowPlaying.track?.primaryArtists}
+            {nowPlaying.track?.artists.primary[0].name}
           </p>
         </div>
         <div className="flex h-full w-[90px] items-center justify-around pr-2">

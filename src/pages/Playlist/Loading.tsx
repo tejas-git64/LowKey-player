@@ -2,7 +2,7 @@ import SongFallback from "../../components/Song/SongFallback";
 
 export default function ListLoading() {
   return (
-    <div className="h-full w-full animate-pulse overflow-x-hidden overflow-y-scroll scroll-smooth">
+    <div className="h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth">
       <div className="flex h-auto w-full flex-col items-center justify-center border-b border-black bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 p-3 sm:h-[23.5dvh] sm:px-4">
         <div className="flex h-auto w-full flex-col items-start justify-start pt-1 sm:flex-row sm:items-center sm:pt-1.5">
           <div className="mr-4 h-[150px] w-[150px] bg-neutral-500"></div>

@@ -19,7 +19,7 @@ import WaveSurfer from "wavesurfer.js";
 import secondsToHMS from "../../utils/utils";
 import tick from "../../assets/icons8-tick.svg";
 import "../../App.css";
-import { TrackDetails } from "../../types/GlobalTypes";
+import { ArtistInSong, TrackDetails } from "../../types/GlobalTypes";
 
 export default function NowPlaying() {
   const {
@@ -147,7 +147,7 @@ export default function NowPlaying() {
         height: 12,
       });
       nowPlaying.track &&
-        wavesurfer.current?.load(nowPlaying.track.downloadUrl[4].link);
+        wavesurfer.current?.load(nowPlaying.track.downloadUrl[4].url);
       wavesurfer.current?.seekTo(0);
       wavesurfer.current?.setVolume(volume);
     }
@@ -180,7 +180,7 @@ export default function NowPlaying() {
       <div className="flex h-full w-[30%] max-w-[300px] items-center justify-center p-2.5">
         <img
           src={
-            nowPlaying.track ? nowPlaying.track?.image[2]?.link : songfallback
+            nowPlaying.track ? nowPlaying.track?.image[2]?.url : songfallback
           }
           id="songImg"
           alt="song-img"
@@ -192,7 +192,9 @@ export default function NowPlaying() {
             {nowPlaying.track?.name}
           </h2>
           <p className="line-clamp-1 whitespace-nowrap text-xs text-neutral-400">
-            {nowPlaying.track?.primaryArtists}
+            {nowPlaying.track?.artists.all.map(
+              (artist: ArtistInSong) => artist.name,
+            )}
           </p>
         </div>
       </div>

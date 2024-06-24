@@ -6,7 +6,7 @@ import songfallback from "../../assets/icons8-song-fallback.png";
 
 export default function Recents() {
   const { recents } = useBoundStore();
-  const RecentSong = ({ id, name, primaryArtists, image }: TrackDetails) => {
+  const RecentSong = ({ id, name, artists, image }: TrackDetails) => {
     return (
       <>
         <li
@@ -14,15 +14,17 @@ export default function Recents() {
           className="mb-0.5 flex h-[50px] w-full flex-shrink-0 items-center justify-start overflow-hidden rounded-md bg-black"
         >
           <img
-            src={image ? image[0].link : songfallback}
+            src={image ? image[0].url : songfallback}
             alt="img"
             onError={(e) => (e.currentTarget.src = songfallback)}
             className="mr-4 h-[50px] w-[50px] border-r border-black"
           />
           <div className="w-[65%] leading-5">
-            <p className="line-clamp-1 w-full text-ellipsis text-xs">{name}</p>
+            <p className="line-clamp-1 w-full text-ellipsis text-xs text-white">
+              {name}
+            </p>
             <p className="line-clamp-1 text-xs text-neutral-500">
-              {primaryArtists}
+              {artists.primary[0]?.name}
             </p>
           </div>
         </li>
@@ -34,7 +36,7 @@ export default function Recents() {
     return (
       <>
         <li className="mb-0.5 line-clamp-1 flex h-[35px] w-full flex-shrink-0 items-center justify-start overflow-hidden text-ellipsis whitespace-nowrap bg-black px-2">
-          <p className=" mx-1 line-clamp-1 w-auto text-ellipsis text-xs font-semibold text-neutral-300">
+          <p className="mx-1 line-clamp-1 w-auto text-ellipsis text-xs font-semibold text-neutral-300">
             {message}
           </p>
         </li>
@@ -66,10 +68,7 @@ export default function Recents() {
                 releaseDate={song.releaseDate}
                 duration={song.duration}
                 label={song.label}
-                primaryArtists={song.primaryArtists}
-                primaryArtistsId={song.primaryArtistsId}
-                featuredArtists={song.featuredArtists}
-                featuredArtistsId={song.featuredArtistsId}
+                artists={song.artists}
                 explicitContent={song.explicitContent}
                 playCount={song.playCount}
                 language={song.language}
@@ -78,6 +77,7 @@ export default function Recents() {
                 copyright={song.copyright}
                 image={song.image}
                 downloadUrl={song.downloadUrl}
+                lyricsId={undefined}
               />
             ))}
         </ul>

@@ -44,14 +44,14 @@ export default function ArtistPage() {
     queryKey: ["artistalbums"],
     queryFn: () => id && getArtistAlbums(id),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    select: (data: any) => setArtistAlbums(data.data.results),
+    select: (data: any) => setArtistAlbums(data.data.albums),
   });
 
   const { isPending: artistSongsPending } = useQuery({
     queryKey: ["artistsongs"],
     queryFn: () => id && getArtistSongs(id),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    select: (data: any) => setArtistSongs(data.data.results),
+    select: (data: any) => setArtistSongs(data.data.songs),
   });
 
   function followArtist() {
@@ -70,7 +70,7 @@ export default function ArtistPage() {
 
   const NewArtistPage = () => {
     return (
-      <div className="h-auto max-h-fit w-full bg-neutral-900">
+      <div className="h-full w-full bg-neutral-900">
         <div className="relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-600 via-neutral-800 to-black p-4 sm:flex-row sm:items-end sm:justify-between sm:bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))]">
           <div className="absolute right-2 top-2 h-auto w-auto">
             <RouteNav />
@@ -79,7 +79,7 @@ export default function ArtistPage() {
             <img
               src={
                 artist.details.image
-                  ? artist.details.image[1]?.link
+                  ? artist.details.image[1]?.url
                   : artistfallback
               }
               alt="artist-img"
@@ -151,8 +151,7 @@ export default function ArtistPage() {
                   border: "none",
                 }}
                 onClick={() => id && removeFollowing(id)}
-                className={`ease pl-2" w-[100px] rounded-lg bg-green-400 p-1.5 text-center font-semibold text-black transition-all ease-in-out sm:mx-0 sm:mt-1.5
-                `}
+                className={`ease pl-2" w-[100px] rounded-lg bg-green-400 p-1.5 text-center font-semibold text-black transition-all ease-in-out sm:mx-0 sm:mt-1.5`}
               >
                 <img
                   src={isLoading ? loadingGif : ""}
@@ -173,8 +172,7 @@ export default function ArtistPage() {
                   border: "none",
                 }}
                 onClick={followArtist}
-                className={`ease } w-[100px] rounded-lg bg-white p-1.5 text-center font-semibold text-black transition-all ease-in-out sm:mx-0
-                sm:mt-1.5`}
+                className={`ease } w-[100px] rounded-lg bg-white p-1.5 text-center font-semibold text-black transition-all ease-in-out sm:mx-0 sm:mt-1.5`}
               >
                 <img
                   src={isLoading ? loadingGif : ""}
@@ -191,72 +189,74 @@ export default function ArtistPage() {
           </div>
         </div>
         {/* Artist Albums */}
-        <div className="h-[240px] w-full px-4 py-3 pb-12">
-          <h2 className="text-xl font-semibold text-white">Albums</h2>
-          <ul className="mx-auto mt-2.5 flex h-full w-full items-center justify-start overflow-y-hidden overflow-x-scroll">
-            {artist.albums.map((album) => (
-              <li
-                key={album.id}
-                onClick={() =>
-                  navigate(`/albums/${album.id}`, { replace: true })
-                }
-                className="mr-4 h-[180px] w-[150px] flex-shrink-0"
-              >
-                <img
-                  src={album.image ? album.image[1]?.link : songfallback}
-                  alt="artist-album"
-                  className="h-[150px] w-[150px]"
-                />
-                <p className="mt-1 line-clamp-1 w-full text-ellipsis text-center text-xs text-neutral-400">
-                  {album.name}
+        {artist.albums.length > 0 && (
+          <div className="h-[240px] w-full px-4 py-3 pb-12">
+            <h2 className="text-xl font-semibold text-white">Albums</h2>
+            <ul className="mx-auto mt-2.5 flex h-full w-full items-center justify-start overflow-y-hidden overflow-x-scroll">
+              {artist.albums?.map((album) => (
+                <li
+                  key={album.id}
+                  onClick={() =>
+                    navigate(`/albums/${album.id}`, { replace: true })
+                  }
+                  className="mr-4 h-[180px] w-[150px] flex-shrink-0"
+                >
+                  <img
+                    src={album.image ? album.image[1]?.url : songfallback}
+                    alt="artist-album"
+                    className="h-[150px] w-[150px]"
+                  />
+                  <p className="mt-1 line-clamp-1 w-full text-ellipsis text-center text-xs text-neutral-400">
+                    {album.name}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {artist.songs.length > 0 && (
+          <div className="h-auto max-h-fit w-full px-4 py-2 pb-4">
+            <h2 className="pb-2 text-xl font-semibold text-white">Songs</h2>
+            <ul
+              id="artist-songs-list"
+              className="max-h-auto mx-auto mt-1 h-auto w-full overflow-x-hidden overflow-y-scroll bg-neutral-900 pb-28 sm:pb-20"
+            >
+              {artist.songs?.length > 0 ? (
+                artist.songs.map((song: TrackDetails) => (
+                  <Song
+                    id={song.id}
+                    key={song.id}
+                    name={song.name}
+                    type={song.type}
+                    album={{
+                      id: song.album.id,
+                      name: song.album.name,
+                      url: song.album.url,
+                    }}
+                    year={song.year}
+                    releaseDate={song.releaseDate}
+                    duration={song.duration}
+                    label={song.label}
+                    artists={song.artists}
+                    explicitContent={song.explicitContent}
+                    playCount={song.playCount}
+                    language={song.language}
+                    hasLyrics={song.hasLyrics}
+                    url={song.url}
+                    copyright={song.copyright}
+                    image={song.image}
+                    downloadUrl={song.downloadUrl}
+                    lyricsId={undefined}
+                  />
+                ))
+              ) : (
+                <p className="m-auto text-xl text-neutral-500">
+                  No songs here...T_T
                 </p>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="h-auto max-h-fit w-full px-4 py-2 pb-4">
-          <h2 className="pb-2 text-xl font-semibold text-white">Songs</h2>
-          <ul
-            id="artist-songs-list"
-            className="max-h-auto mx-auto mt-1 h-auto w-full overflow-x-hidden overflow-y-scroll bg-neutral-900 pb-28 sm:pb-20"
-          >
-            {artist.songs.length > 0 ? (
-              artist.songs.map((song: TrackDetails) => (
-                <Song
-                  id={song.id}
-                  key={song.id}
-                  name={song.name}
-                  type={song.type}
-                  album={{
-                    id: song.album.id,
-                    name: song.album.name,
-                    url: song.album.url,
-                  }}
-                  year={song.year}
-                  releaseDate={song.releaseDate}
-                  duration={song.duration}
-                  label={song.label}
-                  primaryArtists={song.primaryArtists}
-                  primaryArtistsId={song.featuredArtistsId}
-                  featuredArtists={song.featuredArtists}
-                  featuredArtistsId={song.featuredArtistsId}
-                  explicitContent={song.explicitContent}
-                  playCount={song.playCount}
-                  language={song.language}
-                  hasLyrics={song.hasLyrics}
-                  url={song.url}
-                  copyright={song.copyright}
-                  image={song.image}
-                  downloadUrl={song.downloadUrl}
-                />
-              ))
-            ) : (
-              <p className="m-auto text-xl text-neutral-500">
-                No songs here...T_T
-              </p>
-            )}
-          </ul>
-        </div>
+              )}
+            </ul>
+          </div>
+        )}
       </div>
     );
   };
@@ -265,7 +265,7 @@ export default function ArtistPage() {
     if (!artistDetailsPending && !artistAlbumsPending && !artistSongsPending) {
       return <NewArtistPage />;
     } else {
-      throw new Promise((resolve) => setTimeout(resolve, 1000));
+      throw new Promise((resolve) => setTimeout(resolve, 0));
     }
   };
 

@@ -96,15 +96,15 @@ export default function Menu() {
             <p className="hidden text-white sm:block">New Playlist</p>
           </div>
         </div>
-        <div className="mt-2 flex h-auto w-full flex-col items-center justify-center overflow-x-hidden overflow-y-scroll pb-6 lg:ml-0.5 2xl:ml-1">
-          {library.albums.map((album: AlbumById) => (
+        <div className="mt-2 flex h-auto w-full flex-col items-center justify-center overflow-y-auto overflow-x-hidden pb-6 lg:ml-0.5 2xl:ml-1">
+          {library.albums?.map((album: AlbumById) => (
             <Link
               to={`/albums/${album.id}`}
               key={album.id}
               className="flex h-[50px] w-full flex-shrink-0 items-center justify-start p-2 py-1 hover:bg-neutral-900"
             >
               <img
-                src={album.image[0]?.link || ""}
+                src={album.image[0]?.url || ""}
                 alt="album"
                 onError={(e) => (e.currentTarget.src = userplaylist)}
                 className="mr-4 h-[35px] w-[35px] rounded-md shadow-md shadow-black xl:mr-6"
@@ -114,14 +114,14 @@ export default function Menu() {
               </p>
             </Link>
           ))}
-          {library.playlists.map((playlist: PlaylistById) => (
+          {library.playlists?.map((playlist: PlaylistById) => (
             <Link
               to={`/playlists/${playlist.id}`}
               key={playlist.id}
               className="flex h-[50px] w-full flex-shrink-0 items-center justify-start p-2 py-1 hover:bg-neutral-900"
             >
               <img
-                src={playlist.image[0]?.link || ""}
+                src={playlist.image[0]?.url || ""}
                 alt="playlist"
                 onError={(e) => (e.currentTarget.src = userplaylist)}
                 className="mr-4 h-[35px] w-[35px] rounded-md shadow-md shadow-black xl:mr-6"
@@ -131,7 +131,7 @@ export default function Menu() {
               </p>
             </Link>
           ))}
-          {library.userPlaylists.map((playlist: UserPlaylist) => (
+          {library.userPlaylists?.map((playlist: UserPlaylist) => (
             <Link
               to={`/userplaylists/${playlist.id}`}
               key={playlist.id}

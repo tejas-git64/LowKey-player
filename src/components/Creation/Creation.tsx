@@ -33,6 +33,19 @@ export default function Creation() {
     setRevealCreation(false);
   }
 
+  function createNew() {
+    if (
+      library.userPlaylists.some(
+        (playlist: UserPlaylist) => playlist.name === name,
+      )
+    ) {
+      alert(`Playlist ${name} already exists`);
+    } else {
+      createNewUserPlaylist(name, Math.floor(Math.random() * 10000));
+      setRevealCreation(false);
+    }
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const CustomPlaylist = ({ id, name }: any) => {
     return (
@@ -111,15 +124,13 @@ export default function Creation() {
               <button
                 type="button"
                 onClick={() => setCreationMenu(false)}
-                className="w-20 whitespace-nowrap bg-neutral-600 py-1.5 text-xs"
+                className="w-20 whitespace-nowrap bg-neutral-600 py-1.5 text-xs text-white"
               >
                 Cancel
               </button>
               <button
                 type="button"
-                onClick={() =>
-                  createNewUserPlaylist(name, Math.floor(Math.random() * 10000))
-                }
+                onClick={createNew}
                 className="w-20 whitespace-nowrap border-2 bg-neutral-100 py-1.5 text-xs text-black"
               >
                 Create ✨

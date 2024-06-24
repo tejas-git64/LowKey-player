@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import fallback from "../../assets/icons8-song-fallback.png";
-import { TrackDetails } from "../../types/GlobalTypes";
+import { ArtistInSong, TrackDetails } from "../../types/GlobalTypes";
 import { useState } from "react";
 import notfav from "../../assets/icons8-heart.svg";
 import fav from "../../assets/icons8-favorited.svg";
@@ -24,8 +24,12 @@ export default function Song(track: TrackDetails) {
     removeFromUserPlaylist,
   } = useBoundStore();
   const [isHovered, setIsHovered] = useState(false);
-  const artistIds = track?.primaryArtistsId.split(",");
-  const artistNames = track?.primaryArtists.split(",");
+  const artistIds = track.artists?.all?.map(
+    (artist: ArtistInSong) => artist.id,
+  );
+  const artistNames = track.artists?.all?.map(
+    (artist: ArtistInSong) => artist.name,
+  );
   const navigate = useNavigate();
   const path = useLocation().pathname;
 
@@ -107,7 +111,7 @@ export default function Song(track: TrackDetails) {
           onMouseLeave={() => setIsHovered(false)}
         >
           <img
-            src={track.image ? track.image[0]?.link : fallback}
+            src={track.image ? track.image[0]?.url : fallback}
             alt="img"
             className="mr-4 h-[50px] w-[50px] bg-black md:mr-[5%]"
             onError={(e) => (e.currentTarget.src = fallback)}
@@ -128,7 +132,7 @@ export default function Song(track: TrackDetails) {
             }}
             className="2xl:w-50 line-clamp-2 w-32 overflow-hidden whitespace-nowrap font-medium text-neutral-300 sm:flex sm:w-[20%] 2xl:w-56"
           >
-            {artistIds.map((id, i) => (
+            {artistIds?.map((id, i) => (
               <div
                 key={id}
                 onClick={(e) => navigateToArtist(e, id)}
@@ -196,7 +200,7 @@ export default function Song(track: TrackDetails) {
                 }}
                 type="button"
                 onClick={(e) => playlist && removeFromPlaylist(e, playlist.id)}
-                className={`border bg-transparent p-0 opacity-100 `}
+                className={`border bg-transparent p-0 opacity-100`}
               >
                 <img src={tick} alt="tick" className="h-[20px] w-[20px]" />
               </button>

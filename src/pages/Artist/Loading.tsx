@@ -2,7 +2,7 @@ import SongFallback from "../../components/Song/SongFallback";
 
 export default function ArtistPageLoading() {
   return (
-    <div className="h-auto max-h-fit w-full animate-pulse bg-neutral-900">
+    <div className="h-full w-full bg-neutral-900">
       <div className="flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-600 via-neutral-800 to-black p-4 sm:flex-row sm:items-end sm:justify-between sm:bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))]">
         <div className="flex h-full min-w-[80%] flex-col items-center justify-center text-center sm:h-full sm:w-[70%] sm:flex-row sm:justify-start sm:text-left">
           <div className="h-[150px] w-[150px] bg-neutral-400 sm:mr-4"></div>
@@ -29,23 +29,23 @@ export default function ArtistPageLoading() {
       <div className="h-[240px] w-full px-4 py-3 pb-12">
         <h2 className="text-xl font-semibold text-white">Albums</h2>
         <ul className="mx-auto mt-2.5 flex h-full w-full items-center justify-start overflow-hidden">
-          <li className="mr-4 h-[180px] w-[150px] flex-shrink-0">
+          <li className="mr-4 h-[180px] w-[150px] flex-shrink-0 animate-pulse">
             <div className="h-[150px] w-[150px] bg-neutral-500"></div>
             <div className="mt-1 line-clamp-1 h-3 w-[150px] text-ellipsis rounded-full bg-neutral-600 text-center text-xs"></div>
           </li>
-          <li className="mr-4 h-[180px] w-[150px] flex-shrink-0">
+          <li className="mr-4 h-[180px] w-[150px] flex-shrink-0 animate-pulse">
             <div className="h-[150px] w-[150px] bg-neutral-500"></div>
             <div className="mt-1 line-clamp-1 h-3 w-[150px] text-ellipsis rounded-full bg-neutral-600 text-center text-xs"></div>
           </li>
-          <li className="mr-4 h-[180px] w-[150px] flex-shrink-0">
+          <li className="mr-4 h-[180px] w-[150px] flex-shrink-0 animate-pulse">
             <div className="h-[150px] w-[150px] bg-neutral-500"></div>
             <div className="mt-1 line-clamp-1 h-3 w-[150px] text-ellipsis rounded-full bg-neutral-600 text-center text-xs"></div>
           </li>
-          <li className="mr-4 h-[180px] w-[150px] flex-shrink-0">
+          <li className="mr-4 h-[180px] w-[150px] flex-shrink-0 animate-pulse">
             <div className="h-[150px] w-[150px] bg-neutral-500"></div>
             <div className="mt-1 line-clamp-1 h-3 w-[150px] text-ellipsis rounded-full bg-neutral-600 text-center text-xs"></div>
           </li>
-          <li className="mr-4 h-[180px] w-[150px] flex-shrink-0">
+          <li className="mr-4 h-[180px] w-[150px] flex-shrink-0 animate-pulse">
             <div className="h-[150px] w-[150px] bg-neutral-500"></div>
             <div className="mt-1 line-clamp-1 h-3 w-[150px] text-ellipsis rounded-full bg-neutral-600 text-center text-xs"></div>
           </li>

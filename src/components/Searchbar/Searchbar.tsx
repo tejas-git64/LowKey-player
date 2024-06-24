@@ -10,6 +10,7 @@ export default function Searchbar() {
     if (query !== "") {
       getSearchResults(deferredQuery.replace(" ", "+"));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deferredQuery]);
 
   return (

@@ -12,7 +12,7 @@ import pause from "../../assets/icons8-pause.svg";
 import shuffle from "../../assets/icons8-shuffle.svg";
 import random from "../../assets/icons8-shuffle-activated.svg";
 import addPlaylist from "../../assets/icons8-addplaylist-28.svg";
-import addedToPlaylist from "../../assets/icons8-tick.svg";
+import addedToPlaylist from "../../assets/icons8-tick-28.png";
 import ListLoading from "../Playlist/Loading";
 import { useQuery } from "@tanstack/react-query";
 import RouteNav from "../../components/RouteNav/RouteNav";
@@ -75,7 +75,7 @@ export default function AlbumPage() {
             <img
               src={
                 album.image !== undefined || album.image !== null
-                  ? album.image[1].link
+                  ? album.image[1].url
                   : fallback
               }
               alt="img"
@@ -106,7 +106,7 @@ export default function AlbumPage() {
               </p>
             </div>
             <div className="flex h-auto w-[180px] items-center justify-between">
-              {library.albums.some((album) => album.id === id) ? (
+              {library.albums?.some((album) => album.id === id) ? (
                 <button
                   type="button"
                   style={{
@@ -114,7 +114,7 @@ export default function AlbumPage() {
                     border: "none",
                   }}
                   onClick={() => id && removeLibraryAlbum(id)}
-                  className="border border-white p-0"
+                  className="border border-white bg-transparent p-0"
                 >
                   <img
                     src={addedToPlaylist}
@@ -130,7 +130,7 @@ export default function AlbumPage() {
                     border: "none",
                   }}
                   onClick={() => setLibraryAlbum(album)}
-                  className="border border-white p-0"
+                  className="border border-white bg-transparent p-0"
                 >
                   <img
                     src={addPlaylist}
@@ -147,7 +147,7 @@ export default function AlbumPage() {
                     border: "none",
                   }}
                   onClick={() => removeFavoriteAlbum(album.id)}
-                  className="border border-white p-0"
+                  className="border border-white bg-transparent p-0"
                 >
                   <img
                     src={favorited}
@@ -163,7 +163,7 @@ export default function AlbumPage() {
                     border: "none",
                   }}
                   onClick={() => setFavoriteAlbum(album)}
-                  className="border border-white p-0"
+                  className="border border-white bg-transparent p-0"
                 >
                   <img
                     src={favorite}
@@ -180,7 +180,7 @@ export default function AlbumPage() {
                     border: "none",
                   }}
                   onClick={() => setIsShuffling(false)}
-                  className="border border-white p-0"
+                  className="border border-white bg-transparent p-0"
                 >
                   <img
                     src={random}
@@ -196,7 +196,7 @@ export default function AlbumPage() {
                     border: "none",
                   }}
                   onClick={() => setIsShuffling(true)}
-                  className="border border-white p-0"
+                  className="border border-white bg-transparent p-0"
                 >
                   <img
                     src={shuffle}
@@ -216,7 +216,10 @@ export default function AlbumPage() {
                     outline: "none",
                     border: "none",
                   }}
-                  onClick={() => setIsPlaying(false)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsPlaying(false);
+                  }}
                   className="rounded-full bg-emerald-400 p-1.5"
                 >
                   <img src={pause} alt="pause" />
@@ -254,10 +257,7 @@ export default function AlbumPage() {
                 releaseDate={song.releaseDate}
                 duration={song.duration}
                 label={song.label}
-                primaryArtists={song.primaryArtists}
-                primaryArtistsId={song.primaryArtistsId}
-                featuredArtists={song.featuredArtists}
-                featuredArtistsId={song.featuredArtistsId}
+                artists={song.artists}
                 explicitContent={song.explicitContent}
                 playCount={song.playCount}
                 language={song.language}
@@ -266,6 +266,7 @@ export default function AlbumPage() {
                 copyright={song.copyright}
                 image={song.image}
                 downloadUrl={song.downloadUrl}
+                lyricsId={undefined}
               />
             ))
           ) : (
@@ -283,7 +284,7 @@ export default function AlbumPage() {
       return <AlbumPageById />;
     } else {
       if (id !== album.id) {
-        throw new Promise((resolve) => setTimeout(resolve, 100));
+        throw new Promise((resolve) => setTimeout(resolve, 0));
       }
     }
   };

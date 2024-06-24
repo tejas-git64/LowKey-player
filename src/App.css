@@ -31,6 +31,7 @@
 button {
   border: none;
   outline: none;
+  background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {

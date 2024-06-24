@@ -285,7 +285,7 @@ export default function Favorites() {
                 border: "none",
               }}
               onClick={() => setIsShuffling(false)}
-              className="border border-white p-0"
+              className="border border-white bg-transparent p-0"
             >
               <img src={random} alt="shuffle" className="h-[28px] w-[28px]" />
             </button>
@@ -297,7 +297,7 @@ export default function Favorites() {
                 border: "none",
               }}
               onClick={() => setIsShuffling(true)}
-              className="border border-white p-0"
+              className="border border-white bg-transparent p-0"
             >
               <img src={shuffle} alt="shuffle" className="h-[28px] w-[28px]" />
             </button>
@@ -373,10 +373,7 @@ export default function Favorites() {
                     releaseDate={song.releaseDate}
                     duration={song.duration}
                     label={song.label}
-                    primaryArtists={song.primaryArtists}
-                    primaryArtistsId={song.primaryArtistsId}
-                    featuredArtists={song.featuredArtists}
-                    featuredArtistsId={song.featuredArtistsId}
+                    artists={song.artists}
                     explicitContent={song.explicitContent}
                     playCount={song.playCount}
                     language={song.language}
@@ -385,6 +382,7 @@ export default function Favorites() {
                     copyright={song.copyright}
                     image={song.image}
                     downloadUrl={song.downloadUrl}
+                    lyricsId={undefined}
                   />
                 ))}
               </ul>

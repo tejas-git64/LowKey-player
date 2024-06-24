@@ -1,6 +1,6 @@
 export type Song = {
   quality: string;
-  link: string;
+  url: string;
 };
 
 export type AlbumType = {
@@ -37,15 +37,15 @@ export type AlbumType = {
   image: [
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
   ];
   songs: TrackDetails[];
@@ -60,15 +60,15 @@ export type PlaylistType = {
   image: [
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
   ];
   url: string;
@@ -91,15 +91,15 @@ export type PlaylistOfList = {
   image: [
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
   ];
   url: string;
@@ -114,15 +114,15 @@ export type ChartType = {
   image: [
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
   ];
   url: string;
@@ -138,15 +138,15 @@ export type ArtistType = {
   image: [
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
   ];
   followerCount: string;
@@ -185,15 +185,15 @@ export type Track = {
         | [
             {
               quality: string;
-              link: string;
+              url: string;
             },
             {
               quality: string;
-              link: string;
+              url: string;
             },
             {
               quality: string;
-              link: string;
+              url: string;
             },
           ]
         | boolean;
@@ -209,76 +209,93 @@ export type Track = {
   image: [
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
   ];
+};
+
+export type ArtistInSong = {
+  id: string;
+  name: string;
+  role: string;
+  image: [
+    {
+      quality: string;
+      url: string;
+    },
+  ];
+  type: string;
+  url: string;
 };
 
 export type TrackDetails = {
   id: string;
   name: string;
   type: string;
+  year: string;
+  releaseDate: string;
+  duration: string;
+  label: string;
+  explicitContent: number;
+  playCount: number;
+  language: string;
+  hasLyrics: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  lyricsId: any;
+  url: string;
+  copyright: string;
+  artists: {
+    primary: ArtistInSong[];
+    featured: ArtistInSong[];
+    all: ArtistInSong[];
+  };
   album: {
     id: string;
     name: string;
     url: string;
   };
-  year: string;
-  releaseDate: string;
-  duration: string;
-  label: string;
-  primaryArtists: string;
-  primaryArtistsId: string;
-  featuredArtists: string;
-  featuredArtistsId: string;
-  explicitContent: number;
-  playCount: number;
-  language: string;
-  hasLyrics: string;
-  url: string;
-  copyright: string;
   image: [
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
   ];
   downloadUrl: [
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
   ];
 };
@@ -291,23 +308,23 @@ export type GlobalHome = {
     songs: [
       {
         quality: string;
-        link: string;
+        url: string;
       },
       {
         quality: string;
-        link: string;
+        url: string;
       },
       {
         quality: string;
-        link: string;
+        url: string;
       },
       {
         quality: string;
-        link: string;
+        url: string;
       },
       {
         quality: string;
-        link: string;
+        url: string;
       },
     ];
     albums: AlbumType[];
@@ -332,15 +349,15 @@ export type PlaylistById = {
   image: [
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
   ];
   url: string;
@@ -361,15 +378,15 @@ export type AlbumById = {
   image: [
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
   ];
   songs: TrackDetails[];
@@ -385,15 +402,15 @@ export type QueryResult = {
   image: [
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
   ];
   url: string;
@@ -413,15 +430,15 @@ export type SongAlbumResult = {
   image: [
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
   ];
   album: string;
@@ -445,15 +462,15 @@ export type AlbumResult = {
   image: [
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
   ];
   url: string;
@@ -473,15 +490,15 @@ export type PlaylistResult = {
   image: [
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
     {
       quality: string;
-      link: string;
+      url: string;
     },
   ];
   url: string;
@@ -517,15 +534,15 @@ export type Queue = {
     | [
         {
           quality: string;
-          link: string;
+          url: string;
         },
         {
           quality: string;
-          link: string;
+          url: string;
         },
         {
           quality: string;
-          link: string;
+          url: string;
         },
       ]
     | boolean;

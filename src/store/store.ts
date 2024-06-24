@@ -82,15 +82,15 @@ export type StoreType = {
     image: [
       {
         quality: string;
-        link: string;
+        url: string;
       },
       {
         quality: string;
-        link: string;
+        url: string;
       },
       {
         quality: string;
-        link: string;
+        url: string;
       },
     ];
     url: string;
@@ -110,15 +110,15 @@ export type StoreType = {
     image: [
       {
         quality: string;
-        link: string;
+        url: string;
       },
       {
         quality: string;
-        link: string;
+        url: string;
       },
       {
         quality: string;
-        link: string;
+        url: string;
       },
     ];
     songs: TrackDetails[];
@@ -219,15 +219,15 @@ export const useBoundStore = create<StoreType>()(
           image: [
             {
               quality: "",
-              link: "",
+              url: "",
             },
             {
               quality: "",
-              link: "",
+              url: "",
             },
             {
               quality: "",
-              link: "",
+              url: "",
             },
           ],
           url: "",
@@ -248,15 +248,15 @@ export const useBoundStore = create<StoreType>()(
             image: [
               {
                 quality: "",
-                link: "",
+                url: "",
               },
               {
                 quality: "",
-                link: "",
+                url: "",
               },
               {
                 quality: "",
-                link: "",
+                url: "",
               },
             ],
             url: "",
@@ -276,15 +276,15 @@ export const useBoundStore = create<StoreType>()(
             image: [
               {
                 quality: "",
-                link: "",
+                url: "",
               },
               {
                 quality: "",
-                link: "",
+                url: "",
               },
               {
                 quality: "",
-                link: "",
+                url: "",
               },
             ],
             url: "",
@@ -304,15 +304,15 @@ export const useBoundStore = create<StoreType>()(
             image: [
               {
                 quality: "",
-                link: "",
+                url: "",
               },
               {
                 quality: "",
-                link: "",
+                url: "",
               },
               {
                 quality: "",
-                link: "",
+                url: "",
               },
             ],
             url: "",
@@ -332,15 +332,15 @@ export const useBoundStore = create<StoreType>()(
             image: [
               {
                 quality: "",
-                link: "",
+                url: "",
               },
               {
                 quality: "",
-                link: "",
+                url: "",
               },
               {
                 quality: "",
-                link: "",
+                url: "",
               },
             ],
             url: "",
@@ -355,7 +355,7 @@ export const useBoundStore = create<StoreType>()(
             songs: [
               {
                 quality: "",
-                link: "",
+                url: "",
               },
             ],
             albums: [],
@@ -404,15 +404,15 @@ export const useBoundStore = create<StoreType>()(
         image: [
           {
             quality: "",
-            link: "",
+            url: "",
           },
           {
             quality: "",
-            link: "",
+            url: "",
           },
           {
             quality: "",
-            link: "",
+            url: "",
           },
         ],
         url: "",
@@ -432,15 +432,15 @@ export const useBoundStore = create<StoreType>()(
         image: [
           {
             quality: "",
-            link: "",
+            url: "",
           },
           {
             quality: "",
-            link: "",
+            url: "",
           },
           {
             quality: "",
-            link: "",
+            url: "",
           },
         ],
         songs: [],
@@ -453,15 +453,15 @@ export const useBoundStore = create<StoreType>()(
           image: [
             {
               quality: "",
-              link: "",
+              url: "",
             },
             {
               quality: "",
-              link: "",
+              url: "",
             },
             {
               quality: "",
-              link: "",
+              url: "",
             },
           ],
           followerCount: "",
@@ -516,10 +516,12 @@ export const useBoundStore = create<StoreType>()(
           releaseDate: "",
           duration: "",
           label: "",
-          primaryArtists: "",
-          primaryArtistsId: "",
-          featuredArtists: "",
-          featuredArtistsId: "",
+          artists: {
+            all: [],
+            featured: [],
+            primary: [],
+          },
+          lyricsId: "",
           explicitContent: 0,
           playCount: 0,
           language: "",
@@ -529,37 +531,37 @@ export const useBoundStore = create<StoreType>()(
           image: [
             {
               quality: "",
-              link: "",
+              url: "",
             },
             {
               quality: "",
-              link: "",
+              url: "",
             },
             {
               quality: "",
-              link: "",
+              url: "",
             },
           ],
           downloadUrl: [
             {
               quality: "",
-              link: "",
+              url: "",
             },
             {
               quality: "",
-              link: "",
+              url: "",
             },
             {
               quality: "",
-              link: "",
+              url: "",
             },
             {
               quality: "",
-              link: "",
+              url: "",
             },
             {
               quality: "",
-              link: "",
+              url: "",
             },
           ],
         },
@@ -571,15 +573,15 @@ export const useBoundStore = create<StoreType>()(
           name: "",
           image: [
             {
-              link: "",
+              url: "",
               quality: "",
             },
             {
-              link: "",
+              url: "",
               quality: "",
             },
             {
-              link: "",
+              url: "",
               quality: "",
             },
           ],

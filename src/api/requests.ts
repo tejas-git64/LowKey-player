@@ -4,23 +4,27 @@ import { defaultSearchData } from "../utils/utils";
 //Get widget data
 export async function getWidgetData() {
   const res = await fetch(
-    `https://jiosaavn-api-lowkey.vercel.app/playlists?id=1039424150`,
+    `https://lowkey-backend-pa4je3yio-tejas-projects-5a8c5787.vercel.app/api/playlists?id=1039424150`,
+    {
+      method: "GET",
+      mode: "cors",
+    },
   );
   return res.json();
 }
 
-//get default home data
-export async function getMusic() {
-  const res = await fetch(
-    "https://jiosaavn-api-lowkey.vercel.app/modules?language=english,hindi",
-  );
-  return res.json();
-}
+// //get default home data
+// export async function getMusic() {
+//   const res = await fetch(
+//     "https://jiosaavn-api-lowkey.vercel.app/modules?language=english,hindi",
+//   );
+//   return res.json();
+// }
 
 //get timely music data
 export async function getTimelyData(id: number, timely: string) {
   const res = await fetch(
-    `https://jiosaavn-api-lowkey.vercel.app/playlists?id=${id}`,
+    `https://lowkey-backend-pa4je3yio-tejas-projects-5a8c5787.vercel.app/api/playlists?id=${id}`,
   );
   const playlist = await res.json();
   switch (true) {
@@ -42,7 +46,7 @@ export async function getTimelyData(id: number, timely: string) {
 //Genre query
 export const getPlaylist = async (genre: string) => {
   const res = await fetch(
-    `https://jiosaavn-api-lowkey.vercel.app/search/playlists?query=${genre}`,
+    `https://lowkey-backend-pa4je3yio-tejas-projects-5a8c5787.vercel.app/api/search/playlists?query=${genre}`,
   );
   const playlist = await res.json();
   useBoundStore.getState().setGenres(genre, playlist.data.results);
@@ -51,7 +55,7 @@ export const getPlaylist = async (genre: string) => {
 //Playlist page request
 export const getPlaylistData = async (id: string) => {
   const res = await fetch(
-    `https://jiosaavn-api-lowkey.vercel.app/playlists?id=${id}`,
+    `https://lowkey-backend-pa4je3yio-tejas-projects-5a8c5787.vercel.app/api/playlists?id=${id}`,
   );
   if (id !== "") {
     return res.json();
@@ -60,7 +64,7 @@ export const getPlaylistData = async (id: string) => {
 //Album page request
 export const getAlbumData = async (id: string) => {
   const res = await fetch(
-    `https://jiosaavn-api-lowkey.vercel.app/albums?id=${id}`,
+    `https://lowkey-backend-pa4je3yio-tejas-projects-5a8c5787.vercel.app/api/albums?id=${id}`,
   );
   if (id !== "") {
     return res.json();
@@ -70,7 +74,7 @@ export const getAlbumData = async (id: string) => {
 //search query
 export const getSearchResults = async (query: string) => {
   const res = await fetch(
-    `https://jiosaavn-api-lowkey.vercel.app/search/all?query=${query}`,
+    `https://lowkey-backend-pa4je3yio-tejas-projects-5a8c5787.vercel.app/api/search?query=${query}`,
   );
   const searchresults = await res.json();
   if (query !== "" && query.length >= 2) {
@@ -87,7 +91,7 @@ export const getSearchResults = async (query: string) => {
 //artist details
 export const getArtistDetails = async (id: string) => {
   const res = await fetch(
-    `https://jiosaavn-api-lowkey.vercel.app/artists?id=${id}`,
+    `https://lowkey-backend-pa4je3yio-tejas-projects-5a8c5787.vercel.app/api/artists/${id}`,
   );
   if (id !== "") {
     if (res.ok) {
@@ -99,7 +103,7 @@ export const getArtistDetails = async (id: string) => {
 //artist albums
 export const getArtistAlbums = async (id: string) => {
   const res = await fetch(
-    `https://jiosaavn-api-lowkey.vercel.app/artists/${id}/albums?page=1`,
+    `https://lowkey-backend-pa4je3yio-tejas-projects-5a8c5787.vercel.app/api/artists/${id}/albums?page=0`,
   );
   if (id !== "") {
     if (res.ok) {
@@ -111,7 +115,7 @@ export const getArtistAlbums = async (id: string) => {
 //artist songs
 export const getArtistSongs = async (id: string) => {
   const res = await fetch(
-    `https://jiosaavn-api-lowkey.vercel.app/artists/${id}/songs?page=1`,
+    `https://lowkey-backend-pa4je3yio-tejas-projects-5a8c5787.vercel.app/api/artists/${id}/songs?page=0`,
   );
   if (id !== "") {
     if (res.ok) {

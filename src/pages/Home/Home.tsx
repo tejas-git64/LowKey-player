@@ -3,9 +3,9 @@ import { useBoundStore } from "../../store/store";
 import { Link, useNavigate } from "react-router-dom";
 import {
   ActivityType,
-  AlbumType,
-  ChartType,
-  PlaylistType,
+  // AlbumType,
+  // ChartType,
+  // PlaylistType,
   TrackDetails,
 } from "../../types/GlobalTypes";
 import Loading from "./Loading";
@@ -17,9 +17,9 @@ import fallbacktoday from "../../assets/timely/icons8-timely-today.png";
 import fallbackweekly from "../../assets/timely/icons8-timely-weekly.png";
 import fallbackmonthly from "../../assets/timely/icons8-timely-monthly.png";
 import fallbackyearly from "../../assets/timely/icons8-timely-yearly.png";
-import fallback from "../../assets/playlist-fallback.webp";
+// import fallback from "../../assets/playlist-fallback.webp";
 import { useQuery } from "@tanstack/react-query";
-import { getMusic, getTimelyData, getWidgetData } from "../../api/requests";
+import { getTimelyData, getWidgetData } from "../../api/requests";
 import { genres, timelyData } from "../../utils/utils";
 import logo from "../../assets/sound-waves.png";
 import songfallback from "../../assets/icons8-song-fallback.png";
@@ -31,7 +31,7 @@ export default function Home() {
     home,
     greeting,
     setWidgetData,
-    setDefault,
+    // setDefault,
     nowPlaying,
     setIsPlaying,
     recents,
@@ -67,11 +67,11 @@ export default function Home() {
     select: (data) => setWidgetData(data.data),
   });
 
-  const { isPending: homePending } = useQuery({
-    queryKey: ["home"],
-    queryFn: getMusic,
-    select: (data) => setDefault(data.data),
-  });
+  // const { isPending: homePending } = useQuery({
+  //   queryKey: ["home"],
+  //   queryFn: getMusic,
+  //   select: (data) => setDefault(data.data),
+  // });
 
   function setNowPlayingQueue(
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -101,7 +101,7 @@ export default function Home() {
     return (
       <>
         <li className="mb-0.5 line-clamp-1 flex h-[35px] w-full flex-shrink-0 items-center justify-start overflow-hidden text-ellipsis whitespace-nowrap rounded-lg bg-black px-2">
-          <p className=" mx-1 line-clamp-1 w-auto text-ellipsis text-xs font-semibold text-neutral-300">
+          <p className="mx-1 line-clamp-1 w-auto text-ellipsis text-xs font-semibold text-neutral-300">
             {message}
           </p>
         </li>
@@ -122,7 +122,7 @@ export default function Home() {
       <div className="h-auto w-full scroll-smooth bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700">
         <div className="h-auto max-h-max w-full pt-2 xl:w-full">
           <div className="-mb-0.5 flex h-auto w-full items-center justify-between px-4 sm:hidden">
-            <h1 className="text-left text-2xl font-semibold text-white sm:hidden">
+            <h1 className="text-left text-xl font-semibold text-white sm:hidden md:text-2xl">
               {greeting}
             </h1>
             <div className="flex w-20 items-center justify-between">
@@ -172,7 +172,7 @@ export default function Home() {
           <div className="h-auto max-h-max w-full px-3.5">
             <section className="relative z-0 mx-auto my-3 mb-7 flex h-80 w-full flex-col overflow-hidden rounded-2xl bg-transparent sm:flex-row">
               <img
-                src={widget.image ? widget.image[2].link : songfallback}
+                src={widget.image ? widget.image[2].url : songfallback}
                 alt="img"
                 loading="lazy"
                 className="h-auto w-auto bg-neutral-700 sm:z-10 sm:h-[320px] sm:w-[320px] sm:rounded-xl"
@@ -181,7 +181,7 @@ export default function Home() {
                 }
               />
               <div className="absolute right-2.5 top-[105px] z-20 flex h-auto w-[95%] items-end justify-between sm:left-0 sm:top-[268px] sm:h-12 sm:w-[320px] sm:justify-end sm:p-2 md:p-2 md:py-1">
-                <p className="left-0 top-0 line-clamp-1 h-auto w-[80%] pl-1 text-xl font-bold sm:hidden">
+                <p className="left-0 top-0 line-clamp-1 h-auto w-[80%] pl-1 text-xl font-bold text-white sm:hidden">
                   {widget.name}
                 </p>
                 {nowPlaying.isPlaying ? (
@@ -238,10 +238,7 @@ export default function Home() {
                       releaseDate={song.releaseDate}
                       duration={song.duration}
                       label={song.label}
-                      primaryArtists={song.primaryArtists}
-                      primaryArtistsId={song.primaryArtistsId}
-                      featuredArtists={song.featuredArtists}
-                      featuredArtistsId={song.featuredArtistsId}
+                      artists={song.artists}
                       explicitContent={song.explicitContent}
                       playCount={song.playCount}
                       language={song.language}
@@ -250,6 +247,7 @@ export default function Home() {
                       copyright={song.copyright}
                       image={song.image}
                       downloadUrl={song.downloadUrl}
+                      lyricsId={undefined}
                     />
                   ))
                 ) : (
@@ -269,7 +267,7 @@ export default function Home() {
               className="flex h-12 w-full items-center justify-start overflow-hidden rounded-md bg-neutral-800 shadow-md transition-all ease-linear hover:text-yellow-500 hover:shadow-lg hover:shadow-yellow-500 sm:h-full"
             >
               <img
-                src={today.image ? today.image[0].link : fallbacktoday}
+                src={today.image ? today.image[0]?.url : fallbacktoday}
                 alt="img"
                 loading="lazy"
                 className="h-full w-12 sm:w-14"
@@ -284,7 +282,7 @@ export default function Home() {
               className="flex h-12 w-full items-center justify-start overflow-hidden rounded-md bg-neutral-800 shadow-md transition-all ease-linear hover:text-teal-500 hover:shadow-lg hover:shadow-teal-500 sm:h-auto"
             >
               <img
-                src={weekly.image ? weekly.image[0].link : fallbackweekly}
+                src={weekly.image ? weekly.image[0]?.url : fallbackweekly}
                 alt="img"
                 loading="lazy"
                 className="h-full w-12 sm:w-14"
@@ -299,7 +297,7 @@ export default function Home() {
               className="flex h-12 w-full items-center justify-start overflow-hidden rounded-md bg-neutral-800 shadow-md transition-all ease-linear hover:text-rose-500 hover:shadow-lg hover:shadow-rose-500 sm:h-auto"
             >
               <img
-                src={monthly.image ? monthly.image[0].link : fallbackmonthly}
+                src={monthly.image ? monthly.image[0]?.url : fallbackmonthly}
                 alt="img"
                 loading="lazy"
                 className="h-full w-12 sm:w-14"
@@ -314,7 +312,7 @@ export default function Home() {
               className="flex h-12 w-full items-center justify-start overflow-hidden rounded-md bg-neutral-800 shadow-md transition-all ease-linear hover:text-purple-500 hover:shadow-lg hover:shadow-purple-500 sm:h-auto"
             >
               <img
-                src={yearly.image ? yearly.image[0].link : fallbackyearly}
+                src={yearly.image ? yearly.image[0]?.url : fallbackyearly}
                 alt="img"
                 loading="lazy"
                 className="h-full w-12 sm:w-14"
@@ -325,7 +323,7 @@ export default function Home() {
               </p>
             </Link>
           </div>
-          {/* Trending */}
+          {/* Trending
           <div className="flex h-auto w-full flex-col overflow-x-hidden bg-transparent py-2">
             <h1 className="px-4 pb-1 text-left text-xl font-semibold text-white">
               Trending
@@ -341,9 +339,7 @@ export default function Home() {
                 >
                   <img
                     src={
-                      Array.isArray(album.image)
-                        ? album.image[1].link
-                        : fallback
+                      Array.isArray(album.image) ? album.image[1].url : fallback
                     }
                     alt="user-profile"
                     loading="lazy"
@@ -357,7 +353,7 @@ export default function Home() {
               ))}
             </ul>
           </div>
-          {/* Playlists */}
+          Playlists 
           <div className="flex h-auto w-full flex-col overflow-x-hidden bg-transparent py-2">
             <h1 className="px-4 pb-1 text-left text-xl font-semibold text-white">
               Popular Playlists
@@ -374,7 +370,7 @@ export default function Home() {
                   <img
                     src={
                       Array.isArray(playlist.image)
-                        ? playlist.image[1].link
+                        ? playlist.image[1].url
                         : fallback
                     }
                     alt="user-profile"
@@ -389,7 +385,7 @@ export default function Home() {
               ))}
             </ul>
           </div>
-          {/* Albums */}
+           Albums 
           <div className="flex h-auto w-full flex-col overflow-x-hidden bg-transparent py-2">
             <h1 className="px-4 pb-1 text-left text-xl font-semibold text-white">
               Latest Albums
@@ -405,9 +401,7 @@ export default function Home() {
                 >
                   <img
                     src={
-                      Array.isArray(album.image)
-                        ? album.image[1].link
-                        : fallback
+                      Array.isArray(album.image) ? album.image[1].url : fallback
                     }
                     alt="user-profile"
                     loading="lazy"
@@ -435,7 +429,7 @@ export default function Home() {
                   }
                 >
                   <img
-                    src={chart.image ? chart.image[1].link : fallback}
+                    src={chart.image ? chart.image[1].url : fallback}
                     alt="user-profile"
                     loading="lazy"
                     className="h-[150px] w-[150px] rounded-xl shadow-md shadow-black"
@@ -447,7 +441,7 @@ export default function Home() {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
           <div className="h-auto max-h-max w-full pb-28 sm:pb-14">
             {/* Genres */}
             {genres.map((genre) => (
@@ -460,7 +454,7 @@ export default function Home() {
   };
 
   const DataComponent = () => {
-    if (widgetPending && homePending) {
+    if (widgetPending) {
       throw new Promise((resolve) => setTimeout(resolve, 100));
     } else {
       return <HomeComponent />;

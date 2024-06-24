@@ -75,7 +75,7 @@ export default function PlaylistPage() {
             <img
               src={
                 playlist.image !== null || playlist.image !== undefined
-                  ? playlist.image[1]?.link
+                  ? playlist.image[1]?.url
                   : fallback
               }
               alt="img"
@@ -107,7 +107,7 @@ export default function PlaylistPage() {
                     border: "none",
                   }}
                   onClick={() => id && removeLibraryPlaylist(id)}
-                  className="border border-white p-0"
+                  className="border border-white bg-transparent p-0"
                 >
                   <img
                     src={addedToPlaylist}
@@ -123,7 +123,7 @@ export default function PlaylistPage() {
                     border: "none",
                   }}
                   onClick={() => setLibraryPlaylist(playlist)}
-                  className="border border-white p-0"
+                  className="border border-white bg-transparent p-0"
                 >
                   <img
                     src={addPlaylist}
@@ -142,7 +142,7 @@ export default function PlaylistPage() {
                     border: "none",
                   }}
                   onClick={() => removeFavoritePlaylist(playlist.id)}
-                  className="border border-white p-0"
+                  className="border border-white bg-transparent p-0"
                 >
                   <img
                     src={favorited}
@@ -158,7 +158,7 @@ export default function PlaylistPage() {
                     border: "none",
                   }}
                   onClick={() => setFavoritePlaylist(playlist)}
-                  className="border border-white p-0"
+                  className="border border-white bg-transparent p-0"
                 >
                   <img
                     src={favorite}
@@ -175,7 +175,7 @@ export default function PlaylistPage() {
                     border: "none",
                   }}
                   onClick={() => setIsShuffling(false)}
-                  className="border border-white p-0"
+                  className="border border-white bg-transparent p-0"
                 >
                   <img
                     src={random}
@@ -191,7 +191,7 @@ export default function PlaylistPage() {
                     border: "none",
                   }}
                   onClick={() => setIsShuffling(true)}
-                  className="border border-white p-0"
+                  className="border border-white bg-transparent p-0"
                 >
                   <img
                     src={shuffle}
@@ -249,10 +249,7 @@ export default function PlaylistPage() {
                 releaseDate={song.releaseDate}
                 duration={song.duration}
                 label={song.label}
-                primaryArtists={song.primaryArtists}
-                primaryArtistsId={song.primaryArtistsId}
-                featuredArtists={song.featuredArtists}
-                featuredArtistsId={song.featuredArtistsId}
+                artists={song.artists}
                 explicitContent={song.explicitContent}
                 playCount={song.playCount}
                 language={song.language}
@@ -261,6 +258,7 @@ export default function PlaylistPage() {
                 copyright={song.copyright}
                 image={song.image}
                 downloadUrl={song.downloadUrl}
+                lyricsId={undefined}
               />
             ))
           ) : (
@@ -278,7 +276,7 @@ export default function PlaylistPage() {
       return <PlaylistPageById />;
     } else {
       if (id !== playlist?.id) {
-        throw new Promise((resolve) => setTimeout(resolve, 100));
+        throw new Promise((resolve) => setTimeout(resolve, 0));
       }
     }
   };

@@ -12,7 +12,7 @@ export default function Playlist({ id, image, name }: PlaylistOfList) {
         onClick={() => navigate(`/playlists/${id}`, { replace: true })}
       >
         <img
-          src={image ? image[1].link : fallback}
+          src={image ? image[1].url : fallback}
           alt="user-profile"
           className="h-[150px] w-[150px] shadow-md shadow-black"
           onError={(e) => (e.currentTarget.src = fallback)}

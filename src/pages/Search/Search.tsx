@@ -55,11 +55,11 @@ export default function Search() {
                     className="flex h-[50px] w-full items-center justify-start overflow-hidden rounded-md bg-neutral-900"
                   >
                     <img
-                      src={res.image ? res.image[0].link : ""}
+                      src={res.image ? res.image[0].url : ""}
                       alt="img"
-                      className="mr-4 h-[50px] w-[50px]"
+                      className="mr-4 h-[50px] w-[50px] rounded-lg"
                     />
-                    <p className="text-sm font-medium">
+                    <p className="text-sm font-medium text-white">
                       {res.title.replace(/^(&#(\d+);)/g, "")}
                     </p>
                   </li>
@@ -77,16 +77,16 @@ export default function Search() {
                     className="flex h-[50px] w-full items-center justify-start overflow-hidden rounded-md border-b border-black bg-neutral-900"
                   >
                     <img
-                      src={song.image ? song.image[0].link : songfallback}
+                      src={song.image ? song.image[0].url : songfallback}
                       alt="img"
-                      className="mr-4 h-[50px] w-[50px]"
+                      className="mr-4 h-[40px] w-[40px] rounded-lg"
                       onError={(e) => (e.currentTarget.src = songfallback)}
                     />
                     <div className="mr-4 flex h-auto w-[50%] flex-col items-start justify-center">
-                      <p className="line-clamp-1 text-ellipsis text-sm">
+                      <p className="line-clamp-1 text-ellipsis text-sm text-white">
                         {song.title.replace(/^(&#(\d+);)/g, "")}
                       </p>
-                      <p className="line-clamp-1 text-ellipsis text-xs text-neutral-400 ">
+                      <p className="line-clamp-1 text-ellipsis text-xs text-neutral-400">
                         {song.primaryArtists}
                       </p>
                     </div>
@@ -114,7 +114,7 @@ export default function Search() {
                       >
                         <Link to={`/playlists/${id}`} className="h-auto w-auto">
                           <img
-                            src={image ? image[1].link : fallback}
+                            src={image ? image[1].url : fallback}
                             alt="user-profile"
                             className="h-[150px] w-[150px] shadow-md shadow-black"
                             onError={(e) => (e.currentTarget.src = fallback)}
@@ -146,7 +146,7 @@ export default function Search() {
                       >
                         <Link to={`/artists/${id}`} className="h-auto w-auto">
                           <img
-                            src={image ? image[1].link : artistfallback}
+                            src={image ? image[1].url : artistfallback}
                             alt="user-profile"
                             className="h-[150px] w-[150px] rounded-full shadow-md shadow-black"
                             onError={(e) =>
@@ -180,7 +180,7 @@ export default function Search() {
                       >
                         <Link to={`/albums/${id}`} className="h-auto w-auto">
                           <img
-                            src={image ? image[1].link : fallback}
+                            src={image ? image[1].url : fallback}
                             alt="user-profile"
                             className="h-[150px] w-[150px] shadow-md shadow-black"
                             onError={(e) => (e.currentTarget.src = fallback)}
