@@ -97,19 +97,19 @@ export default function Intro() {
                 <p className="flex h-auto w-auto items-center pr-1 text-left text-sm font-bold text-white">
                   React
                 </p>
-                <img src={reactlogo} className="h-4 w-4" alt="react" />
+                <img src={reactlogo} className="h-4 w-4" alt="tech-icon" />
               </li>
               <li className="ml-3 flex h-auto w-auto items-center justify-start">
                 <p className="flex h-auto w-auto items-center pr-1 text-left text-sm font-bold text-white">
                   TailwindCSS
                 </p>
-                <img src={tailwindlogo} className="h-4 w-4" alt="react" />
+                <img src={tailwindlogo} className="h-4 w-4" alt="tech-icon" />
               </li>
               <li className="ml-3 flex h-auto w-auto items-center justify-start">
                 <p className="flex h-auto w-auto items-center pr-1 text-left text-sm font-bold text-white">
                   Vite
                 </p>
-                <img src="/vite.svg" className="h-4 w-4" alt="react" />
+                <img src="/vite.svg" className="h-4 w-4" alt="tech-icon" />
               </li>
             </ul>
           </div>
@@ -117,14 +117,13 @@ export default function Intro() {
             <Link
               to="/home"
               onClick={toHome}
-              className="h-auto w-auto rounded-lg border-none bg-purple-800 p-2 px-4
-               text-sm font-extrabold text-black hover:bg-teal-500 hover:text-black"
+              className="h-auto w-auto rounded-lg border-none bg-[#a855f7] p-2 px-4 text-sm font-extrabold text-black hover:bg-teal-500 hover:text-black"
             >
               Check it out
             </Link>
           </div>
           <footer className="h-auto w-full border-t-[1px] border-neutral-900">
-            <p className="py-2 text-center text-sm font-bold text-neutral-400">
+            <p className="py-2 text-center text-sm font-medium text-neutral-400">
               Made with 💖 by{"\t"}
               <a
                 href="https://github.com/tejas-git64"

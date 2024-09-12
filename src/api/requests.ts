@@ -13,14 +13,6 @@ export async function getWidgetData() {
   return res.json();
 }
 
-// //get default home data
-// export async function getMusic() {
-//   const res = await fetch(
-//     "https://jiosaavn-api-lowkey.vercel.app/modules?language=english,hindi",
-//   );
-//   return res.json();
-// }
-
 //get timely music data
 export async function getTimelyData(id: number, timely: string) {
   const res = await fetch(
