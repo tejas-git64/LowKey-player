@@ -130,7 +130,7 @@ export default function Song(track: TrackDetails) {
             style={{
               wordSpacing: "2px",
             }}
-            className="2xl:w-50 line-clamp-2 w-32 overflow-hidden whitespace-nowrap font-medium text-neutral-300 sm:flex sm:w-[20%] 2xl:w-56"
+            className="2xl:w-50 mr-4 line-clamp-2 w-32 overflow-hidden whitespace-nowrap font-medium text-neutral-300 sm:flex sm:w-[20%] 2xl:w-56"
           >
             {artistIds?.map((id, i) => (
               <div
@@ -145,7 +145,7 @@ export default function Song(track: TrackDetails) {
           <p className="hidden text-xs font-normal text-white sm:block">
             {secondsToHMS(Number(track?.duration))}
           </p>
-          <div className="mx-1 flex w-[60px] items-center justify-between xl:ml-3">
+          <div className="mx-1 ml-3 flex w-[55px] items-center justify-between xl:ml-6">
             {favorites.songs?.some((song) => song.id === track?.id) ? (
               <button
                 style={{

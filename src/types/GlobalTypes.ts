@@ -3,6 +3,11 @@ export type Song = {
   url: string;
 };
 
+export type Image = {
+  quality: string;
+  url: string;
+};
+
 export type AlbumType = {
   id: string;
   name: string;
@@ -34,20 +39,7 @@ export type AlbumType = {
       role: string;
     },
   ];
-  image: [
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-  ];
+  image: Image[];
   songs: TrackDetails[];
 };
 
@@ -57,20 +49,7 @@ export type PlaylistType = {
   title: string;
   subtitle: string;
   type: string;
-  image: [
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-  ];
+  image: Image[];
   url: string;
   songCount: string;
   firstname: string;
@@ -88,20 +67,7 @@ export type PlaylistOfList = {
   firstname: string;
   lastname: string;
   language: string;
-  image: [
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-  ];
+  image: Image[];
   url: string;
   songs: Song[];
 };
@@ -111,20 +77,7 @@ export type ChartType = {
   title: string;
   subtitle: string;
   type: string;
-  image: [
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-  ];
+  image: Image[];
   url: string;
   firstname: string;
   explicitContent: string;
@@ -135,20 +88,7 @@ export type ArtistType = {
   id: string;
   name: string;
   url: string;
-  image: [
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-  ];
+  image: Image[];
   followerCount: string;
   fanCount: string;
   isVerified: false;
@@ -181,22 +121,7 @@ export type Track = {
       id: string;
       name: string;
       url: string;
-      image:
-        | [
-            {
-              quality: string;
-              url: string;
-            },
-            {
-              quality: string;
-              url: string;
-            },
-            {
-              quality: string;
-              url: string;
-            },
-          ]
-        | boolean;
+      image: Image[];
       type: string;
       role: string;
     },
@@ -206,32 +131,14 @@ export type Track = {
   playCount: string;
   language: string;
   url: string;
-  image: [
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-  ];
+  image: Image[];
 };
 
 export type ArtistInSong = {
   id: string;
   name: string;
   role: string;
-  image: [
-    {
-      quality: string;
-      url: string;
-    },
-  ];
+  image: Image[];
   type: string;
   url: string;
 };
@@ -262,42 +169,8 @@ export type TrackDetails = {
     name: string;
     url: string;
   };
-  image: [
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-  ];
-  downloadUrl: [
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-  ];
+  image: Image[];
+  downloadUrl: Song[];
 };
 
 export type GlobalHome = {
@@ -305,28 +178,7 @@ export type GlobalHome = {
   charts: ChartType[];
   playlists: PlaylistType[];
   trending: {
-    songs: [
-      {
-        quality: string;
-        url: string;
-      },
-      {
-        quality: string;
-        url: string;
-      },
-      {
-        quality: string;
-        url: string;
-      },
-      {
-        quality: string;
-        url: string;
-      },
-      {
-        quality: string;
-        url: string;
-      },
-    ];
+    songs: Song[];
     albums: AlbumType[];
   };
 };
@@ -346,20 +198,7 @@ export type PlaylistById = {
   firstname: string;
   lastname: string;
   shares: string;
-  image: [
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-  ];
+  image: Image[];
   url: string;
   songs: TrackDetails[];
 };
@@ -375,20 +214,7 @@ export type AlbumById = {
   primaryArtists: string;
   featuredArtists: [];
   artists: [];
-  image: [
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-  ];
+  image: Image[];
   songs: TrackDetails[];
 };
 
@@ -399,20 +225,7 @@ export type ActivityType = {
 export type QueryResult = {
   id: string;
   title: string;
-  image: [
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-  ];
+  image: Image[];
   url: string;
   type: string;
   description: string;
@@ -427,20 +240,7 @@ export type TopQuerySearch = {
 export type SongAlbumResult = {
   id: string;
   title: string;
-  image: [
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-  ];
+  image: Image[];
   album: string;
   url: string;
   type: string;
@@ -459,20 +259,7 @@ export type SongAlbumSearch = {
 export type AlbumResult = {
   id: string;
   title: string;
-  image: [
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-  ];
+  image: Image[];
   url: string;
   type: string;
   description: string;
@@ -487,20 +274,7 @@ export type ArtistSearch = {
 export type PlaylistResult = {
   id: string;
   title: string;
-  image: [
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-    {
-      quality: string;
-      url: string;
-    },
-  ];
+  image: Image[];
   url: string;
   type: string;
   language: string;
@@ -530,21 +304,6 @@ export type UserPlaylist = {
 export type Queue = {
   id: string;
   name: string;
-  image:
-    | [
-        {
-          quality: string;
-          url: string;
-        },
-        {
-          quality: string;
-          url: string;
-        },
-        {
-          quality: string;
-          url: string;
-        },
-      ]
-    | boolean;
+  image: boolean | Image[];
   songs: TrackDetails[];
 };

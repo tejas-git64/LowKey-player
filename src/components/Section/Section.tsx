@@ -5,11 +5,11 @@ import { Suspense, useEffect, useRef } from "react";
 import SectionLoading from "./Loading";
 import { getPlaylist } from "../../api/requests";
 export default function Section({ genre }: SectionType) {
-  const playlist = useBoundStore((state) => state.home.genres[genre]);
   const options = {
-    rootMargin: "240px",
-    threshold: 0,
+    // rootMargin: "240px",
+    threshold: 1.0,
   };
+  const playlist = useBoundStore((state) => state.home.genres[genre]);
   const sectionRef = useRef(null);
 
   useEffect(() => {
@@ -65,7 +65,7 @@ export default function Section({ genre }: SectionType) {
 
   const DataComponent = () => {
     if (!playlist) {
-      throw new Promise((resolve) => setTimeout(resolve, 100));
+      throw new Promise((resolve) => setTimeout(resolve, 0));
     } else {
       return <PlaylistComponent />;
     }

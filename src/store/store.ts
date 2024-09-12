@@ -5,6 +5,7 @@ import {
   ArtistType,
   ChartType,
   GlobalHome,
+  Image,
   PlaylistById,
   PlaylistOfList,
   PlaylistType,
@@ -22,7 +23,7 @@ export type StoreType = {
   greeting: string;
   changeGreeting: (str: string) => void;
   home: {
-    widget: PlaylistById;
+    widget: PlaylistById | null;
     timely: {
       today: PlaylistById;
       weekly: PlaylistById;
@@ -30,38 +31,38 @@ export type StoreType = {
       yearly: PlaylistById;
     };
     default: {
-      albums: AlbumType[] | [];
-      charts: ChartType[] | [];
-      playlists: PlaylistType[] | [];
+      albums: AlbumType[];
+      charts: ChartType[];
+      playlists: PlaylistType[];
       trending: {
-        songs: Song[] | [];
-        albums: AlbumType[] | [];
+        songs: Song[];
+        albums: AlbumType[];
       };
     };
     genres: {
-      [key: string]: PlaylistOfList[] | [];
-      pop: PlaylistOfList[] | [];
-      hiphop: PlaylistOfList[] | [];
-      love: PlaylistOfList[] | [];
-      rap: PlaylistOfList[] | [];
-      workout: PlaylistOfList[] | [];
-      jazz: PlaylistOfList[] | [];
-      rock: PlaylistOfList[] | [];
-      melody: PlaylistOfList[] | [];
-      lofi: PlaylistOfList[] | [];
-      chill: PlaylistOfList[] | [];
-      focus: PlaylistOfList[] | [];
-      instrumental: PlaylistOfList[] | [];
-      indie: PlaylistOfList[] | [];
-      edm: PlaylistOfList[] | [];
-      metal: PlaylistOfList[] | [];
-      punk: PlaylistOfList[] | [];
-      party: PlaylistOfList[] | [];
-      folk: PlaylistOfList[] | [];
-      devotional: PlaylistOfList[] | [];
-      ambient: PlaylistOfList[] | [];
-      sleep: PlaylistOfList[] | [];
-      soul: PlaylistOfList[] | [];
+      [key: string]: PlaylistOfList[];
+      pop: PlaylistOfList[];
+      hiphop: PlaylistOfList[];
+      love: PlaylistOfList[];
+      rap: PlaylistOfList[];
+      workout: PlaylistOfList[];
+      jazz: PlaylistOfList[];
+      rock: PlaylistOfList[];
+      melody: PlaylistOfList[];
+      lofi: PlaylistOfList[];
+      chill: PlaylistOfList[];
+      focus: PlaylistOfList[];
+      instrumental: PlaylistOfList[];
+      indie: PlaylistOfList[];
+      edm: PlaylistOfList[];
+      metal: PlaylistOfList[];
+      punk: PlaylistOfList[];
+      party: PlaylistOfList[];
+      folk: PlaylistOfList[];
+      devotional: PlaylistOfList[];
+      ambient: PlaylistOfList[];
+      sleep: PlaylistOfList[];
+      soul: PlaylistOfList[];
     };
   };
   recents: {
@@ -79,50 +80,11 @@ export type StoreType = {
     firstname: string;
     lastname: string;
     shares: string;
-    image: [
-      {
-        quality: string;
-        url: string;
-      },
-      {
-        quality: string;
-        url: string;
-      },
-      {
-        quality: string;
-        url: string;
-      },
-    ];
+    image: Image[];
     url: string;
     songs: TrackDetails[];
   };
-  album: {
-    id: string;
-    name: string;
-    year: string;
-    releaseDate: string;
-    songCount: string;
-    url: string;
-    primaryArtistsId: string;
-    primaryArtists: string;
-    featuredArtists: [];
-    artists: [];
-    image: [
-      {
-        quality: string;
-        url: string;
-      },
-      {
-        quality: string;
-        url: string;
-      },
-      {
-        quality: string;
-        url: string;
-      },
-    ];
-    songs: TrackDetails[];
-  };
+  album: AlbumById;
   artist: {
     details: ArtistType;
     songs: TrackDetails[];
@@ -216,20 +178,7 @@ export const useBoundStore = create<StoreType>()(
           firstname: "",
           lastname: "",
           shares: "",
-          image: [
-            {
-              quality: "",
-              url: "",
-            },
-            {
-              quality: "",
-              url: "",
-            },
-            {
-              quality: "",
-              url: "",
-            },
-          ],
+          image: [],
           url: "",
           songs: [],
         },
@@ -245,20 +194,7 @@ export const useBoundStore = create<StoreType>()(
             firstname: "",
             lastname: "",
             shares: "",
-            image: [
-              {
-                quality: "",
-                url: "",
-              },
-              {
-                quality: "",
-                url: "",
-              },
-              {
-                quality: "",
-                url: "",
-              },
-            ],
+            image: [],
             url: "",
             songs: [],
           },
@@ -273,20 +209,7 @@ export const useBoundStore = create<StoreType>()(
             firstname: "",
             lastname: "",
             shares: "",
-            image: [
-              {
-                quality: "",
-                url: "",
-              },
-              {
-                quality: "",
-                url: "",
-              },
-              {
-                quality: "",
-                url: "",
-              },
-            ],
+            image: [],
             url: "",
             songs: [],
           },
@@ -301,20 +224,7 @@ export const useBoundStore = create<StoreType>()(
             firstname: "",
             lastname: "",
             shares: "",
-            image: [
-              {
-                quality: "",
-                url: "",
-              },
-              {
-                quality: "",
-                url: "",
-              },
-              {
-                quality: "",
-                url: "",
-              },
-            ],
+            image: [],
             url: "",
             songs: [],
           },
@@ -329,20 +239,7 @@ export const useBoundStore = create<StoreType>()(
             firstname: "",
             lastname: "",
             shares: "",
-            image: [
-              {
-                quality: "",
-                url: "",
-              },
-              {
-                quality: "",
-                url: "",
-              },
-              {
-                quality: "",
-                url: "",
-              },
-            ],
+            image: [],
             url: "",
             songs: [],
           },
@@ -352,12 +249,7 @@ export const useBoundStore = create<StoreType>()(
           charts: [],
           playlists: [],
           trending: {
-            songs: [
-              {
-                quality: "",
-                url: "",
-              },
-            ],
+            songs: [],
             albums: [],
           },
         },
@@ -401,20 +293,7 @@ export const useBoundStore = create<StoreType>()(
         firstname: "",
         lastname: "",
         shares: "",
-        image: [
-          {
-            quality: "",
-            url: "",
-          },
-          {
-            quality: "",
-            url: "",
-          },
-          {
-            quality: "",
-            url: "",
-          },
-        ],
+        image: [],
         url: "",
         songs: [],
       },
@@ -429,20 +308,7 @@ export const useBoundStore = create<StoreType>()(
         primaryArtists: "",
         featuredArtists: [],
         artists: [],
-        image: [
-          {
-            quality: "",
-            url: "",
-          },
-          {
-            quality: "",
-            url: "",
-          },
-          {
-            quality: "",
-            url: "",
-          },
-        ],
+        image: [],
         songs: [],
       },
       artist: {
@@ -450,20 +316,7 @@ export const useBoundStore = create<StoreType>()(
           id: "",
           name: "",
           url: "",
-          image: [
-            {
-              quality: "",
-              url: "",
-            },
-            {
-              quality: "",
-              url: "",
-            },
-            {
-              quality: "",
-              url: "",
-            },
-          ],
+          image: [],
           followerCount: "",
           fanCount: "",
           isVerified: false,
@@ -528,42 +381,8 @@ export const useBoundStore = create<StoreType>()(
           hasLyrics: "",
           url: "",
           copyright: "",
-          image: [
-            {
-              quality: "",
-              url: "",
-            },
-            {
-              quality: "",
-              url: "",
-            },
-            {
-              quality: "",
-              url: "",
-            },
-          ],
-          downloadUrl: [
-            {
-              quality: "",
-              url: "",
-            },
-            {
-              quality: "",
-              url: "",
-            },
-            {
-              quality: "",
-              url: "",
-            },
-            {
-              quality: "",
-              url: "",
-            },
-            {
-              quality: "",
-              url: "",
-            },
-          ],
+          image: [],
+          downloadUrl: [],
         },
         isPlaying: false,
         isMobilePlayer: false,
@@ -571,20 +390,7 @@ export const useBoundStore = create<StoreType>()(
         queue: {
           id: "",
           name: "",
-          image: [
-            {
-              url: "",
-              quality: "",
-            },
-            {
-              url: "",
-              quality: "",
-            },
-            {
-              url: "",
-              quality: "",
-            },
-          ],
+          image: [],
           songs: [],
         },
       },

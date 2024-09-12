@@ -67,24 +67,18 @@ export default function Home() {
     select: (data) => setWidgetData(data.data),
   });
 
-  // const { isPending: homePending } = useQuery({
-  //   queryKey: ["home"],
-  //   queryFn: getMusic,
-  //   select: (data) => setDefault(data.data),
-  // });
-
   function setNowPlayingQueue(
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) {
     e.preventDefault();
     e.stopPropagation();
     setQueue({
-      id: widget.id,
-      name: widget.name,
-      image: widget.image,
-      songs: widget.songs,
+      id: widget?.id || "",
+      name: widget?.name || "",
+      image: widget?.image || [],
+      songs: widget?.songs || [],
     });
-    setNowPlaying(widget.songs[0]);
+    widget !== null && setNowPlaying(widget.songs[0]);
     setIsPlaying(true);
   }
 
@@ -93,7 +87,7 @@ export default function Home() {
     timelyData.map((obj: { id: number; timely: string }) => {
       getTimelyData(obj.id, obj.timely);
     });
-    setInterval(() => setGreeting(), 60000);
+    // setInterval(() => setGreeting(), 60000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -172,17 +166,24 @@ export default function Home() {
           <div className="h-auto max-h-max w-full px-3.5">
             <section className="relative z-0 mx-auto my-3 mb-7 flex h-80 w-full flex-col overflow-hidden rounded-2xl bg-transparent sm:flex-row">
               <img
-                src={widget.image ? widget.image[2].url : songfallback}
+                src={
+                  widget !== null && widget.image
+                    ? widget.image[2].url
+                    : songfallback
+                }
                 alt="img"
-                loading="lazy"
+                width={320}
+                height={320}
                 className="h-auto w-auto bg-neutral-700 sm:z-10 sm:h-[320px] sm:w-[320px] sm:rounded-xl"
                 onClick={() =>
-                  widget.id !== "" && navigate(`/playlists/${widget.id}`)
+                  widget !== null &&
+                  widget.id !== "" &&
+                  navigate(`/playlists/${widget.id}`)
                 }
               />
               <div className="absolute right-2.5 top-[105px] z-20 flex h-auto w-[95%] items-end justify-between sm:left-0 sm:top-[268px] sm:h-12 sm:w-[320px] sm:justify-end sm:p-2 md:p-2 md:py-1">
                 <p className="left-0 top-0 line-clamp-1 h-auto w-[80%] pl-1 text-xl font-bold text-white sm:hidden">
-                  {widget.name}
+                  {widget !== null && widget.name}
                 </p>
                 {nowPlaying.isPlaying ? (
                   <button
@@ -222,10 +223,10 @@ export default function Home() {
                 id="widget-container"
                 className="absolute bottom-1.5 left-1.5 mx-auto h-[158px] w-[96.5%] list-none overflow-x-hidden overflow-y-scroll rounded-xl bg-neutral-900 p-2 sm:static sm:ml-1 sm:mt-0 sm:h-full sm:w-full sm:pl-2 sm:pr-2"
               >
-                {widget.songs.length > 0 ? (
-                  widget.songs.map((song: TrackDetails) => (
+                {widget !== null && widget.songs.length > 0 ? (
+                  widget.songs.map((song: TrackDetails, i: number) => (
                     <Song
-                      key={song.id}
+                      key={i}
                       id={song.id}
                       name={song.name}
                       type={song.type}
@@ -269,7 +270,8 @@ export default function Home() {
               <img
                 src={today.image ? today.image[0]?.url : fallbacktoday}
                 alt="img"
-                loading="lazy"
+                width={56}
+                height={56}
                 className="h-full w-12 sm:w-14"
                 onError={(e) => (e.currentTarget.src = fallbacktoday)}
               />
@@ -284,7 +286,8 @@ export default function Home() {
               <img
                 src={weekly.image ? weekly.image[0]?.url : fallbackweekly}
                 alt="img"
-                loading="lazy"
+                width={56}
+                height={56}
                 className="h-full w-12 sm:w-14"
                 onError={(e) => (e.currentTarget.src = fallbackweekly)}
               />
@@ -299,7 +302,8 @@ export default function Home() {
               <img
                 src={monthly.image ? monthly.image[0]?.url : fallbackmonthly}
                 alt="img"
-                loading="lazy"
+                width={56}
+                height={56}
                 className="h-full w-12 sm:w-14"
                 onError={(e) => (e.currentTarget.src = fallbackmonthly)}
               />
@@ -314,7 +318,8 @@ export default function Home() {
               <img
                 src={yearly.image ? yearly.image[0]?.url : fallbackyearly}
                 alt="img"
-                loading="lazy"
+                width={56}
+                height={56}
                 className="h-full w-12 sm:w-14"
                 onError={(e) => (e.currentTarget.src = fallbackyearly)}
               />
@@ -323,125 +328,6 @@ export default function Home() {
               </p>
             </Link>
           </div>
-          {/* Trending
-          <div className="flex h-auto w-full flex-col overflow-x-hidden bg-transparent py-2">
-            <h1 className="px-4 pb-1 text-left text-xl font-semibold text-white">
-              Trending
-            </h1>
-            <ul className="flex h-48 w-full overflow-y-hidden overflow-x-scroll whitespace-nowrap p-4 py-2">
-              {home.default.trending?.albums?.map((album: AlbumType) => (
-                <li
-                  className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 cursor-pointer list-none flex-col items-center bg-transparent"
-                  key={album.id}
-                  onClick={() =>
-                    navigate(`/albums/${album.id}`, { replace: true })
-                  }
-                >
-                  <img
-                    src={
-                      Array.isArray(album.image) ? album.image[1].url : fallback
-                    }
-                    alt="user-profile"
-                    loading="lazy"
-                    className="h-[150px] w-[150px] rounded-full shadow-xl shadow-neutral-950"
-                    onError={(e) => (e.currentTarget.src = fallback)}
-                  />
-                  <p className="mt-1 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-xs font-semibold text-neutral-400">
-                    {album.name}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div>
-          Playlists 
-          <div className="flex h-auto w-full flex-col overflow-x-hidden bg-transparent py-2">
-            <h1 className="px-4 pb-1 text-left text-xl font-semibold text-white">
-              Popular Playlists
-            </h1>
-            <ul className="flex h-48 w-full overflow-y-hidden overflow-x-scroll whitespace-nowrap p-4 py-2">
-              {home.default.playlists?.map((playlist: PlaylistType) => (
-                <li
-                  className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 cursor-pointer list-none flex-col items-center bg-transparent"
-                  key={playlist.id}
-                  onClick={() =>
-                    navigate(`/playlists/${playlist.id}`, { replace: true })
-                  }
-                >
-                  <img
-                    src={
-                      Array.isArray(playlist.image)
-                        ? playlist.image[1].url
-                        : fallback
-                    }
-                    alt="user-profile"
-                    loading="lazy"
-                    className="h-[150px] w-[150px] rounded-3xl shadow-xl shadow-neutral-950"
-                    onError={(e) => (e.currentTarget.src = fallback)}
-                  />
-                  <p className="mt-1 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-xs font-semibold text-neutral-400">
-                    {playlist.title}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div>
-           Albums 
-          <div className="flex h-auto w-full flex-col overflow-x-hidden bg-transparent py-2">
-            <h1 className="px-4 pb-1 text-left text-xl font-semibold text-white">
-              Latest Albums
-            </h1>
-            <ul className="flex h-48 w-full overflow-y-hidden overflow-x-scroll whitespace-nowrap p-4 py-2">
-              {home.default.albums?.map((album: AlbumType) => (
-                <li
-                  className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 cursor-pointer list-none flex-col items-center bg-transparent"
-                  key={album.id}
-                  onClick={() =>
-                    navigate(`/albums/${album.id}`, { replace: true })
-                  }
-                >
-                  <img
-                    src={
-                      Array.isArray(album.image) ? album.image[1].url : fallback
-                    }
-                    alt="user-profile"
-                    loading="lazy"
-                    className="h-[150px] w-[150px] rounded-br-3xl rounded-tl-3xl shadow-xl shadow-neutral-950"
-                    onError={(e) => (e.currentTarget.src = fallback)}
-                  />
-                  <p className="mt-1 line-clamp-1 h-auto text-ellipsis whitespace-pre-line bg-transparent text-center text-xs font-semibold text-neutral-400">
-                    {album.name}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="flex h-auto w-full flex-col bg-transparent py-2">
-            <h1 className="px-4 pb-1 text-left text-xl font-semibold text-white">
-              Charts
-            </h1>
-            <ul className="flex h-48 w-full overflow-y-hidden overflow-x-scroll whitespace-nowrap p-4 py-2">
-              {home.default.charts?.map((chart: ChartType) => (
-                <li
-                  key={chart.id}
-                  className="mr-4 flex h-[175px] w-[150px] flex-shrink-0 cursor-pointer list-none flex-col items-center"
-                  onClick={() =>
-                    navigate(`/playlists/${chart.id}`, { replace: true })
-                  }
-                >
-                  <img
-                    src={chart.image ? chart.image[1].url : fallback}
-                    alt="user-profile"
-                    loading="lazy"
-                    className="h-[150px] w-[150px] rounded-xl shadow-md shadow-black"
-                    onError={(e) => (e.currentTarget.src = fallback)}
-                  />
-                  <p className="mt-1 line-clamp-1 h-auto text-ellipsis whitespace-pre-line text-center text-xs font-semibold text-neutral-400">
-                    {chart.title.replace("-", "").replace("&quote;", "")}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div> */}
           <div className="h-auto max-h-max w-full pb-28 sm:pb-14">
             {/* Genres */}
             {genres.map((genre) => (
@@ -455,7 +341,7 @@ export default function Home() {
 
   const DataComponent = () => {
     if (widgetPending) {
-      throw new Promise((resolve) => setTimeout(resolve, 100));
+      throw new Promise((resolve) => setTimeout(resolve, 0));
     } else {
       return <HomeComponent />;
     }

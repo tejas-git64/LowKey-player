@@ -117,7 +117,7 @@ export default function Intro() {
             <Link
               to="/home"
               onClick={toHome}
-              className="h-auto w-auto rounded-lg border-none bg-[#a855f7] p-2 px-4 text-sm font-extrabold text-black hover:bg-teal-500 hover:text-black"
+              className="transition-bg h-auto w-auto rounded-lg border-none bg-[#a855f7] p-2 px-4 text-sm font-extrabold text-black hover:bg-teal-500 hover:text-black"
             >
               Check it out
             </Link>

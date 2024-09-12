@@ -1,4 +1,6 @@
+import { useState, useEffect, useRef } from "react";
 import { useBoundStore } from "../../store/store";
+import { ArtistInSong, TrackDetails } from "../../types/GlobalTypes";
 import songfallback from "../../assets/icons8-song-fallback.png";
 import speaker from "../../assets/speaker-svgrepo.svg";
 import favorite from "../../assets/icons8-heart.svg";
@@ -14,12 +16,10 @@ import previous from "../../assets/previous.svg";
 import next from "../../assets/next.svg";
 import play from "../../assets/icons8-play.svg";
 import pause from "../../assets/icons8-pause.svg";
-import { useState, useEffect, useRef } from "react";
 import WaveSurfer from "wavesurfer.js";
 import secondsToHMS from "../../utils/utils";
 import tick from "../../assets/icons8-tick.svg";
 import "../../App.css";
-import { ArtistInSong, TrackDetails } from "../../types/GlobalTypes";
 
 export default function NowPlaying() {
   const {
@@ -38,7 +38,6 @@ export default function NowPlaying() {
     setIsShuffling,
     setHistory,
   } = useBoundStore();
-  const [volume, setVolume] = useState<number>(0);
   const [currentTime, setCurrentTime] = useState(0);
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const songIndex = nowPlaying.queue.songs?.findIndex(
@@ -84,7 +83,7 @@ export default function NowPlaying() {
   function playOrder() {
     if (isShuffling === false) {
       setIsPlaying(true);
-      songIndex && setNowPlaying(nowPlaying.queue.songs[songIndex + 1]);
+      songIndex && setNowPlaying(nowPlaying.queue.songs[songIndex]);
     } else {
       const randomIndex = Math.floor(
         Math.random() * nowPlaying.queue.songs.length,
@@ -145,12 +144,16 @@ export default function NowPlaying() {
         barWidth: 2,
         minPxPerSec: 1,
         height: 12,
+        duration: Number(nowPlaying.track?.duration),
+        url: nowPlaying.track?.downloadUrl[4]?.url,
       });
       nowPlaying.track &&
-        wavesurfer.current?.load(nowPlaying.track.downloadUrl[4].url);
+        wavesurfer.current?.load(nowPlaying.track.downloadUrl[4]?.url);
       wavesurfer.current?.seekTo(0);
-      wavesurfer.current?.setVolume(volume);
     }
+    wavesurfer.current?.on("redrawcomplete", () => {
+      setIsPlaying(true);
+    });
     wavesurfer.current?.on("seeking", () => {
       wavesurfer.current && setCurrentTime(wavesurfer.current.getCurrentTime());
     });
@@ -165,9 +168,6 @@ export default function NowPlaying() {
         playOrder();
       }
     });
-    wavesurfer.current?.on("ready", () => {
-      setIsPlaying(true);
-    });
     return () => {
       wavesurfer.current?.destroy();
       wavesurfer.current?.stop();
@@ -180,7 +180,9 @@ export default function NowPlaying() {
       <div className="flex h-full w-[30%] max-w-[300px] items-center justify-center p-2.5">
         <img
           src={
-            nowPlaying.track ? nowPlaying.track?.image[2]?.url : songfallback
+            nowPlaying.track && nowPlaying.track.id !== ""
+              ? nowPlaying.track?.image[2]?.url
+              : songfallback
           }
           id="songImg"
           alt="song-img"
@@ -267,7 +269,7 @@ export default function NowPlaying() {
                 outline: "none",
               }}
               className={`h-auto w-auto rounded-full border-none bg-neutral-100 p-1 outline-none disabled:cursor-not-allowed disabled:bg-neutral-600`}
-              // disabled={isReady === false}
+              disabled={!nowPlaying.track?.id}
             >
               <img
                 src={pause}
@@ -286,7 +288,7 @@ export default function NowPlaying() {
                 outline: "none",
               }}
               className={`h-auto w-auto rounded-full border-none bg-neutral-100 p-1 outline-none disabled:cursor-not-allowed disabled:bg-neutral-600`}
-              // disabled={isReady === false}
+              disabled={!nowPlaying.track?.id}
             >
               <img
                 src={play}
@@ -337,7 +339,7 @@ export default function NowPlaying() {
           <p className="h-full w-[50px] text-center text-[12px] text-white">
             {nowPlaying.track?.duration
               ? secondsToHMS(Number(nowPlaying.track?.duration))
-              : ""}
+              : "--:--"}
           </p>
         </div>
       </div>
@@ -428,18 +430,26 @@ export default function NowPlaying() {
             min={0}
             className="h-[3px] w-full appearance-none transition-all ease-linear disabled:cursor-not-allowed"
             max={1}
-            step={0.05}
-            value={volume}
-            onChange={(e) => setVolume(Number(e.target.value))}
+            step={0.1}
+            value={wavesurfer.current?.getVolume()}
+            onChange={(e) =>
+              wavesurfer.current?.setVolume(Number(e.target.value))
+            }
             disabled={nowPlaying.track?.id === ""}
           />
           <img
-            src={volume > 0.1 ? (volume < 0.7 ? vol : high) : mute}
+            src={
+              wavesurfer.current && wavesurfer.current?.getVolume() > 0.1
+                ? wavesurfer.current?.getVolume() < 0.7
+                  ? vol
+                  : high
+                : mute
+            }
             alt="volume"
             className={`-mr-1 ml-1 h-[28px] w-[28px] bg-transparent ${
               nowPlaying.track?.id === "" ? "invert-[0.4]" : ""
             } ${
-              volume === 0 && "invert-[0.5]"
+              wavesurfer.current?.getVolume() === 0 && "invert-[0.5]"
             } disabled:cursor-not-allowed disabled:bg-neutral-900`}
           />
         </div>

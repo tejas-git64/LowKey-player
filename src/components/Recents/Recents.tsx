@@ -14,7 +14,7 @@ export default function Recents() {
           className="mb-0.5 flex h-[50px] w-full flex-shrink-0 items-center justify-start overflow-hidden rounded-md bg-black"
         >
           <img
-            src={image ? image[0].url : songfallback}
+            src={image ? image[0]?.url : songfallback}
             alt="img"
             onError={(e) => (e.currentTarget.src = songfallback)}
             className="mr-4 h-[50px] w-[50px] border-r border-black"
