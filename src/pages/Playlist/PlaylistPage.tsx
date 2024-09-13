@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { getPlaylistData } from "../../api/requests";
 import { useBoundStore } from "../../store/store";
 import fallback from "../../assets/playlist-fallback.webp";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import favorite from "../../assets/icons8-heart.svg";
 import favorited from "../../assets/icons8-favorited.svg";
 import play from "../../assets/icons8-play.svg";
@@ -50,6 +50,7 @@ export default function PlaylistPage() {
     e.preventDefault();
     e.stopPropagation();
     setIsPlaying(true);
+    setNowPlaying(nowPlaying.queue.songs[0]);
     playlist !== null &&
       setQueue({
         id: playlist.id,
@@ -57,8 +58,12 @@ export default function PlaylistPage() {
         image: playlist.image || false,
         songs: playlist.songs,
       });
-    setNowPlaying(nowPlaying.queue.songs[0]);
   }
+
+  useEffect(() => {
+    setNowPlaying(nowPlaying.queue.songs[0]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nowPlaying.queue.id]);
 
   const PlaylistPageById = () => {
     return (

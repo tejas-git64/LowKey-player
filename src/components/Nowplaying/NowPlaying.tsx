@@ -40,7 +40,7 @@ export default function NowPlaying() {
   const setHistory = useBoundStore((state) => state.setHistory);
   const [currentTime, setCurrentTime] = useState(0);
   const wavesurfer = useRef<WaveSurfer | null>(null);
-  const songIndex = nowPlaying.queue.songs?.findIndex(
+  let songIndex = nowPlaying.queue.songs?.findIndex(
     (song: TrackDetails) => song.id === nowPlaying.track?.id,
   ); //current index of song in queue
   const formatTime = (seconds: number) =>
@@ -82,7 +82,7 @@ export default function NowPlaying() {
 
   function playOrder() {
     if (isShuffling === false) {
-      setIsPlaying(true);
+      console.log(songIndex);
       songIndex && setNowPlaying(nowPlaying.queue.songs[songIndex]);
     } else {
       const randomIndex = Math.floor(
@@ -97,7 +97,7 @@ export default function NowPlaying() {
     e.stopPropagation();
     setNowPlaying(null);
     if (songIndex === 0) {
-      setNowPlaying(nowPlaying.queue.songs[0]);
+      setNowPlaying(nowPlaying.queue.songs[nowPlaying.queue.songs.length - 1]);
     } else {
       setNowPlaying(nowPlaying.queue.songs[songIndex - 1]);
     }
@@ -147,9 +147,9 @@ export default function NowPlaying() {
         duration: Number(nowPlaying.track?.duration),
         url: nowPlaying.track?.downloadUrl[4]?.url,
       });
-      nowPlaying.track &&
-        wavesurfer.current?.load(nowPlaying.track.downloadUrl[4]?.url);
-      wavesurfer.current?.seekTo(0);
+      // nowPlaying.track &&
+      //   wavesurfer.current?.load(nowPlaying.track.downloadUrl[4]?.url);
+      // wavesurfer.current?.seekTo(0);
     }
     wavesurfer.current?.on("redrawcomplete", () => {
       setIsPlaying(true);
@@ -161,8 +161,9 @@ export default function NowPlaying() {
       wavesurfer.current && setCurrentTime(wavesurfer.current.getCurrentTime());
     });
     wavesurfer.current?.on("finish", () => {
+      songIndex++;
       setIsPlaying(false);
-      if (!songIndex) {
+      if (songIndex === -1) {
         setShowPlayer(false);
       } else {
         playOrder();

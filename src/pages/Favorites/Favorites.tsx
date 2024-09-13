@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import fallback from "../../assets/playlist-fallback.webp";
 import close from "../../assets/close.svg";
 import brokenheart from "../../assets/heart-break.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Favorites() {
   const favorites = useBoundStore((state) => state.favorites);
@@ -54,6 +54,11 @@ export default function Favorites() {
       e.stopPropagation();
       setIsPlaying(false);
     }
+
+    useEffect(() => {
+      setNowPlaying(nowPlaying.queue.songs[0]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [nowPlaying.queue.id]);
 
     return (
       <li

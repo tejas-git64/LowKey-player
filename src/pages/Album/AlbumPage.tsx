@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getAlbumData } from "../../api/requests";
 import Song from "../../components/Song/Song";
@@ -55,6 +55,11 @@ export default function AlbumPage() {
       });
     setNowPlaying(nowPlaying.queue.songs[0]);
   }
+
+  useEffect(() => {
+    setNowPlaying(nowPlaying.queue.songs[0]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nowPlaying.queue.id]);
 
   const AlbumPageById = () => {
     return (

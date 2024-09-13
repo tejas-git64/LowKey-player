@@ -8,6 +8,7 @@ import { useBoundStore } from "../../store/store";
 import { useParams } from "react-router-dom";
 import { TrackDetails, UserPlaylist } from "../../types/GlobalTypes";
 import Song from "../../components/Song/Song";
+import { useEffect } from "react";
 
 export default function UserPlaylistPage() {
   const isShuffling = useBoundStore((state) => state.isShuffling);
@@ -36,6 +37,11 @@ export default function UserPlaylistPage() {
     }
     setIsPlaying(true);
   }
+
+  useEffect(() => {
+    setNowPlaying(nowPlaying.queue.songs[0]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nowPlaying.queue.id]);
 
   return (
     <>

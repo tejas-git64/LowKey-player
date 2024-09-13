@@ -214,17 +214,22 @@ export default function MobilePlayer() {
         waveColor: "#333",
         progressColor: "#10B981",
         fillParent: true,
-        barGap: 2,
-        barWidth: 3,
+        barGap: 1,
+        barWidth: 2,
         minPxPerSec: 3,
         normalize: true,
         height: 50,
         barRadius: 10,
+        duration: Number(nowPlaying.track?.duration),
+        url: nowPlaying.track?.downloadUrl[4]?.url,
       });
-      nowPlaying.track &&
-        wavesurfer.current?.load(nowPlaying.track?.downloadUrl[4].url);
-      wavesurfer.current?.seekTo(0);
+      // nowPlaying.track &&
+      //   wavesurfer.current?.load(nowPlaying.track?.downloadUrl[4].url);
+      // wavesurfer.current?.seekTo(0);
     }
+    wavesurfer.current?.on("redrawcomplete", () => {
+      setIsReady(true);
+    });
     wavesurfer.current?.on("seeking", () => {
       wavesurfer.current &&
         setCurrentTime(wavesurfer.current?.getCurrentTime());
@@ -234,19 +239,13 @@ export default function MobilePlayer() {
         setCurrentTime(wavesurfer.current?.getCurrentTime());
     });
     wavesurfer.current?.on("finish", () => {
+      songIndex++;
       setIsPlaying(false);
       if (!songIndex) {
         setShowPlayer(false);
       } else {
         playOrder();
       }
-    });
-    wavesurfer.current?.on("redraw", () => {
-      setIsReady(false);
-    });
-    wavesurfer.current?.on("ready", () => {
-      setIsReady(true);
-      setIsPlaying(true);
     });
     return () => {
       wavesurfer.current?.destroy();
@@ -276,6 +275,8 @@ export default function MobilePlayer() {
         src={nowPlaying.track ? nowPlaying.track.image[2]?.url : songfallback}
         onError={(e) => (e.currentTarget.src = songfallback)}
         alt="image"
+        width={500}
+        height={500}
         className="mx-auto h-[500px] w-[500px] rounded-xl rounded-t-lg bg-fixed"
       />
       <div className="flex h-auto w-full flex-col items-center justify-start invert-0">
