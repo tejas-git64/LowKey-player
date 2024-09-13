@@ -11,10 +11,10 @@ import Creation from "../../components/Creation/Creation";
 
 export default function Layout() {
   const path = useLocation().pathname;
-  const { nowPlaying } = useBoundStore();
+  const nowPlaying = useBoundStore((state) => state.nowPlaying);
 
   return (
-    <div className="h-full w-full overflow-hidden">
+    <div className="h-full w-full overflow-hidden bg-black">
       {path !== "/" && <Nav />}
       <div
         className={`relative flex h-full w-full flex-row items-start justify-start overflow-hidden ${
@@ -27,7 +27,9 @@ export default function Layout() {
             path !== "/" ? "sm:h-[95vh]" : "sm:h-full"
           }`}
         >
-          <Outlet />
+          <div className="h-full w-full bg-black">
+            <Outlet />
+          </div>
           <Creation />
           <div
             className={`fixed bottom-0 left-0 ${

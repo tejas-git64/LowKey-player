@@ -5,16 +5,16 @@ import close from "../../assets/close.svg";
 
 //Playlist Creation Component
 export default function Creation() {
-  const {
-    isCreationMenu,
-    setCreationMenu,
-    setToUserPlaylist,
-    library,
-    createNewUserPlaylist,
-    revealCreation,
-    setRevealCreation,
-    creationTrack,
-  } = useBoundStore();
+  const isCreationMenu = useBoundStore((state) => state.isCreationMenu);
+  const setCreationMenu = useBoundStore((state) => state.setCreationMenu);
+  const setToUserPlaylist = useBoundStore((state) => state.setToUserPlaylist);
+  const library = useBoundStore((state) => state.library);
+  const createNewUserPlaylist = useBoundStore(
+    (state) => state.createNewUserPlaylist,
+  );
+  const revealCreation = useBoundStore((state) => state.revealCreation);
+  const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
+  const creationTrack = useBoundStore((state) => state.creationTrack);
   const ids: Set<number> = new Set([]);
   const [name, setName] = useState("");
 

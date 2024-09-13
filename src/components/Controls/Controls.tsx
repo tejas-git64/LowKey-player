@@ -4,14 +4,13 @@ import play from "../../assets/icons8-play.svg";
 import pause from "../../assets/icons8-pause.svg";
 import { useBoundStore } from "../../store/store";
 import shuffle from "../../assets/icons8-shuffle.svg";
-// import shuffling from "../../assets/icons8-shuffle-activated.svg";
 import replay from "../../assets/replay.svg";
 import WaveSurfer from "wavesurfer.js/dist/types.js";
-// import replaying from "../../assets/replaying.svg";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function Controls({ wavesurfer }: any) {
-  const { nowPlaying, setIsPlaying } = useBoundStore();
+  const nowPlaying = useBoundStore((state) => state.nowPlaying);
+  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
   const waveform: WaveSurfer = wavesurfer;
 
   function togglePlayPause() {

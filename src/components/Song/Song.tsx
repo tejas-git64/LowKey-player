@@ -11,18 +11,19 @@ import add from "../../assets/icons8-addplaylist-28.svg";
 import tick from "../../assets/icons8-tick.svg";
 
 export default function Song(track: TrackDetails) {
-  const {
-    setNowPlaying,
-    nowPlaying,
-    setIsPlaying,
-    setFavoriteSong,
-    favorites,
-    removeFavorite,
-    library,
-    setRevealCreation,
-    setCreationTrack,
-    removeFromUserPlaylist,
-  } = useBoundStore();
+  const nowPlaying = useBoundStore((state) => state.nowPlaying);
+  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
+  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
+  const setFavoriteSong = useBoundStore((state) => state.setFavoriteSong);
+  const favorites = useBoundStore((state) => state.favorites);
+  const library = useBoundStore((state) => state.library);
+  const removeFavorite = useBoundStore((state) => state.removeFavorite);
+  const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
+  const setCreationTrack = useBoundStore((state) => state.setCreationTrack);
+  const removeFromUserPlaylist = useBoundStore(
+    (state) => state.removeFromUserPlaylist,
+  );
+
   const [isHovered, setIsHovered] = useState(false);
   const artistIds = track.artists?.all?.map(
     (artist: ArtistInSong) => artist.id,
@@ -113,6 +114,8 @@ export default function Song(track: TrackDetails) {
           <img
             src={track.image ? track.image[0]?.url : fallback}
             alt="img"
+            width={50}
+            height={50}
             className="mr-4 h-[50px] w-[50px] bg-black md:mr-[5%]"
             onError={(e) => (e.currentTarget.src = fallback)}
           />
@@ -130,7 +133,7 @@ export default function Song(track: TrackDetails) {
             style={{
               wordSpacing: "2px",
             }}
-            className="2xl:w-50 mr-4 line-clamp-2 w-32 overflow-hidden whitespace-nowrap font-medium text-neutral-300 sm:flex sm:w-[20%] 2xl:w-56"
+            className="mr-4 line-clamp-2 w-32 overflow-hidden whitespace-nowrap font-medium text-neutral-300 sm:flex sm:w-[20%] 2xl:w-56"
           >
             {artistIds?.map((id, i) => (
               <div

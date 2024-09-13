@@ -40,10 +40,23 @@ export default function App() {
     ),
   );
 
+  const emoticons = [
+    "(👉ﾟヮﾟ)👉",
+    "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧",
+    "ヾ(⌐■_■)ノ♪",
+    "○( ＾皿＾)っ Hehehe…",
+  ];
+
+  function getRandomEmoticons() {
+    return emoticons[Math.floor(Math.random() * emoticons.length)];
+  }
+
   const MainFallback = () => {
     return (
       <div className="flex h-full w-full items-center justify-center bg-neutral-800">
-        <p className="text-xl font-semibold text-white">Loading (∩^o^)⊃━☆...</p>
+        <p className="text-xl font-semibold text-emerald-500">
+          Loading vibes {getRandomEmoticons()}
+        </p>
       </div>
     );
   };

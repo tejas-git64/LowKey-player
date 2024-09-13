@@ -1,4 +1,4 @@
-import { useEffect, Suspense } from "react";
+import { Suspense } from "react";
 import { useParams } from "react-router-dom";
 import { getAlbumData } from "../../api/requests";
 import Song from "../../components/Song/Song";
@@ -19,25 +19,25 @@ import RouteNav from "../../components/RouteNav/RouteNav";
 
 export default function AlbumPage() {
   const { id } = useParams();
-  const {
-    album,
-    setAlbum,
-    setFavoriteAlbum,
-    removeFavoriteAlbum,
-    favorites,
-    setLibraryAlbum,
-    removeLibraryAlbum,
-    library,
-    setNowPlaying,
-    setIsPlaying,
-    nowPlaying,
-    setQueue,
-    isShuffling,
-    setIsShuffling,
-  } = useBoundStore();
+  const album = useBoundStore((state) => state.album);
+  const setAlbum = useBoundStore((state) => state.setAlbum);
+  const setFavoriteAlbum = useBoundStore((state) => state.setFavoriteAlbum);
+  const removeFavoriteAlbum = useBoundStore(
+    (state) => state.removeFavoriteAlbum,
+  );
+  const favorites = useBoundStore((state) => state.favorites);
+  const setLibraryAlbum = useBoundStore((state) => state.setLibraryAlbum);
+  const removeLibraryAlbum = useBoundStore((state) => state.removeLibraryAlbum);
+  const library = useBoundStore((state) => state.library);
+  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
+  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
+  const nowPlaying = useBoundStore((state) => state.nowPlaying);
+  const setQueue = useBoundStore((state) => state.setQueue);
+  const isShuffling = useBoundStore((state) => state.isShuffling);
+  const setIsShuffling = useBoundStore((state) => state.setIsShuffling);
 
   const { isPending: albumPending } = useQuery({
-    queryKey: ["albumPage"],
+    queryKey: ["albumPage", id],
     queryFn: () => id && getAlbumData(id),
     select: (data) => setAlbum(data.data),
   });
@@ -53,16 +53,8 @@ export default function AlbumPage() {
         image: album.image || false,
         songs: album.songs,
       });
-  }
-
-  useEffect(() => {
     setNowPlaying(nowPlaying.queue.songs[0]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nowPlaying.queue.id]);
-
-  useEffect(() => {
-    id && getAlbumData(id);
-  }, [id]);
+  }
 
   const AlbumPageById = () => {
     return (

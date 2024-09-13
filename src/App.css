@@ -5,27 +5,10 @@
   font-family: "Outfit", sans-serif;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: -webkit-filter 300ms;
-  transition:
-    filter 300ms,
-    -webkit-filter 300ms;
-}
-.logo:hover {
-  -webkit-filter: drop-shadow(0 0 2em #646cffaa);
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  -webkit-filter: drop-shadow(0 0 2em #61dafbaa);
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
 ::-webkit-scrollbar {
   width: 0px;
   height: 2px;
+  background-color: transparent;
 }
 
 button {
@@ -36,7 +19,7 @@ button {
 
 ::-webkit-scrollbar-thumb {
   height: 2px;
-  background-color: transparent;
+  background-color: #3e3e3e;
 }
 
 #menu::-webkit-scrollbar,
@@ -47,14 +30,13 @@ button {
 
 @media screen and (min-width: 640px) {
   ::-webkit-scrollbar {
-    width: 3px;
-    height: 2px;
+    width: 4px;
     background-color: transparent;
   }
 
   ::-webkit-scrollbar-thumb {
-    height: 2px;
-    background-color: #000;
+    width: auto;
+    background-color: #323232;
   }
 }
 

@@ -15,11 +15,11 @@ export default function Searchbar() {
 
   return (
     <>
-      <div className="mx-auto mr-3 flex h-10 w-full items-center justify-start overflow-hidden rounded-md bg-neutral-200 sm:ml-4 sm:h-12 lg:ml-3 xl:ml-2 2xl:ml-0">
+      <div className="mx-auto mr-3 flex h-10 w-full items-center justify-start overflow-hidden rounded-md bg-neutral-900 sm:ml-4 lg:ml-3 xl:ml-2 2xl:ml-0">
         <img
           src={searchIcon}
           alt="search-icon"
-          className="w-[35px] pl-3 invert-[0.5] sm:w-auto sm:p-2 sm:pr-1"
+          className="w-[35px] bg-neutral-900 py-3 pl-3 invert-[0.2] sm:w-auto sm:p-2 sm:pr-1"
         />
         <input
           type="search"
@@ -32,7 +32,7 @@ export default function Searchbar() {
             setQuery(e.target.value);
           }}
           placeholder="Search for songs, albums, playlists or artists"
-          className="placeholder: h-full w-full border-none bg-neutral-200 px-2 font-semibold text-neutral-800 outline-none placeholder:font-medium placeholder:text-neutral-400"
+          className="placeholder: h-full w-full border-none bg-neutral-700 px-2 font-semibold text-neutral-300 outline-none placeholder:font-medium placeholder:text-neutral-400"
         />
       </div>
     </>

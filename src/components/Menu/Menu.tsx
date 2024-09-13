@@ -13,7 +13,10 @@ import userplaylist from "../../assets/userplaylist.svg";
 
 export default function Menu() {
   const [status, setStatus] = useState<boolean | null>(null);
-  const { library, setRevealCreation, setCreationMenu } = useBoundStore();
+  const library = useBoundStore((state) => state.library);
+  const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
+  const setCreationMenu = useBoundStore((state) => state.setCreationMenu);
+
   async function checkConnection() {
     try {
       const res = await fetch("https://www.bing.com"); //temporary ping checker
@@ -56,14 +59,14 @@ export default function Menu() {
           to={"/home"}
           className="flex w-full items-center justify-start p-3 hover:bg-neutral-600"
         >
-          <img src={home} alt="home" className="mr-4 w-auto xl:mr-6" />
+          <img src={home} alt="menu-icon" className="mr-4 w-auto xl:mr-6" />
           <p className="hidden text-white sm:block">Home</p>
         </Link>
         <Link
           to={"/search"}
           className="flex w-full items-center justify-start p-3 hover:bg-neutral-600"
         >
-          <img src={search} alt="search" className="mr-4 w-auto xl:mr-6" />
+          <img src={search} alt="menu-icon" className="mr-4 w-auto xl:mr-6" />
           <p className="hidden text-white sm:block">Search</p>
         </Link>
       </div>
@@ -75,7 +78,7 @@ export default function Menu() {
           >
             <img
               src={libraryImg}
-              alt="library"
+              alt="menu-icon"
               className="mr-4 w-auto xl:mr-6"
             />
             <p className="hidden text-white sm:block">Library</p>
@@ -84,7 +87,7 @@ export default function Menu() {
             to={"/favorites"}
             className="flex w-full items-center justify-start p-3 pl-2.5 hover:bg-neutral-600"
           >
-            <img src={heart} alt="favorites" className="mr-4 w-auto xl:mr-6" />
+            <img src={heart} alt="menu-icon" className="mr-4 w-auto xl:mr-6" />
             <p className="hidden text-white sm:block">Favorites</p>
           </Link>
           <div
@@ -92,7 +95,11 @@ export default function Menu() {
             className="flex w-full items-center justify-start p-3 py-0 pl-2.5 hover:bg-neutral-600 lg:py-3"
             onClick={showCreationMenu}
           >
-            <img src={add} alt="new-playlist" className="mr-4 w-auto xl:mr-6" />
+            <img
+              src={add}
+              alt="new-menu-icon"
+              className="mr-4 w-auto xl:mr-6"
+            />
             <p className="hidden text-white sm:block">New Playlist</p>
           </div>
         </div>
@@ -105,7 +112,7 @@ export default function Menu() {
             >
               <img
                 src={album.image[0]?.url || ""}
-                alt="album"
+                alt="menu-icon"
                 onError={(e) => (e.currentTarget.src = userplaylist)}
                 className="mr-4 h-[35px] w-[35px] rounded-md shadow-md shadow-black xl:mr-6"
               />
@@ -122,7 +129,7 @@ export default function Menu() {
             >
               <img
                 src={playlist.image[0]?.url || ""}
-                alt="playlist"
+                alt="menu-icon"
                 onError={(e) => (e.currentTarget.src = userplaylist)}
                 className="mr-4 h-[35px] w-[35px] rounded-md shadow-md shadow-black xl:mr-6"
               />
@@ -139,7 +146,7 @@ export default function Menu() {
             >
               <img
                 src={userplaylist}
-                alt="userplaylist"
+                alt="menu-icon"
                 className="mr-4 h-[35px] w-[35px] rounded-md bg-emerald-500 shadow-md shadow-black xl:mr-6"
               />
               <p className="line-clamp-1 hidden text-ellipsis whitespace-nowrap text-sm text-neutral-200 sm:block">
@@ -151,7 +158,7 @@ export default function Menu() {
         <div className="mb-16 flex w-full items-center justify-start p-3">
           <img
             src={status ? online : offline}
-            alt="library"
+            alt="menu-icon"
             className="mr-4 h-[28px] w-[28px] xl:mr-6"
           />
           <p

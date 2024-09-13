@@ -4,8 +4,10 @@ import notifsImg from "../../assets/bell-svgrepo-com.svg";
 import { ActivityType } from "../../types/GlobalTypes";
 
 export default function Nav() {
-  const { greeting, recents, notifications, setNotifications } =
-    useBoundStore();
+  const greeting = useBoundStore((state) => state.greeting);
+  const recents = useBoundStore((state) => state.recents);
+  const notifications = useBoundStore((state) => state.notifications);
+  const setNotifications = useBoundStore((state) => state.setNotifications);
 
   function toggleNotifs() {
     if (notifications) {
@@ -19,7 +21,7 @@ export default function Nav() {
     return (
       <>
         <li className="mb-0.5 line-clamp-1 flex h-[35px] w-full flex-shrink-0 items-center justify-start overflow-hidden text-ellipsis whitespace-nowrap rounded-lg bg-black px-2">
-          <p className=" mx-1 line-clamp-1 w-auto text-ellipsis text-xs font-semibold text-neutral-300">
+          <p className="mx-1 line-clamp-1 w-auto text-ellipsis text-xs font-semibold text-neutral-300">
             {message}
           </p>
         </li>

@@ -22,22 +22,22 @@ import tick from "../../assets/icons8-tick.svg";
 import "../../App.css";
 
 export default function NowPlaying() {
-  const {
-    library,
-    nowPlaying,
-    setFavoriteSong,
-    favorites,
-    removeFavorite,
-    setIsPlaying,
-    removeFromUserPlaylist,
-    setCreationTrack,
-    setRevealCreation,
-    isShuffling,
-    setNowPlaying,
-    setShowPlayer,
-    setIsShuffling,
-    setHistory,
-  } = useBoundStore();
+  const library = useBoundStore((state) => state.library);
+  const nowPlaying = useBoundStore((state) => state.nowPlaying);
+  const setFavoriteSong = useBoundStore((state) => state.setFavoriteSong);
+  const favorites = useBoundStore((state) => state.favorites);
+  const removeFavorite = useBoundStore((state) => state.removeFavorite);
+  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
+  const removeFromUserPlaylist = useBoundStore(
+    (state) => state.removeFromUserPlaylist,
+  );
+  const setCreationTrack = useBoundStore((state) => state.setCreationTrack);
+  const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
+  const isShuffling = useBoundStore((state) => state.isShuffling);
+  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
+  const setShowPlayer = useBoundStore((state) => state.setShowPlayer);
+  const setIsShuffling = useBoundStore((state) => state.setIsShuffling);
+  const setHistory = useBoundStore((state) => state.setHistory);
   const [currentTime, setCurrentTime] = useState(0);
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const songIndex = nowPlaying.queue.songs?.findIndex(
@@ -431,6 +431,7 @@ export default function NowPlaying() {
             className="h-[3px] w-full appearance-none transition-all ease-linear disabled:cursor-not-allowed"
             max={1}
             step={0.1}
+            aria-label="Volume"
             value={wavesurfer.current?.getVolume()}
             onChange={(e) =>
               wavesurfer.current?.setVolume(Number(e.target.value))

@@ -15,17 +15,19 @@ import brokenheart from "../../assets/heart-break.svg";
 import { useState } from "react";
 
 export default function Favorites() {
-  const {
-    favorites,
-    setIsPlaying,
-    nowPlaying,
-    setIsShuffling,
-    isShuffling,
-    setNowPlaying,
-    removeFavoriteAlbum,
-    removeFavoritePlaylist,
-    setQueue,
-  } = useBoundStore();
+  const favorites = useBoundStore((state) => state.favorites);
+  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
+  const nowPlaying = useBoundStore((state) => state.nowPlaying);
+  const setIsShuffling = useBoundStore((state) => state.setIsShuffling);
+  const isShuffling = useBoundStore((state) => state.isShuffling);
+  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
+  const removeFavoriteAlbum = useBoundStore(
+    (state) => state.removeFavoritePlaylist,
+  );
+  const removeFavoritePlaylist = useBoundStore(
+    (state) => state.removeFavoritePlaylist,
+  );
+  const setQueue = useBoundStore((state) => state.setQueue);
   const navigate = useNavigate();
 
   const FavoriteAlbum = (props: any) => {

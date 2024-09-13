@@ -24,24 +24,24 @@ import artistfallback from "../../assets/icons8-artist-fallback.png";
 import { useNavigate } from "react-router-dom";
 
 export default function MobilePlayer() {
-  const {
-    library,
-    nowPlaying,
-    setShowPlayer,
-    setIsPlaying,
-    favorites,
-    setFavoriteSong,
-    removeFavorite,
-    setNowPlaying,
-    setCreationTrack,
-    setRevealCreation,
-    removeFromUserPlaylist,
-    setFollowing,
-    removeFollowing,
-    isShuffling,
-    setIsShuffling,
-    setHistory,
-  } = useBoundStore();
+  const library = useBoundStore((state) => state.library);
+  const nowPlaying = useBoundStore((state) => state.nowPlaying);
+  const setShowPlayer = useBoundStore((state) => state.setShowPlayer);
+  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
+  const favorites = useBoundStore((state) => state.favorites);
+  const setFavoriteSong = useBoundStore((state) => state.setFavoriteSong);
+  const removeFavorite = useBoundStore((state) => state.removeFavorite);
+  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
+  const setCreationTrack = useBoundStore((state) => state.setCreationTrack);
+  const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
+  const removeFromUserPlaylist = useBoundStore(
+    (state) => state.removeFromUserPlaylist,
+  );
+  const setFollowing = useBoundStore((state) => state.setFollowing);
+  const removeFollowing = useBoundStore((state) => state.removeFollowing);
+  const isShuffling = useBoundStore((state) => state.isShuffling);
+  const setIsShuffling = useBoundStore((state) => state.setIsShuffling);
+  const setHistory = useBoundStore((state) => state.setHistory);
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(0);

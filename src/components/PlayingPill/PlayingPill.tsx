@@ -6,14 +6,12 @@ import favorite from "../../assets/icons8-heart.svg";
 import favorited from "../../assets/icons8-favorited.svg";
 
 export default function PlayingPill() {
-  const {
-    nowPlaying,
-    setIsPlaying,
-    setShowPlayer,
-    setFavoriteSong,
-    favorites,
-    removeFavorite,
-  } = useBoundStore();
+  const nowPlaying = useBoundStore((state) => state.nowPlaying);
+  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
+  const setShowPlayer = useBoundStore((state) => state.setShowPlayer);
+  const setFavoriteSong = useBoundStore((state) => state.setFavoriteSong);
+  const favorites = useBoundStore((state) => state.favorites);
+  const removeFavorite = useBoundStore((state) => state.removeFavorite);
 
   function playTrack(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();

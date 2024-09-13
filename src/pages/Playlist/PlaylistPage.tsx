@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { getPlaylistData } from "../../api/requests";
 import { useBoundStore } from "../../store/store";
 import fallback from "../../assets/playlist-fallback.webp";
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 import favorite from "../../assets/icons8-heart.svg";
 import favorited from "../../assets/icons8-favorited.svg";
 import play from "../../assets/icons8-play.svg";
@@ -19,32 +19,32 @@ import RouteNav from "../../components/RouteNav/RouteNav";
 
 export default function PlaylistPage() {
   const { id } = useParams();
-  const {
-    playlist,
-    setPlaylist,
-    setIsPlaying,
-    nowPlaying,
-    setNowPlaying,
-    setFavoritePlaylist,
-    removeFavoritePlaylist,
-    favorites,
-    library,
-    isShuffling,
-    setLibraryPlaylist,
-    removeLibraryPlaylist,
-    setQueue,
-    setIsShuffling,
-  } = useBoundStore();
+  const playlist = useBoundStore((state) => state.playlist);
+  const setPlaylist = useBoundStore((state) => state.setPlaylist);
+  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
+  const nowPlaying = useBoundStore((state) => state.nowPlaying);
+  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
+  const setFavoritePlaylist = useBoundStore(
+    (state) => state.setFavoritePlaylist,
+  );
+  const removeFavoritePlaylist = useBoundStore(
+    (state) => state.removeFavoritePlaylist,
+  );
+  const favorites = useBoundStore((state) => state.favorites);
+  const library = useBoundStore((state) => state.library);
+  const isShuffling = useBoundStore((state) => state.isShuffling);
+  const setLibraryPlaylist = useBoundStore((state) => state.setLibraryPlaylist);
+  const removeLibraryPlaylist = useBoundStore(
+    (state) => state.removeLibraryPlaylist,
+  );
+  const setQueue = useBoundStore((state) => state.setQueue);
+  const setIsShuffling = useBoundStore((state) => state.setIsShuffling);
 
   const { isPending: playlistPending } = useQuery({
-    queryKey: ["playlistPage"],
+    queryKey: ["playlistPage", id],
     queryFn: () => id && getPlaylistData(id),
     select: (data) => setPlaylist(data.data),
   });
-
-  useEffect(() => {
-    id && getPlaylistData(id);
-  }, [id]);
 
   function playNewPlaylist(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
@@ -57,12 +57,8 @@ export default function PlaylistPage() {
         image: playlist.image || false,
         songs: playlist.songs,
       });
-  }
-
-  useEffect(() => {
     setNowPlaying(nowPlaying.queue.songs[0]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nowPlaying.queue.id]);
+  }
 
   const PlaylistPageById = () => {
     return (

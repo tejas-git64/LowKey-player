@@ -19,19 +19,19 @@ import add from "../../assets/icons8-addplaylist-28.svg";
 import { Link } from "react-router-dom";
 
 export default function Library() {
-  const {
-    library,
-    removeLibraryAlbum,
-    removeLibraryPlaylist,
-    removeFollowing,
-    setNowPlaying,
-    removeUserPlaylist,
-    setIsPlaying,
-    nowPlaying,
-    setRevealCreation,
-    setQueue,
-    setCreationMenu,
-  } = useBoundStore();
+  const library = useBoundStore((state) => state.library);
+  const removeLibraryAlbum = useBoundStore((state) => state.removeLibraryAlbum);
+  const removeLibraryPlaylist = useBoundStore(
+    (state) => state.removeLibraryPlaylist,
+  );
+  const removeFollowing = useBoundStore((state) => state.removeFollowing);
+  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
+  const removeUserPlaylist = useBoundStore((state) => state.removeUserPlaylist);
+  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
+  const nowPlaying = useBoundStore((state) => state.nowPlaying);
+  const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
+  const setQueue = useBoundStore((state) => state.setQueue);
+  const setCreationMenu = useBoundStore((state) => state.setCreationMenu);
 
   //Album play/pause functions
   function playAlbum(

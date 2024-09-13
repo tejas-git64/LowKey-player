@@ -86,7 +86,7 @@ export type StoreType = {
   };
   album: AlbumById;
   artist: {
-    details: ArtistType;
+    details: ArtistType | null;
     songs: TrackDetails[];
     albums: AlbumType[];
   };
@@ -127,7 +127,7 @@ export type StoreType = {
   setSearch: (data: SearchType) => void;
   setPlaylist: (data: PlaylistById) => void;
   setAlbum: (data: AlbumById) => void;
-  setArtistDetails: (data: ArtistType) => void;
+  setArtistDetails: (data: ArtistType | null) => void;
   setArtistAlbums: (data: AlbumType[]) => void;
   setArtistSongs: (data: TrackDetails[]) => void;
   setNowPlaying: (data: TrackDetails | null) => void;
@@ -463,7 +463,7 @@ export const useBoundStore = create<StoreType>()(
         set((state) => {
           state.album = data;
         }),
-      setArtistDetails: (data: ArtistType) =>
+      setArtistDetails: (data: ArtistType | null) =>
         set((state) => {
           state.artist.details = data;
         }),

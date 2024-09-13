@@ -5,7 +5,7 @@ import { ActivityType, TrackDetails } from "../../types/GlobalTypes";
 import songfallback from "../../assets/icons8-song-fallback.png";
 
 export default function Recents() {
-  const { recents } = useBoundStore();
+  const recents = useBoundStore((state) => state.recents);
   const RecentSong = ({ id, name, artists, image }: TrackDetails) => {
     return (
       <>

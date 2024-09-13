@@ -10,15 +10,13 @@ import { TrackDetails, UserPlaylist } from "../../types/GlobalTypes";
 import Song from "../../components/Song/Song";
 
 export default function UserPlaylistPage() {
-  const {
-    isShuffling,
-    setIsShuffling,
-    nowPlaying,
-    library,
-    setIsPlaying,
-    setQueue,
-    setNowPlaying,
-  } = useBoundStore();
+  const isShuffling = useBoundStore((state) => state.isShuffling);
+  const setIsShuffling = useBoundStore((state) => state.setIsShuffling);
+  const nowPlaying = useBoundStore((state) => state.nowPlaying);
+  const library = useBoundStore((state) => state.library);
+  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
+  const setQueue = useBoundStore((state) => state.setQueue);
+  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
   const { id } = useParams();
   const playlist: UserPlaylist | undefined = library.userPlaylists.find(
     (playlist: UserPlaylist) => playlist.id === Number(id),

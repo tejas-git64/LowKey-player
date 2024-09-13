@@ -15,7 +15,7 @@ export default function Loading() {
               </div>
               <ul
                 id="widget-container"
-                className="absolute bottom-1.5 left-1.5 mx-auto h-[158px] w-[96.5%] list-none overflow-hidden rounded-xl bg-neutral-900 p-2 sm:static sm:ml-0 sm:mt-0 sm:h-full sm:w-full sm:pl-3 sm:pr-2.5"
+                className="absolute bottom-1.5 left-1.5 mx-auto h-[158px] w-[96.5%] list-none overflow-hidden rounded-xl bg-neutral-900 sm:static sm:ml-3 sm:mt-0 sm:h-full sm:w-[80%]"
               >
                 <SongFallback />
                 <SongFallback />
@@ -60,36 +60,36 @@ export default function Loading() {
             <div className="ml-4 h-[20px] w-28 rounded-md bg-neutral-500 px-4 pb-1"></div>
             <ul className="flex h-48 w-full overflow-hidden whitespace-nowrap p-4">
               <li className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center">
-                <div className="line-clamp-1 h-[150px] w-full rounded-full bg-neutral-500"></div>
-                <div className="mt-1 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
+                <div className="line-clamp-1 h-[150px] w-full bg-neutral-500"></div>
+                <div className="mt-2 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
               </li>
               <li className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center">
-                <div className="line-clamp-1 h-[150px] w-full rounded-full bg-neutral-500"></div>
-                <div className="mt-1 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
+                <div className="line-clamp-1 h-[150px] w-full bg-neutral-500"></div>
+                <div className="mt-2 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
               </li>
               <li className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center">
-                <div className="line-clamp-1 h-[150px] w-full rounded-full bg-neutral-500"></div>
-                <div className="mt-1 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
+                <div className="line-clamp-1 h-[150px] w-full bg-neutral-500"></div>
+                <div className="mt-2 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
               </li>
               <li className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center">
-                <div className="line-clamp-1 h-[150px] w-full rounded-full bg-neutral-500"></div>
-                <div className="mt-1 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
+                <div className="line-clamp-1 h-[150px] w-full bg-neutral-500"></div>
+                <div className="mt-2 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
               </li>
               <li className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center">
-                <div className="line-clamp-1 h-[150px] w-full rounded-full bg-neutral-500"></div>
-                <div className="mt-1 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
+                <div className="line-clamp-1 h-[150px] w-full bg-neutral-500"></div>
+                <div className="mt-2 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
               </li>
               <li className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center">
-                <div className="line-clamp-1 h-[150px] w-full rounded-full bg-neutral-500"></div>
-                <div className="mt-1 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
+                <div className="line-clamp-1 h-[150px] w-full bg-neutral-500"></div>
+                <div className="mt-2 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
               </li>
               <li className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center">
-                <div className="line-clamp-1 h-[150px] w-full rounded-full bg-neutral-500"></div>
-                <div className="mt-1 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
+                <div className="line-clamp-1 h-[150px] w-full bg-neutral-500"></div>
+                <div className="mt-2 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
               </li>
               <li className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center">
-                <div className="line-clamp-1 h-[150px] w-full rounded-full bg-neutral-500"></div>
-                <div className="mt-1 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
+                <div className="line-clamp-1 h-[150px] w-full bg-neutral-500"></div>
+                <div className="mt-2 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
               </li>
             </ul>
           </div>
@@ -98,36 +98,36 @@ export default function Loading() {
             <div className="ml-4 h-[20px] w-44 rounded-md bg-neutral-500 px-4 py-1"></div>
             <ul className="flex h-48 w-full overflow-hidden whitespace-nowrap p-4">
               <li className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center">
-                <div className="line-clamp-1 h-[150px] w-full rounded-3xl bg-neutral-500"></div>
-                <div className="mt-1 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
+                <div className="line-clamp-1 h-[150px] w-full bg-neutral-500"></div>
+                <div className="mt-2 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
               </li>
               <li className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center">
-                <div className="line-clamp-1 h-[150px] w-full rounded-3xl bg-neutral-500"></div>
-                <div className="mt-1 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
+                <div className="line-clamp-1 h-[150px] w-full bg-neutral-500"></div>
+                <div className="mt-2 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
               </li>
               <li className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center">
-                <div className="line-clamp-1 h-[150px] w-full rounded-3xl bg-neutral-500"></div>
-                <div className="mt-1 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
+                <div className="line-clamp-1 h-[150px] w-full bg-neutral-500"></div>
+                <div className="mt-2 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
               </li>
               <li className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center">
-                <div className="line-clamp-1 h-[150px] w-full rounded-3xl bg-neutral-500"></div>
-                <div className="mt-1 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
+                <div className="line-clamp-1 h-[150px] w-full bg-neutral-500"></div>
+                <div className="mt-2 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
               </li>
               <li className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center">
-                <div className="line-clamp-1 h-[150px] w-full rounded-3xl bg-neutral-500"></div>
-                <div className="mt-1 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
+                <div className="line-clamp-1 h-[150px] w-full bg-neutral-500"></div>
+                <div className="mt-2 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
               </li>
               <li className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center">
-                <div className="line-clamp-1 h-[150px] w-full rounded-3xl bg-neutral-500"></div>
-                <div className="mt-1 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
+                <div className="line-clamp-1 h-[150px] w-full bg-neutral-500"></div>
+                <div className="mt-2 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
               </li>
               <li className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center">
-                <div className="line-clamp-1 h-[150px] w-full rounded-3xl bg-neutral-500"></div>
-                <div className="mt-1 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
+                <div className="line-clamp-1 h-[150px] w-full bg-neutral-500"></div>
+                <div className="mt-2 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
               </li>
               <li className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center">
-                <div className="line-clamp-1 h-[150px] w-full rounded-3xl bg-neutral-500"></div>
-                <div className="mt-1 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
+                <div className="line-clamp-1 h-[150px] w-full bg-neutral-500"></div>
+                <div className="mt-2 line-clamp-1 h-3 w-full rounded-full bg-neutral-700"></div>
               </li>
             </ul>
           </div>

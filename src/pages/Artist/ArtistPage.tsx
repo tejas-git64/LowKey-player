@@ -3,7 +3,7 @@ import meta from "../../assets/icons8-meta.svg";
 import wiki from "../../assets/icons8-wiki.svg";
 import verified from "../../assets/icons8-verified.svg";
 import loadingGif from "../../assets/loading.svg";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   getArtistAlbums,
@@ -21,34 +21,32 @@ import songfallback from "../../assets/icons8-song-fallback.png";
 
 export default function ArtistPage() {
   const { id } = useParams();
-  const {
-    artist,
-    setArtistAlbums,
-    setArtistDetails,
-    setArtistSongs,
-    setFollowing,
-    library,
-    removeFollowing,
-  } = useBoundStore();
+  const artist = useBoundStore((state) => state.artist);
+  const setArtistAlbums = useBoundStore((state) => state.setArtistAlbums);
+  const setArtistDetails = useBoundStore((state) => state.setArtistDetails);
+  const setArtistSongs = useBoundStore((state) => state.setArtistSongs);
+  const setFollowing = useBoundStore((state) => state.setFollowing);
+  const library = useBoundStore((state) => state.library);
+  const removeFollowing = useBoundStore((state) => state.removeFollowing);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const { isPending: artistDetailsPending } = useQuery({
-    queryKey: ["artistdetails"],
+    queryKey: ["artistdetails", id],
     queryFn: () => id && getArtistDetails(id),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     select: (data: any) => setArtistDetails(data.data),
   });
 
   const { isPending: artistAlbumsPending } = useQuery({
-    queryKey: ["artistalbums"],
+    queryKey: ["artistalbums", id],
     queryFn: () => id && getArtistAlbums(id),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     select: (data: any) => setArtistAlbums(data.data.albums),
   });
 
   const { isPending: artistSongsPending } = useQuery({
-    queryKey: ["artistsongs"],
+    queryKey: ["artistsongs", id],
     queryFn: () => id && getArtistSongs(id),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     select: (data: any) => setArtistSongs(data.data.songs),
@@ -56,21 +54,13 @@ export default function ArtistPage() {
 
   function followArtist() {
     setIsLoading((prev) => !prev);
-    setTimeout(() => setIsLoading((prev) => !prev), 500);
-    setTimeout(() => setFollowing(artist.details), 500);
+    setTimeout(() => setIsLoading((prev) => !prev), 250);
+    setTimeout(() => artist.details && setFollowing(artist.details), 250);
   }
-
-  useEffect(() => {
-    if (id) {
-      getArtistDetails(id);
-      getArtistAlbums(id);
-      getArtistSongs(id);
-    }
-  }, [id]);
 
   const NewArtistPage = () => {
     return (
-      <div className="h-full w-full bg-neutral-900">
+      <div className="h-auto w-full bg-neutral-900">
         <div className="relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-600 via-neutral-800 to-black p-4 sm:flex-row sm:items-end sm:justify-between sm:bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))]">
           <div className="absolute right-2 top-2 h-auto w-auto">
             <RouteNav />
@@ -78,7 +68,7 @@ export default function ArtistPage() {
           <div className="flex h-full min-w-[80%] flex-col items-center justify-center text-center sm:h-full sm:w-[70%] sm:flex-row sm:justify-start sm:text-left">
             <img
               src={
-                artist.details.image
+                artist.details && artist.details.image
                   ? artist.details.image[1]?.url
                   : artistfallback
               }
@@ -88,7 +78,7 @@ export default function ArtistPage() {
             <div>
               <div className="flex h-fit w-full items-center justify-center sm:justify-start">
                 <p className="my-2 ml-5 line-clamp-2 w-full overflow-hidden whitespace-pre-line text-center text-3xl font-bold capitalize text-white sm:my-0 sm:ml-0 sm:w-fit sm:text-left sm:text-4xl">
-                  {artist.details.name ? artist.details.name : ""}
+                  {artist.details?.name ? artist.details?.name : ""}
                 </p>
                 <img
                   src={verified}
@@ -97,18 +87,18 @@ export default function ArtistPage() {
                 />
               </div>
               <p className="text-md font-semibold leading-5 text-neutral-400">
-                {artist.details.followerCount} Followers
+                {artist.details?.followerCount} Followers
               </p>
               <p className="text-sm font-semibold text-neutral-400">
-                {artist.details.fanCount} Fans
+                {artist.details?.fanCount} Fans
               </p>
             </div>
           </div>
           <div className="flex h-full w-full flex-col items-center justify-between sm:h-[150px] sm:items-end">
             <ul className="my-2.5 flex h-full w-[45%] items-center justify-evenly sm:my-1.5 sm:w-fit sm:items-end sm:justify-end">
-              {artist.details.fb && (
+              {artist.details?.fb && (
                 <li className="mr-4">
-                  <a href={artist.details.fb} target="_blank">
+                  <a href={artist.details?.fb} target="_blank">
                     <img
                       src={meta}
                       alt="meta"
@@ -117,9 +107,9 @@ export default function ArtistPage() {
                   </a>
                 </li>
               )}
-              {artist.details.twitter && (
+              {artist.details?.twitter && (
                 <li>
-                  <a href={artist.details.twitter} target="_blank">
+                  <a href={artist.details?.twitter} target="_blank">
                     <img
                       src={x}
                       alt="x"
@@ -129,9 +119,9 @@ export default function ArtistPage() {
                 </li>
               )}
 
-              {artist.details.fb && (
+              {artist.details?.fb && (
                 <li>
-                  <a href={artist.details.wiki} target="_blank">
+                  <a href={artist.details?.wiki} target="_blank">
                     <img
                       src={wiki}
                       alt="wiki"
@@ -142,7 +132,7 @@ export default function ArtistPage() {
               )}
             </ul>
             {library.followings.some(
-              (following) => following.id === artist.details.id,
+              (following) => following.id === artist.details?.id,
             ) ? (
               <div
                 role="button"
@@ -215,11 +205,11 @@ export default function ArtistPage() {
           </div>
         )}
         {artist.songs.length > 0 && (
-          <div className="h-auto max-h-fit w-full px-4 py-2 pb-4">
+          <div className="max-h-auto h-full w-full px-4 py-2 pb-4">
             <h2 className="pb-2 text-xl font-semibold text-white">Songs</h2>
             <ul
               id="artist-songs-list"
-              className="max-h-auto mx-auto mt-1 h-auto w-full overflow-x-hidden overflow-y-scroll bg-neutral-900 pb-28 sm:pb-20"
+              className="max-h-auto mx-auto mt-1 h-[60dvh] w-full overflow-hidden bg-neutral-900 pb-28 sm:pb-20"
             >
               {artist.songs?.length > 0 ? (
                 artist.songs.map((song: TrackDetails) => (

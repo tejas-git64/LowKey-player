@@ -13,7 +13,9 @@ import { Link, useNavigate } from "react-router-dom";
 import RouteNav from "../../components/RouteNav/RouteNav";
 
 export default function Search() {
-  const { search, setNowPlaying, setIsPlaying } = useBoundStore();
+  const search = useBoundStore((state) => state.search);
+  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
+  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
   const navigate = useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function navigateQuery(type: string, id: string, res: any) {
@@ -34,8 +36,8 @@ export default function Search() {
 
   return (
     <>
-      <div className="h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth bg-neutral-900 p-4">
-        <div className="mx-auto flex w-full items-center sm:px-2 lg:w-[95%]">
+      <div className="h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth bg-neutral-900 p-4 px-0">
+        <div className="flex w-full items-center px-3 pl-5">
           <Searchbar />
           <RouteNav />
         </div>
