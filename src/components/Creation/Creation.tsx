@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useBoundStore } from "../../store/store";
 import { UserPlaylist } from "../../types/GlobalTypes";
-import close from "../../assets/close.svg";
+import close from "../../assets/svgs/close.svg";
 
 //Playlist Creation Component
 export default function Creation() {
@@ -46,8 +46,7 @@ export default function Creation() {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const CustomPlaylist = ({ id, name }: any) => {
+  const CustomPlaylist = ({ id, name }: { id: number; name: string }) => {
     return (
       <>
         <li className="mb-1 flex h-10 w-full items-center justify-start rounded-xl bg-neutral-600 px-3">
