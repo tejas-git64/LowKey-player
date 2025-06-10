@@ -1,116 +1,132 @@
 import { useBoundStore } from "../../store/store";
-import songfallback from "../../assets/icons8-song-fallback.png";
-import play from "../../assets/icons8-play.svg";
-import pause from "../../assets/icons8-pause.svg";
-import favorite from "../../assets/icons8-heart.svg";
-import favorited from "../../assets/icons8-favorited.svg";
+import songfallback from "../../assets/fallbacks/song-fallback.webp";
+import play from "../../assets/svgs/play-icon.svg";
+import pause from "../../assets/svgs/pause-icon.svg";
+import add from "../../assets/svgs/icons8-addplaylist-28.svg";
+import favorite from "../../assets/svgs/icons8-heart.svg";
+import favorited from "../../assets/svgs/icons8-favorited.svg";
+import tick from "../../assets/svgs/icons8-tick.svg";
+import { toggleFavorite } from "../../helpers/toggleFavorite";
+import { startTransition, useMemo } from "react";
+import { TrackDetails, UserPlaylist } from "../../types/GlobalTypes";
+import { getPlaylist } from "../../helpers/getPlaylist";
+import { cleanString } from "../../helpers/cleanString";
 
 export default function PlayingPill() {
-  const nowPlaying = useBoundStore((state) => state.nowPlaying);
+  const track = useBoundStore((state) => state.nowPlaying.track);
+  const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
   const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
   const setShowPlayer = useBoundStore((state) => state.setShowPlayer);
   const setFavoriteSong = useBoundStore((state) => state.setFavoriteSong);
   const favorites = useBoundStore((state) => state.favorites);
   const removeFavorite = useBoundStore((state) => state.removeFavorite);
+  const userPlaylists = useBoundStore((state) => state.library.userPlaylists);
+  const setCreationTrack = useBoundStore((state) => state.setCreationTrack);
+  const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
+  const removeFromUserPlaylist = useBoundStore(
+    (state) => state.removeFromUserPlaylist,
+  );
+  const isFavorited = useMemo(
+    () => favorites.songs?.some((song) => song.id === track?.id),
+    [favorites],
+  );
+  const playlist: UserPlaylist | undefined = useMemo(
+    () =>
+      userPlaylists.find((obj) => {
+        return obj.songs.find((song) => {
+          return song.id === track?.id;
+        });
+      }),
+    [userPlaylists, track?.id],
+  );
 
-  function playTrack(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsPlaying(true);
-  }
-
-  function pauseTrack(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsPlaying(false);
-  }
-
-  return (
-    <div
-      onClick={() => setShowPlayer(true)}
-      className={`${
-        nowPlaying.track?.id ? "flex" : "hidden"
-      } ml-0.5 h-[50px] w-[95%] items-center justify-start overflow-hidden rounded-lg bg-black sm:hidden`}
-    >
-      <img
-        src={nowPlaying.track ? nowPlaying.track.image[0]?.url : songfallback}
-        alt="song-img"
-        onError={(e) => (e.currentTarget.src = songfallback)}
-        className="h-[50px] w-[50px] rounded-md"
-      />
-      <div className="flex h-full w-[87%] items-center justify-between">
-        <div className="ml-3 flex h-[50px] w-[55%] flex-col items-start justify-center border-white leading-4">
-          <p className="line-clamp-1 h-auto w-full text-white">
-            {nowPlaying.track?.name}
-          </p>
-          <p className="line-clamp-1 h-auto w-full text-ellipsis whitespace-nowrap text-xs text-neutral-400">
-            {nowPlaying.track?.artists.primary[0].name}
-          </p>
-        </div>
-        <div className="flex h-full w-[90px] items-center justify-around pr-2">
-          {favorites.songs?.some((song) => song.id === nowPlaying.track?.id) ? (
+  const Pill = ({ track }: { track: TrackDetails }) => {
+    return (
+      <div
+        onClick={() => setShowPlayer(true)}
+        className={`${
+          track?.id ? "flex" : "hidden"
+        } ml-0.5 h-[50px] w-[95%] cursor-pointer items-center justify-around overflow-hidden rounded-lg bg-black sm:hidden`}
+      >
+        <img
+          src={track?.image ? track.image[0]?.url : songfallback}
+          alt="song-img"
+          onError={(e) => (e.currentTarget.src = songfallback)}
+          className="h-[50px] w-[50px] rounded-md"
+        />
+        <div className="flex h-full w-[87%] items-center justify-between">
+          <div className="ml-3 flex h-[50px] w-[55%] flex-col items-start justify-center border-white leading-4">
+            <p className="line-clamp-1 h-auto w-full text-sm text-white">
+              {track ? cleanString(track?.name) : ""}
+            </p>
+            <p className="line-clamp-1 h-auto w-full text-ellipsis whitespace-nowrap text-xs text-neutral-400">
+              {track ? cleanString(track?.artists?.primary[0].name) : ""}
+            </p>
+          </div>
+          <div className="flex h-full w-[130px] items-center justify-around">
+            <button
+              className="h-auto w-auto px-1"
+              onClick={(e) =>
+                track &&
+                getPlaylist({
+                  e,
+                  track,
+                  playlist,
+                  removeFromUserPlaylist,
+                  setCreationTrack,
+                  setRevealCreation,
+                  startTransition,
+                })
+              }
+            >
+              <img
+                src={playlist?.id ? tick : add}
+                alt="add-to-playlist"
+                className="h-6 w-6"
+              />
+            </button>
+            <button
+              onClick={(e) =>
+                track &&
+                toggleFavorite({
+                  e,
+                  track,
+                  isFavorited,
+                  setFavoriteSong,
+                  removeFavorite,
+                  startTransition,
+                })
+              }
+              className="border-none bg-transparent p-0 outline-none"
+            >
+              <img
+                src={isFavorited ? favorited : favorite}
+                alt="favorite"
+                className="h-7 w-7 bg-transparent"
+              />
+            </button>
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                nowPlaying.track && removeFavorite(nowPlaying.track?.id);
+                isPlaying ? setIsPlaying(false) : setIsPlaying(true);
               }}
-              style={{
-                border: "none",
-                outline: "none",
-              }}
-              className="mx-3 border-none bg-transparent p-0 outline-none"
-            >
-              <img
-                src={favorited}
-                alt="favorite"
-                className="h-[25px] w-[25px] bg-transparent"
-              />
-            </button>
-          ) : (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                nowPlaying.track && setFavoriteSong(nowPlaying.track);
-              }}
-              style={{
-                border: "none",
-                outline: "none",
-              }}
-              className="mx-3 border-none bg-transparent p-0 outline-none disabled:cursor-not-allowed disabled:invert-[0.5]"
-              disabled={nowPlaying.track?.id === ""}
-            >
-              <img
-                src={favorite}
-                alt="favorite"
-                className="h-[25px] w-[25px] bg-transparent"
-              />
-            </button>
-          )}
-          {nowPlaying.isPlaying ? (
-            <button
-              onClick={(e) => pauseTrack(e)}
               style={{
                 border: "none",
                 outline: "none",
               }}
               className="h-auto w-auto bg-transparent p-0"
             >
-              <img src={pause} alt="pause" className="w-[35px] invert-[1]" />
+              <img
+                src={isPlaying ? pause : play}
+                alt="play-btn"
+                className="h-9 w-9 invert-[1]"
+              />
             </button>
-          ) : (
-            <button
-              onClick={(e) => playTrack(e)}
-              style={{
-                border: "none",
-                outline: "none",
-              }}
-              className="h-auto w-auto bg-transparent p-0"
-            >
-              <img src={play} alt="play" className="w-[30px] invert-[1]" />
-            </button>
-          )}
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
+
+  return track && <Pill track={track} />;
 }
