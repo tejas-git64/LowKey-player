@@ -92,12 +92,12 @@ const Song = memo(
               onError={(e) => (e.currentTarget.src = fallback)}
             />
             <p
-              className={`${isWidgetSong ? "xmd:w-[22vw] xxl:w-[13.5vw] w-[48.5vw] sm:w-[18vw] md:w-[20vw] lg:mr-[1vw] lg:w-[22vw] xl:w-[12.5vw] 2xl:w-[15vw] 2xl:max-w-60" : "w-[25vw] sm:w-[25%] md:w-[30%] lg:w-[25%] xl:w-[30%] 2xl:w-60"} line-clamp-1 flex-shrink-0 text-ellipsis text-xs font-normal text-white`}
+              className={`${isWidgetSong ? "w-[48.5vw] sm:w-[18vw] md:w-[20vw] xmd:w-[22vw] lg:mr-[1vw] lg:w-[22vw] xl:w-[12.5vw] xxl:w-[13.5vw] 2xl:w-[15vw] 2xl:max-w-60" : "w-[25vw] sm:w-[25%] md:w-[30%] lg:w-[25%] xl:w-[30%] 2xl:w-60"} line-clamp-1 flex-shrink-0 text-ellipsis text-xs font-normal text-white`}
             >
               {(track.name && cleanString(track.name)) || "Unknown track"}
             </p>
             <div
-              className={`${isWidgetSong ? "xmd:block xmd:mx-2 xlg:mx-4 xlg:block xxl:mx-5 sm:hidden lg:hidden 2xl:mx-6 2xl:block" : "mr-8 sm:ml-0 lg:mx-8 xl:mx-12 2xl:mx-10"} flex h-5 w-5 flex-shrink-0 items-center justify-start`}
+              className={`${isWidgetSong ? "sm:hidden xmd:mx-2 xmd:block lg:hidden xlg:mx-4 xlg:block xxl:mx-5 2xl:mx-6 2xl:block" : "mx-4 sm:ml-0 lg:mx-8 xl:mx-12 2xl:mx-10"} flex h-5 w-5 flex-shrink-0 items-center justify-start`}
             >
               {nowPlaying.track?.id === track?.id && nowPlaying.isPlaying && (
                 <img src={playing} alt="playing" className="h-5 w-5" />
@@ -107,7 +107,7 @@ const Song = memo(
               style={{
                 wordSpacing: "5px",
               }}
-              className={`${isWidgetSong ? "xlg:flex xlg:w-[3.5vw] xxl:w-[8.5vw] hidden xl:w-[5vw] 2xl:w-[10vw] 2xl:max-w-40" : "xmd:w-[30%] xxl:w-[30%] xxl:mr-[4%] w-[20vw] sm:mr-12 sm:w-[25%] md:mr-6 md:w-[25%] lg:mr-10 lg:w-[35%] xl:mr-[7%] xl:w-[25%] 2xl:mr-14 2xl:w-[37.5%] 2xl:max-w-96"} mr-4 line-clamp-1 flex flex-shrink-0 space-x-3 overflow-hidden font-medium text-neutral-300`}
+              className={`${isWidgetSong ? "hidden xlg:flex xlg:w-[3.5vw] xl:w-[5vw] xxl:w-[8.5vw] 2xl:w-[10vw] 2xl:max-w-40" : "w-[20vw] sm:mr-12 sm:w-[25%] md:mr-6 md:w-[25%] xmd:w-[30%] lg:mr-10 lg:w-[35%] xl:mr-[7%] xl:w-[25%] xxl:mr-[4%] xxl:w-[30%] 2xl:mr-14 2xl:w-[37.5%] 2xl:max-w-96"} mr-4 line-clamp-1 flex flex-shrink-0 space-x-3 overflow-hidden font-medium text-neutral-300`}
             >
               {artistIds?.map((id, i) => (
                 <p
@@ -120,11 +120,11 @@ const Song = memo(
               ))}
             </div>
             <p
-              className={`${isWidgetSong ? "xmd:mx-[3vw] xlg:ml-[1.5vw] xxl:mx-[0.5vw] mr-[2%] sm:ml-[4vw] sm:mr-2 md:mx-[2vw] lg:mx-[1vw] 2xl:mx-2" : "xmd:mx-4 xlg:mx-[2vw] sm:ml-4 sm:mr-[2%] sm:block md:mx-[5%] lg:mx-0 xl:mr-4"} mr-2 text-xs font-normal text-white`}
+              className={`${isWidgetSong ? "mr-[2%] sm:ml-[4vw] sm:mr-2 md:mx-[2vw] xmd:mx-[3vw] lg:mx-[1vw] xlg:ml-[1.5vw] xxl:mx-[0.5vw] 2xl:mx-2" : "sm:ml-4 sm:mr-[2%] sm:block md:mx-[5%] xmd:mx-4 lg:mx-0 xlg:mx-[2vw] xl:mr-4"} mr-2 text-xs font-normal text-white`}
             >
               {secondsToHMS(Number(track?.duration))}
             </p>
-            <div className="xlg:mx-[1vw] mx-3 flex w-14 items-center justify-evenly space-x-3 sm:w-6 md:ml-2 lg:mx-6 lg:w-12">
+            <div className="mx-3 flex w-14 items-center justify-evenly space-x-3 sm:w-6 md:ml-2 lg:mx-6 lg:w-12 xlg:mx-[1vw]">
               <button
                 className={`h-auto w-[20px] flex-shrink-0 bg-transparent p-0 opacity-0 transition-opacity group-hover:opacity-100 ${isFavorited ? "opacity-100" : "opacity-0"}`}
                 onClick={(e) =>
