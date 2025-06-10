@@ -207,7 +207,7 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
 });
 PlaylistControls.displayName = "PlaylistControls";
 
-const PlaylistInfo = () => {
+const PlaylistInfo = memo(() => {
   const images = useBoundStore((state) => state.playlist?.image);
   const name = useBoundStore((state) => state.playlist?.name);
   return (
@@ -227,10 +227,10 @@ const PlaylistInfo = () => {
       </p>
     </div>
   );
-};
+});
 PlaylistInfo.displayName = "PlaylistAlbumInfo";
 
-const PlaylistCount = () => {
+const PlaylistCount = memo(() => {
   const songCount = useBoundStore((state) => state.playlist?.songCount);
   const followerCount = useBoundStore((state) => state.playlist?.followerCount);
 
@@ -240,10 +240,10 @@ const PlaylistCount = () => {
       <p className="text-sm text-neutral-400">{songCount} Tracks</p>
     </div>
   );
-};
+});
 PlaylistCount.displayName = "PlaylistAlbumCount";
 
-const PlaylistTracks = () => {
+const PlaylistTracks = memo(() => {
   const songs = useBoundStore((state) => state.playlist?.songs);
 
   return (
@@ -257,5 +257,5 @@ const PlaylistTracks = () => {
       )}
     </ul>
   );
-};
-PlaylistTracks.displayName = 'PlaylistTracks';
+});
+PlaylistTracks.displayName = "PlaylistTracks";

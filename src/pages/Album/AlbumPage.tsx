@@ -198,7 +198,7 @@ const AlbumControls = memo(({ id }: { id: string }) => {
 });
 AlbumControls.displayName = "AlbumControls";
 
-const AlbumInfo = () => {
+const AlbumInfo = memo(() => {
   const images = useBoundStore((state) => state.album?.image);
   const name = useBoundStore((state) => state.album?.name);
   return (
@@ -218,10 +218,10 @@ const AlbumInfo = () => {
       </p>
     </div>
   );
-};
+});
 AlbumInfo.displayName = "AlbumInfo";
 
-const AlbumCount = () => {
+const AlbumCount = memo(() => {
   const songCount = useBoundStore((state) => state.album?.songCount);
   const primaryArtists = useBoundStore((state) => state.album?.primaryArtists);
 
@@ -231,10 +231,10 @@ const AlbumCount = () => {
       <p className="mr-2 text-sm text-neutral-400">{primaryArtists}</p>
     </div>
   );
-};
+});
 AlbumCount.displayName = "AlbumCount";
 
-const AlbumTracks = () => {
+const AlbumTracks = memo(() => {
   const songs = useBoundStore((state) => state.album?.songs);
 
   return (
@@ -248,5 +248,5 @@ const AlbumTracks = () => {
       )}
     </ul>
   );
-};
+});
 AlbumTracks.displayName = "AlbumTracks";
