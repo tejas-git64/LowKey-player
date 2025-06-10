@@ -1,216 +1,180 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import fallback from "../../assets/icons8-song-fallback.png";
-import { ArtistInSong, TrackDetails } from "../../types/GlobalTypes";
-import { useState } from "react";
-import notfav from "../../assets/icons8-heart.svg";
-import fav from "../../assets/icons8-favorited.svg";
-import playing from "../../assets/song-playing.svg";
+import fallback from "../../assets/fallbacks/song-fallback.webp";
+import {
+  ArtistInSong,
+  TrackDetails,
+  UserPlaylist,
+} from "../../types/GlobalTypes";
+import { startTransition, useMemo, useCallback, memo } from "react";
+import notfav from "../../assets/svgs/icons8-heart.svg";
+import fav from "../../assets/svgs/icons8-favorited.svg";
+import playing from "../../assets/gifs/play-animation.gif";
 import { useBoundStore } from "../../store/store";
 import secondsToHMS from "../../utils/utils";
-import add from "../../assets/icons8-addplaylist-28.svg";
-import tick from "../../assets/icons8-tick.svg";
+import add from "../../assets/svgs/icons8-addplaylist-28.svg";
+import tick from "../../assets/svgs/tick.svg";
+import { toggleFavorite } from "../../helpers/toggleFavorite";
+import { getPlaylist } from "../../helpers/getPlaylist";
+import { cleanString } from "../../helpers/cleanString";
 
-export default function Song(track: TrackDetails) {
-  const nowPlaying = useBoundStore((state) => state.nowPlaying);
-  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
-  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
-  const setFavoriteSong = useBoundStore((state) => state.setFavoriteSong);
-  const favorites = useBoundStore((state) => state.favorites);
-  const library = useBoundStore((state) => state.library);
-  const removeFavorite = useBoundStore((state) => state.removeFavorite);
-  const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
-  const setCreationTrack = useBoundStore((state) => state.setCreationTrack);
-  const removeFromUserPlaylist = useBoundStore(
-    (state) => state.removeFromUserPlaylist,
-  );
+const Song = memo(
+  ({ track, isWidgetSong }: { track: TrackDetails; isWidgetSong: boolean }) => {
+    const nowPlaying = useBoundStore((state) => state.nowPlaying);
+    const favorites = useBoundStore((state) => state.favorites);
+    const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
+    const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
+    const setFavoriteSong = useBoundStore((state) => state.setFavoriteSong);
+    const removeFavorite = useBoundStore((state) => state.removeFavorite);
+    const userPlaylists = useBoundStore((state) => state.library.userPlaylists);
+    const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
+    const setCreationTrack = useBoundStore((state) => state.setCreationTrack);
+    const removeFromUserPlaylist = useBoundStore(
+      (state) => state.removeFromUserPlaylist,
+    );
+    const { artistIds, artistNames, playlist } = useMemo(() => {
+      const ids: string[] = [];
+      const names: string[] = [];
+      track?.artists?.primary?.forEach((artist: ArtistInSong) => {
+        ids.push(artist.id);
+        names.push(artist.name);
+      });
+      const playlist: UserPlaylist | undefined = userPlaylists.find((obj) => {
+        return obj.songs.find((song) => {
+          return song.id === track?.id;
+        });
+      });
+      return { artistIds: ids, artistNames: names, playlist: playlist };
+    }, [track?.name]);
 
-  const [isHovered, setIsHovered] = useState(false);
-  const artistIds = track.artists?.all?.map(
-    (artist: ArtistInSong) => artist.id,
-  );
-  const artistNames = track.artists?.all?.map(
-    (artist: ArtistInSong) => artist.name,
-  );
-  const navigate = useNavigate();
-  const path = useLocation().pathname;
+    const isFavorited = useMemo(
+      () => favorites.songs?.some((song) => song.id === track?.id),
+      [favorites],
+    );
+    const navigate = useNavigate();
+    const path = useLocation().pathname;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const playlist = library.userPlaylists.find((obj) => {
-    return obj.songs.find((song) => {
-      return song.id === track?.id;
-    });
-  });
+    const navigateToArtist = useCallback(
+      (id: string) => {
+        id !== ""
+          ? navigate(`/artists/${id.replace(/\s+/g, "")}`)
+          : navigate(path);
+      },
+      [track?.id],
+    );
 
-  function removeFromPlaylist(
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    playlistid: number,
-  ) {
-    e.preventDefault();
-    e.stopPropagation();
-    removeFromUserPlaylist(playlistid, track?.id);
-  }
+    const setPlay = useCallback(
+      (e: React.MouseEvent<HTMLLIElement, MouseEvent>, song: TrackDetails) => {
+        e.stopPropagation();
+        startTransition(() => {
+          setNowPlaying(song);
+          setIsPlaying(true);
+        });
+      },
+      [track?.name],
+    );
 
-  function navigateToArtist(
-    e:
-      | React.MouseEvent<HTMLDivElement, MouseEvent>
-      | React.MouseEvent<HTMLLIElement, MouseEvent>,
-    id: string,
-  ) {
-    e.stopPropagation();
-    e.preventDefault();
-    id !== "" ? navigate(`/artists/${id.replace(/\s+/g, "")}`) : navigate(path);
-  }
-  function addFavorite(
-    e:
-      | React.MouseEvent<HTMLLIElement, MouseEvent>
-      | React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) {
-    e.preventDefault();
-    e.stopPropagation();
-    track && setFavoriteSong(track);
-  }
-  function unFavorite(
-    e:
-      | React.MouseEvent<HTMLLIElement, MouseEvent>
-      | React.MouseEvent<HTMLButtonElement, MouseEvent>,
-  ) {
-    e.stopPropagation();
-    removeFavorite(track?.id);
-  }
-  function setPlay(
-    e: React.MouseEvent<HTMLLIElement, MouseEvent>,
-    song: TrackDetails,
-  ) {
-    e.stopPropagation();
-    e.preventDefault();
-    setNowPlaying(null);
-    setNowPlaying(song);
-    setIsPlaying(true);
-  }
-  function revealTrackMenu(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-    e.stopPropagation();
-    e.preventDefault();
-    setCreationTrack(track);
-    setRevealCreation(true);
-  }
-
-  return (
-    <>
-      <li
-        id={track?.id}
-        onClick={(e) => track && setPlay(e, track)}
-        className="mb-0.5 h-12 w-full flex-shrink-0 overflow-hidden rounded-sm text-sm"
-      >
-        <div
-          style={{
-            border: "none",
-            outline: "none",
-          }}
-          className="flex h-full w-full items-center justify-between bg-neutral-800 p-0 pr-2 transition-all ease-in-out"
-          role="button"
-          onMouseOver={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
+    return (
+      <>
+        <li
+          onClick={(e) => setPlay(e, track)}
+          className="duration-70 group mb-0.5 h-12 w-full flex-shrink-0 overflow-hidden rounded-sm bg-neutral-800 text-sm transition-colors hover:bg-neutral-700"
         >
-          <img
-            src={track.image ? track.image[0]?.url : fallback}
-            alt="img"
-            width={50}
-            height={50}
-            className="mr-4 h-[50px] w-[50px] bg-black md:mr-[5%]"
-            onError={(e) => (e.currentTarget.src = fallback)}
-          />
-          <p className="line-clamp-1 w-[35%] text-ellipsis text-xs font-normal capitalize text-white sm:text-sm md:w-[30%]">
-            {track.name !== ""
-              ? track.name?.replace("&quot;", "").replace("&amp;", "")
-              : ""}
-          </p>
-          <div className="mx-2 flex h-[20px] w-[20px] items-center justify-start">
-            {nowPlaying.track?.id === track?.id && nowPlaying.isPlaying && (
-              <img src={playing} alt="playing" className="h-[20px] w-[20px]" />
-            )}
-          </div>
           <div
-            style={{
-              wordSpacing: "2px",
-            }}
-            className="mr-4 line-clamp-2 w-32 overflow-hidden whitespace-nowrap font-medium text-neutral-300 sm:flex sm:w-[20%] 2xl:w-56"
+            className="flex h-full w-full items-center justify-start p-0 pr-2 transition-all ease-in-out"
+            role="button"
           >
-            {artistIds?.map((id, i) => (
-              <div
-                key={id}
-                onClick={(e) => navigateToArtist(e, id)}
-                className="mr-2 text-xs text-neutral-400 hover:text-white"
-              >
-                {artistNames[i] !== "" ? artistNames[i] : ""}
-              </div>
-            ))}
-          </div>
-          <p className="hidden text-xs font-normal text-white sm:block">
-            {secondsToHMS(Number(track?.duration))}
-          </p>
-          <div className="mx-1 ml-3 flex w-[55px] items-center justify-between xl:ml-6">
-            {favorites.songs?.some((song) => song.id === track?.id) ? (
-              <button
-                style={{
-                  border: "none",
-                  outline: "none",
-                }}
-                className={`h-auto w-[20px] bg-transparent p-0 ${
-                  isHovered ||
-                  favorites.songs?.some((song) => song.id === track?.id)
-                    ? "opacity-100"
-                    : "opacity-0"
-                }`}
-                onClick={(e) => unFavorite(e)}
-              >
-                <img src={fav} alt="fav" />
-              </button>
-            ) : (
-              <button
-                style={{
-                  border: "none",
-                  outline: "none",
-                }}
-                className={`h-auto w-[20px] bg-transparent p-0 ${
-                  isHovered ? "opacity-100" : "opacity-0"
-                } ${
-                  favorites.songs?.some((song) => song.id === track?.id)
-                    ? "opacity-100"
-                    : "opacity-0"
-                }`}
-                onClick={(e) => addFavorite(e)}
-              >
-                <img src={notfav} alt="not-fav" />
-              </button>
-            )}
-            <button
-              style={{
-                border: "none",
-                outline: "none",
-              }}
-              onClick={(e) => revealTrackMenu(e)}
-              className={`border bg-transparent p-0 ${
-                isHovered ? "opacity-100" : "opacity-0"
-              } ${!playlist ? "block" : "hidden"}`}
+            <img
+              src={track?.image[0]?.url}
+              alt="img"
+              width={50}
+              height={50}
+              className="mr-6 h-[50px] w-[50px] bg-black sm:mr-4"
+              onError={(e) => (e.currentTarget.src = fallback)}
+            />
+            <p
+              className={`${isWidgetSong ? "xmd:w-[22vw] xxl:w-[13.5vw] w-[48.5vw] sm:w-[18vw] md:w-[20vw] lg:mr-[1vw] lg:w-[22vw] xl:w-[12.5vw] 2xl:w-[15vw] 2xl:max-w-60" : "w-[25vw] sm:w-[25%] md:w-[30%] lg:w-[25%] xl:w-[30%] 2xl:w-60"} line-clamp-1 flex-shrink-0 text-ellipsis text-xs font-normal text-white`}
             >
-              <img src={add} alt="add" className="h-[20px] w-[20px]" />
-            </button>
-            {playlist?.id && (
+              {(track.name && cleanString(track.name)) || "Unknown track"}
+            </p>
+            <div
+              className={`${isWidgetSong ? "xmd:block xmd:mx-2 xlg:mx-4 xlg:block xxl:mx-5 sm:hidden lg:hidden 2xl:mx-6 2xl:block" : "mr-8 sm:ml-0 lg:mx-8 xl:mx-12 2xl:mx-10"} flex h-5 w-5 flex-shrink-0 items-center justify-start`}
+            >
+              {nowPlaying.track?.id === track?.id && nowPlaying.isPlaying && (
+                <img src={playing} alt="playing" className="h-5 w-5" />
+              )}
+            </div>
+            <div
+              style={{
+                wordSpacing: "5px",
+              }}
+              className={`${isWidgetSong ? "xlg:flex xlg:w-[3.5vw] xxl:w-[8.5vw] hidden xl:w-[5vw] 2xl:w-[10vw] 2xl:max-w-40" : "xmd:w-[30%] xxl:w-[30%] xxl:mr-[4%] w-[20vw] sm:mr-12 sm:w-[25%] md:mr-6 md:w-[25%] lg:mr-10 lg:w-[35%] xl:mr-[7%] xl:w-[25%] 2xl:mr-14 2xl:w-[37.5%] 2xl:max-w-96"} mr-4 line-clamp-1 flex flex-shrink-0 space-x-3 overflow-hidden font-medium text-neutral-300`}
+            >
+              {artistIds?.map((id, i) => (
+                <p
+                  key={id}
+                  onClick={() => navigateToArtist(id)}
+                  className="whitespace-nowrap py-4 text-xs text-neutral-400 hover:text-white"
+                >
+                  {cleanString(artistNames[i]) || ""}
+                </p>
+              ))}
+            </div>
+            <p
+              className={`${isWidgetSong ? "xmd:mx-[3vw] xlg:ml-[1.5vw] xxl:mx-[0.5vw] mr-[2%] sm:ml-[4vw] sm:mr-2 md:mx-[2vw] lg:mx-[1vw] 2xl:mx-2" : "xmd:mx-4 xlg:mx-[2vw] sm:ml-4 sm:mr-[2%] sm:block md:mx-[5%] lg:mx-0 xl:mr-4"} mr-2 text-xs font-normal text-white`}
+            >
+              {secondsToHMS(Number(track?.duration))}
+            </p>
+            <div className="xlg:mx-[1vw] mx-3 flex w-14 items-center justify-evenly space-x-3 sm:w-6 md:ml-2 lg:mx-6 lg:w-12">
               <button
-                style={{
-                  border: "none",
-                  outline: "none",
-                }}
-                type="button"
-                onClick={(e) => playlist && removeFromPlaylist(e, playlist.id)}
-                className={`border bg-transparent p-0 opacity-100`}
+                className={`h-auto w-[20px] flex-shrink-0 bg-transparent p-0 opacity-0 transition-opacity group-hover:opacity-100 ${isFavorited ? "opacity-100" : "opacity-0"}`}
+                onClick={(e) =>
+                  track &&
+                  toggleFavorite({
+                    e,
+                    track,
+                    isFavorited,
+                    setFavoriteSong,
+                    removeFavorite,
+                    startTransition,
+                  })
+                }
               >
-                <img src={tick} alt="tick" className="h-[20px] w-[20px]" />
+                <img
+                  width={18}
+                  height={18}
+                  src={isFavorited ? fav : notfav}
+                  alt="not-fav"
+                />
               </button>
-            )}
+              <button
+                type="button"
+                onClick={(e) =>
+                  track &&
+                  getPlaylist({
+                    e,
+                    track,
+                    playlist,
+                    removeFromUserPlaylist,
+                    setCreationTrack,
+                    setRevealCreation,
+                    startTransition,
+                  })
+                }
+                className={`flex-shrink-0 border bg-transparent p-0 opacity-0 transition-opacity group-hover:opacity-100 ${!playlist?.id ? "opacity-0" : "opacity-100"}`}
+              >
+                <img
+                  width={18}
+                  height={18}
+                  src={playlist?.id ? tick : add}
+                  alt="tick"
+                />
+              </button>
+            </div>
           </div>
-        </div>
-      </li>
-    </>
-  );
-}
+        </li>
+      </>
+    );
+  },
+);
+
+export default Song;
