@@ -1,5 +1,5 @@
 import { PlaylistOfList } from "../../types/GlobalTypes";
-import fallback from "../../assets/playlist-fallback.webp";
+import fallback from "../../assets/fallbacks/playlist-fallback.webp";
 import { useNavigate } from "react-router-dom";
 
 export default function Playlist({ id, image, name }: PlaylistOfList) {
