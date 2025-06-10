@@ -1,12 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
-import reactlogo from "../../assets/icons8-react.png";
-import tailwindlogo from "../../assets/icons8-tailwindcss.png";
-import bg480 from "../../assets/landing/landing-480px.webp";
-import bg640 from "../../assets/landing/landing-640px.webp";
-import bg768 from "../../assets/landing/landing-768px.webp";
-import bg1024 from "../../assets/landing/landing-1024px.webp";
-import bg1280 from "../../assets/landing/landing-1280px.webp";
-import bg1536 from "../../assets/landing/landing-1536px.webp";
+import reactlogo from "../../assets/svgs/react.svg";
+import tailwindlogo from "../../assets/svgs/tailwindcss.svg";
+import bg480 from "../../assets/images/landing/landing-480px.webp";
+import bg640 from "../../assets/images/landing/landing-640px.webp";
+import bg768 from "../../assets/images/landing/landing-768px.webp";
+import bg1024 from "../../assets/images/landing/landing-1024px.webp";
+import bg1280 from "../../assets/images/landing/landing-1280px.webp";
+import bg1536 from "../../assets/images/landing/landing-1536px.webp";
 import { useEffect, useState } from "react";
 
 export default function Intro() {
@@ -117,7 +117,7 @@ export default function Intro() {
             <Link
               to="/home"
               onClick={toHome}
-              className="transition-bg h-auto w-auto rounded-lg border-none bg-[#a855f7] p-2 px-4 text-sm font-extrabold text-black hover:bg-teal-500 hover:text-black"
+              className="transition-bg h-auto w-auto rounded-lg border-none bg-[#a855f7] p-2 px-4 text-sm font-extrabold transition-colors duration-200 text-black hover:bg-teal-500 hover:text-black"
             >
               Check it out
             </Link>
