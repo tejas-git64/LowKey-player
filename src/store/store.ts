@@ -5,15 +5,15 @@ import {
   ArtistType,
   ChartType,
   GlobalHome,
-  Image,
   PlaylistById,
   PlaylistOfList,
   PlaylistType,
-  Queue,
+  SongQueue,
   SearchType,
   Song,
   TrackDetails,
   UserPlaylist,
+  ArtistInSong,
 } from "../types/GlobalTypes";
 import { immer } from "zustand/middleware/immer";
 import { produce } from "immer";
@@ -25,10 +25,10 @@ export type StoreType = {
   home: {
     widget: PlaylistById | null;
     timely: {
-      today: PlaylistById;
-      weekly: PlaylistById;
-      monthly: PlaylistById;
-      yearly: PlaylistById;
+      viral: PlaylistById | null;
+      weekly: PlaylistById | null;
+      monthly: PlaylistById | null;
+      latest: PlaylistById | null;
     };
     default: {
       albums: AlbumType[];
@@ -69,22 +69,8 @@ export type StoreType = {
     history: TrackDetails[];
     activity: string[];
   };
-  playlist: {
-    id: string;
-    userId: string;
-    name: string;
-    followerCount: string;
-    songCount: string;
-    fanCount: string;
-    username: string;
-    firstname: string;
-    lastname: string;
-    shares: string;
-    image: Image[];
-    url: string;
-    songs: TrackDetails[];
-  };
-  album: AlbumById;
+  playlist: PlaylistById | null;
+  album: AlbumById | null;
   artist: {
     details: ArtistType | null;
     songs: TrackDetails[];
@@ -96,7 +82,7 @@ export type StoreType = {
     isPlaying: boolean;
     isMobilePlayer: boolean;
     isFavorite: boolean;
-    queue: Queue;
+    queue: SongQueue | null;
   };
   favorites: {
     songs: TrackDetails[];
@@ -106,7 +92,7 @@ export type StoreType = {
   library: {
     albums: AlbumById[];
     playlists: PlaylistById[];
-    followings: ArtistType[];
+    followings: ArtistInSong[];
     userPlaylists: UserPlaylist[];
   };
   isShuffling: boolean;
@@ -118,10 +104,10 @@ export type StoreType = {
   setWidgetData: (data: PlaylistById) => void;
   setDefault: (data: GlobalHome) => void;
   setGenres: (genre: string, data: PlaylistOfList[]) => void;
-  setToday: (data: PlaylistById) => void;
+  setViral: (data: PlaylistById) => void;
   setWeekly: (data: PlaylistById) => void;
   setMonthly: (data: PlaylistById) => void;
-  setYearly: (data: PlaylistById) => void;
+  setLatest: (data: PlaylistById) => void;
   setHistory: (data: TrackDetails) => void;
   setActivity: (message: string) => void;
   setSearch: (data: SearchType) => void;
@@ -141,7 +127,7 @@ export type StoreType = {
   removeFavorite: (id: string) => void;
   removeFavoriteAlbum: (id: string) => void;
   removeFavoritePlaylist: (id: string) => void;
-  setFollowing: (song: ArtistType) => void;
+  setFollowing: (song: ArtistInSong) => void;
   setLibraryAlbum: (data: AlbumById) => void;
   setLibraryPlaylist: (data: PlaylistById) => void;
   removeFollowing: (id: string) => void;
@@ -154,7 +140,7 @@ export type StoreType = {
   removeUserPlaylist: (id: number) => void;
   setRevealCreation: (isRevealed: boolean) => void;
   setCreationTrack: (song: TrackDetails) => void;
-  setQueue: (data: Queue) => void;
+  setQueue: (data: SongQueue) => void;
   setNotifications: (show: boolean) => void;
 };
 
@@ -167,82 +153,12 @@ export const useBoundStore = create<StoreType>()(
           greeting: str,
         })),
       home: {
-        widget: {
-          id: "",
-          userId: "",
-          name: "",
-          followerCount: "",
-          songCount: "",
-          fanCount: "",
-          username: "",
-          firstname: "",
-          lastname: "",
-          shares: "",
-          image: [],
-          url: "",
-          songs: [],
-        },
+        widget: null,
         timely: {
-          today: {
-            id: "",
-            userId: "",
-            name: "",
-            followerCount: "",
-            songCount: "",
-            fanCount: "",
-            username: "",
-            firstname: "",
-            lastname: "",
-            shares: "",
-            image: [],
-            url: "",
-            songs: [],
-          },
-          weekly: {
-            id: "",
-            userId: "",
-            name: "",
-            followerCount: "",
-            songCount: "",
-            fanCount: "",
-            username: "",
-            firstname: "",
-            lastname: "",
-            shares: "",
-            image: [],
-            url: "",
-            songs: [],
-          },
-          monthly: {
-            id: "",
-            userId: "",
-            name: "",
-            followerCount: "",
-            songCount: "",
-            fanCount: "",
-            username: "",
-            firstname: "",
-            lastname: "",
-            shares: "",
-            image: [],
-            url: "",
-            songs: [],
-          },
-          yearly: {
-            id: "",
-            userId: "",
-            name: "",
-            followerCount: "",
-            songCount: "",
-            fanCount: "",
-            username: "",
-            firstname: "",
-            lastname: "",
-            shares: "",
-            image: [],
-            url: "",
-            songs: [],
-          },
+          viral: null,
+          weekly: null,
+          monthly: null,
+          latest: null,
         },
         default: {
           albums: [],
@@ -278,139 +194,6 @@ export const useBoundStore = create<StoreType>()(
           soul: [],
         },
       },
-      recents: {
-        history: [],
-        activity: [],
-      },
-      playlist: {
-        id: "",
-        userId: "",
-        name: "",
-        followerCount: "",
-        songCount: "",
-        fanCount: "",
-        username: "",
-        firstname: "",
-        lastname: "",
-        shares: "",
-        image: [],
-        url: "",
-        songs: [],
-      },
-      album: {
-        id: "",
-        name: "",
-        year: "",
-        releaseDate: "",
-        songCount: "",
-        url: "",
-        primaryArtistsId: "",
-        primaryArtists: "",
-        featuredArtists: [],
-        artists: [],
-        image: [],
-        songs: [],
-      },
-      artist: {
-        details: {
-          id: "",
-          name: "",
-          url: "",
-          image: [],
-          followerCount: "",
-          fanCount: "",
-          isVerified: false,
-          dominantLanguage: "",
-          dominantType: "",
-          bio: [],
-          dob: "",
-          fb: "",
-          twitter: "",
-          wiki: "",
-          availableLanguages: [],
-          isRadioPresent: false,
-        },
-        songs: [],
-        albums: [],
-      },
-      search: {
-        topQuery: {
-          results: [],
-          position: 0,
-        },
-        songs: {
-          results: [],
-          position: 0,
-        },
-        albums: {
-          results: [],
-          position: 0,
-        },
-        artists: {
-          results: [],
-          position: 0,
-        },
-        playlists: {
-          results: [],
-          position: 0,
-        },
-      },
-      nowPlaying: {
-        track: {
-          id: "",
-          name: "",
-          type: "",
-          album: {
-            id: "",
-            name: "",
-            url: "",
-          },
-          year: "",
-          releaseDate: "",
-          duration: "",
-          label: "",
-          artists: {
-            all: [],
-            featured: [],
-            primary: [],
-          },
-          lyricsId: "",
-          explicitContent: 0,
-          playCount: 0,
-          language: "",
-          hasLyrics: "",
-          url: "",
-          copyright: "",
-          image: [],
-          downloadUrl: [],
-        },
-        isPlaying: false,
-        isMobilePlayer: false,
-        isFavorite: false,
-        queue: {
-          id: "",
-          name: "",
-          image: [],
-          songs: [],
-        },
-      },
-      favorites: {
-        songs: [],
-        albums: [],
-        playlists: [],
-      },
-      library: {
-        followings: [],
-        albums: [],
-        playlists: [],
-        userPlaylists: [],
-      },
-      isShuffling: false,
-      isReplay: false,
-      isCreationMenu: false,
-      revealCreation: false,
-      creationTrack: null,
-      notifications: false,
       setWidgetData: (data: PlaylistById) =>
         set((state) => {
           state.home.widget = data;
@@ -423,9 +206,9 @@ export const useBoundStore = create<StoreType>()(
         set((state) => {
           state.home.genres[genre] = data;
         }),
-      setToday: (data: PlaylistById) =>
+      setViral: (data: PlaylistById) =>
         set((state) => {
-          state.home.timely.today = data;
+          state.home.timely.viral = data;
         }),
       setWeekly: (data: PlaylistById) =>
         set((state) => {
@@ -435,10 +218,14 @@ export const useBoundStore = create<StoreType>()(
         set((state) => {
           state.home.timely.monthly = data;
         }),
-      setYearly: (data: PlaylistById) =>
+      setLatest: (data: PlaylistById) =>
         set((state) => {
-          state.home.timely.yearly = data;
+          state.home.timely.latest = data;
         }),
+      recents: {
+        history: [],
+        activity: [],
+      },
       setHistory: (data: TrackDetails) =>
         set(
           produce((state) => {
@@ -451,40 +238,55 @@ export const useBoundStore = create<StoreType>()(
             state.recents.activity.unshift(message);
           }),
         ),
-      setSearch: (data: SearchType) =>
-        set((state) => {
-          state.search = data;
-        }),
+      playlist: null,
       setPlaylist: (data: PlaylistById) =>
         set((state) => {
           state.playlist = data;
         }),
+      album: null,
       setAlbum: (data: AlbumById) =>
         set((state) => {
           state.album = data;
         }),
+      artist: {
+        details: null,
+        songs: [],
+        albums: [],
+      },
       setArtistDetails: (data: ArtistType | null) =>
         set((state) => {
           state.artist.details = data;
-        }),
-      setArtistAlbums: (data: AlbumType[]) =>
-        set((state) => {
-          state.artist.albums = data;
         }),
       setArtistSongs: (data: TrackDetails[]) =>
         set((state) => {
           state.artist.songs = data;
         }),
+      setArtistAlbums: (data: AlbumType[]) =>
+        set((state) => {
+          state.artist.albums = data;
+        }),
+      search: {
+        topQuery: null,
+        songs: null,
+        albums: null,
+        artists: null,
+        playlists: null,
+      },
+      setSearch: (data: SearchType) =>
+        set((state) => {
+          state.search = data;
+        }),
+      nowPlaying: {
+        track: null,
+        isPlaying: false,
+        isMobilePlayer: false,
+        isFavorite: false,
+        queue: null,
+      },
       setNowPlaying: (data: TrackDetails | null) =>
         set((state) => {
           state.nowPlaying.track = data;
         }),
-      setQueue: (data: Queue) =>
-        set(
-          produce((state) => {
-            state.nowPlaying.queue = data;
-          }),
-        ),
       setIsPlaying: (status: boolean) =>
         set((state) => {
           state.nowPlaying.isPlaying = status;
@@ -493,37 +295,54 @@ export const useBoundStore = create<StoreType>()(
         set((state) => {
           state.nowPlaying.isMobilePlayer = isShow;
         }),
-      setIsShuffling: (isShuffled: boolean) =>
-        set((state) => {
-          state.isShuffling = isShuffled;
-        }),
-      setIsReplay: (replay: boolean) =>
-        set((state) => {
-          state.isReplay = replay;
-        }),
+      setQueue: (data: SongQueue) =>
+        set(
+          produce((state) => {
+            state.nowPlaying.queue = data;
+          }),
+        ),
+      favorites: {
+        songs: [],
+        albums: [],
+        playlists: [],
+      },
       setFavoriteSong: (song: TrackDetails) => {
         set(
           produce((state) => {
-            state.favorites.songs.push(song);
+            if (
+              !state.favorites.songs.some((s: TrackDetails) => s.id === song.id)
+            ) {
+              state.favorites.songs.push(song);
+              get().setActivity(`Added ${song.name} to favorites 💘`);
+            }
           }),
         );
-        get().setActivity(`Added ${song.name} to favorites 💘`);
       },
       setFavoriteAlbum: (data: AlbumById) => {
         set(
           produce((state) => {
-            state.favorites.albums.push(data);
+            if (
+              !state.favorites.albums.some((a: AlbumById) => a.id === data.id)
+            ) {
+              state.favorites.albums.push(data);
+              get().setActivity(`Added ${data.name} to favorites 💘`);
+            }
           }),
         );
-        get().setActivity(`Added ${data.name} to favorites 💘`);
       },
       setFavoritePlaylist: (data: PlaylistById) => {
         set(
           produce((state) => {
-            state.favorites.playlists.push(data);
+            if (
+              !state.favorites.playlists.some(
+                (p: PlaylistById) => p.id === data.id,
+              )
+            ) {
+              state.favorites.playlists.push(data);
+              get().setActivity(`Added ${data.name} to favorites 💘`);
+            }
           }),
         );
-        get().setActivity(`Added ${data.name} to favorites 💘`);
       },
       removeFavorite: (id: string) =>
         set(
@@ -549,7 +368,13 @@ export const useBoundStore = create<StoreType>()(
             );
           }),
         ),
-      setFollowing: (data: ArtistType) => {
+      library: {
+        followings: [],
+        albums: [],
+        playlists: [],
+        userPlaylists: [],
+      },
+      setFollowing: (data: ArtistInSong) => {
         set(
           produce((state) => {
             state.library.followings.unshift(data);
@@ -557,6 +382,14 @@ export const useBoundStore = create<StoreType>()(
         );
         get().setActivity(`Started following ${data.name} ✨`);
       },
+      removeFollowing: (id: string) =>
+        set(
+          produce((state) => {
+            state.library.followings = state.library.followings.filter(
+              (following: ArtistInSong) => following.id !== id,
+            );
+          }),
+        ),
       setLibraryAlbum: (data: AlbumById) => {
         set(
           produce((state) => {
@@ -565,22 +398,6 @@ export const useBoundStore = create<StoreType>()(
         );
         get().setActivity(`Added ${data.name} to Library 📚`);
       },
-      setLibraryPlaylist: (data: PlaylistById) => {
-        set(
-          produce((state) => {
-            state.library.playlists.unshift(data);
-          }),
-        );
-        get().setActivity(`Added ${data.name} to Library 📚`);
-      },
-      removeFollowing: (id: string) =>
-        set(
-          produce((state) => {
-            state.library.followings = state.library.followings.filter(
-              (following: ArtistType) => following.id !== id,
-            );
-          }),
-        ),
       removeLibraryAlbum: (id: string) =>
         set(
           produce((state) => {
@@ -589,6 +406,14 @@ export const useBoundStore = create<StoreType>()(
             );
           }),
         ),
+      setLibraryPlaylist: (data: PlaylistById) => {
+        set(
+          produce((state) => {
+            state.library.playlists.unshift(data);
+          }),
+        );
+        get().setActivity(`Added ${data.name} to Library 📚`);
+      },
       removeLibraryPlaylist: (id: string) =>
         set(
           produce((state) => {
@@ -597,10 +422,6 @@ export const useBoundStore = create<StoreType>()(
             );
           }),
         ),
-      setCreationMenu: (show: boolean) =>
-        set((state) => {
-          state.isCreationMenu = show;
-        }),
       setToUserPlaylist: (song: TrackDetails, id: number) => {
         set(
           produce((state) => {
@@ -643,14 +464,32 @@ export const useBoundStore = create<StoreType>()(
             );
           }),
         ),
+      isShuffling: false,
+      setIsShuffling: (isShuffled: boolean) =>
+        set((state) => {
+          state.isShuffling = isShuffled;
+        }),
+      isReplay: false,
+      setIsReplay: (replay: boolean) =>
+        set((state) => {
+          state.isReplay = replay;
+        }),
+      isCreationMenu: false,
+      setCreationMenu: (show: boolean) =>
+        set((state) => {
+          state.isCreationMenu = show;
+        }),
+      revealCreation: false,
       setRevealCreation: (isRevealed: boolean) =>
         set((state) => {
           state.revealCreation = isRevealed;
         }),
+      creationTrack: null,
       setCreationTrack: (song: TrackDetails) =>
         set((state) => {
           state.creationTrack = song;
         }),
+      notifications: false,
       setNotifications: (show: boolean) =>
         set((state) => {
           state.notifications = show;
