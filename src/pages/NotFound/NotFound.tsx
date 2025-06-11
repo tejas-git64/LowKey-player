@@ -1,9 +1,9 @@
-import nf480 from "../../assets/notfound/notfound-480px.webp";
-import nf640 from "../../assets/notfound/notfound-640px.webp";
-import nf768 from "../../assets/notfound/notfound-landscape-768px.webp";
-import nf1024 from "../../assets/notfound/notfound-landscape-1024px.webp";
-import nf1280 from "../../assets/notfound/notfound-landscape-1280px.webp";
-import nf1536 from "../../assets/notfound/notfound-landscape-1536px.webp";
+import nf480 from "../../assets/images/notfound/notfound-480px.webp";
+import nf640 from "../../assets/images/notfound/notfound-640px.webp";
+import nf768 from "../../assets/images/notfound/notfound-landscape-768px.webp";
+import nf1024 from "../../assets/images/notfound/notfound-landscape-1024px.webp";
+import nf1280 from "../../assets/images/notfound/notfound-landscape-1280px.webp";
+import nf1536 from "../../assets/images/notfound/notfound-landscape-1536px.webp";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
