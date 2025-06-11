@@ -14,6 +14,7 @@ import { PlaylistById, TrackDetails } from "../../types/GlobalTypes";
 import { useQuery } from "@tanstack/react-query";
 import ListLoading from "./Loading";
 import RouteNav from "../../components/RouteNav/RouteNav";
+import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
 
 export default function PlaylistPage() {
   const { id } = useParams();
@@ -57,6 +58,7 @@ export default function PlaylistPage() {
 const PlaylistControls = memo(({ id }: { id: string }) => {
   const isShuffling = useBoundStore((state) => state.isShuffling);
   const setIsShuffling = useBoundStore((state) => state.setIsShuffling);
+  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
   const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
   const favorites = useBoundStore((state) => state.favorites.playlists);
   const playlists = useBoundStore((state) => state.library.playlists);
@@ -74,28 +76,11 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
     (state) => state.removeLibraryPlaylist,
   );
   const setQueue = useBoundStore((state) => state.setQueue);
-
   const isAdded = playlists.some((playlist) => playlist?.id === id);
   const isFavorite = favorites.some(
     (playlist: PlaylistById) => playlist?.id === id,
   );
   const isPlaylistPlaying = isPlaying && queue?.id === id;
-
-  const handlePlay = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.stopPropagation();
-    if (!isPlaylistPlaying) {
-      playlist !== null &&
-        setQueue({
-          id: playlist?.id,
-          name: playlist?.name,
-          image: playlist?.image || false,
-          songs: playlist?.songs,
-        });
-      setIsPlaying(true);
-    } else {
-      setIsPlaying(false);
-    }
-  };
 
   const handlePlaylist = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -120,6 +105,10 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
       }
     }
   };
+
+  useEffect(() => {
+    localStorage.setItem("favorite-playlists", JSON.stringify(favorites));
+  }, [favorites]);
 
   return (
     <div className="mr-1 flex w-[170px] items-center justify-between sm:mr-0">
@@ -193,7 +182,17 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
           outline: "none",
           border: "none",
         }}
-        onClick={handlePlay}
+        onClick={(e) =>
+          playlist &&
+          handleCollectionPlayback(
+            e,
+            playlist,
+            isPlaying,
+            setQueue,
+            setNowPlaying,
+            setIsPlaying,
+          )
+        }
         className="rounded-full bg-emerald-400 p-1"
       >
         <img
