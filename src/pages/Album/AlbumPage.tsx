@@ -14,6 +14,7 @@ import addedToAlbum from "../../assets/svgs/tick.svg";
 import ListLoading from "../Playlist/Loading";
 import { useQuery } from "@tanstack/react-query";
 import RouteNav from "../../components/RouteNav/RouteNav";
+import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
 
 export default function AlbumPage() {
   const { id } = useParams();
@@ -60,6 +61,7 @@ const AlbumControls = memo(({ id }: { id: string }) => {
   const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
   const favorites = useBoundStore((state) => state.favorites.albums);
   const albums = useBoundStore((state) => state.library.albums);
+  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
   const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
   const queue = useBoundStore((state) => state.nowPlaying.queue);
   const album = useBoundStore((state) => state.album);
@@ -73,22 +75,6 @@ const AlbumControls = memo(({ id }: { id: string }) => {
   const isAdded = albums.some((playlist) => playlist?.id === id);
   const isFavorite = favorites.some((album: AlbumById) => album?.id === id);
   const isAlbumPlaying = isPlaying && queue?.id === id;
-
-  const handlePlay = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.stopPropagation();
-    if (!isAlbumPlaying) {
-      album !== null &&
-        setQueue({
-          id: album?.id,
-          name: album?.name,
-          image: album?.image || false,
-          songs: album?.songs,
-        });
-      setIsPlaying(true);
-    } else {
-      setIsPlaying(false);
-    }
-  };
 
   const handleAlbum = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
@@ -111,6 +97,10 @@ const AlbumControls = memo(({ id }: { id: string }) => {
       }
     }
   };
+
+  useEffect(() => {
+    localStorage.setItem("favorite-albums", JSON.stringify(favorites));
+  }, [favorites]);
 
   return (
     <div className="mr-1 flex w-[170px] items-center justify-between sm:mr-0">
@@ -184,7 +174,17 @@ const AlbumControls = memo(({ id }: { id: string }) => {
           outline: "none",
           border: "none",
         }}
-        onClick={handlePlay}
+        onClick={(e) =>
+          album &&
+          handleCollectionPlayback(
+            e,
+            album,
+            isPlaying,
+            setQueue,
+            setNowPlaying,
+            setIsPlaying,
+          )
+        }
         className="rounded-full bg-emerald-400 p-1"
       >
         <img
