@@ -8,7 +8,7 @@ export const FollowButton = memo(({ artist }: { artist: ArtistInSong }) => {
   const followings = useBoundStore((state) => state.library.followings);
   const isFollowing = useMemo(
     () => followings.some((a) => a.id === artist.id),
-    [followings],
+    [followings, artist.id],
   );
 
   const handleFollowing = (
