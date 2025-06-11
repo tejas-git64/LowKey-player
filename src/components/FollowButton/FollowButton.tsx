@@ -26,7 +26,7 @@ export const FollowButton = memo(({ artist }: { artist: ArtistInSong }) => {
     <button
       type="button"
       onClick={handleFollowing}
-      className={`mx-3 rounded-sm ${isFollowing ? "px-0.5 text-emerald-500" : "border-none bg-white px-3"} py-0.5 text-sm font-semibold text-black`}
+      className={`w-[85px] rounded-sm ${isFollowing ? "text-emerald-500 outline outline-1" : "bg-neutral-300 outline-none hover:bg-white"} transition-outline duration-1500 px-3 py-1.5 text-sm font-semibold text-black transition-colors ease-in`}
     >
       {isFollowing ? "Following" : "Follow"}
     </button>
