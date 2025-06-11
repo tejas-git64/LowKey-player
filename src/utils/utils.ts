@@ -1,21 +1,21 @@
 export const genres = [
-  "pop",
-  "hiphop",
+  "indie",
+  "edm",
+  "metal",
+  "punk",
+  "party",
+  "jazz",
   "love",
   "rap",
   "workout",
-  "jazz",
+  "pop",
+  "hiphop",
   "rock",
   "melody",
   "lofi",
   "chill",
   "focus",
   "instrumental",
-  "indie",
-  "edm",
-  "metal",
-  "punk",
-  "party",
   "folk",
   "devotional",
   "ambient",
@@ -26,11 +26,11 @@ export const genres = [
 //ids for timely playlists
 export const timelyData = [
   {
-    id: 110858205,
-    timely: "today",
+    id: 1223482895,
+    timely: "viral",
   },
   {
-    id: 7386899,
+    id: 2252904,
     timely: "weekly",
   },
   {
@@ -38,8 +38,8 @@ export const timelyData = [
     timely: "monthly",
   },
   {
-    id: 1180899296,
-    timely: "yearly",
+    id: 1210453303,
+    timely: "latest",
   },
 ];
 
@@ -66,65 +66,13 @@ export const defaultSearchData = {
   },
 };
 
-export const songData = {
-  id: "",
-  name: "",
-  type: "",
-  album: {
-    id: "",
-    name: "",
-    url: "",
+export const PLAYER_CONSTANTS = {
+  MOBILE_BREAKPOINT: 640,
+  DEFAULT_VOLUME: 0.5,
+  VOLUME_THRESHOLDS: {
+    MUTE: 0.1,
+    MEDIUM: 0.75,
   },
-  year: "",
-  releaseDate: "",
-  duration: "",
-  label: "",
-  primaryArtists: "",
-  primaryArtistsId: "",
-  featuredArtists: "",
-  featuredArtistsId: "",
-  explicitContent: "",
-  playCount: 0,
-  language: "",
-  hasLyrics: "",
-  url: "",
-  copyright: "",
-  image: [
-    {
-      quality: "",
-      link: "",
-    },
-    {
-      quality: "",
-      link: "",
-    },
-    {
-      quality: "",
-      link: "",
-    },
-  ],
-  downloadUrl: [
-    {
-      quality: "",
-      link: "",
-    },
-    {
-      quality: "",
-      link: "",
-    },
-    {
-      quality: "",
-      link: "",
-    },
-    {
-      quality: "",
-      link: "",
-    },
-    {
-      quality: "",
-      link: "",
-    },
-  ],
 };
 
 export default function secondsToHMS(seconds: number) {
