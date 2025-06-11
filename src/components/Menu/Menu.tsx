@@ -36,7 +36,7 @@ export default function Menu() {
       id="menu"
       className="hidden h-full max-h-screen overflow-hidden border-l-2 border-black bg-neutral-950 sm:block sm:w-[60px] lg:w-72 xl:w-80 2xl:w-96"
     >
-      <div className="flex h-auto w-full flex-col items-start justify-evenly overflow-hidden bg-neutral-800">
+      <div className="flex h-auto w-full flex-col items-start justify-evenly overflow-hidden bg-neutral-800 lg:pl-1">
         <Link
           to={"/home"}
           className="flex w-full items-center justify-start p-3 hover:bg-neutral-600"
@@ -57,14 +57,14 @@ export default function Menu() {
           <img
             src={search}
             alt="menu-icon"
-            className="ml-0.5 mr-[18px] w-7 flex-shrink-0 xl:mr-[22px]"
+            className="mr-[18px] w-7 flex-shrink-0 xl:mr-[22px]"
           />
           <p className="-mt-0.5 hidden text-base font-normal text-white sm:block">
             Search
           </p>
         </Link>
       </div>
-      <div className="relative mt-[3px] flex h-[88.5%] w-full flex-col items-center justify-start overflow-hidden bg-neutral-800 lg:h-[88%]">
+      <div className="relative mt-[3px] flex h-[88.5%] w-full flex-col items-center justify-start overflow-hidden bg-neutral-800 lg:h-[88%] lg:pl-1">
         <div className="h-[150px] w-full lg:h-[155px]">
           <Link
             to={"/library"}
