@@ -6,7 +6,7 @@ export default function RouteNav() {
   const navigate = useNavigate();
 
   return (
-    <div className="max-w-auto ml-2 flex w-[45px] flex-shrink-0 items-center justify-between sm:w-[60px]">
+    <div className="max-w-auto flex w-[55px] flex-shrink-0 items-center justify-between sm:w-[60px]">
       <button
         onClick={() => navigate(-1)} // go to previous page
         className="bg-transparent p-0"
