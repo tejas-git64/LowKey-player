@@ -64,7 +64,7 @@ const ArtistInfo = memo(({ id }: { id: string }) => {
         <div>
           <div className="flex h-fit w-full items-center justify-center sm:justify-start">
             <p className="sm:max-w-auto my-2 ml-5 line-clamp-2 w-full whitespace-pre-line text-center text-3xl font-bold capitalize text-white sm:my-0 sm:ml-0 sm:min-w-min sm:text-left sm:text-4xl">
-              {details?.name || ""}
+              {details?.name || "Unknown Artist"}
             </p>
             <img src={verified} alt="verified" className="h-[24px] w-[24px]" />
           </div>
