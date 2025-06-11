@@ -5,42 +5,16 @@ export type Song = {
 
 export type Image = {
   quality: string;
-  url: string;
+  url: string | undefined;
 };
 
-export type AlbumType = {
+export type ArtistInSong = {
   id: string;
   name: string;
-  year: string;
-  type: string;
-  playCount: string;
-  language: string;
-  explicitContent: string;
-  songCount: string;
-  url: string;
-  primaryArtists: [
-    {
-      id: string;
-      name: string;
-      url: string;
-      image: boolean;
-      type: string;
-      role: string;
-    },
-  ];
-  featuredArtists: [];
-  artists: [
-    {
-      id: string;
-      name: string;
-      url: string;
-      image: boolean;
-      type: string;
-      role: string;
-    },
-  ];
+  role: string;
   image: Image[];
-  songs: TrackDetails[];
+  type: string;
+  url: string;
 };
 
 export type PlaylistType = {
@@ -103,76 +77,6 @@ export type ArtistType = {
   isRadioPresent: boolean;
 };
 
-export type Track = {
-  id: string;
-  name: string;
-  type: string;
-  album: {
-    id: string;
-    name: string;
-    url: string;
-  };
-  year: string;
-  releaseDate: string;
-  duration: string;
-  label: string;
-  primaryArtists: [
-    {
-      id: string;
-      name: string;
-      url: string;
-      image: Image[];
-      type: string;
-      role: string;
-    },
-  ];
-  featuredArtists: [];
-  explicitContent: string;
-  playCount: string;
-  language: string;
-  url: string;
-  image: Image[];
-};
-
-export type ArtistInSong = {
-  id: string;
-  name: string;
-  role: string;
-  image: Image[];
-  type: string;
-  url: string;
-};
-
-export type TrackDetails = {
-  id: string;
-  name: string;
-  type: string;
-  year: string;
-  releaseDate: string;
-  duration: string;
-  label: string;
-  explicitContent: number;
-  playCount: number;
-  language: string;
-  hasLyrics: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  lyricsId: any;
-  url: string;
-  copyright: string;
-  artists: {
-    primary: ArtistInSong[];
-    featured: ArtistInSong[];
-    all: ArtistInSong[];
-  };
-  album: {
-    id: string;
-    name: string;
-    url: string;
-  };
-  image: Image[];
-  downloadUrl: Song[];
-};
-
 export type GlobalHome = {
   albums: AlbumType[];
   charts: ChartType[];
@@ -181,10 +85,6 @@ export type GlobalHome = {
     songs: Song[];
     albums: AlbumType[];
   };
-};
-
-export type SectionType = {
-  genre: string;
 };
 
 export type PlaylistById = {
@@ -288,11 +188,11 @@ export type PlaylistSearch = {
 };
 
 export type SearchType = {
-  topQuery: TopQuerySearch;
-  songs: SongAlbumSearch;
-  albums: SongAlbumSearch;
-  artists: ArtistSearch;
-  playlists: PlaylistSearch;
+  topQuery: TopQuerySearch | null;
+  songs: SongAlbumSearch | null;
+  albums: SongAlbumSearch | null;
+  artists: ArtistSearch | null;
+  playlists: PlaylistSearch | null;
 };
 
 export type UserPlaylist = {
@@ -301,9 +201,77 @@ export type UserPlaylist = {
   songs: TrackDetails[];
 };
 
-export type Queue = {
+export type SongQueue = {
   id: string;
   name: string;
   image: boolean | Image[];
   songs: TrackDetails[];
+};
+
+export type AlbumType = {
+  id: string;
+  name: string;
+  year: string;
+  type: string;
+  playCount: string;
+  language: string;
+  explicitContent: string;
+  songCount: string;
+  url: string;
+  primaryArtists: ArtistInSong[];
+  featuredArtists: [];
+  artists: ArtistInSong[];
+  image: Image[];
+  songs: TrackDetails[];
+};
+
+export type Track = {
+  id: string;
+  name: string;
+  type: string;
+  album: {
+    id: string;
+    name: string;
+    url: string;
+  };
+  year: string;
+  releaseDate: string;
+  duration: string;
+  label: string;
+  primaryArtists: ArtistInSong[];
+  featuredArtists: [];
+  explicitContent: string;
+  playCount: string;
+  language: string;
+  url: string;
+  image: Image[];
+};
+
+export type TrackDetails = {
+  id: string;
+  name: string;
+  type: string;
+  year: string;
+  releaseDate: string;
+  duration: string;
+  label: string;
+  explicitContent: number;
+  playCount: number;
+  language: string;
+  hasLyrics: string;
+  lyricsId: any;
+  url: string;
+  copyright: string;
+  artists: {
+    primary: ArtistInSong[];
+    featured: ArtistInSong[];
+    all: ArtistInSong[];
+  };
+  album: {
+    id: string;
+    name: string;
+    url: string;
+  };
+  image: Image[];
+  downloadUrl: Song[];
 };
