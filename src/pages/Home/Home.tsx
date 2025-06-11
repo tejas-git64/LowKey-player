@@ -4,8 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { TrackDetails } from "../../types/GlobalTypes";
 import Loading from "./Loading";
 import Section from "../../components/Section/Section";
-import play from "../../assets/svgs/icons8-play.svg";
-import pause from "../../assets/svgs/icons8-pause.svg";
+import play from "../../assets/svgs/play-icon.svg";
+import pause from "../../assets/svgs/pause-icon.svg";
 import Song from "../../components/Song/Song";
 import fallbacktoday from "../../assets/fallbacks/timely/icons8-timely-today.png";
 import fallbackweekly from "../../assets/fallbacks/timely/icons8-timely-weekly.png";
@@ -141,13 +141,13 @@ const Widget = memo(() => {
               border: "1px solid #000",
             }}
             onClick={handlePlaylist}
-            className="rounded-full bg-emerald-500 p-2"
+            className="rounded-full bg-emerald-500 p-1.5"
           >
             <img
               src={isPlaying ? pause : play}
               alt="play"
               loading="lazy"
-              className="h-[28px] w-[28px] pl-0.5"
+              className="h-8 w-8"
             />
           </button>
         </div>
