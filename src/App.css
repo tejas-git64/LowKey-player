@@ -2,6 +2,7 @@
   width: 100%;
   margin: 0 auto;
   height: 100dvh;
+  background-color: black;
   font-family: "Outfit", sans-serif;
 }
 
@@ -15,6 +16,7 @@ button {
   border: none;
   outline: none;
   background-color: transparent;
+  color: white;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -25,7 +27,7 @@ button {
 #menu::-webkit-scrollbar,
 #artist-songs-list::-webkit-scrollbar,
 #widget-container::-webkit-scrollbar {
-  width: 2px;
+  width: 1px;
 }
 
 @media screen and (min-width: 640px) {
@@ -38,6 +40,7 @@ button {
     width: auto;
     background-color: #323232;
   }
+
 }
 
 #volumeSlider {
@@ -46,7 +49,7 @@ button {
   appearance: none;
   height: 12px;
   width: 100%;
-  background: #181818;
+  background: #2c2c2c;
   overflow: hidden;
   border-radius: 10px;
 }
@@ -58,6 +61,13 @@ button {
   height: 12px;
   background-color: #000;
   border-radius: 100%;
-  box-shadow: -113px 0 0 107px #00ffaa;
+  box-shadow: -163px 0 0 157px #00ffaa;
   border: 2px solid #00ffaa;
+}
+
+#fallback-ui {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #eee;
 }
