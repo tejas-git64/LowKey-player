@@ -9,7 +9,7 @@ export default function Nav() {
     <>
       <nav className="flex h-12 w-full items-center justify-between bg-gradient-to-r from-neutral-800 to-black pl-2.5 pr-[18px] sm:border-b sm:border-black sm:bg-black">
         <p className="whitespace-nowrap px-1 text-xl font-semibold text-white sm:text-lg">
-          {greeting || "Keep Jamming 🎶"}
+          {greeting || "Keep jamming 🎶"}
         </p>
         <NotificationButton />
       </nav>
