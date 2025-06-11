@@ -178,7 +178,7 @@ const ArtistSongs = memo(({ id }: { id: string }) => {
   });
 
   return (
-    <div className="max-h-auto h-full w-full px-4 py-2 pb-4">
+    <div className="max-h-auto h-full w-full px-4 py-2 pb-20">
       <h2 className="pb-2 text-xl font-semibold text-white">Songs</h2>
       <ul
         id="artist-songs-list"
