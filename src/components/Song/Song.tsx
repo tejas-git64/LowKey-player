@@ -5,7 +5,7 @@ import {
   TrackDetails,
   UserPlaylist,
 } from "../../types/GlobalTypes";
-import { startTransition, useMemo, useCallback, memo } from "react";
+import { startTransition, useMemo, useCallback, memo, useEffect } from "react";
 import notfav from "../../assets/svgs/icons8-heart.svg";
 import fav from "../../assets/svgs/icons8-favorited.svg";
 import playing from "../../assets/gifs/play-animation.gif";
@@ -62,6 +62,10 @@ const Song = memo(
       },
       [track?.name],
     );
+
+    useEffect(() => {
+      localStorage.setItem("favorite-songs", JSON.stringify(favorites.songs));
+    }, [favorites.songs]);
 
     return (
       <>
