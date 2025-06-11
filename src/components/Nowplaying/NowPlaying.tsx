@@ -569,12 +569,16 @@ const VolumeControl = memo(
 
 const Artist = (artist: ArtistInSong) => {
   const navigate = useNavigate();
+  const setShowPlayer = useBoundStore((state) => state.setShowPlayer);
 
   return (
     <div
       role={"link"}
-      onClick={() => navigate(`/artists/${artist.id}`)}
-      className="mb-2 flex w-full items-center justify-between bg-black hover:cursor-pointer"
+      onClick={() => {
+        setShowPlayer(false);
+        navigate(`/artists/${artist.id}`);
+      }}
+      className="mb-2 flex w-full items-center justify-between bg-black pr-4 hover:cursor-pointer"
     >
       <div className="flex w-auto items-center justify-start">
         <img
