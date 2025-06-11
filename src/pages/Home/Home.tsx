@@ -124,7 +124,7 @@ const Widget = memo(() => {
           width={320}
           height={320}
           fetchPriority="high"
-          className="aspect-square h-auto w-auto flex-shrink-0 rounded-sm bg-neutral-700 contain-layout sm:z-10 sm:h-[40vw] sm:w-[40vw] md:h-80 md:w-80"
+          className="aspect-square h-auto w-auto flex-shrink-0 rounded-sm bg-neutral-700 brightness-75 contain-layout sm:z-10 sm:h-[40vw] sm:w-[40vw] sm:brightness-100 md:h-80 md:w-80"
           onClick={() =>
             widget !== null &&
             widget.id !== "" &&
@@ -196,7 +196,7 @@ const TimelyPlaylists = memo(() => {
           className="flex h-12 w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-800 shadow-sm transition-all ease-linear hover:text-yellow-500 hover:shadow-md hover:shadow-yellow-500 sm:h-full"
         >
           <img
-            src={viral?.image ? viral?.image[0]?.url : fallbacktoday}
+            src={viral?.image[0]?.url || fallbacktoday}
             alt="img"
             width={56}
             height={56}
@@ -213,7 +213,7 @@ const TimelyPlaylists = memo(() => {
           className="flex h-12 w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-800 shadow-sm transition-all ease-linear hover:text-teal-500 hover:shadow-md hover:shadow-teal-500 sm:h-auto"
         >
           <img
-            src={weekly?.image ? weekly?.image[0]?.url : fallbackweekly}
+            src={weekly?.image[0]?.url || fallbackweekly}
             alt="img"
             width={56}
             height={56}
@@ -230,7 +230,7 @@ const TimelyPlaylists = memo(() => {
           className="flex h-12 w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-800 shadow-sm transition-all ease-linear hover:text-rose-500 hover:shadow-md hover:shadow-rose-500 sm:h-auto"
         >
           <img
-            src={monthly?.image ? monthly?.image[0]?.url : fallbackmonthly}
+            src={monthly?.image[0]?.url || fallbackmonthly}
             alt="img"
             width={56}
             height={56}
@@ -247,7 +247,7 @@ const TimelyPlaylists = memo(() => {
           className="flex h-12 w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-800 shadow-sm transition-all ease-linear hover:text-purple-500 hover:shadow-md hover:shadow-purple-500 sm:h-auto"
         >
           <img
-            src={latest?.image ? latest.image[0]?.url : fallbackyearly}
+            src={latest?.image[0]?.url || fallbackyearly}
             alt="img"
             width={56}
             height={56}
