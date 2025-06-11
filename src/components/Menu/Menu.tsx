@@ -6,16 +6,13 @@ import add from "../../assets/svgs/icons8-plus.svg";
 import heart from "../../assets/svgs/icons8-heart.svg";
 import online from "../../assets/icons8-online-28.png";
 import offline from "../../assets/icons8-offline-28.png";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useBoundStore } from "../../store/store";
 import { AlbumById, PlaylistById, UserPlaylist } from "../../types/GlobalTypes";
 import userplaylist from "../../assets/svgs/userplaylist.svg";
 
 export default function Menu() {
-  const [status, setStatus] = useState<boolean | null>(null);
-  const albums = useBoundStore((state) => state.library.albums);
-  const playlists = useBoundStore((state) => state.library.playlists);
-  const userPlaylists = useBoundStore((state) => state.library.userPlaylists);
+  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
   const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
   const setCreationMenu = useBoundStore((state) => state.setCreationMenu);
 
@@ -25,7 +22,7 @@ export default function Menu() {
   }
 
   useEffect(() => {
-    const handleNetworkChange = () => setStatus(navigator.onLine);
+    const handleNetworkChange = () => setIsOnline(navigator.onLine);
     window.addEventListener("online", handleNetworkChange);
     window.addEventListener("offline", handleNetworkChange);
     return () => {
@@ -67,7 +64,7 @@ export default function Menu() {
           </p>
         </Link>
       </div>
-      <div className="mt-[3px] flex h-[88.5%] w-full flex-col items-center justify-start overflow-hidden bg-neutral-800 lg:h-[88%]">
+      <div className="relative mt-[3px] flex h-[88.5%] w-full flex-col items-center justify-start overflow-hidden bg-neutral-800 lg:h-[88%]">
         <div className="h-[150px] w-full lg:h-[155px]">
           <Link
             to={"/library"}
@@ -110,73 +107,82 @@ export default function Menu() {
             </p>
           </div>
         </div>
-        <div className="mt-2 flex h-auto w-full flex-col items-center justify-center overflow-y-auto overflow-x-hidden pb-6 lg:ml-0.5 2xl:ml-1">
-          {albums.map((album: AlbumById) => (
-            <Link
-              to={`/albums/${album.id}`}
-              key={album.id}
-              className="flex h-[50px] w-full flex-shrink-0 items-center justify-start p-2 py-1 hover:bg-neutral-900"
-            >
-              <img
-                src={album.image[0]?.url || ""}
-                alt="menu-icon"
-                onError={(e) => (e.currentTarget.src = userplaylist)}
-                className="mr-4 h-[35px] w-[35px] rounded-md shadow-md shadow-black xl:mr-6"
-              />
-              <p className="line-clamp-1 hidden text-ellipsis whitespace-nowrap text-sm text-neutral-200 sm:block">
-                {album.name}
-              </p>
-            </Link>
-          ))}
-          {playlists.map((playlist: PlaylistById) => (
-            <Link
-              to={`/playlists/${playlist.id}`}
-              key={playlist.id}
-              className="flex h-[50px] w-full flex-shrink-0 items-center justify-start p-2 py-1 hover:bg-neutral-900"
-            >
-              <img
-                src={playlist.image[0]?.url || ""}
-                alt="menu-icon"
-                onError={(e) => (e.currentTarget.src = userplaylist)}
-                className="mr-4 h-[35px] w-[35px] rounded-md shadow-md shadow-black xl:mr-6"
-              />
-              <p className="line-clamp-1 hidden text-ellipsis whitespace-nowrap text-sm text-neutral-200 sm:block">
-                {playlist.name}
-              </p>
-            </Link>
-          ))}
-          {userPlaylists.map((playlist: UserPlaylist) => (
-            <Link
-              to={`/userplaylists/${playlist.id}`}
-              key={playlist.id}
-              className="flex h-[50px] w-full flex-shrink-0 items-center justify-start p-2 py-1 hover:bg-neutral-900"
-            >
-              <img
-                src={userplaylist}
-                alt="menu-icon"
-                className="mr-4 h-[35px] w-[35px] rounded-md bg-emerald-500 shadow-md shadow-black xl:mr-6"
-              />
-              <p className="line-clamp-1 hidden text-ellipsis whitespace-nowrap text-sm text-neutral-200 sm:block">
-                {playlist.name}
-              </p>
-            </Link>
-          ))}
-        </div>
-        <div className="mb-16 flex w-full items-center justify-start p-3">
+        <RecentPlaylistsOrAlbums />
+        <div className="absolute bottom-[70px] flex w-full items-center justify-start bg-inherit p-3">
           <img
-            src={status ? online : offline}
+            src={isOnline ? online : offline}
             alt="menu-icon"
-            className="mr-4 h-[28px] w-[28px] xl:mr-6"
+            className="mr-4 h-7 w-7 xl:mr-6"
           />
           <p
             className={`hidden ${
-              status ? "text-white" : "text-neutral-500"
+              isOnline ? "text-white" : "text-red-600"
             } text-sm sm:block`}
           >
-            {status ? "Online" : "Offline"}
+            {isOnline ? "Online" : "Offline"}
           </p>
         </div>
       </div>
     </div>
   );
 }
+
+const RecentPlaylistsOrAlbums = memo(() => {
+  const albums = useBoundStore((state) => state.library.albums);
+  const playlists = useBoundStore((state) => state.library.playlists);
+  const userPlaylists = useBoundStore((state) => state.library.userPlaylists);
+  return (
+    <div className="mt-2 flex h-auto w-full flex-col items-center justify-center overflow-y-auto overflow-x-hidden pb-6 lg:ml-0.5 2xl:ml-1">
+      {albums.map((album: AlbumById) => (
+        <Link
+          to={`/albums/${album.id}`}
+          key={album.id}
+          className="flex h-[50px] w-full flex-shrink-0 items-center justify-start p-2 py-1 hover:bg-neutral-900"
+        >
+          <img
+            src={album.image[0]?.url || ""}
+            alt="menu-icon"
+            onError={(e) => (e.currentTarget.src = userplaylist)}
+            className="mr-4 h-[35px] w-[35px] rounded-md shadow-md shadow-black xl:mr-6"
+          />
+          <p className="line-clamp-1 hidden text-ellipsis whitespace-nowrap text-sm text-neutral-200 sm:block">
+            {album.name}
+          </p>
+        </Link>
+      ))}
+      {playlists.map((playlist: PlaylistById) => (
+        <Link
+          to={`/playlists/${playlist.id}`}
+          key={playlist.id}
+          className="flex h-[50px] w-full flex-shrink-0 items-center justify-start p-2 py-1 hover:bg-neutral-900"
+        >
+          <img
+            src={playlist.image[0]?.url || ""}
+            alt="menu-icon"
+            onError={(e) => (e.currentTarget.src = userplaylist)}
+            className="mr-4 h-[35px] w-[35px] rounded-md shadow-md shadow-black xl:mr-6"
+          />
+          <p className="line-clamp-1 hidden text-ellipsis whitespace-nowrap text-sm text-neutral-200 sm:block">
+            {playlist.name}
+          </p>
+        </Link>
+      ))}
+      {userPlaylists.map((playlist: UserPlaylist) => (
+        <Link
+          to={`/userplaylists/${playlist.id}`}
+          key={playlist.id}
+          className="flex h-[50px] w-full flex-shrink-0 items-center justify-start p-2 py-1 hover:bg-neutral-900"
+        >
+          <img
+            src={userplaylist}
+            alt="menu-icon"
+            className="mr-4 h-[35px] w-[35px] rounded-md bg-emerald-500 shadow-md shadow-black xl:mr-6"
+          />
+          <p className="line-clamp-1 hidden text-ellipsis whitespace-nowrap text-sm text-neutral-200 sm:block">
+            {playlist.name}
+          </p>
+        </Link>
+      ))}
+    </div>
+  );
+});
