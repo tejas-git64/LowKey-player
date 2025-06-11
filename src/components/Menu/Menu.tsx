@@ -1,34 +1,23 @@
 import { Link } from "react-router-dom";
-import home from "../../assets/icons8-home.svg";
-import search from "../../assets/icons8-search.svg";
-import libraryImg from "../../assets/icons8-library.svg";
-import add from "../../assets/icons8-plus.svg";
-import heart from "../../assets/icons8-heart.svg";
+import home from "../../assets/svgs/icons8-home.svg";
+import search from "../../assets/svgs/icons8-search.svg";
+import libraryImg from "../../assets/svgs/icons8-library.svg";
+import add from "../../assets/svgs/icons8-plus.svg";
+import heart from "../../assets/svgs/icons8-heart.svg";
 import online from "../../assets/icons8-online-28.png";
 import offline from "../../assets/icons8-offline-28.png";
 import { useEffect, useState } from "react";
 import { useBoundStore } from "../../store/store";
 import { AlbumById, PlaylistById, UserPlaylist } from "../../types/GlobalTypes";
-import userplaylist from "../../assets/userplaylist.svg";
+import userplaylist from "../../assets/svgs/userplaylist.svg";
 
 export default function Menu() {
   const [status, setStatus] = useState<boolean | null>(null);
-  const library = useBoundStore((state) => state.library);
+  const albums = useBoundStore((state) => state.library.albums);
+  const playlists = useBoundStore((state) => state.library.playlists);
+  const userPlaylists = useBoundStore((state) => state.library.userPlaylists);
   const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
   const setCreationMenu = useBoundStore((state) => state.setCreationMenu);
-
-  async function checkConnection() {
-    try {
-      const res = await fetch("https://www.bing.com"); //temporary ping checker
-      if (res.ok) {
-        return true;
-      } else {
-        return false;
-      }
-    } catch (err) {
-      return false;
-    }
-  }
 
   function showCreationMenu() {
     setRevealCreation(true);
@@ -36,41 +25,49 @@ export default function Menu() {
   }
 
   useEffect(() => {
-    setStatus(window.navigator.onLine);
-    async function updateNetworkStatus() {
-      const result = await checkConnection();
-      setStatus(result);
-    }
-    window.addEventListener("online", updateNetworkStatus);
-    window.addEventListener("offline", updateNetworkStatus);
+    const handleNetworkChange = () => setStatus(navigator.onLine);
+    window.addEventListener("online", handleNetworkChange);
+    window.addEventListener("offline", handleNetworkChange);
     return () => {
-      window.removeEventListener("online", updateNetworkStatus);
-      window.removeEventListener("offline", updateNetworkStatus);
+      window.removeEventListener("online", handleNetworkChange);
+      window.removeEventListener("offline", handleNetworkChange);
     };
   }, []);
 
   return (
     <div
       id="menu"
-      className="hidden h-full max-h-screen overflow-hidden border-r-2 border-black bg-neutral-950 sm:block sm:w-[60px] lg:w-72 xl:w-80 2xl:w-96"
+      className="hidden h-full max-h-screen overflow-hidden border-l-2 border-black bg-neutral-950 sm:block sm:w-[60px] lg:w-72 xl:w-80 2xl:w-96"
     >
-      <div className="flex h-auto w-full flex-col items-start justify-evenly overflow-hidden rounded-l-lg border-l-[3px] border-neutral-950 bg-neutral-800">
+      <div className="flex h-auto w-full flex-col items-start justify-evenly overflow-hidden bg-neutral-800">
         <Link
           to={"/home"}
           className="flex w-full items-center justify-start p-3 hover:bg-neutral-600"
         >
-          <img src={home} alt="menu-icon" className="mr-4 w-auto xl:mr-6" />
-          <p className="hidden text-white sm:block">Home</p>
+          <img
+            src={home}
+            alt="menu-icon"
+            className="mr-4 w-7 flex-shrink-0 xl:mr-6"
+          />
+          <p className="hidden text-base font-normal text-white sm:block">
+            Home
+          </p>
         </Link>
         <Link
           to={"/search"}
           className="flex w-full items-center justify-start p-3 hover:bg-neutral-600"
         >
-          <img src={search} alt="menu-icon" className="mr-4 w-auto xl:mr-6" />
-          <p className="hidden text-white sm:block">Search</p>
+          <img
+            src={search}
+            alt="menu-icon"
+            className="ml-0.5 mr-5 w-[25px] xl:mr-6"
+          />
+          <p className="-mt-0.5 hidden text-base font-normal text-white sm:block">
+            Search
+          </p>
         </Link>
       </div>
-      <div className="mt-[3px] flex h-[88.5%] w-full flex-col items-center justify-start overflow-hidden rounded-l-lg border-l-[3px] border-neutral-950 bg-neutral-800 lg:h-[88%]">
+      <div className="mt-[3px] flex h-[88.5%] w-full flex-col items-center justify-start overflow-hidden bg-neutral-800 lg:h-[88%]">
         <div className="h-[150px] w-full lg:h-[155px]">
           <Link
             to={"/library"}
@@ -79,32 +76,42 @@ export default function Menu() {
             <img
               src={libraryImg}
               alt="menu-icon"
-              className="mr-4 w-auto xl:mr-6"
+              className="xl:mr-5.5 ml-0.5 mr-5 w-[23px] xl:w-6 2xl:mr-[26px]"
             />
-            <p className="hidden text-white sm:block">Library</p>
+            <p className="hidden text-base font-normal text-white sm:block">
+              Library
+            </p>
           </Link>
           <Link
             to={"/favorites"}
             className="flex w-full items-center justify-start p-3 pl-2.5 hover:bg-neutral-600"
           >
-            <img src={heart} alt="menu-icon" className="mr-4 w-auto xl:mr-6" />
-            <p className="hidden text-white sm:block">Favorites</p>
+            <img
+              src={heart}
+              alt="menu-icon"
+              className="ml-0.5 mr-4 w-[27px] xl:mr-6 xl:w-7"
+            />
+            <p className="-mt-1 hidden text-base font-normal text-white sm:block">
+              Favorites
+            </p>
           </Link>
           <div
             role="button"
-            className="flex w-full items-center justify-start p-3 py-0 pl-2.5 hover:bg-neutral-600 lg:py-3"
+            className="-mt-0.5 flex w-full items-center justify-start px-3 pl-2.5 hover:bg-neutral-600 lg:py-3"
             onClick={showCreationMenu}
           >
             <img
               src={add}
               alt="new-menu-icon"
-              className="mr-4 w-auto xl:mr-6"
+              className="ml-1 mr-5 w-6 xl:mr-6"
             />
-            <p className="hidden text-white sm:block">New Playlist</p>
+            <p className="-mt-0.5 hidden text-base font-normal text-white sm:block">
+              New playlist
+            </p>
           </div>
         </div>
         <div className="mt-2 flex h-auto w-full flex-col items-center justify-center overflow-y-auto overflow-x-hidden pb-6 lg:ml-0.5 2xl:ml-1">
-          {library.albums?.map((album: AlbumById) => (
+          {albums.map((album: AlbumById) => (
             <Link
               to={`/albums/${album.id}`}
               key={album.id}
@@ -121,7 +128,7 @@ export default function Menu() {
               </p>
             </Link>
           ))}
-          {library.playlists?.map((playlist: PlaylistById) => (
+          {playlists.map((playlist: PlaylistById) => (
             <Link
               to={`/playlists/${playlist.id}`}
               key={playlist.id}
@@ -138,7 +145,7 @@ export default function Menu() {
               </p>
             </Link>
           ))}
-          {library.userPlaylists?.map((playlist: UserPlaylist) => (
+          {userPlaylists.map((playlist: UserPlaylist) => (
             <Link
               to={`/userplaylists/${playlist.id}`}
               key={playlist.id}
