@@ -44,7 +44,7 @@ export default function Menu() {
           <img
             src={home}
             alt="menu-icon"
-            className="mr-4 w-7 flex-shrink-0 xl:mr-6"
+            className="mr-5 w-7 flex-shrink-0 xl:mr-6"
           />
           <p className="hidden text-base font-normal text-white sm:block">
             Home
@@ -57,7 +57,7 @@ export default function Menu() {
           <img
             src={search}
             alt="menu-icon"
-            className="ml-0.5 mr-5 w-[25px] xl:mr-6"
+            className="ml-0.5 mr-[18px] w-7 flex-shrink-0 xl:mr-[22px]"
           />
           <p className="-mt-0.5 hidden text-base font-normal text-white sm:block">
             Search
@@ -73,7 +73,7 @@ export default function Menu() {
             <img
               src={libraryImg}
               alt="menu-icon"
-              className="xl:mr-5.5 ml-0.5 mr-5 w-[23px] xl:w-6 2xl:mr-[26px]"
+              className="ml-0.5 mr-[24px] w-[23px] flex-shrink-0 xl:mr-[27px] 2xl:mr-[26px]"
             />
             <p className="hidden text-base font-normal text-white sm:block">
               Library
@@ -86,7 +86,7 @@ export default function Menu() {
             <img
               src={heart}
               alt="menu-icon"
-              className="ml-0.5 mr-4 w-[27px] xl:mr-6 xl:w-7"
+              className="ml-0.5 mr-[21px] w-7 flex-shrink-0 xl:mr-6 xl:w-7"
             />
             <p className="-mt-1 hidden text-base font-normal text-white sm:block">
               Favorites
@@ -100,7 +100,7 @@ export default function Menu() {
             <img
               src={add}
               alt="new-menu-icon"
-              className="ml-1 mr-5 w-6 xl:mr-6"
+              className="mx-1 mr-[23px] w-6 flex-shrink-0 xl:mr-[26px]"
             />
             <p className="-mt-0.5 hidden text-base font-normal text-white sm:block">
               New playlist
