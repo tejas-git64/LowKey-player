@@ -74,7 +74,7 @@ export default function NowPlaying() {
   const setShowPlayer = useBoundStore((state) => state.setShowPlayer);
   let songIndex =
     queueSongs?.findIndex((song: TrackDetails) => song.id === track?.id) ?? -1;
-  const uniqueArtists = [...new Set(track?.artists.primary)].slice(0, 4);
+  const uniqueArtists = [...new Set(track?.artists?.primary)].slice(0, 4);
 
   const continuePlayback = () => {
     if (queueSongs) {
@@ -225,36 +225,39 @@ export default function NowPlaying() {
                 e.stopPropagation();
                 setAudioIndex(Number(e.target.value));
               }}
-              className="mr-4 rounded-sm bg-neutral-950 p-0.5 text-center outline-none sm:mr-0 sm:bg-black sm:px-0 sm:text-xs"
+              disabled={track.downloadUrl?.length <= 1}
+              className="mr-4 rounded-sm bg-neutral-950 p-0.5 text-center outline-none disabled:text-neutral-800 sm:mr-0 sm:bg-black sm:px-0 sm:text-xs"
             >
-              {track?.downloadUrl.map((d, i) => (
+              {track?.downloadUrl?.map((d, i) => (
                 <option key={d.url} value={i}>
                   {d.quality}
                 </option>
               ))}
             </select>
           </div>
-          <button
-            onClick={() => {
-              const url = track?.downloadUrl[audioIndex]?.url;
-              const filename = track?.name || "track";
-              if (url) {
-                handleDownload(url, filename);
-              }
-            }}
-            disabled={!track?.downloadUrl[audioIndex]?.url}
-            className={`flex w-auto items-center justify-center bg-transparent px-0 py-1 text-lg text-white transition-colors sm:py-0 ${
-              !track?.downloadUrl[audioIndex]?.url &&
-              "pointer-events-none cursor-not-allowed bg-neutral-700"
-            }`}
-          >
-            <p className="block sm:hidden">Download</p>
-            <img
-              src={downloadIcon}
-              alt="download-icon"
-              className="w-9 flex-shrink-0 pl-2 sm:h-[23px] sm:w-auto sm:pl-0"
-            />
-          </button>
+          {track.downloadUrl && (
+            <button
+              onClick={() => {
+                const url = track?.downloadUrl[audioIndex]?.url;
+                const filename = track?.name || "track";
+                if (url) {
+                  handleDownload(url, filename);
+                }
+              }}
+              disabled={!track?.downloadUrl[audioIndex]?.url}
+              className={`flex w-auto items-center justify-center bg-transparent px-0 py-1 text-lg text-white transition-colors sm:py-0 ${
+                !track?.downloadUrl[audioIndex]?.url &&
+                "pointer-events-none cursor-not-allowed bg-neutral-700"
+              }`}
+            >
+              <p className="block sm:hidden">Download</p>
+              <img
+                src={downloadIcon}
+                alt="download-icon"
+                className="w-9 flex-shrink-0 pl-2 sm:h-[23px] sm:w-auto sm:pl-0"
+              />
+            </button>
+          )}
         </div>
       )}
       {isMobilePlayer && (
