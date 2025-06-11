@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import fallback from "../../assets/fallbacks/song-fallback.webp";
 import {
   ArtistInSong,
@@ -51,16 +51,6 @@ const Song = memo(
       [favorites],
     );
     const navigate = useNavigate();
-    const path = useLocation().pathname;
-
-    const navigateToArtist = useCallback(
-      (id: string) => {
-        id !== ""
-          ? navigate(`/artists/${id.replace(/\s+/g, "")}`)
-          : navigate(path);
-      },
-      [track?.id],
-    );
 
     const setPlay = useCallback(
       (e: React.MouseEvent<HTMLLIElement, MouseEvent>, song: TrackDetails) => {
@@ -107,12 +97,15 @@ const Song = memo(
               style={{
                 wordSpacing: "5px",
               }}
-              className={`${isWidgetSong ? "hidden xlg:flex xlg:w-[3.5vw] xl:w-[5vw] xxl:w-[8.5vw] 2xl:w-[10vw] 2xl:max-w-40" : "w-[20vw] sm:mr-12 sm:w-[25%] md:mr-6 md:w-[25%] xmd:w-[30%] lg:mr-10 lg:w-[35%] xl:mr-[7%] xl:w-[25%] xxl:mr-[4%] xxl:w-[30%] 2xl:mr-14 2xl:w-[37.5%] 2xl:max-w-96"} mr-4 line-clamp-1 flex flex-shrink-0 space-x-3 overflow-hidden font-medium text-neutral-300`}
+              className={`${isWidgetSong ? "hidden xlg:flex xlg:w-[3.5vw] xl:w-[5vw] xxl:w-[8.5vw] 2xl:w-[10vw] 2xl:max-w-40" : "w-[17.5vw] sm:mr-12 sm:w-[25%] md:mr-6 md:w-[25%] xmd:w-[30%] lg:mr-10 lg:w-[35%] xl:mr-[7%] xl:w-[25%] xxl:mr-[4%] xxl:w-[30%] 2xl:mr-14 2xl:w-[37.5%] 2xl:max-w-96"} mr-4 line-clamp-1 flex flex-shrink-0 space-x-3 overflow-hidden font-medium text-neutral-300`}
             >
               {artistIds?.map((id, i) => (
                 <p
                   key={id}
-                  onClick={() => navigateToArtist(id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    id && navigate(`/artists/${id}`);
+                  }}
                   className="whitespace-nowrap py-4 text-xs text-neutral-400 hover:text-white"
                 >
                   {cleanString(artistNames[i]) || ""}
@@ -120,11 +113,11 @@ const Song = memo(
               ))}
             </div>
             <p
-              className={`${isWidgetSong ? "mr-[2%] sm:ml-[4vw] sm:mr-2 md:mx-[2vw] xmd:mx-[3vw] lg:mx-[1vw] xlg:ml-[1.5vw] xxl:mx-[0.5vw] 2xl:mx-2" : "sm:ml-4 sm:mr-[2%] sm:block md:mx-[5%] xmd:mx-4 lg:mx-0 xlg:mx-[2vw] xl:mr-4"} mr-2 text-xs font-normal text-white`}
+              className={`${isWidgetSong ? "mr-[2%] sm:ml-[4vw] sm:mr-2 md:mx-[2vw] xmd:mx-[3vw] lg:mx-[1vw] xlg:ml-[1.5vw] xxl:mx-[0.5vw] 2xl:mx-2" : "m-[1vw] sm:ml-4 sm:mr-[2%] sm:block md:mx-[5%] xmd:mx-4 lg:mx-0 xlg:mx-[2vw] xl:mr-4"} mr-2 text-xs font-normal text-white`}
             >
               {secondsToHMS(Number(track?.duration))}
             </p>
-            <div className="mx-3 flex w-14 items-center justify-evenly space-x-3 sm:w-6 md:ml-2 lg:mx-6 lg:w-12 xlg:mx-[1vw]">
+            <div className="mx-2 flex w-14 items-center justify-evenly space-x-3 sm:w-6 md:ml-2 lg:mx-6 lg:w-12 xlg:mx-[1vw]">
               <button
                 className={`h-auto w-[20px] flex-shrink-0 bg-transparent p-0 opacity-0 transition-opacity group-hover:opacity-100 ${isFavorited ? "opacity-100" : "opacity-0"}`}
                 onClick={(e) =>
