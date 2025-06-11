@@ -4,7 +4,7 @@ import { defaultSearchData } from "../utils/utils";
 //Get widget data
 export async function getWidgetData() {
   const res = await fetch(
-    `https://lowkey-backend.vercel.app/api/playlists?id=1039424150`,
+    `https://lowkey-backend.vercel.app/api/playlists?id=47599074`,
     {
       method: "GET",
       mode: "cors",
@@ -20,8 +20,8 @@ export async function getTimelyData(id: number, timely: string) {
   );
   const playlist = await res.json();
   switch (true) {
-    case timely === "today":
-      useBoundStore.getState().setToday(playlist.data);
+    case timely === "viral":
+      useBoundStore.getState().setViral(playlist.data);
       break;
     case timely === "weekly":
       useBoundStore.getState().setWeekly(playlist.data);
@@ -29,8 +29,8 @@ export async function getTimelyData(id: number, timely: string) {
     case timely === "monthly":
       useBoundStore.getState().setMonthly(playlist.data);
       break;
-    case timely === "yearly":
-      useBoundStore.getState().setYearly(playlist.data);
+    case timely === "latest":
+      useBoundStore.getState().setLatest(playlist.data);
       break;
   }
 }
