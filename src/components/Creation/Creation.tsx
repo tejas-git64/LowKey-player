@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useBoundStore } from "../../store/store";
 import { UserPlaylist } from "../../types/GlobalTypes";
 import close from "../../assets/svgs/close.svg";
+import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
 
 //Playlist Creation Component
 export default function Creation() {
   const isCreationMenu = useBoundStore((state) => state.isCreationMenu);
   const setCreationMenu = useBoundStore((state) => state.setCreationMenu);
   const setToUserPlaylist = useBoundStore((state) => state.setToUserPlaylist);
-  const library = useBoundStore((state) => state.library);
+  const userPlaylists = useBoundStore((state) => state.library.userPlaylists);
   const createNewUserPlaylist = useBoundStore(
     (state) => state.createNewUserPlaylist,
   );
@@ -17,6 +18,11 @@ export default function Creation() {
   const creationTrack = useBoundStore((state) => state.creationTrack);
   const ids: Set<number> = new Set([]);
   const [name, setName] = useState("");
+  const isPlaylistPresent = useMemo(
+    () =>
+      userPlaylists.some((playlist: UserPlaylist) => playlist.name === name),
+    [userPlaylists],
+  );
 
   function addToIds(e: React.ChangeEvent<HTMLInputElement>, id: number) {
     if (e.target.checked) {
@@ -27,24 +33,28 @@ export default function Creation() {
   }
 
   function addToPlaylist() {
-    Array.from(ids).forEach(
-      (id: number) => creationTrack && setToUserPlaylist(creationTrack, id),
-    );
+    Array.from(ids).forEach((id: number) => {
+      if (creationTrack) {
+        setToUserPlaylist(creationTrack, id);
+      }
+    });
     setRevealCreation(false);
   }
 
   function createNew() {
-    if (
-      library.userPlaylists.some(
-        (playlist: UserPlaylist) => playlist.name === name,
-      )
-    ) {
+    if (isPlaylistPresent) {
       alert(`Playlist ${name} already exists`);
     } else {
       createNewUserPlaylist(name, Math.floor(Math.random() * 10000));
       setRevealCreation(false);
     }
   }
+
+  useEffect(() => {
+    saveToLocalStorage("local-library", {
+      userPlaylists,
+    });
+  }, [userPlaylists]);
 
   const CustomPlaylist = ({ id, name }: { id: number; name: string }) => {
     return (
@@ -98,7 +108,7 @@ export default function Creation() {
               </button>
             </div>
           </div>
-          {library.userPlaylists.length < 1 && creationTrack && (
+          {userPlaylists?.length < 1 && creationTrack && (
             <p className="text-xs text-red-400">
               Create a playlist first to add to*
             </p>
@@ -142,7 +152,7 @@ export default function Creation() {
             }`}
           >
             <ul className="mt-2 h-auto w-full list-none flex-col rounded-xl">
-              {library.userPlaylists.map((playlist: UserPlaylist) => (
+              {userPlaylists?.map((playlist: UserPlaylist) => (
                 <CustomPlaylist
                   key={playlist.id}
                   id={playlist.id}
@@ -154,7 +164,7 @@ export default function Creation() {
               type="button"
               onClick={addToPlaylist}
               className={`mx-auto my-2 rounded-full bg-neutral-300 px-4 py-2 text-sm text-black hover:bg-white ${
-                library.userPlaylists ? "block" : "hidden"
+                userPlaylists ? "block" : "hidden"
               }`}
             >
               Add to playlist 🎶
