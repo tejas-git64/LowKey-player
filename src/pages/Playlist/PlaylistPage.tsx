@@ -214,10 +214,19 @@ PlaylistControls.displayName = "PlaylistControls";
 const PlaylistInfo = memo(() => {
   const images = useBoundStore((state) => state.playlist?.image);
   const name = useBoundStore((state) => state.playlist?.name);
+
+  const getPlaylistImage = () => {
+    if (images) {
+      const obj = images.find((img) => img.quality === "150x150");
+      return obj?.url;
+    }
+    return fallback;
+  };
+
   return (
     <div className="flex h-auto w-full flex-col items-start justify-start pt-1 sm:flex-row sm:items-center">
       <img
-        src={images ? images[1]?.url : fallback}
+        src={getPlaylistImage()}
         alt="img"
         className="mr-4 h-[150px] w-[150px]"
         style={{

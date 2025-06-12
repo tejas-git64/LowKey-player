@@ -99,15 +99,19 @@ const Widget = memo(() => {
     }
   };
 
+  const getWidgetImage = () => {
+    if (widget) {
+      const obj = widget.image.find((img) => img.quality === "500x500");
+      return obj?.url;
+    }
+    return widgetfallback;
+  };
+
   return (
     <div className="h-auto max-h-max w-full px-3.5 sm:pt-0.5">
       <section className="relative z-0 mx-auto mb-7 flex h-80 w-full flex-col overflow-hidden rounded-sm bg-transparent sm:my-3 sm:h-[40vw] sm:flex-row md:h-80">
         <img
-          src={
-            widget !== null && widget.image
-              ? widget.image[2]?.url
-              : widgetfallback
-          }
+          src={getWidgetImage()}
           alt="img"
           width={320}
           height={320}

@@ -50,6 +50,14 @@ const ArtistInfo = memo(({ id }: { id: string }) => {
     select: (data: any) => setArtistDetails(data.data),
   });
 
+  const getArtistImage = () => {
+    if (details) {
+      const obj = details.image.find((img) => img.quality === "150x150");
+      return obj?.url;
+    }
+    return artistfallback;
+  };
+
   return (
     <div className="relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-600 via-neutral-800 to-black p-4 sm:flex-row sm:items-end sm:justify-between sm:bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))]">
       <div className="absolute right-2 top-2 h-auto w-auto">
@@ -57,7 +65,7 @@ const ArtistInfo = memo(({ id }: { id: string }) => {
       </div>
       <div className="flex h-full min-w-[80%] flex-col items-center justify-center text-center sm:h-full sm:w-[70%] sm:flex-row sm:justify-start sm:text-left">
         <img
-          src={(details?.image && details?.image[1]?.url) || artistfallback}
+          src={getArtistImage()}
           alt="artist-img"
           className="h-[150px] w-[150px] shadow-xl shadow-black sm:mr-4"
         />

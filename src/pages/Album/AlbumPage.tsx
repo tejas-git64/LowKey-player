@@ -198,10 +198,19 @@ AlbumControls.displayName = "AlbumControls";
 const AlbumInfo = memo(() => {
   const images = useBoundStore((state) => state.album?.image);
   const name = useBoundStore((state) => state.album?.name);
+
+  const getAlbumImage = () => {
+    if (images) {
+      const obj = images.find((img) => img.quality === "150x150");
+      return obj?.url;
+    }
+    return fallback;
+  };
+
   return (
     <div className="flex h-auto w-full flex-col items-start justify-start pt-1 sm:flex-row sm:items-center">
       <img
-        src={images ? images[1]?.url : fallback}
+        src={getAlbumImage()}
         alt="img"
         className="mr-4 h-[150px] w-[150px]"
         style={{

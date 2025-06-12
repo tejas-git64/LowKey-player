@@ -4,6 +4,15 @@ import { useNavigate } from "react-router-dom";
 
 export default function Playlist({ id, image, name }: PlaylistOfList) {
   const navigate = useNavigate();
+
+  const getPlaylistImage = () => {
+    if (image) {
+      const obj = image.find((img) => img.quality === "150x150");
+      return obj?.url;
+    }
+    return fallback;
+  };
+
   return (
     <>
       <li
@@ -12,7 +21,7 @@ export default function Playlist({ id, image, name }: PlaylistOfList) {
         onClick={() => navigate(`/playlists/${id}`, { replace: true })}
       >
         <img
-          src={image[1]?.url || fallback}
+          src={getPlaylistImage()}
           alt="user-profile"
           loading="eager"
           fetchPriority="high"
