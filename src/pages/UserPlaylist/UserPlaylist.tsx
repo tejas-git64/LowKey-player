@@ -36,7 +36,7 @@ export default function UserPlaylistPage() {
     if (localSaves !== null) {
       const { userPlaylists }: LocalLibrary = JSON.parse(localSaves);
       const playlist =
-        userPlaylists.find(
+        userPlaylists?.find(
           (playlist: UserPlaylist) => playlist.id === Number(id),
         ) ?? null;
       if (playlist !== null) setUserPlaylist(playlist);

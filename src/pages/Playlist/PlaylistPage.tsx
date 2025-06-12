@@ -119,7 +119,7 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
     const localSaves = localStorage.getItem("local-library");
     if (localSaves !== null) {
       const { playlists }: LocalLibrary = JSON.parse(localSaves);
-      playlists.forEach(setLibraryPlaylist);
+      playlists?.forEach(setLibraryPlaylist);
     }
   }, []);
 

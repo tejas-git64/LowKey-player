@@ -103,7 +103,7 @@ const AlbumControls = memo(({ id }: { id: string }) => {
     const localSaves = localStorage.getItem("local-library");
     if (localSaves !== null) {
       const { albums }: LocalLibrary = JSON.parse(localSaves);
-      albums.forEach(setFavoriteAlbum);
+      albums?.forEach(setFavoriteAlbum);
     }
   }, []);
 

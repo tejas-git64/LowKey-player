@@ -110,16 +110,17 @@ export default function Library() {
           {followings &&
             followings.length > 0 &&
             followings.map((following: ArtistInSong) => (
-              <>
-                <div className="mb-[30dvh] h-auto w-full overflow-hidden">
-                  <h2 className="text-md w-full font-semibold text-white">
-                    Followings
-                  </h2>
-                  <ul className="mt-1 h-auto w-full">
-                    <Following key={following.id} {...following} />
-                  </ul>
-                </div>
-              </>
+              <div
+                key={following.id}
+                className="mb-[30dvh] h-auto w-full overflow-hidden"
+              >
+                <h2 className="text-md w-full font-semibold text-white">
+                  Followings
+                </h2>
+                <ul className="mt-1 h-auto w-full">
+                  <Following {...following} />
+                </ul>
+              </div>
             ))}
         </div>
       ) : (
