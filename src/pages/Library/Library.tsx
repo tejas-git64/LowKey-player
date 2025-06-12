@@ -1,431 +1,407 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
 import Playlist from "../../components/Playlist/Playlist";
 import RouteNav from "../../components/RouteNav/RouteNav";
 import { useBoundStore } from "../../store/store";
 import {
   AlbumById,
-  ArtistType,
+  ArtistInSong,
+  LocalLibrary,
   PlaylistById,
   UserPlaylist,
 } from "../../types/GlobalTypes";
-import close from "../../assets/close.svg";
-import play from "../../assets/icons8-play.svg";
-import pause from "../../assets/icons8-pause.svg";
-import artistfallback from "../../assets/icons8-artist-fallback.png";
-import userplaylist from "../../assets/playlist-fallback.webp";
-import unfollow from "../../assets/user-xmark.svg";
-import add from "../../assets/icons8-addplaylist-28.svg";
+import close from "../../assets/svgs/close.svg";
+import play from "../../assets/svgs/play-icon.svg";
+import pause from "../../assets/svgs/pause-icon.svg";
+import artistfallback from "../../assets/fallbacks/artist-fallback.png";
+import userplaylist from "../../assets/fallbacks/playlist-fallback.webp";
 import { Link } from "react-router-dom";
+import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
+import { FollowButton } from "../../components/FollowButton/FollowButton";
+import { memo, useEffect, useState } from "react";
+import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
 
 export default function Library() {
-  const library = useBoundStore((state) => state.library);
-  const removeLibraryAlbum = useBoundStore((state) => state.removeLibraryAlbum);
-  const removeLibraryPlaylist = useBoundStore(
-    (state) => state.removeLibraryPlaylist,
-  );
-  const removeFollowing = useBoundStore((state) => state.removeFollowing);
-  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
-  const removeUserPlaylist = useBoundStore((state) => state.removeUserPlaylist);
-  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
-  const nowPlaying = useBoundStore((state) => state.nowPlaying);
   const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
-  const setQueue = useBoundStore((state) => state.setQueue);
   const setCreationMenu = useBoundStore((state) => state.setCreationMenu);
+  const userPlaylists = useBoundStore((state) => state.library.userPlaylists);
+  const setUserPlaylist = useBoundStore((state) => state.setUserPlaylist);
+  const setLibraryPlaylist = useBoundStore((state) => state.setLibraryPlaylist);
+  const setLibraryAlbum = useBoundStore((state) => state.setLibraryAlbum);
+  const setFollowing = useBoundStore((state) => state.setFollowing);
+  const playlists = useBoundStore((state) => state.library.playlists);
+  const albums = useBoundStore((state) => state.library.albums);
+  const followings = useBoundStore((state) => state.library.followings);
+  const [hydrated, setHydrated] = useState(false);
 
-  //Album play/pause functions
-  function playAlbum(
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    album: AlbumById,
-  ) {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsPlaying(true);
-    setQueue({
-      id: album.id,
-      name: album.name,
-      image: album.image,
-      songs: album.songs,
-    });
-    setNowPlaying(album.songs[0]);
-    setIsPlaying(true);
-  }
-  function pauseAlbum(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsPlaying(false);
-  }
-  //Album play/pause functions
-  function playPlaylist(
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    playlist: any,
-  ) {
-    e.preventDefault();
-    e.stopPropagation();
-    setQueue({
-      id: playlist.id,
-      name: playlist.name,
-      songs: playlist.songs,
-      image: playlist.image || false,
-    });
-    setNowPlaying(playlist.songs[0]);
-    setIsPlaying(true);
-  }
-  function pausePlaylist(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsPlaying(false);
-  }
   function createNewPlaylist(
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) {
-    e.preventDefault();
     e.stopPropagation();
     setCreationMenu(true);
     setRevealCreation(true);
   }
 
-  const LibraryAlbum = (props: any) => {
-    const [isAlbumHovered, setIsAlbumHovered] = useState(false);
-    return (
-      <>
-        <Link
-          to={`/albums/${props.album.id}`}
-          key={props.album.id}
-          className="relative h-fit w-fit"
-          onMouseOver={() => setIsAlbumHovered(true)}
-          onMouseLeave={() => setIsAlbumHovered(false)}
-        >
-          <Playlist
-            id={props.album.id}
-            userId={props.album.id}
-            name={props.album.name}
-            songCount={props.album.songCount}
-            username={""}
-            firstname={""}
-            lastname={""}
-            language={""}
-            image={props.album.image}
-            url={props.album.url}
-            songs={[]}
-          />
-          <div
-            className={`${
-              isAlbumHovered ? "opacity-100" : "opacity-0"
-            } absolute left-0 top-0 flex h-[150px] w-full items-center justify-center bg-transparent transition-all ease-in`}
-          >
-            {nowPlaying.isPlaying && nowPlaying.queue.id === props.album.id ? (
-              <button
-                type="button"
-                className="rounded-full bg-emerald-400 p-2"
-                onClick={(e) => pauseAlbum(e)}
-              >
-                <img
-                  src={pause}
-                  alt="pause album"
-                  className="h-[25px] w-[25px]"
-                />
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="rounded-full bg-emerald-400 p-2"
-                onClick={(e) => playAlbum(e, props.album)}
-              >
-                <img
-                  src={play}
-                  alt="play album"
-                  className="h-[25px] w-[25px] pl-1"
-                />
-              </button>
-            )}
-            <button
-              type="button"
-              className="ml-2 rounded-full bg-white p-0"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                removeLibraryAlbum(props.album.id);
-              }}
-            >
-              <img
-                src={close}
-                alt="remove"
-                className="h-[28px] w-[28px] rounded-full"
-              />
-            </button>
-          </div>
-        </Link>
-      </>
-    );
-  };
-
-  const LibraryPlaylist = (props: any) => {
-    const [isPlaylistHovered, setIsPlaylistHovered] = useState(false);
-    return (
-      <>
-        <Link
-          to={`/playlists/${props.playlist.id}`}
-          key={props.playlist.id}
-          className="relative h-fit w-fit"
-          onMouseOver={() => setIsPlaylistHovered(true)}
-          onMouseLeave={() => setIsPlaylistHovered(false)}
-        >
-          <Playlist
-            id={props.playlist.id}
-            userId={props.playlist.userId}
-            name={props.playlist.name}
-            songCount={props.playlist.songCount}
-            username={props.playlist.username}
-            firstname={props.playlist.firstname}
-            lastname={props.playlist.lastname}
-            language={""}
-            image={props.playlist.image}
-            url={props.playlist.url}
-            songs={props.playlist.songs}
-          />
-          <div
-            className={`${
-              isPlaylistHovered ? "opacity-100" : "opacity-0"
-            } absolute left-0 top-0 flex h-[150px] w-full items-center justify-center bg-transparent transition-all ease-in`}
-          >
-            {nowPlaying.isPlaying &&
-            nowPlaying.queue.id === props.playlist.id ? (
-              <button
-                type="button"
-                className="rounded-full bg-emerald-400 p-2"
-                onClick={(e) => pausePlaylist(e)}
-              >
-                <img
-                  src={pause}
-                  alt="pause album"
-                  className="h-[25px] w-[25px]"
-                />
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="rounded-full bg-emerald-400 p-2"
-                onClick={(e) => playPlaylist(e, props.playlist)}
-              >
-                <img
-                  src={play}
-                  alt="play album"
-                  className="h-[25px] w-[25px] pl-1"
-                />
-              </button>
-            )}
-            <button
-              type="button"
-              className="ml-2 rounded-full bg-white p-0"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                removeLibraryPlaylist(props.playlist.id);
-              }}
-            >
-              <img
-                src={close}
-                alt="remove"
-                className="h-[28px] w-[28px] rounded-full"
-              />
-            </button>
-          </div>
-        </Link>
-      </>
-    );
-  };
-
-  const CustomPlaylist = ({ playlist }: any) => {
-    const [isPlaylistHovered, setIsPlaylistHovered] = useState(false);
-    return (
-      <>
-        <Link
-          to={`/userplaylists/${playlist.id}`}
-          key={playlist.id}
-          className="relative h-fit w-fit"
-          onMouseOver={() => setIsPlaylistHovered(true)}
-          onMouseLeave={() => setIsPlaylistHovered(false)}
-        >
-          <div className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center">
-            <img
-              src={userplaylist}
-              alt="user-profile"
-              className="h-[150px] w-[150px] shadow-md shadow-black"
-            />
-            <p className="mt-2 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-xs font-semibold text-neutral-400">
-              {playlist.name}
-            </p>
-          </div>
-          <div
-            className={`${
-              isPlaylistHovered ? "opacity-100" : "opacity-0"
-            } absolute left-0 top-0 flex h-[150px] w-full items-center justify-center bg-transparent transition-all ease-in`}
-          >
-            {nowPlaying.isPlaying && nowPlaying.queue.id === playlist.id ? (
-              <button
-                type="button"
-                className="rounded-full bg-emerald-400 p-2"
-                onClick={(e) => pausePlaylist(e)}
-              >
-                <img
-                  src={pause}
-                  alt="pause album"
-                  className="h-[25px] w-[25px]"
-                />
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="rounded-full bg-emerald-400 p-2"
-                onClick={(e) => playPlaylist(e, playlist)}
-              >
-                <img
-                  src={play}
-                  alt="play album"
-                  className="h-[25px] w-[25px] pl-1"
-                />
-              </button>
-            )}
-            <button
-              type="button"
-              className="ml-2 rounded-full bg-white p-0"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                removeUserPlaylist(Number(playlist.id));
-              }}
-            >
-              <img
-                src={close}
-                alt="remove"
-                className="h-[28px] w-[28px] rounded-full"
-              />
-            </button>
-          </div>
-        </Link>
-      </>
-    );
-  };
-
-  const Following = ({ id, name, image }: any) => {
-    const [isHovered, setIsHovered] = useState(false);
-    return (
-      <Link
-        to={`/artists/${id}`}
-        className="mb-3 flex h-[50px] w-full items-center justify-between"
-        onMouseOver={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <div className="flex h-full w-[80%] items-center justify-start">
-          <img
-            src={image ? image[0].url : artistfallback}
-            alt="artist"
-            className="mr-4 h-[40px] w-[40px] rounded-lg"
-          />
-          <p className="text-sm font-medium text-white">{name}</p>
-        </div>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            removeFollowing(id);
-          }}
-          className={`mr-2 h-auto w-auto p-0 transition-all ease-out ${
-            isHovered ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <img
-            src={unfollow}
-            alt="unfollow-artist"
-            className="h-[28px] w-[28px]"
-          />
-        </button>
-      </Link>
-    );
-  };
+  useEffect(() => {
+    const localSaves = localStorage.getItem("local-library");
+    if (localSaves !== null) {
+      const {
+        albums: lastAlbums,
+        followings: lastFollowings,
+        playlists: lastPlaylists,
+        userPlaylists: lastUserPlaylists,
+      }: LocalLibrary = JSON.parse(localSaves);
+      lastAlbums?.forEach(setLibraryAlbum);
+      lastUserPlaylists?.forEach(setUserPlaylist);
+      lastPlaylists?.forEach(setLibraryPlaylist);
+      lastFollowings?.forEach(setFollowing);
+    }
+    setHydrated(true);
+  }, []);
 
   useEffect(() => {
-    console.log(library.followings);
-  }, [library.followings]);
+    if (hydrated) {
+      saveToLocalStorage("local-library", {
+        albums,
+        playlists,
+        userPlaylists,
+        followings,
+      });
+    }
+  }, [userPlaylists, playlists, albums, followings]);
 
   return (
-    <div className="relative h-[95vh] w-full overflow-y-scroll scroll-smooth bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700">
+    <div className="relative max-h-fit min-h-full w-full scroll-smooth bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700">
       <div className="absolute right-2 top-2 h-auto w-auto">
         <RouteNav />
       </div>
       <h2 className="font p-2 px-2 text-2xl font-semibold text-white">
         Your Library
       </h2>
-      <div className="mt-8 flex h-full w-full flex-col items-center justify-start px-3 py-2">
-        <div className="h-auto w-full overflow-x-hidden overflow-y-scroll">
-          <div className="mb-3 h-[215px] w-full overflow-x-hidden">
-            <div className="mb-2 flex h-[28px] w-full items-center justify-between">
-              <h2 className="text-md w-auto font-semibold text-white">
-                Your playlists
-              </h2>
-              <button
-                type="button"
-                style={{
-                  outline: "none",
-                  border: "none",
-                }}
-                onClick={(e) => createNewPlaylist(e)}
-                className="h-auto w-auto bg-transparent p-0"
-              >
-                <img
-                  src={add}
-                  alt="add-to-playlist"
-                  className="h-[20px] w-[20px]"
-                />
-              </button>
-            </div>
-            <ul className="flex h-[180px] w-full items-center justify-start overflow-y-hidden overflow-x-scroll">
-              {library.userPlaylists.map((playlist: UserPlaylist) => (
-                <CustomPlaylist key={playlist.id} playlist={playlist} />
-              ))}
-            </ul>
-          </div>
-          <div className="mb-3 h-[215px] w-full overflow-x-hidden">
-            <h2 className="text-md mb-2 w-full font-semibold text-white">
-              Playlists
-            </h2>
-            <ul className="flex h-[180px] w-full items-center justify-start overflow-y-hidden overflow-x-scroll">
-              {library.playlists.map(
-                (playlist: PlaylistById | UserPlaylist) => (
-                  <LibraryPlaylist key={playlist.id} playlist={playlist} />
-                ),
-              )}
-            </ul>
-          </div>
-          <div className="mb-3 h-[215px] w-full overflow-x-hidden">
-            <h2 className="text-md mb-2 w-full font-semibold text-white">
-              Albums
-            </h2>
-            <ul className="flex h-[180px] w-full items-center justify-start overflow-y-hidden overflow-x-scroll">
-              {library.albums.map((album: AlbumById) => (
-                <LibraryAlbum key={album.id} album={album} />
-              ))}
-            </ul>
-          </div>
-          <div className="mb-[30dvh] h-auto w-full overflow-hidden">
-            <h2 className="text-md w-full font-semibold text-white">
-              Followings
-            </h2>
-            <ul className="h-auto w-full p-2">
-              {library.followings.map((following: ArtistType) => (
-                <Following
-                  key={following.id}
-                  id={following.id}
-                  image={following.image}
-                  name={following.name}
-                />
-              ))}
-            </ul>
-          </div>
-        </div>
+      <div className="mb-2 flex h-auto w-full items-center justify-end px-3">
+        <button
+          type="button"
+          onClick={(e) => createNewPlaylist(e)}
+          className="h-auto w-auto rounded-sm bg-neutral-300 py-1.5 pl-2 pr-3 text-sm font-semibold text-black transition-colors ease-in hover:bg-neutral-200"
+        >
+          ➕ New playlist
+        </button>
       </div>
+      {userPlaylists.length > 0 ||
+      playlists.length > 0 ||
+      albums.length > 0 ||
+      followings.length > 0 ? (
+        <div className="h-auto w-full overflow-x-hidden overflow-y-scroll px-3">
+          {userPlaylists && userPlaylists.length > 0 && (
+            <div className="mb-3 flex h-full max-h-max w-full flex-col items-start justify-start">
+              {userPlaylists && (
+                <CustomPlaylists userPlaylists={userPlaylists} />
+              )}
+            </div>
+          )}
+          {playlists && playlists.length > 0 && (
+            <div className="mb-3 h-[215px] w-full overflow-x-hidden">
+              <LibraryPlaylists playlists={playlists} />
+            </div>
+          )}
+          {albums && albums.length > 0 && (
+            <div className="mb-3 h-[215px] w-full overflow-x-hidden">
+              <LibraryAlbums albums={albums} />
+            </div>
+          )}
+          {followings &&
+            followings.length > 0 &&
+            followings.map((following: ArtistInSong) => (
+              <>
+                <div className="mb-[30dvh] h-auto w-full overflow-hidden">
+                  <h2 className="text-md w-full font-semibold text-white">
+                    Followings
+                  </h2>
+                  <ul className="mt-1 h-auto w-full">
+                    <Following key={following.id} {...following} />
+                  </ul>
+                </div>
+              </>
+            ))}
+        </div>
+      ) : (
+        <div className="flex h-[70dvh] w-full items-center justify-center">
+          <p className="text-neutral-400">Add something to your library</p>
+        </div>
+      )}
     </div>
   );
 }
+
+const Following = memo(({ id, name, image }: any) => {
+  return (
+    <Link
+      to={`/artists/${id}`}
+      className="flex h-[50px] w-full items-center justify-between bg-inherit p-3 pr-4 transition-colors hover:bg-neutral-800"
+    >
+      <div className="flex h-full w-[80%] items-center justify-start">
+        <img
+          src={image[0]?.url || artistfallback}
+          alt="artist"
+          className="mr-4 h-[40px] w-[40px] rounded-sm"
+        />
+        <p className="text-sm font-medium text-white">
+          {name || "Unknown Artist"}
+        </p>
+      </div>
+      <FollowButton
+        artist={{
+          id: id,
+          name: name,
+          role: "",
+          image: image,
+          type: "",
+          url: "",
+        }}
+      />
+    </Link>
+  );
+});
+
+const CustomPlaylists = memo(
+  ({ userPlaylists }: { userPlaylists: UserPlaylist[] }) => {
+    const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
+    const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
+    const queueId = useBoundStore((state) => state.nowPlaying.queue?.id);
+    const setQueue = useBoundStore((state) => state.setQueue);
+    const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
+    const removeUserPlaylist = useBoundStore(
+      (state) => state.removeUserPlaylist,
+    );
+
+    return (
+      <>
+        <div className="flex h-full w-full flex-col items-start justify-start overflow-x-scroll">
+          <h2 className="mb-3 w-auto text-base font-semibold text-white">
+            Your playlists
+          </h2>
+          {userPlaylists.map((playlist) => (
+            <Link
+              to={`/userplaylists/${playlist.id}`}
+              key={playlist.id}
+              className="group relative h-fit w-fit"
+            >
+              <div className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center justify-center">
+                <img
+                  src={userplaylist}
+                  alt="user-profile"
+                  className="h-[150px] w-[150px] shadow-md shadow-black brightness-100 transition-all ease-linear group-hover:brightness-90"
+                />
+                <p className="mt-1.5 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-sm font-semibold text-neutral-400 transition-colors ease-linear group-hover:text-white sm:text-sm">
+                  {playlist.name}
+                </p>
+              </div>
+              <div className="absolute left-0 top-0 flex h-[150px] w-full items-center justify-center bg-transparent opacity-0 transition-all ease-in group-hover:opacity-100">
+                {playlist.songs.length > 0 && (
+                  <button
+                    type="button"
+                    className="-ml-2 mr-2 rounded-full bg-emerald-400 p-2"
+                    onClick={(e) =>
+                      handleCollectionPlayback(
+                        e,
+                        {
+                          id: String(playlist.id),
+                          image: false,
+                          name: playlist.name,
+                          songs: playlist.songs,
+                        },
+                        isPlaying,
+                        setQueue,
+                        setNowPlaying,
+                        setIsPlaying,
+                      )
+                    }
+                  >
+                    <img
+                      src={
+                        isPlaying && queueId === String(playlist?.id)
+                          ? pause
+                          : play
+                      }
+                      alt="play album"
+                      className="h-7 w-7"
+                    />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="rounded-full bg-white p-0"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    removeUserPlaylist(Number(playlist.id));
+                  }}
+                >
+                  <img
+                    src={close}
+                    alt="remove"
+                    className="h-[28px] w-[28px] rounded-full"
+                  />
+                </button>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </>
+    );
+  },
+);
+
+const LibraryAlbums = memo(({ albums }: { albums: AlbumById[] }) => {
+  const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
+  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
+  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
+  const setQueue = useBoundStore((state) => state.setQueue);
+  const queueId = useBoundStore((state) => state.nowPlaying.queue?.id);
+  const removeLibraryAlbum = useBoundStore((state) => state.removeLibraryAlbum);
+
+  return (
+    <>
+      <h2 className="text-md mb-2 w-full font-semibold text-white">Albums</h2>
+      <div className="flex h-[180px] w-full items-center justify-start overflow-y-hidden overflow-x-scroll">
+        {albums.map((album: AlbumById) => (
+          <Link
+            to={`/albums/${album.id}`}
+            key={album.id}
+            className="group relative h-fit w-fit"
+          >
+            <Playlist
+              id={album.id}
+              userId={album.id}
+              name={album.name}
+              songCount={album.songCount}
+              username={""}
+              firstname={""}
+              lastname={""}
+              language={""}
+              image={album.image}
+              url={album.url}
+              songs={[]}
+            />
+            <div className="absolute left-0 top-0 flex h-[150px] w-full items-center justify-center bg-transparent opacity-0 transition-all ease-in hover:opacity-100">
+              <button
+                type="button"
+                className="rounded-full bg-emerald-400 p-2"
+                onClick={(e) =>
+                  handleCollectionPlayback(
+                    e,
+                    album,
+                    isPlaying,
+                    setQueue,
+                    setNowPlaying,
+                    setIsPlaying,
+                  )
+                }
+              >
+                <img
+                  src={isPlaying && queueId === album.id ? pause : play}
+                  alt="play album"
+                  className="h-7 w-7"
+                />
+              </button>
+              <button
+                type="button"
+                className="ml-2 rounded-full bg-white p-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  removeLibraryAlbum(album.id);
+                }}
+              >
+                <img
+                  src={close}
+                  alt="remove"
+                  className="h-[28px] w-[28px] rounded-full"
+                />
+              </button>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </>
+  );
+});
+
+const LibraryPlaylists = memo(
+  ({ playlists }: { playlists: PlaylistById[] }) => {
+    const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
+    const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
+    const queueId = useBoundStore((state) => state.nowPlaying.queue?.id);
+    const setQueue = useBoundStore((state) => state.setQueue);
+    const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
+    const removeLibraryPlaylist = useBoundStore(
+      (state) => state.removeLibraryPlaylist,
+    );
+
+    return (
+      <>
+        <h2 className="text-md mb-2 w-full font-semibold text-white">
+          Playlists
+        </h2>
+        <div className="flex h-[180px] w-full items-center justify-start overflow-y-hidden overflow-x-scroll">
+          {playlists.map((playlist) => (
+            <Link
+              to={`/playlists/${playlist.id}`}
+              key={playlist.id}
+              className="group relative h-fit w-fit"
+            >
+              <Playlist
+                id={playlist.id}
+                userId={playlist.userId}
+                name={playlist.name}
+                songCount={playlist.songCount}
+                username={playlist.username}
+                firstname={playlist.firstname}
+                lastname={playlist.lastname}
+                language={""}
+                image={playlist.image}
+                url={playlist.url}
+                songs={[]}
+              />
+              <div className="absolute left-0 top-0 flex h-[150px] w-full items-center justify-center opacity-0 transition-all ease-in group-hover:opacity-100">
+                <button
+                  type="button"
+                  className="rounded-full bg-emerald-400 p-2"
+                  onClick={(e) =>
+                    handleCollectionPlayback(
+                      e,
+                      playlist,
+                      isPlaying,
+                      setQueue,
+                      setNowPlaying,
+                      setIsPlaying,
+                    )
+                  }
+                >
+                  <img
+                    src={isPlaying && queueId === playlist.id ? pause : play}
+                    alt="pause album"
+                    className="h-[25px] w-[25px]"
+                  />
+                </button>
+                <button
+                  type="button"
+                  className="ml-2 rounded-full bg-white p-0"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    removeLibraryPlaylist(playlist.id);
+                  }}
+                >
+                  <img
+                    src={close}
+                    alt="remove"
+                    className="h-[28px] w-[28px] rounded-full"
+                  />
+                </button>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </>
+    );
+  },
+);
