@@ -14,6 +14,8 @@ export default function Playlist({ id, image, name }: PlaylistOfList) {
         <img
           src={image[1]?.url || fallback}
           alt="user-profile"
+          loading="eager"
+          fetchPriority="high"
           className="h-[150px] w-[150px] rounded-none shadow-md shadow-black brightness-100 transition-all ease-linear group-hover:rounded-xl group-hover:brightness-90"
           onError={(e) => (e.currentTarget.src = fallback)}
         />

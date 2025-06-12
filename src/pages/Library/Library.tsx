@@ -142,6 +142,8 @@ const Following = memo(({ id, name, image }: any) => {
         <img
           src={image[0]?.url || artistfallback}
           alt="artist"
+          loading="eager"
+          fetchPriority="high"
           className="mr-4 h-[40px] w-[40px] rounded-sm"
         />
         <p className="text-sm font-medium text-white">
@@ -189,6 +191,8 @@ const CustomPlaylists = memo(
                 <img
                   src={userplaylist}
                   alt="user-profile"
+                  loading="eager"
+                  fetchPriority="high"
                   className="h-[150px] w-[150px] shadow-md shadow-black brightness-100 transition-all ease-linear group-hover:brightness-90"
                 />
                 <p className="mt-1.5 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-sm font-semibold text-neutral-400 transition-colors ease-linear group-hover:text-white sm:text-sm">

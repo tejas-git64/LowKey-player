@@ -208,6 +208,7 @@ const AlbumInfo = memo(() => {
           boxShadow: "5px 5px 0px #000",
         }}
         fetchPriority="high"
+        loading="eager"
         onError={(e) => (e.currentTarget.src = fallback)}
       />
       <p className="text-md mb-1 mt-2 line-clamp-1 h-auto w-[60%] text-ellipsis text-left text-xl font-semibold text-white sm:line-clamp-3 sm:w-[40%] sm:text-3xl sm:font-bold">

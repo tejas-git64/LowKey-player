@@ -80,6 +80,8 @@ const UserPlaylistInfo = memo(({ name }: { name: string }) => {
         style={{
           boxShadow: "5px 5px 0px #000",
         }}
+        loading="eager"
+        fetchPriority="high"
         className="mr-4 mt-1 h-[150px] w-[150px]"
       />
       <p className="mt-1 line-clamp-1 h-auto w-[80%] text-ellipsis text-left text-xl font-semibold text-white sm:line-clamp-3 sm:w-[40%] sm:text-3xl sm:font-bold">
