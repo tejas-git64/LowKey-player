@@ -73,7 +73,6 @@ const Widget = memo(() => {
   const setQueue = useBoundStore((state) => state.setQueue);
   const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
   const setWidgetData = useBoundStore((state) => state.setWidgetData);
-  const queue = useBoundStore((state) => state.nowPlaying.queue);
   const navigate = useNavigate();
 
   const { isPending } = useQuery({
@@ -99,17 +98,6 @@ const Widget = memo(() => {
       setIsPlaying(false);
     }
   };
-
-  useEffect(() => {
-    const saveToLocalStorage = () => {
-      if (queue?.id !== "")
-        localStorage.setItem("last-queue", JSON.stringify(queue));
-    };
-    window.addEventListener("beforeunload", saveToLocalStorage);
-    return () => {
-      window.removeEventListener("beforeunload", saveToLocalStorage);
-    };
-  }, [queue?.id]);
 
   return (
     <div className="h-auto max-h-max w-full px-3.5 sm:pt-0.5">
