@@ -6,7 +6,8 @@
   font-family: "Outfit", sans-serif;
 }
 
-::-webkit-scrollbar {
+::-webkit-scrollbar,
+::-moz-range-track {
   width: 0px;
   height: 2px;
   background-color: transparent;
@@ -19,9 +20,15 @@ button {
   color: white;
 }
 
-::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb,
+::-webkit-slider-thumb {
   height: 2px;
-  background-color: #3e3e3e;
+  background-color: #3e3e3e
+}
+
+#wave::-webkit-scrollbar,
+#wave::-moz-range-track {
+  height: 0;
 }
 
 #menu::-webkit-scrollbar,
@@ -31,19 +38,23 @@ button {
 }
 
 @media screen and (min-width: 640px) {
-  ::-webkit-scrollbar {
+
+  ::-webkit-scrollbar,
+  ::-moz-range-track {
     width: 4px;
     background-color: transparent;
   }
 
-  ::-webkit-scrollbar-thumb {
+  ::-webkit-scrollbar-thumb,
+  ::-moz-range-thumb {
     width: auto;
     background-color: #323232;
   }
 
 }
 
-#volumeSlider {
+#volumeSlider,
+#volumeSlider::-moz-range-track {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -54,8 +65,11 @@ button {
   border-radius: 10px;
 }
 
-#volumeSlider::-webkit-slider-thumb {
+#volumeSlider::-webkit-slider-thumb,
+#volumeSlider::-moz-range-thumb {
   -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-progress-appearance: none;
   appearance: none;
   width: 12px;
   height: 12px;
