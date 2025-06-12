@@ -201,6 +201,13 @@ export type UserPlaylist = {
   songs: TrackDetails[];
 };
 
+export type LocalLibrary = {
+  userPlaylists: UserPlaylist[];
+  playlists: PlaylistById[];
+  albums: AlbumById[];
+  followings: ArtistInSong[];
+};
+
 export type SongQueue = {
   id: string;
   name: string;

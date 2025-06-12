@@ -135,6 +135,7 @@ export type StoreType = {
   removeLibraryPlaylist: (id: string) => void;
   setCreationMenu: (show: boolean) => void;
   setToUserPlaylist: (song: TrackDetails, id: number) => void;
+  setUserPlaylist: (playlist: UserPlaylist) => void;
   removeFromUserPlaylist: (id: number, songid: string) => void;
   createNewUserPlaylist: (name: string, id: number) => void;
   removeUserPlaylist: (id: number) => void;
@@ -377,7 +378,13 @@ export const useBoundStore = create<StoreType>()(
       setFollowing: (data: ArtistInSong) => {
         set(
           produce((state) => {
-            state.library.followings.unshift(data);
+            if (
+              !state.library.followings.some(
+                (p: PlaylistById) => p.id === data.id,
+              )
+            ) {
+              state.library.followings.unshift(data);
+            }
           }),
         );
         get().setActivity(`Started following ${data.name} ✨`);
@@ -393,7 +400,13 @@ export const useBoundStore = create<StoreType>()(
       setLibraryAlbum: (data: AlbumById) => {
         set(
           produce((state) => {
-            state.library.albums.unshift(data);
+            if (
+              !state.favorites.albums.some(
+                (p: PlaylistById) => p.id === data.id,
+              )
+            ) {
+              state.library.albums.unshift(data);
+            }
           }),
         );
         get().setActivity(`Added ${data.name} to Library 📚`);
@@ -409,7 +422,13 @@ export const useBoundStore = create<StoreType>()(
       setLibraryPlaylist: (data: PlaylistById) => {
         set(
           produce((state) => {
-            state.library.playlists.unshift(data);
+            if (
+              !state.library.playlists.some(
+                (p: PlaylistById) => p.id === data.id,
+              )
+            ) {
+              state.library.playlists.unshift(data);
+            }
           }),
         );
         get().setActivity(`Added ${data.name} to Library 📚`);
@@ -422,6 +441,19 @@ export const useBoundStore = create<StoreType>()(
             );
           }),
         ),
+      setUserPlaylist: (playlist: UserPlaylist) => {
+        set(
+          produce((state) => {
+            if (
+              !state.library.userPlaylists.some(
+                (p: UserPlaylist) => p.id === playlist.id,
+              )
+            ) {
+              state.library.userPlaylists.unshift(playlist);
+            }
+          }),
+        );
+      },
       setToUserPlaylist: (song: TrackDetails, id: number) => {
         set(
           produce((state) => {
