@@ -10,11 +10,20 @@ import fallback from "../../assets/fallbacks/playlist-fallback.webp";
 import close from "../../assets/svgs/close.svg";
 import { memo, useEffect } from "react";
 import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
+import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
 
 export default function Favorites() {
   const albums = useBoundStore((state) => state.favorites.albums);
   const playlists = useBoundStore((state) => state.favorites.playlists);
   const songs = useBoundStore((state) => state.favorites.songs);
+
+  useEffect(() => {
+    saveToLocalStorage("local-favorites", {
+      albums,
+      playlists,
+      songs,
+    });
+  }, [albums, playlists, songs]);
 
   return (
     <div className="h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth pb-20">
@@ -76,19 +85,21 @@ const FavoriteControls = memo(() => {
     songs: favorites.songs,
   };
 
+  type LocalFavorites = {
+    albums: AlbumById[];
+    playlists: PlaylistById[];
+    songs: TrackDetails[];
+  };
+
   useEffect(() => {
-    const lastAlbums = localStorage.getItem("favorite-albums");
-    const lastPlaylists = localStorage.getItem("favorite-playlists");
-    const lastSongs = localStorage.getItem("favorite-songs");
-    const storedAlbums: AlbumById[] | null =
-      lastAlbums && JSON.parse(lastAlbums);
-    const storedPlaylists: PlaylistById[] | null =
-      lastPlaylists && JSON.parse(lastPlaylists);
-    const storedSongs: TrackDetails[] | null =
-      lastSongs && JSON.parse(lastSongs);
-    storedAlbums?.forEach(setFavoriteAlbum);
-    storedPlaylists?.forEach(setFavoritePlaylist);
-    storedSongs?.forEach(setFavoriteSong);
+    const localSaved = localStorage.getItem("local-favorites");
+    if (localSaved !== null) {
+      const { albums, playlists, songs }: LocalFavorites =
+        JSON.parse(localSaved);
+      albums?.forEach(setFavoriteAlbum);
+      playlists?.forEach(setFavoritePlaylist);
+      songs?.forEach(setFavoriteSong);
+    }
   }, []);
 
   return (
@@ -165,10 +176,6 @@ const FavoriteAlbums = memo(() => {
   useEffect(() => {
     queue && setNowPlaying(queue.songs[0]);
   }, [queue?.id]);
-
-  useEffect(() => {
-    localStorage.setItem("favorite-albums", JSON.stringify(albums));
-  }, [albums]);
 
   return (
     <>
@@ -250,10 +257,6 @@ const FavoritePlaylists = memo(() => {
   );
   const navigate = useNavigate();
 
-  useEffect(() => {
-    localStorage.setItem("favorite-playlists", JSON.stringify(playlists));
-  }, [playlists]);
-
   return (
     <>
       {playlists && playlists.length > 0 && (
@@ -269,7 +272,7 @@ const FavoritePlaylists = memo(() => {
                 }
               >
                 <img
-                  src={playlist.image[1].url || fallback}
+                  src={playlist.image[1]?.url || fallback}
                   alt="user-profile"
                   className="h-[150px] w-[150px] rounded-lg shadow-xl shadow-neutral-950"
                   onError={(e) => (e.currentTarget.src = fallback)}
@@ -324,10 +327,6 @@ const FavoritePlaylists = memo(() => {
 
 const FavoriteSongs = memo(() => {
   const songs = useBoundStore((state) => state.favorites.songs);
-
-  useEffect(() => {
-    localStorage.setItem("favorite-songs", JSON.stringify(songs));
-  }, [songs]);
 
   return (
     <>
