@@ -1,8 +1,8 @@
-import history from "../../assets/icons8-history.svg";
-import activity from "../../assets/icons8-activity.svg";
+import history from "../../assets/svgs/icons8-history.svg";
+import activity from "../../assets/svgs/icons8-activity.svg";
 import { useBoundStore } from "../../store/store";
 import { ActivityType, TrackDetails } from "../../types/GlobalTypes";
-import songfallback from "../../assets/icons8-song-fallback.png";
+import songfallback from "../../assets/fallbacks/song-fallback.webp";
 
 export default function Recents() {
   const recents = useBoundStore((state) => state.recents);
@@ -11,7 +11,7 @@ export default function Recents() {
       <>
         <li
           id={id}
-          className="mb-0.5 flex h-[50px] w-full flex-shrink-0 items-center justify-start overflow-hidden rounded-md bg-black"
+          className="mb-0.5 flex h-[50px] w-full flex-shrink-0 items-center justify-start overflow-hidden bg-black"
         >
           <img
             src={image ? image[0]?.url : songfallback}
@@ -46,7 +46,7 @@ export default function Recents() {
 
   return (
     <div className="hidden h-[95vh] flex-col items-center justify-start overflow-hidden border-r-[3px] border-black bg-neutral-950 xl:flex xl:w-[380px] 2xl:w-96">
-      <div className="flex h-[45vh] w-full flex-col items-start justify-start overflow-hidden rounded-r-lg border-l-[3px] border-neutral-950 bg-neutral-800">
+      <div className="flex h-[45vh] w-full flex-col items-start justify-start overflow-hidden border-b-2 border-black bg-neutral-800">
         <div className="flex h-12 w-full items-center justify-between border-b-2 border-neutral-900 bg-neutral-700 px-3">
           <h2 className="w-full font-semibold text-white">Listening History</h2>
           <img src={history} alt="history" className="h-[20px] w-[20px]" />
@@ -82,8 +82,8 @@ export default function Recents() {
             ))}
         </ul>
       </div>
-      <div className="flex h-[49.8vh] w-full flex-col items-start justify-start overflow-hidden rounded-r-lg border-l-[3px] border-t-[3px] border-neutral-950 bg-neutral-800">
-        <div className="flex h-12 w-full items-center justify-between border-b-2 border-neutral-900 bg-neutral-700 px-3">
+      <div className="flex h-[49.8vh] w-full flex-col items-start justify-start overflow-hidden bg-neutral-800">
+        <div className="flex h-12 w-full items-center justify-between bg-neutral-700 px-3">
           <h2 className="w-full font-semibold text-white">Activity</h2>
           <img src={activity} alt="activity" className="h-[25px] w-[25px]" />
         </div>
