@@ -1,4 +1,4 @@
-import { memo, useEffect } from "react";
+import { memo, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { getPlaylistData } from "../../api/requests";
 import { useBoundStore } from "../../store/store";
@@ -10,11 +10,16 @@ import pause from "../../assets/svgs/pause-icon.svg";
 import addPlaylist from "../../assets/svgs/icons8-addplaylist-28.svg";
 import addedToPlaylist from "../../assets/svgs/tick.svg";
 import Song from "../../components/Song/Song";
-import { PlaylistById, TrackDetails } from "../../types/GlobalTypes";
+import {
+  LocalLibrary,
+  PlaylistById,
+  TrackDetails,
+} from "../../types/GlobalTypes";
 import { useQuery } from "@tanstack/react-query";
 import ListLoading from "./Loading";
 import RouteNav from "../../components/RouteNav/RouteNav";
 import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
+import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
 
 export default function PlaylistPage() {
   const { id } = useParams();
@@ -60,8 +65,8 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
   const setIsShuffling = useBoundStore((state) => state.setIsShuffling);
   const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
   const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
-  const favorites = useBoundStore((state) => state.favorites.playlists);
-  const playlists = useBoundStore((state) => state.library.playlists);
+  const playlists = useBoundStore((state) => state.favorites.playlists);
+  const libraryPlaylists = useBoundStore((state) => state.library.playlists);
   const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
   const queue = useBoundStore((state) => state.nowPlaying.queue);
   const playlist = useBoundStore((state) => state.playlist);
@@ -76,9 +81,13 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
     (state) => state.removeLibraryPlaylist,
   );
   const setQueue = useBoundStore((state) => state.setQueue);
-  const isAdded = playlists.some((playlist) => playlist?.id === id);
-  const isFavorite = favorites.some(
-    (playlist: PlaylistById) => playlist?.id === id,
+  const isAdded = useMemo(
+    () => libraryPlaylists.some((playlist) => playlist?.id === id),
+    [libraryPlaylists],
+  );
+  const isFavorite = useMemo(
+    () => playlists.some((playlist: PlaylistById) => playlist?.id === id),
+    [playlists],
   );
   const isPlaylistPlaying = isPlaying && queue?.id === id;
 
@@ -107,8 +116,21 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
   };
 
   useEffect(() => {
-    localStorage.setItem("favorite-playlists", JSON.stringify(favorites));
-  }, [favorites]);
+    saveToLocalStorage("local-favorites", {
+      playlists,
+    });
+    saveToLocalStorage("local-library", {
+      playlists: libraryPlaylists,
+    });
+  }, [playlists, libraryPlaylists]);
+
+  useEffect(() => {
+    const localSaves = localStorage.getItem("local-library");
+    if (localSaves !== null) {
+      const { playlists }: LocalLibrary = JSON.parse(localSaves);
+      playlists.forEach(setLibraryPlaylist);
+    }
+  }, []);
 
   return (
     <div className="mr-1 flex w-[170px] items-center justify-between sm:mr-0">
@@ -118,9 +140,7 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
           outline: "none",
           border: "none",
         }}
-        onClick={() =>
-          isShuffling ? setIsShuffling(false) : setIsShuffling(true)
-        }
+        onClick={() => setIsShuffling(!isShuffling)}
         className="-mr-1 border border-white bg-transparent p-0"
       >
         <svg
@@ -148,10 +168,6 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
       </button>
       <button
         type="button"
-        style={{
-          outline: "none",
-          border: "none",
-        }}
         onClick={handlePlaylist}
         className="border border-white bg-transparent p-0"
       >
@@ -163,10 +179,6 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
       </button>
       <button
         type="button"
-        style={{
-          outline: "none",
-          border: "none",
-        }}
         onClick={handleFavorite}
         className="border border-white bg-transparent p-0"
       >
@@ -178,10 +190,6 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
       </button>
       <button
         type="button"
-        style={{
-          outline: "none",
-          border: "none",
-        }}
         onClick={(e) =>
           playlist &&
           handleCollectionPlayback(

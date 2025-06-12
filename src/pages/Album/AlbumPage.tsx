@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { getAlbumData } from "../../api/requests";
 import Song from "../../components/Song/Song";
 import { useBoundStore } from "../../store/store";
-import { AlbumById, TrackDetails } from "../../types/GlobalTypes";
+import { AlbumById, LocalLibrary, TrackDetails } from "../../types/GlobalTypes";
 import favorite from "../../assets/svgs/icons8-heart.svg";
 import favorited from "../../assets/svgs/icons8-favorited.svg";
 import fallback from "../../assets/fallbacks/playlist-fallback.webp";
@@ -15,6 +15,7 @@ import ListLoading from "../Playlist/Loading";
 import { useQuery } from "@tanstack/react-query";
 import RouteNav from "../../components/RouteNav/RouteNav";
 import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
+import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
 
 export default function AlbumPage() {
   const { id } = useParams();
@@ -59,8 +60,8 @@ const AlbumControls = memo(({ id }: { id: string }) => {
   const isShuffling = useBoundStore((state) => state.isShuffling);
   const setIsShuffling = useBoundStore((state) => state.setIsShuffling);
   const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
-  const favorites = useBoundStore((state) => state.favorites.albums);
-  const albums = useBoundStore((state) => state.library.albums);
+  const albums = useBoundStore((state) => state.favorites.albums);
+  const libraryAlbums = useBoundStore((state) => state.library.albums);
   const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
   const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
   const queue = useBoundStore((state) => state.nowPlaying.queue);
@@ -72,8 +73,8 @@ const AlbumControls = memo(({ id }: { id: string }) => {
   const setLibraryAlbum = useBoundStore((state) => state.setLibraryAlbum);
   const removeLibraryAlbum = useBoundStore((state) => state.removeLibraryAlbum);
   const setQueue = useBoundStore((state) => state.setQueue);
-  const isAdded = albums.some((playlist) => playlist?.id === id);
-  const isFavorite = favorites.some((album: AlbumById) => album?.id === id);
+  const isAdded = libraryAlbums.some((playlist) => playlist?.id === id);
+  const isFavorite = albums.some((album: AlbumById) => album?.id === id);
   const isAlbumPlaying = isPlaying && queue?.id === id;
 
   const handleAlbum = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -99,20 +100,27 @@ const AlbumControls = memo(({ id }: { id: string }) => {
   };
 
   useEffect(() => {
-    localStorage.setItem("favorite-albums", JSON.stringify(favorites));
-  }, [favorites]);
+    saveToLocalStorage("local-favorites", {
+      albums,
+    });
+    saveToLocalStorage("local-library", {
+      libraryAlbums,
+    });
+  }, [albums, libraryAlbums]);
+
+  useEffect(() => {
+    const localSaves = localStorage.getItem("local-library");
+    if (localSaves !== null) {
+      const { albums }: LocalLibrary = JSON.parse(localSaves);
+      albums.forEach(setFavoriteAlbum);
+    }
+  }, []);
 
   return (
     <div className="mr-1 flex w-[170px] items-center justify-between sm:mr-0">
       <button
         type="button"
-        style={{
-          outline: "none",
-          border: "none",
-        }}
-        onClick={() =>
-          isShuffling ? setIsShuffling(false) : setIsShuffling(true)
-        }
+        onClick={() => setIsShuffling(!isShuffling)}
         className="-mr-1 border border-white bg-transparent p-0"
       >
         <svg
@@ -140,10 +148,6 @@ const AlbumControls = memo(({ id }: { id: string }) => {
       </button>
       <button
         type="button"
-        style={{
-          outline: "none",
-          border: "none",
-        }}
         onClick={handleAlbum}
         className="border border-white bg-transparent p-0"
       >
@@ -155,10 +159,6 @@ const AlbumControls = memo(({ id }: { id: string }) => {
       </button>
       <button
         type="button"
-        style={{
-          outline: "none",
-          border: "none",
-        }}
         onClick={handleFavorite}
         className="border border-white bg-transparent p-0"
       >
@@ -170,10 +170,6 @@ const AlbumControls = memo(({ id }: { id: string }) => {
       </button>
       <button
         type="button"
-        style={{
-          outline: "none",
-          border: "none",
-        }}
         onClick={(e) =>
           album &&
           handleCollectionPlayback(
