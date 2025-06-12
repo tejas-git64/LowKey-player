@@ -439,6 +439,7 @@ const Controls = memo(
             setIsShuffling(!isShuffling);
             e.stopPropagation();
           }}
+          title="shuffle-button"
           disabled={queueSongs?.length === 0}
         >
           <svg

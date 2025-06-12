@@ -139,7 +139,7 @@ const Widget = memo(() => {
             />
           </button>
         </div>
-        <div
+        <ul
           id="widget-container"
           className="absolute bottom-1.5 left-[1.75%] h-[158px] w-[96.5%] list-none overflow-x-hidden overflow-y-scroll rounded-sm bg-neutral-900 sm:static sm:ml-3 sm:mt-0 sm:h-full"
         >
@@ -164,7 +164,7 @@ const Widget = memo(() => {
               <SongFallback />
             </>
           )}
-        </div>
+        </ul>
       </section>
     </div>
   );

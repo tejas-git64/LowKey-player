@@ -136,10 +136,7 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
     <div className="mr-1 flex w-[170px] items-center justify-between sm:mr-0">
       <button
         type="button"
-        style={{
-          outline: "none",
-          border: "none",
-        }}
+        title="shuffle-button"
         onClick={() => setIsShuffling(!isShuffling)}
         className="-mr-1 border border-white bg-transparent p-0"
       >

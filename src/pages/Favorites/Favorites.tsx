@@ -106,10 +106,6 @@ const FavoriteControls = memo(() => {
     <div className="mb-0 flex w-[120px] items-center justify-between sm:w-[105px]">
       <button
         type="button"
-        style={{
-          outline: "none",
-          border: "none",
-        }}
         onClick={() => setIsShuffling(!isShuffling)}
         className="border border-white bg-transparent p-0"
       >
