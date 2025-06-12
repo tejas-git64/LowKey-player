@@ -116,6 +116,7 @@ const Widget = memo(() => {
           width={320}
           height={320}
           fetchPriority="high"
+          loading="eager"
           className="aspect-square h-auto w-auto flex-shrink-0 rounded-sm bg-neutral-700 brightness-75 contain-layout sm:z-10 sm:h-[40vw] sm:w-[40vw] sm:brightness-100 md:h-80 md:w-80"
           onClick={() =>
             widget !== null &&
