@@ -116,6 +116,14 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
   };
 
   useEffect(() => {
+    const localSaves = localStorage.getItem("local-library");
+    if (localSaves !== null) {
+      const { playlists }: LocalLibrary = JSON.parse(localSaves);
+      playlists.forEach(setLibraryPlaylist);
+    }
+  }, []);
+
+  useEffect(() => {
     saveToLocalStorage("local-favorites", {
       playlists,
     });
@@ -123,14 +131,6 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
       playlists: libraryPlaylists,
     });
   }, [playlists, libraryPlaylists]);
-
-  useEffect(() => {
-    const localSaves = localStorage.getItem("local-library");
-    if (localSaves !== null) {
-      const { playlists }: LocalLibrary = JSON.parse(localSaves);
-      playlists.forEach(setLibraryPlaylist);
-    }
-  }, []);
 
   return (
     <div className="mr-1 flex w-[170px] items-center justify-between sm:mr-0">
