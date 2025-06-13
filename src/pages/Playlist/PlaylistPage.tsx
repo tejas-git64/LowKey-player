@@ -218,7 +218,7 @@ const PlaylistInfo = memo(() => {
   const getPlaylistImage = () => {
     if (images) {
       const obj = images.find((img) => img.quality === "150x150");
-      return obj?.url;
+      if (obj) obj.url;
     }
     return fallback;
   };

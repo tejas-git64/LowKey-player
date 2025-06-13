@@ -202,7 +202,7 @@ const AlbumInfo = memo(() => {
   const getAlbumImage = () => {
     if (images) {
       const obj = images.find((img) => img.quality === "150x150");
-      return obj?.url;
+      if (obj) return obj.url;
     }
     return fallback;
   };
