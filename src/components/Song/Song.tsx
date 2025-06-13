@@ -14,7 +14,6 @@ import secondsToHMS from "../../utils/utils";
 import add from "../../assets/svgs/icons8-addplaylist-28.svg";
 import tick from "../../assets/svgs/tick.svg";
 import { toggleFavorite } from "../../helpers/toggleFavorite";
-import { getPlaylist } from "../../helpers/getPlaylist";
 import { cleanString } from "../../helpers/cleanString";
 import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
 
@@ -29,9 +28,6 @@ const Song = memo(
     const userPlaylists = useBoundStore((state) => state.library.userPlaylists);
     const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
     const setCreationTrack = useBoundStore((state) => state.setCreationTrack);
-    const removeFromUserPlaylist = useBoundStore(
-      (state) => state.removeFromUserPlaylist,
-    );
     const { artistIds, artistNames, playlist } = useMemo(() => {
       const ids: string[] = [];
       const names: string[] = [];
@@ -147,18 +143,11 @@ const Song = memo(
               </button>
               <button
                 type="button"
-                onClick={(e) =>
-                  track &&
-                  getPlaylist({
-                    e,
-                    track,
-                    playlist,
-                    removeFromUserPlaylist,
-                    setCreationTrack,
-                    setRevealCreation,
-                    startTransition,
-                  })
-                }
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCreationTrack(track);
+                  setRevealCreation(true);
+                }}
                 className={`flex-shrink-0 border bg-transparent p-0 opacity-0 transition-opacity group-hover:opacity-100 ${!playlist?.id ? "opacity-0" : "opacity-100"}`}
               >
                 <img

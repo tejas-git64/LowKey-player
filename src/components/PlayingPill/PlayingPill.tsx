@@ -9,7 +9,6 @@ import tick from "../../assets/svgs/icons8-tick.svg";
 import { toggleFavorite } from "../../helpers/toggleFavorite";
 import { startTransition, useMemo } from "react";
 import { TrackDetails, UserPlaylist } from "../../types/GlobalTypes";
-import { getPlaylist } from "../../helpers/getPlaylist";
 import { cleanString } from "../../helpers/cleanString";
 
 export default function PlayingPill() {
@@ -23,9 +22,6 @@ export default function PlayingPill() {
   const userPlaylists = useBoundStore((state) => state.library.userPlaylists);
   const setCreationTrack = useBoundStore((state) => state.setCreationTrack);
   const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
-  const removeFromUserPlaylist = useBoundStore(
-    (state) => state.removeFromUserPlaylist,
-  );
   const isFavorited = useMemo(
     () => favorites.songs?.some((song) => song.id === track?.id),
     [favorites],
@@ -66,18 +62,11 @@ export default function PlayingPill() {
           <div className="flex h-full w-[130px] items-center justify-around">
             <button
               className="h-auto w-auto px-1"
-              onClick={(e) =>
-                track &&
-                getPlaylist({
-                  e,
-                  track,
-                  playlist,
-                  removeFromUserPlaylist,
-                  setCreationTrack,
-                  setRevealCreation,
-                  startTransition,
-                })
-              }
+              onClick={(e) => {
+                e.stopPropagation();
+                setCreationTrack(track);
+                setRevealCreation(true);
+              }}
             >
               <img
                 src={playlist?.id ? tick : add}
@@ -108,7 +97,7 @@ export default function PlayingPill() {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                isPlaying ? setIsPlaying(false) : setIsPlaying(true);
+                setIsPlaying(!isPlaying);
               }}
               style={{
                 border: "none",

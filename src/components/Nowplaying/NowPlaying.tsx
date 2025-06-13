@@ -31,7 +31,6 @@ import artistfallback from "../../assets/fallbacks/artist-fallback.png";
 import "../../App.css";
 import Waveform from "../Waveform/Waveform";
 import { toggleFavorite } from "../../helpers/toggleFavorite";
-import { getPlaylist } from "../../helpers/getPlaylist";
 import { PLAYER_CONSTANTS } from "../../utils/utils";
 import { getTrackImage } from "../../helpers/getTrackImage";
 import { useNavigate } from "react-router-dom";
@@ -333,9 +332,6 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
   const setFavoriteSong = useBoundStore((state) => state.setFavoriteSong);
   const removeFavorite = useBoundStore((state) => state.removeFavorite);
   const favorites = useBoundStore((state) => state.favorites);
-  const removeFromUserPlaylist = useBoundStore(
-    (state) => state.removeFromUserPlaylist,
-  );
   const isFavorited = useMemo(
     () => favorites.songs?.some((song) => song.id === track?.id),
     [favorites],
@@ -349,22 +345,16 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
       }),
     [userPlaylists, track?.id],
   ); //Provides the playlist of the track
+
   return (
     <div className="absolute -bottom-[48px] right-0 z-20 flex h-auto w-auto flex-shrink-0 items-center justify-end space-x-5 bg-black bg-inherit p-3 px-4 sm:static sm:w-16 sm:space-x-3 sm:bg-transparent sm:p-0 sm:pr-0.5">
       <button
         type="button"
-        onClick={(e) =>
-          track &&
-          getPlaylist({
-            e,
-            track,
-            playlist,
-            removeFromUserPlaylist,
-            setCreationTrack,
-            setRevealCreation,
-            startTransition,
-          })
-        }
+        onClick={(e) => {
+          e.stopPropagation();
+          track && setCreationTrack(track);
+          setRevealCreation(true);
+        }}
         className="border bg-transparent p-0 disabled:cursor-not-allowed disabled:invert-[0.5]"
         disabled={!track}
       >
