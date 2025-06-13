@@ -126,6 +126,7 @@ const CustomPlaylist = memo(
   }) => {
     const userPlaylists = useBoundStore((state) => state.library.userPlaylists);
     const setToUserPlaylist = useBoundStore((state) => state.setToUserPlaylist);
+    const activity = useBoundStore((state) => state.recents.activity);
     const removeFromUserPlaylist = useBoundStore(
       (state) => state.removeFromUserPlaylist,
     );
@@ -146,6 +147,12 @@ const CustomPlaylist = memo(
         }
       }
     };
+
+    useEffect(() => {
+      saveToLocalStorage("last-recents", {
+        activity,
+      });
+    }, [userPlaylists]);
 
     return (
       <>

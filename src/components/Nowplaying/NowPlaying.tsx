@@ -37,6 +37,7 @@ import { useNavigate } from "react-router-dom";
 import { cleanString } from "../../helpers/cleanString";
 import { useResponsiveLayout } from "../../hooks/useResponsiveLayout";
 import { FollowButton } from "../FollowButton/FollowButton";
+import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
 
 export type RootStateType = {
   control: {
@@ -327,6 +328,8 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
   const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
   const setFavoriteSong = useBoundStore((state) => state.setFavoriteSong);
   const setShowPlayer = useBoundStore((state) => state.setShowPlayer);
+  const setHistory = useBoundStore((state) => state.setHistory);
+  const recents = useBoundStore((state) => state.recents.history);
   const removeFavorite = useBoundStore((state) => state.removeFavorite);
   const favorites = useBoundStore((state) => state.favorites);
   const isFavorited = useMemo(
@@ -342,6 +345,13 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
       }),
     [userPlaylists, track?.id],
   ); //Provides the playlist of the track
+
+  useEffect(() => {
+    track !== null && setHistory(track);
+    saveToLocalStorage("last-recents", {
+      history: recents,
+    });
+  }, [track?.id]);
 
   return (
     <div className="absolute -bottom-[48px] right-0 z-20 flex h-auto w-auto flex-shrink-0 items-center justify-end space-x-5 bg-black bg-inherit p-3 px-4 sm:static sm:w-16 sm:space-x-3 sm:bg-transparent sm:p-0 sm:pr-0.5">
