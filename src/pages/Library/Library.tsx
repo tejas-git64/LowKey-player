@@ -13,6 +13,7 @@ import play from "../../assets/svgs/play-icon.svg";
 import pause from "../../assets/svgs/pause-icon.svg";
 import artistfallback from "../../assets/fallbacks/artist-fallback.png";
 import userplaylist from "../../assets/fallbacks/playlist-fallback.webp";
+import playlistIcon from "../../assets/svgs/playlist-icon.svg";
 import { Link } from "react-router-dom";
 import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
 import { FollowButton } from "../../components/FollowButton/FollowButton";
@@ -122,8 +123,15 @@ export default function Library() {
           </ul>
         </div>
       ) : (
-        <div className="flex h-[70dvh] w-full items-center justify-center">
-          <p className="text-neutral-400">Add something to your library</p>
+        <div className="flex h-[70dvh] w-full flex-col items-center justify-center">
+          <img
+            src={playlistIcon}
+            alt="playlist-icon"
+            width={80}
+            height={80}
+            className="mb-2 invert-[0.6]"
+          />
+          <p className="text-lg text-gray-400">Your library is empty</p>
         </div>
       )}
     </div>
