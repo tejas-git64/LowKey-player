@@ -8,7 +8,7 @@ export default function Playlist({ id, image, name }: PlaylistOfList) {
   const getPlaylistImage = () => {
     if (image) {
       const obj = image.find((img) => img.quality === "150x150");
-      return obj?.url;
+      if (obj) return obj.url;
     }
     return fallback;
   };
