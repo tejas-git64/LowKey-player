@@ -454,26 +454,42 @@ export const useBoundStore = create<StoreType>()(
           }),
         );
       },
-      setToUserPlaylist: (song: TrackDetails, id: number) => {
+      setToUserPlaylist: (track: TrackDetails, id: number) => {
         set(
           produce((state) => {
-            const object: UserPlaylist = state.library.userPlaylists.find(
-              (playlist: UserPlaylist) => playlist.id === id,
+            const playlist = state.library.userPlaylists.find(
+              (p: UserPlaylist) => p.id === id,
             );
-            object.songs.unshift(song);
+            if (
+              !playlist ||
+              playlist.songs.some((s: TrackDetails) => s.id === track.id)
+            )
+              return state;
+            return {
+              library: {
+                ...state.library,
+                userPlaylists: state.library.userPlaylists.map(
+                  (p: UserPlaylist) =>
+                    p.id === id ? { ...p, songs: [...p.songs, track] } : p,
+                ),
+              },
+            };
           }),
         );
       },
       removeFromUserPlaylist: (id: number, songid: string) =>
         set(
-          produce((state) => {
-            const object = state.library.userPlaylists.find(
-              (playlist: UserPlaylist) => playlist.id === id,
-            );
-            object.songs = object.songs.filter(
-              (song: TrackDetails) => song.id !== songid,
-            );
-          }),
+          produce((state) => ({
+            library: {
+              ...state.library,
+              userPlaylists: state.library.userPlaylists.map(
+                (u: UserPlaylist) =>
+                  u.id === id
+                    ? { ...u, songs: u.songs.filter((s) => s.id !== songid) }
+                    : u,
+              ),
+            },
+          })),
         ),
       createNewUserPlaylist: (name: string, id: number) => {
         set(
