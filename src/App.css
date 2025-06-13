@@ -6,8 +6,7 @@
   font-family: "Outfit", sans-serif;
 }
 
-::-webkit-scrollbar,
-::-moz-range-track {
+::-webkit-scrollbar {
   width: 0px;
   height: 2px;
   background-color: transparent;
@@ -37,24 +36,27 @@ button {
   width: 1px;
 }
 
+input[type="text"],
+input[type="range"] {
+  outline: none;
+  border: none;
+}
+
 @media screen and (min-width: 640px) {
 
-  ::-webkit-scrollbar,
-  ::-moz-range-track {
-    width: 4px;
+  ::-webkit-scrollbar {
+    width: 2px;
     background-color: transparent;
   }
 
-  ::-webkit-scrollbar-thumb,
-  ::-moz-range-thumb {
+  ::-webkit-scrollbar-thumb {
     width: auto;
     background-color: #323232;
   }
 
 }
 
-#volumeSlider,
-#volumeSlider::-moz-range-track {
+#volumeSlider {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -65,8 +67,7 @@ button {
   border-radius: 10px;
 }
 
-#volumeSlider::-webkit-slider-thumb,
-#volumeSlider::-moz-range-thumb {
+#volumeSlider::-webkit-slider-thumb {
   -webkit-appearance: none;
   -moz-appearance: none;
   -ms-progress-appearance: none;
