@@ -10,6 +10,7 @@ import { memo, useEffect, useState } from "react";
 import { useBoundStore } from "../../store/store";
 import { AlbumById, PlaylistById, UserPlaylist } from "../../types/GlobalTypes";
 import userplaylist from "../../assets/svgs/userplaylist.svg";
+import fallback from "../../assets/fallbacks/playlist-fallback.webp";
 
 export default function Menu() {
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
@@ -100,7 +101,7 @@ export default function Menu() {
             <img
               src={add}
               alt="new-menu-icon"
-              className="mx-1 mr-[23px] w-6 flex-shrink-0 xl:mr-[26px]"
+              className="mx-1 mr-[23px] w-6 flex-shrink-0 invert xl:mr-[26px]"
             />
             <p className="-mt-0.5 hidden text-base font-normal text-white sm:block">
               New playlist
@@ -157,7 +158,7 @@ const RecentPlaylistsOrAlbums = memo(() => {
           className="flex h-[50px] w-full flex-shrink-0 items-center justify-start p-2 py-1 hover:bg-neutral-900"
         >
           <img
-            src={playlist.image[0]?.url || ""}
+            src={playlist.image[0]?.url || fallback}
             alt="menu-icon"
             onError={(e) => (e.currentTarget.src = userplaylist)}
             className="mr-4 h-[35px] w-[35px] rounded-md shadow-md shadow-black xl:mr-6"
