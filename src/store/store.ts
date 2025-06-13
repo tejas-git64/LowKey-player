@@ -66,7 +66,7 @@ export type StoreType = {
     };
   };
   recents: {
-    history: TrackDetails[];
+    history: TrackDetails[] | null;
     activity: string[];
   };
   playlist: PlaylistById | null;
@@ -230,7 +230,13 @@ export const useBoundStore = create<StoreType>()(
       setHistory: (data: TrackDetails) =>
         set(
           produce((state) => {
-            state.recents.history.unshift(data);
+            const existingIndex = state.recents.history?.findIndex(
+              (song: TrackDetails) => song.id === data?.id,
+            );
+            if (existingIndex !== -1) {
+              state.recents.history?.splice(existingIndex, 1);
+            }
+            state.recents.history?.unshift(data);
           }),
         ),
       setActivity: (message: string) =>
