@@ -5,10 +5,12 @@ import Recents from "../../components/Recents/Recents";
 import PlayingPill from "../../components/PlayingPill/PlayingPill";
 import MobileNav from "../../components/MobileNav/MobileNav";
 import NowPlaying from "../../components/Nowplaying/NowPlaying";
-import Creation from "../../components/Creation/Creation";
+import Creation from "../../components/PlaylistModal/PlaylistModal";
+import { useRef } from "react";
 
 export default function Layout() {
   const path = useLocation().pathname;
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   return (
     <div className="relative h-full w-full overflow-hidden 2xl:mx-auto 2xl:max-h-[1200px] 2xl:max-w-[1600px]">
@@ -24,10 +26,13 @@ export default function Layout() {
             path !== "/" ? "sm:h-[95vh]" : "sm:h-full"
           }`}
         >
-          <div className="h-full w-full border-x-2 border-black bg-black">
+          <div
+            ref={containerRef}
+            className="relative h-full w-full border-x-2 border-black bg-black"
+          >
             <Outlet />
+            <Creation ref={containerRef} />
           </div>
-          <Creation />
           <div
             className={`fixed bottom-0 left-0 ${
               path === "/" ? "hidden" : "sm:hidden"
