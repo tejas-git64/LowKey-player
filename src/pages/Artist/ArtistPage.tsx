@@ -24,7 +24,7 @@ export default function ArtistPage() {
 
   return (
     <Suspense fallback={<ArtistPageLoading />}>
-      <div className="h-auto w-full bg-neutral-900">
+      <div className="h-auto w-full bg-neutral-900 pb-32">
         {id && <ArtistInfo id={id} />}
         {id && <ArtistAlbums id={id} />}
         {id && <ArtistSongs id={id} />}

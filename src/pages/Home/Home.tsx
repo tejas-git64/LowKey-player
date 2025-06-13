@@ -46,7 +46,7 @@ export default function Home() {
   return (
     <>
       <Suspense fallback={<Loading />}>
-        <div className="h-auto w-full scroll-smooth bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700">
+        <div className="h-auto w-full scroll-smooth">
           <div className="h-auto max-h-max w-full xl:w-full">
             <Widget />
             <h1 className="my-2 px-4 pt-2 text-left text-xl font-semibold text-white">
@@ -117,7 +117,7 @@ const Widget = memo(() => {
           height={320}
           fetchPriority="high"
           loading="eager"
-          className="aspect-square h-auto w-auto flex-shrink-0 rounded-sm bg-neutral-700 brightness-75 contain-layout sm:z-10 sm:h-[40vw] sm:w-[40vw] sm:brightness-100 md:h-80 md:w-80"
+          className="aspect-square h-auto w-auto flex-shrink-0 cursor-pointer rounded-sm bg-neutral-700 brightness-75 contain-layout sm:z-10 sm:h-[40vw] sm:w-[40vw] sm:brightness-100 md:h-80 md:w-80"
           onClick={() =>
             widget !== null &&
             widget.id !== "" &&
@@ -130,11 +130,10 @@ const Widget = memo(() => {
           </p>
           <button
             style={{
-              outline: "none",
               border: "1px solid #000",
             }}
             onClick={handlePlaylist}
-            className="rounded-full bg-emerald-500 p-1.5"
+            className="rounded-full bg-emerald-500 p-1.5 outline-none"
           >
             <img
               src={isPlaying ? pause : play}

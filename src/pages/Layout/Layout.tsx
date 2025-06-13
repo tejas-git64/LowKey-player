@@ -13,7 +13,7 @@ export default function Layout() {
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   return (
-    <div className="relative h-full w-full overflow-hidden 2xl:mx-auto 2xl:max-h-[1200px] 2xl:max-w-[1600px]">
+    <div className="relative h-full w-full overflow-hidden bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 2xl:mx-auto 2xl:max-h-[1200px] 2xl:max-w-[1600px]">
       {path !== "/" && <Nav />}
       <div
         className={`relative flex h-full w-full flex-row items-start justify-start overflow-hidden ${
@@ -28,7 +28,7 @@ export default function Layout() {
         >
           <div
             ref={containerRef}
-            className="relative h-full w-full border-x-2 border-black bg-black"
+            className="relative h-full w-full border-x-2 border-black"
           >
             <Outlet />
             <Creation ref={containerRef} />

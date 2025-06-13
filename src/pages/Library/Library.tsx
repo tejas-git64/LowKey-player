@@ -69,20 +69,18 @@ export default function Library() {
   }, [userPlaylists, playlists, albums, followings]);
 
   return (
-    <div className="relative max-h-fit min-h-full w-full scroll-smooth bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700">
-      <div className="absolute right-2 top-2 h-auto w-auto">
+    <div className="relative max-h-fit min-h-full w-full scroll-smooth bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 pb-56">
+      <div className="flex h-auto w-auto items-center justify-between bg-inherit px-3">
+        <h2 className="font text-2xl font-semibold text-white">Library</h2>
         <RouteNav />
       </div>
-      <h2 className="font p-2 px-2 text-2xl font-semibold text-white">
-        Your Library
-      </h2>
-      <div className="mb-2 flex h-auto w-full items-center justify-end px-3">
+      <div className="my-2 flex h-auto w-full items-center justify-end px-3">
         <button
           type="button"
           onClick={(e) => createNewPlaylist(e)}
-          className="h-auto w-auto rounded-sm bg-neutral-300 py-1.5 pl-2 pr-3 text-sm font-semibold text-black transition-colors ease-in hover:bg-neutral-200"
+          className="h-auto w-auto rounded-sm bg-neutral-300 px-2 py-1 text-sm font-semibold text-black transition-colors ease-in hover:bg-neutral-200"
         >
-          ➕ New playlist
+          New playlist ✨
         </button>
       </div>
       {userPlaylists.length > 0 ||
@@ -107,21 +105,21 @@ export default function Library() {
               <LibraryAlbums albums={albums} />
             </div>
           )}
-          {followings &&
-            followings.length > 0 &&
-            followings.map((following: ArtistInSong) => (
-              <div
-                key={following.id}
-                className="mb-[30dvh] h-auto w-full overflow-hidden"
-              >
-                <h2 className="text-md w-full font-semibold text-white">
-                  Followings
-                </h2>
-                <ul className="mt-1 h-auto w-full">
+          <h2 className="text-md w-full font-semibold text-white">
+            Followings
+          </h2>
+          <ul className="mt-1 h-auto w-full">
+            {followings &&
+              followings.length > 0 &&
+              followings.map((following: ArtistInSong) => (
+                <div
+                  key={following.id}
+                  className="h-auto w-full overflow-hidden"
+                >
                   <Following {...following} />
-                </ul>
-              </div>
-            ))}
+                </div>
+              ))}
+          </ul>
         </div>
       ) : (
         <div className="flex h-[70dvh] w-full items-center justify-center">

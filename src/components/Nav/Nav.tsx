@@ -7,7 +7,7 @@ export default function Nav() {
   const greeting = useBoundStore((state) => state.greeting);
   return (
     <>
-      <nav className="flex h-12 w-full items-center justify-between bg-gradient-to-r from-neutral-800 to-black pl-2.5 pr-[18px] sm:border-b sm:border-black sm:bg-black">
+      <nav className="flex h-12 w-full items-center justify-between border-b-2 border-black pl-2.5 pr-[18px]">
         <p className="whitespace-nowrap px-1 text-xl font-semibold text-white sm:text-lg">
           {greeting || "Keep jamming 🎶"}
         </p>

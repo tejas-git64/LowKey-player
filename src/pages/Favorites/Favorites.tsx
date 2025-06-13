@@ -230,7 +230,7 @@ const FavoriteAlbums = memo(() => {
                     <img
                       src={close}
                       alt="remove"
-                      className="h-7 w-7 rounded-full"
+                      className="h-6 w-6 rounded-full p-1"
                     />
                   </button>
                 </div>

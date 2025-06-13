@@ -144,7 +144,7 @@ export default function NowPlaying() {
 
   return (
     <div
-      className={`${!isMobilePlayer ? "translate-y-[100%]" : "translate-y-0"} absolute bottom-0 z-20 flex h-full w-full flex-col items-center justify-start overflow-y-scroll bg-black pb-10 transition-transform sm:h-fit sm:translate-y-0 sm:flex-row sm:items-center sm:justify-between sm:pb-0 2xl:border 2xl:border-neutral-900`}
+      className={`${!isMobilePlayer ? "translate-y-full" : "translate-y-0"} absolute bottom-0 z-20 flex h-full w-full flex-col items-center justify-start overflow-y-scroll bg-black pb-10 transition-transform sm:h-fit sm:translate-y-0 sm:flex-row sm:items-center sm:justify-between sm:pb-0 2xl:border 2xl:border-neutral-900`}
     >
       <div className="sm:h-12.5 flex h-max w-full flex-shrink-0 flex-col items-center justify-center sm:w-[30%] sm:max-w-[300px] sm:flex-row sm:justify-start sm:px-2.5">
         <div className="relative z-0 h-full w-full sm:mr-3 sm:w-auto">
@@ -152,9 +152,9 @@ export default function NowPlaying() {
             <button
               type="button"
               onClick={() => setShowPlayer(false)}
-              className="absolute right-2 top-2 rounded-full bg-black px-2 py-0.5"
+              className="absolute right-2 top-2 rounded-sm bg-black px-1 py-0.5 shadow-xl shadow-black"
             >
-              <img src={down} alt="toggle-drawer" />
+              <img src={down} alt="toggle-drawer" width={24} height={24} />
             </button>
           )}
           <img
@@ -162,7 +162,7 @@ export default function NowPlaying() {
             id="songImg"
             alt="song-img"
             onError={(e) => (e.currentTarget.src = songfallback)}
-            className="h-auto w-full flex-shrink-0 rounded-lg sm:mr-3 sm:h-[50px] sm:w-[50px] sm:rounded-sm"
+            className="h-auto w-full flex-shrink-0 rounded-b-lg sm:mr-3 sm:h-[50px] sm:w-[50px] sm:rounded-sm"
           />
           {isMobileWidth && <PlayerOptions track={track} />}
         </div>
@@ -207,7 +207,7 @@ export default function NowPlaying() {
         />
       </div>
       {track && (
-        <div className="mx-auto ml-8 mt-8 flex h-auto w-[90%] items-center justify-evenly sm:absolute sm:-top-[25px] sm:right-16 sm:w-[120px]">
+        <div className="mx-auto mt-8 flex h-auto w-[90%] items-center justify-evenly sm:absolute sm:-top-[25px] sm:right-16 sm:w-[120px]">
           <div>
             <label
               htmlFor="quality"
@@ -309,11 +309,7 @@ const PlayButton = () => {
       onClick={() => {
         setIsPlaying(!isPlaying);
       }}
-      style={{
-        border: "none",
-        outline: "none",
-      }}
-      className={`h-auto w-auto rounded-full border-none bg-neutral-100 p-2 outline-none disabled:cursor-not-allowed disabled:bg-neutral-600 sm:p-1`}
+      className={`h-auto w-auto flex-shrink-0 rounded-full border-none bg-neutral-100 p-2 outline-none disabled:cursor-not-allowed disabled:bg-neutral-600 sm:p-1`}
       disabled={!id}
     >
       <img
@@ -330,6 +326,7 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
   const setCreationTrack = useBoundStore((state) => state.setCreationTrack);
   const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
   const setFavoriteSong = useBoundStore((state) => state.setFavoriteSong);
+  const setShowPlayer = useBoundStore((state) => state.setShowPlayer);
   const removeFavorite = useBoundStore((state) => state.removeFavorite);
   const favorites = useBoundStore((state) => state.favorites);
   const isFavorited = useMemo(
@@ -353,6 +350,7 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
         onClick={(e) => {
           e.stopPropagation();
           track && setCreationTrack(track);
+          setShowPlayer(false);
           setRevealCreation(true);
         }}
         className="border bg-transparent p-0 disabled:cursor-not-allowed disabled:invert-[0.5]"
@@ -377,10 +375,6 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
             startTransition,
           })
         }
-        style={{
-          border: "none",
-          outline: "none",
-        }}
         className="mx-3 border-none bg-transparent p-0 outline-none disabled:cursor-not-allowed disabled:invert-[0.5]"
         disabled={!track?.id}
       >
@@ -421,7 +415,7 @@ const Controls = memo(
     };
 
     return (
-      <div className="-ml-2 -mt-4 flex w-full max-w-[400px] flex-shrink-0 items-center justify-center space-x-[10%] sm:m-0 sm:space-x-5">
+      <div className="-ml-2 -mt-4 flex w-[90%] max-w-[400px] flex-shrink-0 items-center justify-center space-x-[10%] sm:m-0 sm:space-x-5">
         <button
           type="button"
           className="bg-transparent p-0 disabled:cursor-not-allowed disabled:invert-[0.5]"
@@ -578,9 +572,11 @@ const Artist = (artist: ArtistInSong) => {
         <img
           src={artist.image[0]?.url || artistfallback}
           alt="artist-image"
-          className="mr-4 h-[50px] w-[50px] rounded-sm"
+          className="mr-4 h-[50px] w-[50px]"
         />
-        <p className="font-thin text-white">{artist.name}</p>
+        <p className="font-thin text-white">
+          {cleanString(artist.name) || "Unknown artist"}
+        </p>
       </div>
       <FollowButton artist={artist} />
     </div>
