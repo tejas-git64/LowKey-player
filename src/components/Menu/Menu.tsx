@@ -109,7 +109,7 @@ export default function Menu() {
           </div>
         </div>
         <RecentPlaylistsOrAlbums />
-        <div className="absolute bottom-[70px] flex w-full items-center justify-start bg-inherit p-3">
+        <div className="absolute bottom-[17.5%] flex w-full items-center justify-start bg-inherit p-3">
           <img
             src={isOnline ? online : offline}
             alt="menu-icon"
