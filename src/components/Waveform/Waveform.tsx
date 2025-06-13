@@ -87,8 +87,7 @@ const Waveform = ({
     } else {
       lastTimeRef.current = 0;
     }
-    const secureUrl = audioUrl.replace("http", "https");
-    waveSurferRef.current.load(secureUrl);
+    waveSurferRef.current.load(audioUrl);
 
     const handleReady = () => {
       if (isNewTrack) {
