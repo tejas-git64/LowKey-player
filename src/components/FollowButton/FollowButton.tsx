@@ -1,6 +1,7 @@
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import { useBoundStore } from "../../store/store";
 import { ArtistInSong } from "../../types/GlobalTypes";
+import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
 
 export const FollowButton = memo(({ artist }: { artist: ArtistInSong }) => {
   const setFollowing = useBoundStore((state) => state.setFollowing);
@@ -21,6 +22,12 @@ export const FollowButton = memo(({ artist }: { artist: ArtistInSong }) => {
       setFollowing(artist);
     }
   };
+
+  useEffect(() => {
+    saveToLocalStorage("local-library", {
+      followings,
+    });
+  }, [followings]);
 
   return (
     <button

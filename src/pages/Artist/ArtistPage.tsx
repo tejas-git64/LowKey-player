@@ -13,10 +13,10 @@ import { useBoundStore } from "../../store/store";
 import Song from "../../components/Song/Song";
 import { TrackDetails } from "../../types/GlobalTypes";
 import artistfallback from "../../assets/fallbacks/artist-fallback.png";
+import albumfallback from "../../assets/fallbacks/album-fallback.webp";
 import { useQuery } from "@tanstack/react-query";
 import ArtistPageLoading from "./Loading";
 import RouteNav from "../../components/RouteNav/RouteNav";
-import songfallback from "../../assets/fallbacks/song-fallback.webp";
 import { FollowButton } from "../../components/FollowButton/FollowButton";
 
 export default function ArtistPage() {
@@ -24,7 +24,7 @@ export default function ArtistPage() {
 
   return (
     <Suspense fallback={<ArtistPageLoading />}>
-      <div className="h-auto w-full bg-neutral-900">
+      <div className="h-auto w-full bg-neutral-900 pb-32">
         {id && <ArtistInfo id={id} />}
         {id && <ArtistAlbums id={id} />}
         {id && <ArtistSongs id={id} />}
@@ -53,7 +53,7 @@ const ArtistInfo = memo(({ id }: { id: string }) => {
   const getArtistImage = () => {
     if (details) {
       const obj = details.image.find((img) => img.quality === "150x150");
-      return obj?.url;
+      if (obj) return obj.url;
     }
     return artistfallback;
   };
@@ -170,6 +170,14 @@ const ArtistAlbums = memo(({ id }: { id: string }) => {
     select: (data: any) => setArtistAlbums(data.data.albums),
   });
 
+  const getAlbumImage = (id: string) => {
+    if (albums) {
+      const obj = albums.find((album) => album.id === id);
+      if (obj && obj.image) return obj.image[1].url;
+    }
+    return albumfallback;
+  };
+
   return (
     <div className="h-[240px] w-full px-4 py-3 pb-12">
       <h2 className="text-xl font-semibold text-white">Albums</h2>
@@ -183,7 +191,7 @@ const ArtistAlbums = memo(({ id }: { id: string }) => {
           >
             <div className="mb-2.5 h-[150px] w-[150px] overflow-hidden">
               <img
-                src={album.image ? album.image[1]?.url : songfallback}
+                src={getAlbumImage(id)}
                 alt="artist-album"
                 width={150}
                 height={150}

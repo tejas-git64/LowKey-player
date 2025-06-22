@@ -13,6 +13,7 @@ import play from "../../assets/svgs/play-icon.svg";
 import pause from "../../assets/svgs/pause-icon.svg";
 import artistfallback from "../../assets/fallbacks/artist-fallback.png";
 import userplaylist from "../../assets/fallbacks/playlist-fallback.webp";
+import playlistIcon from "../../assets/svgs/playlist-icon.svg";
 import { Link } from "react-router-dom";
 import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
 import { FollowButton } from "../../components/FollowButton/FollowButton";
@@ -69,21 +70,32 @@ export default function Library() {
   }, [userPlaylists, playlists, albums, followings]);
 
   return (
-    <div className="relative max-h-fit min-h-full w-full scroll-smooth bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700">
-      <div className="absolute right-2 top-2 h-auto w-auto">
+    <div className="relative max-h-fit min-h-full w-full scroll-smooth bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 pb-56">
+      <div className="flex h-auto w-auto items-center justify-between bg-inherit px-3">
+        <h2 className="font text-2xl font-semibold text-white">Library</h2>
         <RouteNav />
       </div>
+<<<<<<< HEAD
       <h2 className="font p-2 text-2xl font-semibold text-white">
         Your Library
       </h2>
       <div className="mb-2 flex h-auto w-full items-center justify-end px-3">
+=======
+      <div className="my-2 flex h-auto w-full items-center justify-end px-3">
+>>>>>>> 13aeb08b1c5e05df32001d47ea177be3ac7fabf9
         <button
           type="button"
           tabIndex={0}
           onClick={(e) => createNewPlaylist(e)}
+<<<<<<< HEAD
           className="h-auto w-auto rounded-sm bg-neutral-400 px-3 py-1.5 text-sm font-semibold text-black transition-colors ease-in hover:bg-neutral-200 focus-visible:bg-white"
         >
           New playlist
+=======
+          className="h-auto w-auto rounded-sm bg-neutral-300 px-2 py-1 text-sm font-semibold text-black transition-colors ease-in hover:bg-neutral-200"
+        >
+          New playlist ✨
+>>>>>>> 13aeb08b1c5e05df32001d47ea177be3ac7fabf9
         </button>
       </div>
       {userPlaylists.length > 0 ||
@@ -108,25 +120,32 @@ export default function Library() {
               <LibraryAlbums albums={albums} />
             </div>
           )}
-          {followings &&
-            followings.length > 0 &&
-            followings.map((following: ArtistInSong) => (
-              <div
-                key={following.id}
-                className="mb-[30dvh] h-auto w-full overflow-hidden"
-              >
-                <h2 className="text-md w-full font-semibold text-white">
-                  Followings
-                </h2>
-                <ul className="mt-1 h-auto w-full">
+          <h2 className="text-md w-full font-semibold text-white">
+            Followings
+          </h2>
+          <ul className="mt-1 h-auto w-full">
+            {followings &&
+              followings.length > 0 &&
+              followings.map((following: ArtistInSong) => (
+                <div
+                  key={following.id}
+                  className="h-auto w-full overflow-hidden"
+                >
                   <Following {...following} />
-                </ul>
-              </div>
-            ))}
+                </div>
+              ))}
+          </ul>
         </div>
       ) : (
-        <div className="flex h-[70dvh] w-full items-center justify-center">
-          <p className="text-neutral-400">Add something to your library</p>
+        <div className="flex h-[70dvh] w-full flex-col items-center justify-center">
+          <img
+            src={playlistIcon}
+            alt="playlist-icon"
+            width={80}
+            height={80}
+            className="mb-2 invert-[0.6]"
+          />
+          <p className="text-lg text-gray-400">Your library is empty</p>
         </div>
       )}
     </div>

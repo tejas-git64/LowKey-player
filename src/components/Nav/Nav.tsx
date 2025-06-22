@@ -33,6 +33,7 @@ export default function Menu() {
   }, []);
 
   return (
+<<<<<<< HEAD
     <nav
       role="navigation"
       className="hidden h-full max-h-screen overflow-hidden border-l-2 border-black bg-neutral-950 sm:block sm:w-[60px] lg:w-72 xl:w-80 2xl:w-96"
@@ -126,6 +127,16 @@ export default function Menu() {
         </div>
       </div>
     </nav>
+=======
+    <>
+      <nav className="flex h-12 w-full items-center justify-between border-b-2 border-black pl-2.5 pr-[18px]">
+        <p className="whitespace-nowrap px-1 text-xl font-semibold text-white sm:text-lg">
+          {greeting || "Keep jamming 🎶"}
+        </p>
+        <NotificationButton />
+      </nav>
+    </>
+>>>>>>> 13aeb08b1c5e05df32001d47ea177be3ac7fabf9
   );
 }
 

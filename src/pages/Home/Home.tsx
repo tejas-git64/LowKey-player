@@ -46,7 +46,7 @@ export default function Home() {
   return (
     <>
       <Suspense fallback={<Loading />}>
-        <div className="h-auto w-full scroll-smooth bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700">
+        <div className="h-auto w-full scroll-smooth">
           <div className="h-auto max-h-max w-full xl:w-full">
             <Widget />
             <h1 className="my-2 px-4 pt-2 text-left text-xl font-semibold text-white">

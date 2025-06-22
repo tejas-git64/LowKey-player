@@ -40,7 +40,7 @@ export default function PlaylistPage() {
   return (
     <>
       {!isPending ? (
-        <div className="h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth">
+        <div className="h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth pb-20">
           <div className="relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 p-3 sm:h-[223px] sm:px-4">
             <div className="absolute right-2 top-2 h-auto w-auto">
               <RouteNav />
@@ -231,7 +231,7 @@ const PlaylistInfo = memo(() => {
   const getPlaylistImage = () => {
     if (images) {
       const obj = images.find((img) => img.quality === "150x150");
-      return obj?.url;
+      if (obj) obj.url;
     }
     return fallback;
   };

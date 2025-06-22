@@ -37,6 +37,7 @@ import { useNavigate } from "react-router-dom";
 import { cleanString } from "../../helpers/cleanString";
 import { useResponsiveLayout } from "../../hooks/useResponsiveLayout";
 import { FollowButton } from "../FollowButton/FollowButton";
+import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
 
 export type RootStateType = {
   control: {
@@ -162,7 +163,7 @@ export default function NowPlaying() {
               className="absolute right-2 top-2 rounded-full bg-black px-2 py-0.5"
               aria-label="hide now playing drawer"
             >
-              <img src={down} alt="toggle-drawer" />
+              <img src={down} alt="toggle-drawer" width={24} height={24} />
             </button>
           )}
           <img
@@ -369,6 +370,9 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
   const setCreationTrack = useBoundStore((state) => state.setCreationTrack);
   const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
   const setFavoriteSong = useBoundStore((state) => state.setFavoriteSong);
+  const setShowPlayer = useBoundStore((state) => state.setShowPlayer);
+  const setHistory = useBoundStore((state) => state.setHistory);
+  const recents = useBoundStore((state) => state.recents.history);
   const removeFavorite = useBoundStore((state) => state.removeFavorite);
   const favorites = useBoundStore((state) => state.favorites);
   const isFavorited = useMemo(
@@ -385,6 +389,13 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
     [userPlaylists, track?.id],
   ); //Provides the playlist of the track
 
+  useEffect(() => {
+    track !== null && setHistory(track);
+    saveToLocalStorage("last-recents", {
+      history: recents,
+    });
+  }, [track?.id]);
+
   return (
     <div
       className="absolute -bottom-[48px] right-0 z-20 flex h-auto w-auto flex-shrink-0 items-center justify-end space-x-5 bg-black bg-inherit p-3 px-4 sm:static sm:w-16 sm:space-x-3 sm:bg-transparent sm:p-0 sm:pr-0.5"
@@ -397,6 +408,7 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
         onClick={(e) => {
           e.stopPropagation();
           track && setCreationTrack(track);
+          setShowPlayer(false);
           setRevealCreation(true);
         }}
         className="border bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:invert-[0.5]"
