@@ -1,6 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
+import Banner from "../../components/Banner/Banner";
 import Nav from "../../components/Nav/Nav";
-import Menu from "../../components/Menu/Menu";
 import Recents from "../../components/Recents/Recents";
 import PlayingPill from "../../components/PlayingPill/PlayingPill";
 import MobileNav from "../../components/MobileNav/MobileNav";
@@ -14,13 +14,13 @@ export default function Layout() {
 
   return (
     <div className="relative h-full w-full overflow-hidden 2xl:mx-auto 2xl:max-h-[1200px] 2xl:max-w-[1600px]">
-      {path !== "/" && <Nav />}
+      {path !== "/" && <Banner />}
       <div
         className={`relative flex h-full w-full flex-row items-start justify-start overflow-hidden ${
           path !== "/" ? "sm:h-[95vh]" : "sm:h-full"
         }`}
       >
-        {path !== "/" && <Menu />}
+        {path !== "/" && <Nav />}
         <div
           className={`h-full w-full overflow-x-hidden ${
             path !== "/" ? "sm:h-[95vh]" : "sm:h-full"
@@ -28,6 +28,7 @@ export default function Layout() {
         >
           <div
             ref={containerRef}
+            role="main"
             className="relative h-full w-full border-x-2 border-black bg-black"
           >
             <Outlet />
