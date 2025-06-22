@@ -1,7 +1,9 @@
 import { TrackDetails } from "../types/GlobalTypes";
 
 const handleCollectionPlayback = (
-  e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  e:
+    | React.MouseEvent<HTMLButtonElement, MouseEvent>
+    | React.KeyboardEvent<Element>,
   collection: { id: string; name: string; image: any; songs: TrackDetails[] },
   isPlaying: boolean,
   setQueue: Function,
