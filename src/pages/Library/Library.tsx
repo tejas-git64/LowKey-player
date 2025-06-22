@@ -73,16 +73,17 @@ export default function Library() {
       <div className="absolute right-2 top-2 h-auto w-auto">
         <RouteNav />
       </div>
-      <h2 className="font p-2 px-2 text-2xl font-semibold text-white">
+      <h2 className="font p-2 text-2xl font-semibold text-white">
         Your Library
       </h2>
       <div className="mb-2 flex h-auto w-full items-center justify-end px-3">
         <button
           type="button"
+          tabIndex={0}
           onClick={(e) => createNewPlaylist(e)}
-          className="h-auto w-auto rounded-sm bg-neutral-300 py-1.5 pl-2 pr-3 text-sm font-semibold text-black transition-colors ease-in hover:bg-neutral-200"
+          className="h-auto w-auto rounded-sm bg-neutral-400 px-3 py-1.5 text-sm font-semibold text-black transition-colors ease-in hover:bg-neutral-200 focus-visible:bg-white"
         >
-          ➕ New playlist
+          New playlist
         </button>
       </div>
       {userPlaylists.length > 0 ||
@@ -189,13 +190,17 @@ const CustomPlaylists = memo(
                 className="group relative h-fit w-fit"
               >
                 <div className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center justify-center">
-                  <img
-                    src={userplaylist}
-                    alt="user-profile"
-                    loading="eager"
-                    fetchPriority="high"
-                    className="h-[150px] w-[150px] shadow-md shadow-black brightness-100 transition-all ease-linear group-hover:brightness-90"
-                  />
+                  <div className="h-[150px] w-[150px] overflow-hidden">
+                    <img
+                      src={userplaylist}
+                      alt="user-profile"
+                      loading="eager"
+                      fetchPriority="high"
+                      width={150}
+                      height={150}
+                      className="h-full w-full scale-105 shadow-md shadow-black brightness-100 transition-all ease-linear group-hover:scale-100 group-hover:brightness-90 group-focus:scale-100"
+                    />
+                  </div>
                   <p className="mt-1.5 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-sm font-semibold text-neutral-400 transition-colors ease-linear group-hover:text-white sm:text-sm">
                     {playlist.name}
                   </p>
@@ -204,7 +209,7 @@ const CustomPlaylists = memo(
                   {playlist.songs.length > 0 && (
                     <button
                       type="button"
-                      className="-ml-2 mr-2 rounded-full bg-emerald-400 p-2"
+                      className="mx-2 -ml-4 rounded-full bg-emerald-400 p-2"
                       onClick={(e) =>
                         handleCollectionPlayback(
                           e,

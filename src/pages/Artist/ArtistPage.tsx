@@ -67,6 +67,8 @@ const ArtistInfo = memo(({ id }: { id: string }) => {
         <img
           src={getArtistImage()}
           alt="artist-img"
+          loading="eager"
+          fetchPriority="high"
           className="h-[150px] w-[150px] shadow-xl shadow-black sm:mr-4"
         />
         <div>
@@ -85,35 +87,54 @@ const ArtistInfo = memo(({ id }: { id: string }) => {
         </div>
       </div>
       <div className="flex h-full w-full flex-col items-center justify-between sm:h-[150px] sm:items-end">
-        <ul className="my-2.5 flex h-full w-[45%] items-center justify-evenly sm:my-1.5 sm:w-fit sm:items-end sm:justify-end">
+        <ul className="my-2.5 flex h-full w-[45%] items-center justify-evenly sm:w-fit sm:items-end sm:justify-end">
           {details?.fb && (
-            <li className="mr-4">
-              <a href={details?.fb} target="_blank">
+            <li
+              className="mr-4 outline-none focus:ring-2 focus:ring-emerald-500"
+              tabIndex={0}
+            >
+              <a href={details?.fb} target="_blank" className="outline-none">
                 <img
                   src={meta}
                   alt="meta"
+                  loading="eager"
+                  fetchPriority="high"
                   className="h-[28px] w-[28px] sm:h-[24px] sm:w-[24px]"
                 />
               </a>
             </li>
           )}
           {details?.twitter && (
-            <li>
-              <a href={details?.twitter} target="_blank">
+            <li
+              tabIndex={0}
+              className="mr-4 outline-none focus:ring-2 focus:ring-emerald-500"
+            >
+              <a
+                href={details?.twitter}
+                target="_blank"
+                className="outline-none"
+              >
                 <img
                   src={x}
                   alt="x"
-                  className="mr-4 h-[28px] w-[28px] sm:h-[24px] sm:w-[24px]"
+                  loading="eager"
+                  fetchPriority="high"
+                  className="mb-0.5 h-[28px] w-[28px] sm:h-5 sm:w-5"
                 />
               </a>
             </li>
           )}
           {details?.fb && (
-            <li>
-              <a href={details?.wiki} target="_blank">
+            <li
+              tabIndex={0}
+              className="outline-none focus:ring-2 focus:ring-emerald-500"
+            >
+              <a href={details?.wiki} target="_blank" className="outline-none">
                 <img
                   src={wiki}
                   alt="wiki"
+                  loading="eager"
+                  fetchPriority="high"
                   className="h-[30px] w-[30px] sm:h-[24px] sm:w-[24px]"
                 />
               </a>
@@ -156,15 +177,22 @@ const ArtistAlbums = memo(({ id }: { id: string }) => {
         {albums.map((album) => (
           <li
             key={album.id}
+            tabIndex={0}
             onClick={() => navigate(`/albums/${album.id}`, { replace: true })}
-            className="group mr-4 h-[180px] w-[150px] flex-shrink-0"
+            className="group mr-4 h-[180px] w-[150px] flex-shrink-0 outline-none"
           >
-            <img
-              src={album.image ? album.image[1]?.url : songfallback}
-              alt="artist-album"
-              className="h-[150px] w-[150px] rounded-none transition-all ease-linear group-hover:rounded-xl group-hover:brightness-110"
-            />
-            <p className="mt-1 line-clamp-1 w-full text-ellipsis text-center text-xs text-neutral-300 transition-colors ease-linear group-hover:text-white sm:text-sm">
+            <div className="mb-2.5 h-[150px] w-[150px] overflow-hidden">
+              <img
+                src={album.image ? album.image[1]?.url : songfallback}
+                alt="artist-album"
+                width={150}
+                height={150}
+                loading="eager"
+                fetchPriority="high"
+                className="scale-105 transition-all ease-linear hover:scale-100 group-hover:brightness-110 group-focus:scale-100"
+              />
+            </div>
+            <p className="mt-1 line-clamp-1 w-full text-ellipsis text-center text-xs font-semibold text-neutral-400 transition-colors ease-linear group-hover:text-white group-focus:text-white">
               {album.name}
             </p>
           </li>

@@ -108,8 +108,11 @@ const FavoriteControls = memo(() => {
     <div className="mb-0 flex w-[120px] items-center justify-between sm:w-[105px]">
       <button
         type="button"
+        tabIndex={0}
+        title="Shuffle button"
+        aria-label={isShuffling ? "Disable shuffle" : "Enable shuffle"}
         onClick={() => setIsShuffling(!isShuffling)}
-        className="border border-white bg-transparent p-0"
+        className="border border-white bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
       >
         <svg
           width="64px"
@@ -136,6 +139,9 @@ const FavoriteControls = memo(() => {
       </button>
       <button
         type="button"
+        tabIndex={favorites.songs.length > 0 ? 0 : -1}
+        title="Play button"
+        aria-label={isFavoritePlaying ? "Pause favorites" : "Play favorites"}
         onClick={(e) =>
           handleCollectionPlayback(
             e,
@@ -146,12 +152,14 @@ const FavoriteControls = memo(() => {
             setIsPlaying,
           )
         }
-        className="flex-shrink-0 rounded-full bg-emerald-400 p-1"
+        className="flex-shrink-0 rounded-full bg-emerald-400 p-1 focus:outline-none focus:ring-4 focus:ring-black"
+        disabled={favorites.songs.length === 0}
       >
         <img
           src={isFavoritePlaying ? pause : play}
-          alt="play"
+          alt={isFavoritePlaying ? "Pause" : "Play"}
           className="h-8 w-8"
+          aria-hidden="true"
         />
       </button>
     </div>
@@ -180,29 +188,48 @@ const FavoriteAlbums = memo(() => {
       {albums && albums.length > 0 && (
         <>
           <h2 className="p-4 py-2 font-semibold text-white">Albums</h2>
-          <ul className="flex h-[200px] max-h-fit w-full overflow-y-hidden overflow-x-scroll whitespace-nowrap p-4 py-2">
+          <div className="flex h-[200px] max-h-fit w-full list-none overflow-y-hidden overflow-x-scroll whitespace-nowrap p-4 py-2">
             {albums.map((album: AlbumById) => (
-              <li
-                className="group relative mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center bg-transparent"
+              <div
+                tabIndex={0}
                 key={album.id}
+                className="group relative mr-4 flex h-[180px] w-[150px] flex-shrink-0 flex-col items-center bg-transparent outline-none"
                 onClick={() =>
                   navigate(`/albums/${album.id}`, { replace: true })
                 }
+                role="link"
+                aria-label={`Go to album ${album.name}`}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    navigate(`/albums/${album.id}`, { replace: true });
+                  }
+                }}
               >
-                <img
-                  src={album.image[1]?.url || fallback}
-                  alt="user-profile"
-                  className="h-[150px] w-[150px] rounded-full shadow-xl shadow-neutral-950"
-                  onError={(e) => (e.currentTarget.src = fallback)}
-                />
-                <p className="mt-1 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-xs font-semibold text-neutral-400">
+                <div className="h-[150px] w-[150px] overflow-hidden">
+                  <img
+                    src={album.image[1]?.url || fallback}
+                    alt="user-profile"
+                    width={150}
+                    height={150}
+                    className="scale-105 shadow-xl shadow-neutral-950 transition-transform group-hover:scale-100 group-focus:scale-100"
+                    onError={(e) => (e.currentTarget.src = fallback)}
+                  />
+                </div>
+                <p className="mt-1 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-xs font-semibold text-neutral-400 transition-colors group-hover:text-white group-focus:text-white">
                   {album.name}
                 </p>
-                <div className="absolute left-0 top-0 flex h-[150px] w-full items-center justify-center bg-transparent opacity-0 transition-all ease-in group-hover:opacity-100">
+                <div className="absolute left-0 top-0 flex h-[150px] w-full items-center justify-center bg-transparent opacity-0 transition-all ease-in group-hover:opacity-100 group-focus:opacity-100">
                   <button
                     type="button"
-                    className="rounded-full bg-emerald-400"
-                    onClick={(e) =>
+                    tabIndex={0}
+                    className="rounded-full bg-emerald-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                    aria-label={
+                      isPlaying && album.id === queueId
+                        ? "Pause album"
+                        : "Play album"
+                    }
+                    onClick={(e) => {
+                      e.stopPropagation();
                       handleCollectionPlayback(
                         e,
                         album,
@@ -210,18 +237,21 @@ const FavoriteAlbums = memo(() => {
                         setQueue,
                         setNowPlaying,
                         setIsPlaying,
-                      )
-                    }
+                      );
+                    }}
                   >
                     <img
                       src={isPlaying && album.id === queueId ? pause : play}
-                      alt="pause album"
+                      alt={isPlaying && album.id === queueId ? "Pause" : "Play"}
                       className="h-12 w-12 p-2"
+                      aria-hidden="true"
                     />
                   </button>
                   <button
                     type="button"
-                    className="ml-2 h-auto w-auto rounded-full bg-white p-0"
+                    tabIndex={0}
+                    className="ml-2 h-auto w-auto rounded-full bg-white p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                    aria-label={`Remove album ${album.name} from favorites`}
                     onClick={(e) => {
                       e.stopPropagation();
                       removeFavoriteAlbum(album.id);
@@ -230,13 +260,14 @@ const FavoriteAlbums = memo(() => {
                     <img
                       src={close}
                       alt="remove"
-                      className="h-7 w-7 rounded-full"
+                      className="h-7 w-7 rounded-full p-1.5"
+                      aria-hidden="true"
                     />
                   </button>
                 </div>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </>
       )}
     </>
@@ -260,29 +291,48 @@ const FavoritePlaylists = memo(() => {
       {playlists && playlists.length > 0 && (
         <>
           <h2 className="p-4 py-2 font-semibold text-white">Playlists</h2>
-          <ul className="flex h-[200px] max-h-fit w-full overflow-y-hidden overflow-x-scroll whitespace-nowrap p-4 py-2">
+          <div className="flex h-[200px] max-h-fit w-full list-none overflow-y-hidden overflow-x-scroll whitespace-nowrap p-4 py-2">
             {playlists.map((playlist: PlaylistById) => (
-              <li
-                className="group relative mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center bg-transparent"
+              <div
                 key={playlist.id}
+                tabIndex={0}
+                className="group relative mr-4 flex h-[180px] w-[150px] flex-shrink-0 flex-col items-center bg-transparent outline-none"
                 onClick={() =>
                   navigate(`/albums/${playlist.id}`, { replace: true })
                 }
+                role="link"
+                aria-label={`Go to playlist ${playlist.name}`}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    navigate(`/albums/${playlist.id}`, { replace: true });
+                  }
+                }}
               >
-                <img
-                  src={playlist.image[1]?.url || fallback}
-                  alt="user-profile"
-                  className="h-[150px] w-[150px] rounded-lg shadow-xl shadow-neutral-950"
-                  onError={(e) => (e.currentTarget.src = fallback)}
-                />
-                <p className="mt-1 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-xs font-semibold text-neutral-400">
+                <div className="h-[150px] w-[150px] overflow-hidden">
+                  <img
+                    src={playlist.image[1]?.url || fallback}
+                    alt="user-profile"
+                    width={150}
+                    height={150}
+                    className="scale-105 shadow-xl shadow-neutral-950 brightness-100 transition-all group-hover:scale-100 group-hover:brightness-95 group-focus:scale-100 group-focus:brightness-75"
+                    onError={(e) => (e.currentTarget.src = fallback)}
+                  />
+                </div>
+                <p className="mt-1 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-xs font-semibold text-neutral-400 transition-colors group-hover:text-white group-focus:text-white">
                   {playlist.name}
                 </p>
-                <div className="absolute left-0 top-0 flex h-[150px] w-full items-center justify-center bg-transparent opacity-0 transition-all ease-in group-hover:opacity-100">
+                <div className="absolute left-0 top-0 flex h-[150px] w-full items-center justify-center bg-transparent opacity-0 transition-all ease-in group-hover:opacity-100 group-focus:opacity-100">
                   <button
                     type="button"
-                    className="rounded-full bg-emerald-400 p-2"
-                    onClick={(e) =>
+                    tabIndex={0}
+                    className="rounded-full bg-emerald-400 p-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                    aria-label={
+                      isPlaying && playlist.id === queueId
+                        ? "Pause playlist"
+                        : "Play playlist"
+                    }
+                    onClick={(e) => {
+                      e.stopPropagation();
                       handleCollectionPlayback(
                         e,
                         playlist,
@@ -290,18 +340,23 @@ const FavoritePlaylists = memo(() => {
                         setQueue,
                         setNowPlaying,
                         setIsPlaying,
-                      )
-                    }
+                      );
+                    }}
                   >
                     <img
                       src={isPlaying && playlist.id === queueId ? pause : play}
-                      alt="play album"
+                      alt={
+                        isPlaying && playlist.id === queueId ? "Pause" : "Play"
+                      }
                       className="h-8 w-8"
+                      aria-hidden="true"
                     />
                   </button>
                   <button
                     type="button"
-                    className="ml-2 rounded-full bg-white p-0"
+                    tabIndex={0}
+                    className="ml-2 rounded-full bg-white p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                    aria-label={`Remove playlist ${playlist.name} from favorites`}
                     onClick={(e) => {
                       e.stopPropagation();
                       removeFavoritePlaylist(playlist.id);
@@ -310,13 +365,14 @@ const FavoritePlaylists = memo(() => {
                     <img
                       src={close}
                       alt="remove"
-                      className="h-[28px] w-[28px] rounded-full"
+                      className="h-[28px] w-[28px] rounded-full p-1.5"
+                      aria-hidden="true"
                     />
                   </button>
                 </div>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </>
       )}
     </>

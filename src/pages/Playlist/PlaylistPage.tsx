@@ -137,16 +137,19 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
       <button
         type="button"
         title="shuffle-button"
+        tabIndex={0}
+        aria-label={isShuffling ? "Disable shuffle" : "Enable shuffle"}
         onClick={() => setIsShuffling(!isShuffling)}
-        className="-mr-1 border border-white bg-transparent p-0"
+        className="-mr-1 border border-white bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
       >
         <svg
           width="64px"
           height="64px"
           viewBox="0 0 24 24"
           fill="none"
-          className="-mt-[1px] h-8 w-8 bg-transparent sm:-mt-0.5 sm:h-9 sm:w-9"
+          className="h-8 w-8 bg-transparent"
           xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
         >
           <g id="SVGRepo_bgCarrier" strokeWidth="0" />
           <g
@@ -165,28 +168,36 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
       </button>
       <button
         type="button"
+        tabIndex={0}
+        aria-label={isAdded ? "Remove from Library" : "Add to Library"}
         onClick={handlePlaylist}
-        className="border border-white bg-transparent p-0"
+        className="border border-white bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
       >
         <img
           src={isAdded ? addedToPlaylist : addPlaylist}
-          alt="add-to-playlist"
+          alt={isAdded ? "Added to library" : "Add to library"}
           className="h-6 w-6"
+          aria-hidden="true"
         />
       </button>
       <button
         type="button"
+        tabIndex={0}
+        aria-label={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
         onClick={handleFavorite}
-        className="border border-white bg-transparent p-0"
+        className="border border-white bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
       >
         <img
           src={isFavorite ? favorited : favorite}
-          alt="favorite"
+          alt={isFavorite ? "Favorited" : "Favorite"}
           className="h-[28px] w-[28px]"
+          aria-hidden="true"
         />
       </button>
       <button
         type="button"
+        tabIndex={playlist ? 0 : -1}
+        aria-label={isPlaylistPlaying ? "Pause playlist" : "Play playlist"}
         onClick={(e) =>
           playlist &&
           handleCollectionPlayback(
@@ -198,12 +209,14 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
             setIsPlaying,
           )
         }
-        className="rounded-full bg-emerald-400 p-1"
+        className="rounded-full bg-emerald-400 p-1 focus:outline-none focus-visible:ring-4 focus-visible:ring-black"
+        disabled={!playlist}
       >
         <img
           src={isPlaylistPlaying ? pause : play}
-          alt="play"
+          alt={isPlaylistPlaying ? "Pause" : "Play"}
           className="h-7 w-7"
+          aria-hidden="true"
         />
       </button>
     </div>

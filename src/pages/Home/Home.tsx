@@ -117,7 +117,7 @@ const Widget = memo(() => {
           height={320}
           fetchPriority="high"
           loading="eager"
-          className="aspect-square h-auto w-auto flex-shrink-0 rounded-sm bg-neutral-700 brightness-75 contain-layout sm:z-10 sm:h-[40vw] sm:w-[40vw] sm:brightness-100 md:h-80 md:w-80"
+          className="aspect-square h-auto w-auto flex-shrink-0 cursor-pointer rounded-sm bg-neutral-700 brightness-75 contain-layout sm:z-10 sm:h-[40vw] sm:w-[40vw] sm:brightness-100 md:h-80 md:w-80"
           onClick={() =>
             widget !== null &&
             widget.id !== "" &&
@@ -130,11 +130,11 @@ const Widget = memo(() => {
           </p>
           <button
             style={{
-              outline: "none",
               border: "1px solid #000",
             }}
+            tabIndex={widget ? 0 : -1}
             onClick={handlePlaylist}
-            className="rounded-full bg-emerald-500 p-1.5"
+            className="rounded-full bg-emerald-500 p-1.5 focus:outline-none focus:ring-8 focus:ring-black"
           >
             <img
               src={isPlaying ? pause : play}
@@ -186,7 +186,7 @@ const TimelyPlaylists = memo(() => {
       <div className="mx-auto mb-4 mt-1 grid h-auto w-full grid-cols-2 grid-rows-2 gap-3 px-3.5 sm:gap-5">
         <Link
           to={`/playlists/${viral?.id}`}
-          className="flex h-12 w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-800 shadow-sm transition-all ease-linear hover:text-yellow-500 hover:shadow-md hover:shadow-yellow-500 sm:h-full"
+          className="flex h-12 w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-800 shadow-sm outline-none transition-all ease-linear hover:text-yellow-500 hover:shadow-md hover:shadow-yellow-500 focus:bg-neutral-700 sm:h-full"
         >
           <img
             src={viral?.image[0]?.url || fallbacktoday}
@@ -203,7 +203,7 @@ const TimelyPlaylists = memo(() => {
         </Link>
         <Link
           to={`/playlists/${weekly?.id}`}
-          className="flex h-12 w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-800 shadow-sm transition-all ease-linear hover:text-teal-500 hover:shadow-md hover:shadow-teal-500 sm:h-auto"
+          className="flex h-12 w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-800 shadow-sm outline-none transition-all ease-linear hover:text-teal-500 hover:shadow-md hover:shadow-teal-500 focus:bg-neutral-700 sm:h-auto"
         >
           <img
             src={weekly?.image[0]?.url || fallbackweekly}
@@ -220,7 +220,7 @@ const TimelyPlaylists = memo(() => {
         </Link>
         <Link
           to={`/playlists/${monthly?.id}`}
-          className="flex h-12 w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-800 shadow-sm transition-all ease-linear hover:text-rose-500 hover:shadow-md hover:shadow-rose-500 sm:h-auto"
+          className="flex h-12 w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-800 shadow-sm outline-none transition-all ease-linear hover:text-rose-500 hover:shadow-md hover:shadow-rose-500 focus:bg-neutral-700 sm:h-auto"
         >
           <img
             src={monthly?.image[0]?.url || fallbackmonthly}
@@ -237,7 +237,7 @@ const TimelyPlaylists = memo(() => {
         </Link>
         <Link
           to={`/playlists/${latest?.id}`}
-          className="flex h-12 w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-800 shadow-sm transition-all ease-linear hover:text-purple-500 hover:shadow-md hover:shadow-purple-500 sm:h-auto"
+          className="flex h-12 w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-800 shadow-sm outline-none transition-all ease-linear hover:text-purple-500 hover:shadow-md hover:shadow-purple-500 focus:bg-neutral-700 sm:h-auto"
         >
           <img
             src={latest?.image[0]?.url || fallbackyearly}

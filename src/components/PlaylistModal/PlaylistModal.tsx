@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useBoundStore } from "../../store/store";
 import { TrackDetails, UserPlaylist } from "../../types/GlobalTypes";
 import close from "../../assets/svgs/close.svg";
@@ -21,6 +21,7 @@ export default function PlaylistModal({
   const isPlaylistPresent = userPlaylists.some(
     (playlist: UserPlaylist) => playlist.name === name,
   );
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const createNew = () => {
     if (isPlaylistPresent) {
@@ -42,6 +43,12 @@ export default function PlaylistModal({
   }, [revealCreation]);
 
   useEffect(() => {
+    if (revealCreation && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [revealCreation]);
+
+  useEffect(() => {
     saveToLocalStorage("local-library", {
       userPlaylists,
     });
@@ -54,7 +61,7 @@ export default function PlaylistModal({
           !revealCreation ? "hidden" : "flex"
         } absolute inset-0 z-10 h-full w-full flex-col items-center justify-center overflow-hidden bg-[#00000098]`}
       >
-        <div className="-mt-10 flex h-auto w-[90%] flex-col items-start justify-between rounded-sm bg-neutral-800 p-3 px-4 sm:w-[600px]">
+        <div className="-mt-14 flex h-auto w-[90%] flex-col items-start justify-between rounded-sm bg-neutral-800 p-3 px-4 sm:w-[600px]">
           <div className="flex w-full items-center justify-between">
             <h2 className="whitespace-nowrap text-xl font-bold text-white">
               Add to playlist
@@ -66,30 +73,45 @@ export default function PlaylistModal({
                 setRevealCreation(false);
               }}
               className="flex-shrink-0 whitespace-nowrap bg-neutral-700 p-1 transition-all ease-out hover:bg-neutral-600"
+              aria-label="Close playlist modal"
             >
               <img
                 src={close}
                 alt="close"
                 className="h-5 w-5 flex-shrink-0 rounded-full invert"
+                aria-hidden="true"
               />
             </button>
           </div>
           <div className="mt-4 flex h-10 w-full items-center justify-between p-0">
             <input
+              ref={inputRef}
               type="text"
               name="playlist-name"
               id="playlist-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  createNew();
+                }
+              }}
               className="mr-3.5 h-full w-full rounded-sm bg-neutral-950 px-2 font-semibold placeholder:text-sm placeholder:text-neutral-500"
               placeholder="Playlist name here.."
+              aria-label="Playlist name"
             />
             <button
               type="button"
               onClick={createNew}
               className="h-full whitespace-nowrap rounded-sm bg-neutral-400 px-3 text-sm font-semibold text-black transition-all ease-out hover:bg-white"
+              aria-label="Create new playlist"
             >
-              <img src={add} alt="add-icon" className="h-5 w-5 flex-shrink-0" />
+              <img
+                src={add}
+                alt="add-icon"
+                className="h-5 w-5 flex-shrink-0"
+                aria-hidden="true"
+              />
             </button>
           </div>
           <div
@@ -98,14 +120,22 @@ export default function PlaylistModal({
             }`}
           >
             <ul className="my-4 min-h-48 w-full list-none flex-col overflow-y-scroll rounded-sm border border-black bg-neutral-950">
-              {userPlaylists?.map((playlist: UserPlaylist) => (
-                <CustomPlaylist
-                  key={playlist.id}
-                  id={playlist.id}
-                  name={playlist.name}
-                  creationTrack={creationTrack || null}
-                />
-              ))}
+              {userPlaylists.length > 0 ? (
+                userPlaylists.map((playlist: UserPlaylist) => (
+                  <CustomPlaylist
+                    key={playlist.id}
+                    id={playlist.id}
+                    name={playlist.name}
+                    creationTrack={creationTrack || null}
+                  />
+                ))
+              ) : (
+                <div className="flex h-full w-full items-center justify-center">
+                  <p className="pt-20 text-sm text-neutral-400">
+                    No current playlists
+                  </p>
+                </div>
+              )}
             </ul>
           </div>
         </div>

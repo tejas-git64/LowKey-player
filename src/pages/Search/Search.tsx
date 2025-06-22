@@ -12,7 +12,7 @@ import songfallback from "../../assets/fallbacks/song-fallback.webp";
 import artistfallback from "../../assets/fallbacks/artist-fallback.png";
 import { Link, useNavigate } from "react-router-dom";
 import RouteNav from "../../components/RouteNav/RouteNav";
-import { memo, useEffect } from "react";
+import { memo } from "react";
 import { cleanString } from "../../helpers/cleanString";
 
 export default function Search() {
@@ -20,7 +20,6 @@ export default function Search() {
   const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
   const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
   const navigate = useNavigate();
-  const track = useBoundStore((state) => state.nowPlaying.track);
 
   const navigateQuery = (type: string, id: string) => {
     if (type === "playlist") {
@@ -43,10 +42,6 @@ export default function Search() {
     }
   };
 
-  useEffect(() => {
-    console.log(track);
-  }, [track]);
-
   return (
     <>
       <div className="relative h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth bg-neutral-900 px-3">
@@ -65,8 +60,8 @@ export default function Search() {
             </div>
           ) : (
             <div className="mx-auto -mt-6 flex h-[88dvh] w-full flex-col items-center justify-center rounded-md font-medium sm:h-[83dvh]">
-              <p className="text-3xl sm:text-5xl">🎧</p>
-              <p className="text-sm text-neutral-400 sm:text-lg">
+              <p className="mb-2 text-3xl sm:text-4xl">🎧</p>
+              <p className="text-sm text-neutral-400 sm:text-base">
                 Find your next mood
               </p>
             </div>
@@ -86,32 +81,42 @@ const TopQuery = memo(
     const topQuery = useBoundStore((state) => state.search.topQuery?.results);
 
     return (
-      <ul className="mb-8 h-auto w-full list-none sm:w-full">
+      <div className="mb-8 h-auto w-full list-none sm:w-full">
         {topQuery && (
           <p className="my-2 text-xs font-semibold text-white">Top results</p>
         )}
-        {topQuery?.map((res: QueryResult) => (
-          <li
-            key={res.id}
-            id={res.id}
-            onClick={(e) => {
-              e.stopPropagation();
-              navigateQuery(res.type, res.id, res);
-            }}
-            role="button"
-            className="flex h-[50px] w-full cursor-pointer items-center justify-start overflow-hidden rounded-md bg-neutral-900 hover:bg-neutral-800"
-          >
-            <img
-              src={res.image ? res.image[0].url : ""}
-              alt="img"
-              className="mr-4 h-[50px] w-[50px]"
-            />
-            <p className="text-sm font-medium text-white">
-              {res.title ? cleanString(res.title) : ""}
-            </p>
-          </li>
-        ))}
-      </ul>
+        <ul className="flex h-auto w-full flex-col items-start justify-start">
+          {topQuery?.map((res: QueryResult) => (
+            <li
+              key={res.id}
+              id={res.id}
+              onClick={(e) => {
+                e.stopPropagation();
+                navigateQuery(res.type, res.id, res);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  navigateQuery(res.type, res.id, res);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label={res.title ? cleanString(res.title) : res.type}
+              className="flex h-[50px] w-full cursor-pointer items-center justify-start overflow-hidden rounded-md bg-neutral-900 outline-none hover:bg-neutral-800 focus:bg-neutral-800"
+            >
+              <img
+                src={res.image ? res.image[0].url : ""}
+                alt="img"
+                className="mr-4 h-[50px] w-[50px]"
+              />
+              <p className="text-sm font-medium text-white">
+                {res.title ? cleanString(res.title) : ""}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </div>
     );
   },
 );
@@ -127,38 +132,48 @@ const QuerySongs = memo(
     return (
       <>
         {songs && songs.length > 0 && (
-          <ul className="mb-6 mt-2 h-auto w-full list-none">
+          <div className="mb-6 mt-2 h-auto w-full list-none">
             <p className="mb-2 text-xs font-semibold text-white">Songs</p>
-            {songs?.map((song: SongAlbumResult) => (
-              <li
-                key={song.id}
-                id={song.id}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigateQuery(song.type, song.id);
-                }}
-                className="mb-4 flex h-auto w-full cursor-pointer items-center justify-start overflow-hidden bg-neutral-900 hover:bg-neutral-800"
-              >
-                <img
-                  src={song.image[0]?.url || songfallback}
-                  alt="img"
-                  className="mr-4 h-[40px] w-[40px]"
-                  onError={(e) => (e.currentTarget.src = songfallback)}
-                />
-                <div className="mr-4 flex h-auto w-[30%] flex-col items-start justify-center">
-                  <p className="line-clamp-1 text-ellipsis text-sm text-white">
-                    {song.title ? cleanString(song.title) : ""}
+            <ul className="flex h-auto w-full flex-col items-end justify-start">
+              {songs?.map((song: SongAlbumResult) => (
+                <li
+                  key={song.id}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigateQuery(song.type, song.id);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      navigateQuery(song.type, song.id);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={song.title ? cleanString(song.title) : song.type}
+                  className="mb-4 flex h-auto w-full cursor-pointer items-center justify-start overflow-hidden bg-neutral-900 outline-none hover:bg-neutral-800 focus:bg-neutral-800"
+                >
+                  <img
+                    src={song.image[0]?.url || songfallback}
+                    alt="img"
+                    className="mr-4 h-[40px] w-[40px]"
+                    onError={(e) => (e.currentTarget.src = songfallback)}
+                  />
+                  <div className="mr-4 flex h-auto w-[30%] flex-col items-start justify-center">
+                    <p className="line-clamp-1 text-ellipsis text-sm text-white">
+                      {song.title ? cleanString(song.title) : ""}
+                    </p>
+                    <p className="line-clamp-1 text-ellipsis text-xs text-neutral-400">
+                      {song.primaryArtists}
+                    </p>
+                  </div>
+                  <p className="line-clamp-1 w-[45%] text-ellipsis text-sm text-neutral-500">
+                    {song.album}
                   </p>
-                  <p className="line-clamp-1 text-ellipsis text-xs text-neutral-400">
-                    {song.primaryArtists}
-                  </p>
-                </div>
-                <p className="line-clamp-1 w-[45%] text-ellipsis text-sm text-neutral-500">
-                  {song.album}
-                </p>
-              </li>
-            ))}
-          </ul>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
       </>
     );
@@ -180,7 +195,7 @@ const QueryPlaylists = memo(() => {
             {playlists?.map(({ id, title, image }: PlaylistResult) => (
               <li
                 key={id}
-                className="mr-4 flex h-[150px] w-[150px] flex-shrink-0 list-none flex-col items-center"
+                className="mr-4 flex h-[150px] w-[150px] flex-shrink-0 flex-col items-center bg-neutral-900 outline-none hover:bg-neutral-800"
               >
                 <Link to={`/playlists/${id}`} className="h-auto w-auto">
                   <img
@@ -256,7 +271,7 @@ const QueryAlbums = () => {
             {albums?.map(({ id, title, image }: SongAlbumResult) => (
               <li
                 key={id}
-                className="mr-4 flex h-[150px] w-[150px] flex-shrink-0 list-none flex-col items-center"
+                className="mr-4 flex h-[150px] w-[150px] flex-shrink-0 list-none flex-col items-center outline-none"
               >
                 <Link to={`/albums/${id}`} className="h-auto w-auto">
                   <img

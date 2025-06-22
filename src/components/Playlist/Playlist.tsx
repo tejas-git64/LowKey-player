@@ -17,18 +17,23 @@ export default function Playlist({ id, image, name }: PlaylistOfList) {
     <>
       <li
         key={id}
-        className="group mr-4 flex h-[180px] w-[150px] flex-shrink-0 cursor-pointer list-none flex-col items-center"
+        tabIndex={0}
+        className="group mr-4 flex h-[180px] w-[150px] flex-shrink-0 cursor-pointer list-none flex-col items-center overflow-hidden outline-none"
         onClick={() => navigate(`/playlists/${id}`, { replace: true })}
       >
-        <img
-          src={getPlaylistImage()}
-          alt="user-profile"
-          loading="eager"
-          fetchPriority="high"
-          className="h-[150px] w-[150px] rounded-none shadow-md shadow-black brightness-100 transition-all ease-linear group-hover:rounded-xl group-hover:brightness-90"
-          onError={(e) => (e.currentTarget.src = fallback)}
-        />
-        <p className="mt-2 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-xs text-neutral-400 transition-colors ease-linear group-hover:text-white sm:text-sm">
+        <div className="h-[150px] w-[150px] overflow-hidden">
+          <img
+            src={getPlaylistImage()}
+            alt="user-profile"
+            loading="eager"
+            fetchPriority="high"
+            width={150}
+            height={150}
+            className="scale-105 shadow-md shadow-black brightness-100 transition-all ease-linear hover:scale-100 group-hover:brightness-90 group-focus:scale-100 group-focus:brightness-90"
+            onError={(e) => (e.currentTarget.src = fallback)}
+          />
+        </div>
+        <p className="mt-2 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-xs text-neutral-400 transition-colors ease-linear group-hover:text-white group-focus:text-white">
           {name}
         </p>
       </li>

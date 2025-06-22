@@ -65,16 +65,15 @@ const Song = memo(
         favorites: songs,
       });
     }, [songs]);
+
     return (
       <>
         <li
           onClick={(e) => setPlay(e, track)}
-          className="duration-70 group mb-0.5 h-12 w-full flex-shrink-0 overflow-hidden rounded-sm bg-neutral-800 text-sm transition-colors hover:bg-neutral-700"
+          tabIndex={0}
+          className="duration-70 group mb-0.5 h-12 w-full flex-shrink-0 overflow-hidden rounded-sm bg-neutral-800 text-sm outline-none transition-colors hover:bg-neutral-700 focus:bg-neutral-700"
         >
-          <div
-            className="flex h-full w-full items-center justify-start p-0 pr-2 transition-all ease-in-out"
-            role="button"
-          >
+          <div className="flex h-full w-full items-center justify-start p-0 pr-2 transition-all ease-in-out">
             <img
               src={track?.image[0]?.url}
               alt="img"
@@ -108,7 +107,7 @@ const Song = memo(
                     e.stopPropagation();
                     id && navigate(`/artists/${id}`);
                   }}
-                  className="whitespace-nowrap py-4 text-xs text-neutral-400 hover:text-white"
+                  className="cursor-pointer whitespace-nowrap py-4 text-xs text-neutral-400 hover:text-white"
                 >
                   {cleanString(artistNames[i]) || ""}
                 </p>
