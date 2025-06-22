@@ -75,27 +75,17 @@ export default function Library() {
         <h2 className="font text-2xl font-semibold text-white">Library</h2>
         <RouteNav />
       </div>
-<<<<<<< HEAD
       <h2 className="font p-2 text-2xl font-semibold text-white">
         Your Library
       </h2>
       <div className="mb-2 flex h-auto w-full items-center justify-end px-3">
-=======
-      <div className="my-2 flex h-auto w-full items-center justify-end px-3">
->>>>>>> 13aeb08b1c5e05df32001d47ea177be3ac7fabf9
         <button
           type="button"
           tabIndex={0}
           onClick={(e) => createNewPlaylist(e)}
-<<<<<<< HEAD
           className="h-auto w-auto rounded-sm bg-neutral-400 px-3 py-1.5 text-sm font-semibold text-black transition-colors ease-in hover:bg-neutral-200 focus-visible:bg-white"
         >
           New playlist
-=======
-          className="h-auto w-auto rounded-sm bg-neutral-300 px-2 py-1 text-sm font-semibold text-black transition-colors ease-in hover:bg-neutral-200"
-        >
-          New playlist ✨
->>>>>>> 13aeb08b1c5e05df32001d47ea177be3ac7fabf9
         </button>
       </div>
       {userPlaylists.length > 0 ||

@@ -13,7 +13,7 @@ import { useBoundStore } from "../../store/store";
 import Song from "../../components/Song/Song";
 import { TrackDetails } from "../../types/GlobalTypes";
 import artistfallback from "../../assets/fallbacks/artist-fallback.png";
-import albumfallback from "../../assets/fallbacks/album-fallback.webp";
+import albumfallback from "../../assets/fallbacks/playlist-fallback.webp";
 import { useQuery } from "@tanstack/react-query";
 import ArtistPageLoading from "./Loading";
 import RouteNav from "../../components/RouteNav/RouteNav";
@@ -173,7 +173,7 @@ const ArtistAlbums = memo(({ id }: { id: string }) => {
   const getAlbumImage = (id: string) => {
     if (albums) {
       const obj = albums.find((album) => album.id === id);
-      if (obj && obj.image) return obj.image[1].url;
+      if (obj) return obj.image[1].url;
     }
     return albumfallback;
   };
@@ -191,7 +191,7 @@ const ArtistAlbums = memo(({ id }: { id: string }) => {
           >
             <div className="mb-2.5 h-[150px] w-[150px] overflow-hidden">
               <img
-                src={getAlbumImage(id)}
+                src={getAlbumImage(album.id)}
                 alt="artist-album"
                 width={150}
                 height={150}
