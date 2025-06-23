@@ -275,7 +275,7 @@ const PlaylistTracks = memo(() => {
 
   return (
     <ul className="flex h-auto min-h-[71.5dvh] w-full flex-col items-start justify-start bg-neutral-900 px-3 py-2 pb-28 sm:pb-20">
-      {songs ? (
+      {songs && songs.length > 0 ? (
         songs.map((song: TrackDetails) => (
           <Song key={song.id} track={song} isWidgetSong={false} />
         ))

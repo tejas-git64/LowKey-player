@@ -182,7 +182,7 @@ const ArtistAlbums = memo(({ id }: { id: string }) => {
     <div className="h-[240px] w-full px-4 py-3 pb-12">
       <h2 className="text-xl font-semibold text-white">Albums</h2>
       <ul className="mx-auto mt-2.5 flex h-full w-full cursor-pointer items-center justify-start overflow-y-hidden overflow-x-scroll">
-        {albums.map((album) => (
+        {albums?.map((album) => (
           <li
             key={album.id}
             tabIndex={0}
