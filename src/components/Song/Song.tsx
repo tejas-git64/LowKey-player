@@ -88,7 +88,7 @@ const Song = memo(
               {(track.name && cleanString(track.name)) || "Unknown track"}
             </p>
             <div
-              className={`${isWidgetSong ? "flex-shrink-0 sm:hidden xmd:mx-2 xmd:block lg:hidden xlg:mx-4 xlg:block xxl:mx-5 2xl:mx-6 2xl:block" : "mx-2 sm:ml-0 lg:mx-8 xl:mx-12 2xl:mx-10"} flex h-5 w-5 flex-shrink-0 items-center justify-start`}
+              className={`${isWidgetSong ? "mr-2 flex-shrink-0 sm:hidden xmd:mx-2 xmd:block lg:hidden xlg:mx-4 xlg:block xxl:mx-5 2xl:mx-6 2xl:block" : "mx-2 sm:ml-0 lg:mx-8 xl:mx-12 2xl:mx-10"} flex h-5 w-5 flex-shrink-0 items-center justify-start`}
             >
               {nowPlaying.track?.id === track?.id && nowPlaying.isPlaying && (
                 <img src={playing} alt="playing" className="h-5 w-5" />

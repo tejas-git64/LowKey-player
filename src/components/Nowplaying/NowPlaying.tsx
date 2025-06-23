@@ -151,7 +151,7 @@ export default function NowPlaying() {
       tabIndex={0}
     >
       <div
-        className="sm:h-12.5 flex h-max w-full flex-shrink-0 flex-col items-center justify-center sm:w-[30%] sm:max-w-[300px] sm:flex-row sm:justify-start sm:px-2.5"
+        className="sm:h-12.5 flex h-max w-full max-w-[500px] flex-shrink-0 flex-col items-start justify-start p-2.5 sm:w-[30%] sm:max-w-[300px] sm:flex-row sm:items-center sm:justify-start"
         role="group"
         aria-label="Track and Artist Info"
       >
@@ -166,14 +166,18 @@ export default function NowPlaying() {
               <img src={down} alt="toggle-drawer" width={24} height={24} />
             </button>
           )}
-          <img
-            src={getTrackImage(track?.image as Image[], isMobileWidth)}
-            id="songImg"
-            alt={track?.name ? `Cover art for ${track.name}` : "song-img"}
-            onError={(e) => (e.currentTarget.src = songfallback)}
-            className="h-[500px] w-[500px] flex-shrink-0 rounded-sm sm:mr-3 sm:h-[50px] sm:w-[50px]"
-            aria-hidden={track?.name ? undefined : true}
-          />
+          <div className="h-auto w-full sm:h-[50px] sm:w-[50px]">
+            <img
+              src={getTrackImage(track?.image as Image[], isMobileWidth)}
+              id="songImg"
+              alt={track?.name ? `Cover art for ${track.name}` : "song-img"}
+              onError={(e) => (e.currentTarget.src = songfallback)}
+              fetchPriority="high"
+              loading="eager"
+              className="mx-auto aspect-square h-auto w-auto rounded-sm sm:mr-3 sm:h-full sm:w-full"
+              aria-hidden={track?.name ? undefined : true}
+            />
+          </div>
           {isMobileWidth && <PlayerOptions track={track} />}
         </div>
         {track?.artists?.all && (
@@ -181,7 +185,7 @@ export default function NowPlaying() {
         )}
       </div>
       <div
-        className="mt-8 flex h-auto w-full flex-col items-center space-y-1 sm:order-1 sm:-ml-3 sm:mt-0 sm:w-auto lg:w-[350px] xl:w-[450px] 2xl:w-[500px]"
+        className="mt-8 flex h-auto w-full max-w-[500px] flex-col items-center space-y-1 sm:order-1 sm:-ml-3 sm:mt-0 sm:w-auto lg:w-[350px] xl:w-[450px] 2xl:w-[500px]"
         role="group"
         aria-label="Playback Controls and Progress"
       >
@@ -194,7 +198,7 @@ export default function NowPlaying() {
         />
         {/*Progress */}
         <div
-          className="flex h-auto w-full items-center justify-between sm:h-5 sm:pb-3"
+          className="flex h-auto w-full max-w-[95%] items-center justify-between sm:h-5 sm:pb-3"
           role="group"
           aria-label="Waveform and Progress Bar"
         >
@@ -226,15 +230,12 @@ export default function NowPlaying() {
       </div>
       {track && (
         <div
-          className="mx-auto ml-8 mt-8 flex h-auto w-[90%] items-center justify-evenly sm:absolute sm:-top-[25px] sm:right-16 sm:w-[120px]"
+          className="mx-auto mt-8 flex h-auto w-[90%] max-w-[500px] items-center justify-evenly sm:absolute sm:-top-[25px] sm:right-16 sm:w-[120px]"
           role="group"
           aria-label="Quality and Download Options"
         >
           <div>
-            <label
-              htmlFor="quality"
-              className="mr-4 text-xl text-white sm:hidden"
-            >
+            <label htmlFor="quality" className="text-base text-white sm:hidden">
               Quality
             </label>
             <select
@@ -249,7 +250,7 @@ export default function NowPlaying() {
               }}
               aria-label="Song quality selection"
               disabled={track.downloadUrl?.length <= 1}
-              className="mr-4 cursor-pointer rounded-sm bg-neutral-950 p-0.5 text-center outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:text-neutral-800 sm:mr-0 sm:bg-black sm:px-0 sm:text-xs"
+              className="mr-4 cursor-pointer rounded-sm bg-transparent p-0.5 text-center text-base outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:text-neutral-800 sm:mr-0 sm:bg-black sm:px-0 sm:text-xs"
             >
               {track?.downloadUrl?.map((d, i) => (
                 <option
@@ -280,7 +281,7 @@ export default function NowPlaying() {
               }`}
               aria-label="Download song"
             >
-              <p className="block sm:hidden">Download</p>
+              <p className="block text-base sm:hidden">Download</p>
               <img
                 src={downloadIcon}
                 alt="download-icon"
@@ -292,7 +293,7 @@ export default function NowPlaying() {
       )}
       {isMobilePlayer && (
         <div
-          className="mt-14 w-full bg-neutral-950 p-4 px-5"
+          className="mt-14 w-full max-w-[500px] bg-neutral-950 p-4 px-5"
           role="region"
           aria-label="Primary artists"
         >
@@ -312,11 +313,11 @@ const TrackInfo = memo(
   ({ name, artists }: { name: string; artists: ArtistInSong[] }) => {
     return (
       <div
-        className="flex h-fit w-full flex-col items-start justify-center overflow-hidden text-ellipsis px-4 py-2 sm:h-full sm:max-w-[250px] sm:px-0"
+        className="flex h-fit w-full max-w-[90%] flex-col items-start justify-center overflow-hidden text-ellipsis sm:h-full sm:max-w-[250px] sm:px-0"
         role="group"
         aria-label="Track information"
       >
-        <h2 className="line-clamp-1 w-[80%] flex-shrink-0 text-wrap text-2xl font-bold text-white sm:w-full sm:text-sm">
+        <h2 className="line-clamp-1 w-[80%] flex-shrink-0 text-wrap text-xl font-bold text-white sm:w-full sm:text-sm">
           {cleanString(name)}
         </h2>
         <div className="my-1 line-clamp-1 flex w-[80%] items-center justify-start space-x-2 overflow-hidden whitespace-nowrap sm:my-0 sm:w-auto">
@@ -325,7 +326,7 @@ const TrackInfo = memo(
             return (
               <p
                 key={artist.id}
-                className="text-base text-neutral-400 sm:text-xs"
+                className="text-sm text-neutral-400 sm:text-xs"
                 aria-label={`Artist: ${str}`}
               >
                 {str}
@@ -350,7 +351,7 @@ const PlayButton = () => {
       onClick={() => {
         setIsPlaying(!isPlaying);
       }}
-      className={`h-auto w-auto rounded-full border-none bg-neutral-100 p-2 outline-none focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:cursor-not-allowed disabled:bg-neutral-600 sm:p-1`}
+      className={`h-auto w-auto flex-shrink-0 rounded-full border-none bg-neutral-100 p-2 outline-none focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:cursor-not-allowed disabled:bg-neutral-600 sm:p-1`}
       disabled={!id}
       aria-label={isPlaying ? "Pause" : "Play"}
     >
@@ -396,7 +397,7 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
 
   return (
     <div
-      className="absolute -bottom-[48px] right-0 z-20 flex h-auto w-auto flex-shrink-0 items-center justify-end space-x-5 bg-black bg-inherit p-3 px-4 sm:static sm:w-16 sm:space-x-3 sm:bg-transparent sm:p-0 sm:pr-0.5"
+      className="absolute -bottom-[35px] right-0 z-20 flex h-auto w-auto flex-shrink-0 items-center justify-end space-x-4 bg-black bg-inherit px-3 sm:static sm:w-16 sm:space-x-3 sm:bg-transparent sm:p-0 sm:pr-0.5"
       role="group"
       aria-label="Player Options"
     >
@@ -477,7 +478,7 @@ const Controls = memo(
 
     return (
       <div
-        className="-ml-2 -mt-4 flex w-full max-w-[400px] flex-shrink-0 items-center justify-center space-x-[10%] sm:m-0 sm:space-x-5"
+        className="-ml-2 -mt-4 flex w-full max-w-[90%] flex-shrink-0 items-center justify-center space-x-[10%] sm:m-0 sm:space-x-5"
         role="group"
         aria-label="Playback Controls"
       >
@@ -602,7 +603,7 @@ const VolumeControl = memo(
     };
     return (
       <div
-        className="-ml-2 mr-auto flex h-fit w-[95%] flex-shrink-0 flex-row-reverse items-center justify-end sm:mx-0 sm:ml-0 sm:mr-1.5 sm:mt-1.5 sm:w-auto sm:flex-row"
+        className="ml-1 mr-auto flex h-fit w-[90%] flex-shrink-0 flex-row-reverse items-center justify-end sm:mx-0 sm:ml-0 sm:mr-1.5 sm:mt-1.5 sm:w-auto sm:flex-row"
         role="group"
         aria-label="Volume Control"
       >
