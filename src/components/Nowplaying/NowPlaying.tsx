@@ -171,9 +171,7 @@ export default function NowPlaying() {
             id="songImg"
             alt={track?.name ? `Cover art for ${track.name}` : "song-img"}
             onError={(e) => (e.currentTarget.src = songfallback)}
-            width={50}
-            height={50}
-            className="h-[50px] w-[50px] flex-shrink-0 rounded-sm sm:mr-3"
+            className="h-[500px] w-[500px] flex-shrink-0 rounded-sm sm:mr-3 sm:h-[50px] sm:w-[50px]"
             aria-hidden={track?.name ? undefined : true}
           />
           {isMobileWidth && <PlayerOptions track={track} />}
