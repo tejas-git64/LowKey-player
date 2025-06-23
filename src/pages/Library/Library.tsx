@@ -71,14 +71,11 @@ export default function Library() {
 
   return (
     <div className="relative max-h-fit min-h-full w-full scroll-smooth bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 pb-56">
-      <div className="flex h-auto w-auto items-center justify-between bg-inherit px-3">
-        <h2 className="font text-2xl font-semibold text-white">Library</h2>
+      <div className="flex h-auto w-auto items-center justify-between bg-inherit px-3 py-2">
+        <h2 className="text-2xl font-semibold text-white">Library</h2>
         <RouteNav />
       </div>
-      <h2 className="font p-2 text-2xl font-semibold text-white">
-        Your Library
-      </h2>
-      <div className="mb-2 flex h-auto w-full items-center justify-end px-3">
+      <div className="my-2 flex h-auto w-full items-center justify-end px-3">
         <button
           type="button"
           tabIndex={0}
@@ -110,21 +107,21 @@ export default function Library() {
               <LibraryAlbums albums={albums} />
             </div>
           )}
-          <h2 className="text-md w-full font-semibold text-white">
-            Followings
-          </h2>
-          <ul className="mt-1 h-auto w-full">
-            {followings &&
-              followings.length > 0 &&
-              followings.map((following: ArtistInSong) => (
+          {followings &&
+            followings.length > 0 &&
+            followings.map((following: ArtistInSong) => (
+              <div className="mt-1 h-auto w-full">
+                <h2 className="text-md w-full font-semibold text-white">
+                  Followings
+                </h2>
                 <div
                   key={following.id}
                   className="h-auto w-full overflow-hidden"
                 >
                   <Following {...following} />
                 </div>
-              ))}
-          </ul>
+              </div>
+            ))}
         </div>
       ) : (
         <div className="flex h-[70dvh] w-full flex-col items-center justify-center">
@@ -135,7 +132,7 @@ export default function Library() {
             height={80}
             className="mb-2 invert-[0.6]"
           />
-          <p className="text-lg text-gray-400">Your library is empty</p>
+          <p className="text-lg text-neutral-400">Your library is empty</p>
         </div>
       )}
     </div>
@@ -192,7 +189,7 @@ const CustomPlaylists = memo(
             Your playlists
           </h2>
           <div className="flex h-auto w-full items-start justify-start overflow-x-scroll">
-            {userPlaylists.map((playlist) => (
+            {userPlaylists?.map((playlist) => (
               <Link
                 to={`/userplaylists/${playlist.id}`}
                 key={playlist.id}
@@ -283,7 +280,7 @@ const LibraryAlbums = memo(({ albums }: { albums: AlbumById[] }) => {
     <>
       <h2 className="text-md mb-2 w-full font-semibold text-white">Albums</h2>
       <div className="flex h-[180px] w-full items-center justify-start overflow-y-hidden overflow-x-scroll">
-        {albums.map((album: AlbumById) => (
+        {albums?.map((album: AlbumById) => (
           <Link
             to={`/albums/${album.id}`}
             key={album.id}
@@ -363,7 +360,7 @@ const LibraryPlaylists = memo(
           Playlists
         </h2>
         <div className="flex h-[180px] w-full items-center justify-start overflow-y-hidden overflow-x-scroll">
-          {playlists.map((playlist) => (
+          {playlists?.map((playlist) => (
             <Link
               to={`/playlists/${playlist.id}`}
               key={playlist.id}
