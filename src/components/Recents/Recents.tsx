@@ -26,7 +26,7 @@ export default function Recents() {
           setHistory(song);
         }
       });
-      activity.forEach(setActivity);
+      activity?.forEach(setActivity);
     }
   }, []);
 
