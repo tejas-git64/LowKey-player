@@ -185,7 +185,7 @@ export default function NowPlaying() {
         )}
       </div>
       <div
-        className="mt-8 flex h-auto w-full max-w-[500px] flex-col items-center space-y-1 sm:order-1 sm:-ml-3 sm:mt-0 sm:w-auto lg:w-[350px] xl:w-[450px] 2xl:w-[500px]"
+        className="mt-12 flex h-auto w-full max-w-[500px] flex-col items-center space-y-1 sm:order-1 sm:-ml-3 sm:mt-0 sm:w-auto lg:w-[350px] xl:w-[450px] 2xl:w-[500px]"
         role="group"
         aria-label="Playback Controls and Progress"
       >
@@ -313,7 +313,7 @@ const TrackInfo = memo(
   ({ name, artists }: { name: string; artists: ArtistInSong[] }) => {
     return (
       <div
-        className="flex h-fit w-full max-w-[90%] flex-col items-start justify-center overflow-hidden text-ellipsis sm:h-full sm:max-w-[250px] sm:px-0"
+        className="flex h-fit w-full max-w-[85%] flex-col items-start justify-center overflow-hidden text-ellipsis pl-2.5 pt-1 sm:h-full sm:max-w-[250px] sm:p-0 sm:px-0"
         role="group"
         aria-label="Track information"
       >
