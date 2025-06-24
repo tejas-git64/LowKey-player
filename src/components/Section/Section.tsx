@@ -44,8 +44,9 @@ const Section = memo(({ genre }: { genre: string }) => {
           {genre}
         </h1>
         <ul className="flex h-[180px] w-full overflow-y-hidden overflow-x-scroll whitespace-nowrap px-4">
-          {playlists.map(({ id, image, name }: PlaylistOfList) => (
+          {playlists.map(({ id, image, name }: PlaylistOfList, i) => (
             <Playlist
+              i={i}
               id={id}
               key={id}
               userId={""}
