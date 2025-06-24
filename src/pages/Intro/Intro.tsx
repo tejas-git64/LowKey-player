@@ -153,7 +153,7 @@ export default function Intro() {
               onClick={fadeOutNavigate}
               ref={btnRef}
               aria-label="Visit home"
-              className="intro-fadeout h-auto w-auto rounded-sm bg-[#f8f8f836] px-6 py-2 text-sm font-semibold tracking-wide text-white transition-colors duration-200 ease-linear hover:bg-[#c74fffc2] hover:text-purple-950"
+              className="intro-fadeout h-auto w-auto rounded-sm bg-[#f8f8f836] px-6 py-2 text-sm font-semibold tracking-wide text-white transition-colors duration-200 ease-linear hover:bg-[#c74fffc2] hover:text-purple-950 focus:bg-[#c74fffc2] focus:text-purple-950"
             >
               Check it out
             </button>
@@ -164,7 +164,7 @@ export default function Intro() {
             </p>
             <a
               href="https://github.com/tejas-git64"
-              className="text-sm text-white duration-100 ease-in hover:text-teal-400"
+              className="text-sm text-white outline-none duration-100 ease-in hover:text-teal-400 focus:text-teal-400"
             >
               Tej
             </a>
