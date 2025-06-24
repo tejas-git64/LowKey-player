@@ -25,7 +25,7 @@ type WaveformType = {
 
 const Progress = ({ progress }: { progress: number }) => {
   return (
-    <p className="mr-6 h-full w-[10px] text-center text-xs text-white sm:mr-4 sm:text-[10px] sm:text-sm">
+    <p className="mr-6 h-full w-[10px] text-center text-xs text-white sm:mr-4 sm:text-[10px]">
       {secondsToHMS(progress)}
     </p>
   );
@@ -193,7 +193,7 @@ const Waveform = ({
         id="wave"
         className="flex w-[70%] items-center justify-center overflow-hidden sm:w-[185px] lg:w-[300px] xl:max-w-[400px] 2xl:w-[500px]"
       />
-      <p className="h-full flex-shrink-0 text-center text-xs text-white sm:text-[10px] sm:text-sm">
+      <p className="h-full flex-shrink-0 text-center text-xs text-white sm:text-[10px]">
         {trackDuration ? secondsToHMS(Number(trackDuration)) : "--:--"}
       </p>
     </div>
