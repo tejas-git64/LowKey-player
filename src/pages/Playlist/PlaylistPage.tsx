@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo } from "react";
+import { memo, Suspense, useEffect, useMemo, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { getPlaylistData } from "../../api/requests";
 import { useBoundStore } from "../../store/store";
@@ -26,8 +26,9 @@ export default function PlaylistPage() {
   const setPlaylist = useBoundStore((state) => state.setPlaylist);
   const queue = useBoundStore((state) => state.nowPlaying.queue);
   const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
+  const playEl = useRef<HTMLDivElement>(null);
 
-  const { isPending } = useQuery({
+  useQuery({
     queryKey: ["playlistPage", id],
     queryFn: () => id && getPlaylistData(id),
     select: (data) => setPlaylist(data.data),
@@ -37,11 +38,22 @@ export default function PlaylistPage() {
     queue && setNowPlaying(queue.songs[0]);
   }, [queue?.id]);
 
+  useEffect(() => {
+    setPlaylist(null);
+    setTimeout(() => {
+      playEl.current?.classList.remove("intro-fadeout");
+      playEl.current?.classList.add("intro-fadein");
+    }, 20);
+  }, []);
+
   return (
     <>
-      {!isPending ? (
-        <div className="h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth pb-20">
-          <div className="relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 p-3 sm:h-[223px] sm:px-4">
+      <Suspense fallback={<ListLoading />}>
+        <div
+          ref={playEl}
+          className="intro-fadeout h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth pb-20"
+        >
+          <div className="relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 p-3 sm:h-[223px] sm:p-4">
             <div className="absolute right-2 top-2 h-auto w-auto">
               <RouteNav />
             </div>
@@ -53,9 +65,7 @@ export default function PlaylistPage() {
           </div>
           <PlaylistTracks />
         </div>
-      ) : (
-        <ListLoading />
-      )}
+      </Suspense>
     </>
   );
 }
@@ -274,10 +284,10 @@ const PlaylistTracks = memo(() => {
   const songs = useBoundStore((state) => state.playlist?.songs);
 
   return (
-    <ul className="flex h-auto min-h-[71.5dvh] w-full flex-col items-start justify-start bg-neutral-900 px-3 py-2 pb-28 sm:pb-20">
+    <ul className="flex h-auto min-h-[71.5dvh] w-full flex-col items-start justify-start bg-neutral-900 p-3 pb-28 sm:p-4 sm:pb-20">
       {songs && songs.length > 0 ? (
-        songs.map((song: TrackDetails) => (
-          <Song key={song.id} track={song} isWidgetSong={false} />
+        songs.map((song: TrackDetails, i) => (
+          <Song index={i} key={song.id} track={song} isWidgetSong={false} />
         ))
       ) : (
         <p className="m-auto text-xl text-neutral-500">No songs here...T_T</p>

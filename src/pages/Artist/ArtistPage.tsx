@@ -21,10 +21,23 @@ import { FollowButton } from "../../components/FollowButton/FollowButton";
 
 export default function ArtistPage() {
   const { id } = useParams();
+  const artistEl = useRef<HTMLDivElement>(null);
+  const setArtistDetails = useBoundStore((state) => state.setArtistDetails);
+
+  useEffect(() => {
+    setArtistDetails(null);
+    setTimeout(() => {
+      artistEl.current?.classList.remove("home-fadeout");
+      artistEl.current?.classList.add("home-fadein");
+    }, 50);
+  }, [id]);
 
   return (
     <Suspense fallback={<ArtistPageLoading />}>
-      <div className="h-auto w-full bg-neutral-900 pb-32">
+      <div
+        ref={artistEl}
+        className="home-fadeout h-auto w-full bg-neutral-900 pb-32 duration-300 ease-in"
+      >
         {id && <ArtistInfo id={id} />}
         {id && <ArtistAlbums id={id} />}
         {id && <ArtistSongs id={id} />}
@@ -37,7 +50,6 @@ const ArtistInfo = memo(({ id }: { id: string }) => {
   const details = useBoundStore((state) => state.artist.details);
   const setArtistDetails = useBoundStore((state) => state.setArtistDetails);
   const intlFormatter = new Intl.NumberFormat("en-US");
-  const artistEl = useRef<HTMLDivElement>(null);
   const artistImgEl = useRef<HTMLImageElement>(null);
   const artistTitleEl = useRef<HTMLParagraphElement>(null);
   const followerCount = Number(details?.followerCount) ?? undefined;
@@ -63,20 +75,15 @@ const ArtistInfo = memo(({ id }: { id: string }) => {
 
   useEffect(() => {
     setTimeout(() => {
-      artistEl.current?.classList.remove("intro-fadeout");
       artistImgEl.current?.classList.remove("image-fadeout");
       artistTitleEl.current?.classList.remove("song-fadeout");
-      artistEl.current?.classList.add("intro-fadein");
       artistImgEl.current?.classList.add("image-fadein");
       artistTitleEl.current?.classList.add("song-fadein");
-    }, 50);
+    }, 150);
   }, [id]);
 
   return (
-    <div
-      ref={artistEl}
-      className="intro-fadeout relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-600 via-neutral-800 to-black p-4 duration-200 ease-in sm:flex-row sm:items-end sm:justify-between sm:bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))]"
-    >
+    <div className="relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-600 via-neutral-800 to-black p-4 duration-200 ease-in sm:flex-row sm:items-end sm:justify-between sm:bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))]">
       <div className="absolute right-2 top-2 h-auto w-auto">
         <RouteNav />
       </div>
@@ -85,9 +92,10 @@ const ArtistInfo = memo(({ id }: { id: string }) => {
           ref={artistImgEl}
           src={getArtistImage()}
           alt="artist-img"
+          onError={(e) => (e.currentTarget.src = artistfallback)}
           loading="eager"
           fetchPriority="high"
-          className="image-fadeout h-[150px] w-[150px] shadow-xl shadow-black duration-200 ease-in sm:mr-4"
+          className="image-fadeout h-[150px] w-[150px] shadow-xl shadow-black duration-300 ease-in sm:mr-4"
         />
         <div>
           <div className="flex h-fit w-full items-center justify-center sm:justify-start">
