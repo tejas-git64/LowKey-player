@@ -37,6 +37,7 @@ const ArtistInfo = memo(({ id }: { id: string }) => {
   const details = useBoundStore((state) => state.artist.details);
   const setArtistDetails = useBoundStore((state) => state.setArtistDetails);
   const intlFormatter = new Intl.NumberFormat("en-US");
+  const artistEl = useRef<HTMLDivElement>(null);
   const artistImgEl = useRef<HTMLImageElement>(null);
   const artistTitleEl = useRef<HTMLParagraphElement>(null);
   const followerCount = Number(details?.followerCount) ?? undefined;
@@ -62,15 +63,20 @@ const ArtistInfo = memo(({ id }: { id: string }) => {
 
   useEffect(() => {
     setTimeout(() => {
+      artistEl.current?.classList.remove("intro-fadeout");
       artistImgEl.current?.classList.remove("image-fadeout");
       artistTitleEl.current?.classList.remove("song-fadeout");
+      artistEl.current?.classList.add("intro-fadein");
       artistImgEl.current?.classList.add("image-fadein");
       artistTitleEl.current?.classList.add("song-fadein");
     }, 50);
-  }, []);
+  }, [id]);
 
   return (
-    <div className="relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-600 via-neutral-800 to-black p-4 sm:flex-row sm:items-end sm:justify-between sm:bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))]">
+    <div
+      ref={artistEl}
+      className="intro-fadeout relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-600 via-neutral-800 to-black p-4 duration-200 ease-in sm:flex-row sm:items-end sm:justify-between sm:bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))]"
+    >
       <div className="absolute right-2 top-2 h-auto w-auto">
         <RouteNav />
       </div>
@@ -236,7 +242,7 @@ const ArtistAlbum = ({
       albumImgEl.current?.classList.add("image-fadein");
       albumTitleEl.current?.classList.add("song-fadein");
     }, i * 50);
-  }, []);
+  }, [id]);
 
   return (
     <li
