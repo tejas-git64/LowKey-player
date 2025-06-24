@@ -1,8 +1,7 @@
-import { memo, Suspense, useEffect } from "react";
+import { memo, useEffect, useRef } from "react";
 import { useBoundStore } from "../../store/store";
 import { Link, useNavigate } from "react-router-dom";
 import { TrackDetails } from "../../types/GlobalTypes";
-import Loading from "./Loading";
 import Section from "../../components/Section/Section";
 import play from "../../assets/svgs/play-icon.svg";
 import pause from "../../assets/svgs/pause-icon.svg";
@@ -20,6 +19,7 @@ import SongFallback from "../../components/Song/SongFallback";
 export default function Home() {
   const changeGreeting = useBoundStore((state) => state.changeGreeting);
   const greeting = useBoundStore((state) => state.greeting);
+  const homeRef = useRef<HTMLDivElement>(null);
 
   const setGreeting = () => {
     const hour = new Date().getHours();
@@ -37,6 +37,10 @@ export default function Home() {
   };
 
   useEffect(() => {
+    setTimeout(() => {
+      homeRef.current?.classList.remove("home-fadeout");
+      homeRef.current?.classList.add("home-fadein");
+    }, 100);
     if (greeting === "") setGreeting();
     timelyData.map((obj: { id: number; timely: string }) => {
       getTimelyData(obj.id, obj.timely);
@@ -44,25 +48,22 @@ export default function Home() {
   }, []);
 
   return (
-    <>
-      <Suspense fallback={<Loading />}>
-        <div className="h-auto w-full scroll-smooth">
-          <div className="h-auto max-h-max w-full xl:w-full">
-            <Widget />
-            <h1 className="my-2 px-4 pt-2 text-left text-xl font-semibold text-white">
-              Timely tracks
-            </h1>
-            <TimelyPlaylists />
-            <div className="h-auto max-h-max w-full pb-28 sm:pb-14">
-              {/* Genres */}
-              {genres.map((genre) => (
-                <Section genre={genre} key={genre} />
-              ))}
-            </div>
-          </div>
-        </div>
-      </Suspense>
-    </>
+    <div
+      ref={homeRef}
+      className="home-fadeout h-auto max-h-max w-full scroll-smooth duration-300 ease-in-out xl:w-full"
+    >
+      <Widget />
+      <h1 className="my-2 px-4 pt-2 text-left text-xl font-semibold text-white">
+        Timely tracks
+      </h1>
+      <TimelyPlaylists />
+      <div className="h-auto max-h-max w-full pb-28 sm:pb-14">
+        {/* Genres */}
+        {genres.map((genre) => (
+          <Section genre={genre} key={genre} />
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -73,6 +74,7 @@ const Widget = memo(() => {
   const setQueue = useBoundStore((state) => state.setQueue);
   const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
   const setWidgetData = useBoundStore((state) => state.setWidgetData);
+  const iRef = useRef<HTMLImageElement>(null);
   const navigate = useNavigate();
 
   const { isPending } = useQuery({
@@ -102,27 +104,35 @@ const Widget = memo(() => {
   const getWidgetImage = () => {
     if (widget) {
       const obj = widget.image.find((img) => img.quality === "500x500");
-      return obj?.url;
+      if (obj) return obj.url;
     }
-    return widgetfallback;
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      iRef.current?.classList.remove("widget-banner-fadeout");
+      iRef.current?.classList.add("widget-banner-fadein");
+    }, 10);
+  }, []);
 
   return (
     <div className="h-auto max-h-max w-full px-3.5 sm:pt-0.5">
       <section className="relative z-0 mx-auto mb-7 flex h-80 w-full flex-col overflow-hidden rounded-sm bg-transparent sm:my-3 sm:h-[40vw] sm:flex-row md:h-80">
         <img
+          ref={iRef}
           src={getWidgetImage()}
           alt="img"
           width={320}
           height={320}
           fetchPriority="high"
           loading="eager"
-          className="aspect-square h-auto w-auto flex-shrink-0 cursor-pointer rounded-sm bg-neutral-700 brightness-75 contain-layout sm:z-10 sm:h-[40vw] sm:w-[40vw] sm:brightness-100 md:h-80 md:w-80"
+          className="widget-banner-fadeout aspect-square h-auto w-auto flex-shrink-0 cursor-pointer rounded-sm brightness-75 duration-500 ease-in contain-layout sm:z-10 sm:h-[40vw] sm:w-[40vw] sm:brightness-100 md:h-80 md:w-80"
           onClick={() =>
             widget !== null &&
             widget.id !== "" &&
             navigate(`/playlists/${widget.id}`)
           }
+          onError={(e) => (e.currentTarget.src = widgetfallback)}
         />
         <div className="absolute right-2.5 top-[105px] z-20 flex h-auto w-[95%] items-end justify-between sm:-left-16 sm:top-[80%] sm:h-12 sm:w-[48vw] sm:justify-end sm:p-2 md:w-[370px] md:py-1">
           <p className="left-0 top-0 line-clamp-1 h-auto w-[80%] text-3xl font-bold text-white sm:hidden sm:text-xl">
@@ -150,8 +160,13 @@ const Widget = memo(() => {
         >
           {!isPending ? (
             widget && widget.songs.length > 0 ? (
-              widget.songs.map((song: TrackDetails) => (
-                <Song key={song.id} track={song} isWidgetSong={true} />
+              widget.songs.map((song: TrackDetails, i) => (
+                <Song
+                  index={i}
+                  key={song.id}
+                  track={song}
+                  isWidgetSong={true}
+                />
               ))
             ) : (
               <p className="m-auto my-[12.5%] text-center text-xl text-neutral-500 sm:my-[135px]">
@@ -180,24 +195,43 @@ const TimelyPlaylists = memo(() => {
   const latest = useBoundStore((state) => state.home.timely.latest);
   const weekly = useBoundStore((state) => state.home.timely.weekly);
   const viral = useBoundStore((state) => state.home.timely.viral);
+  const titleEl = useRef<HTMLParagraphElement>(null);
+  const timeEl = useRef<HTMLDivElement>(null);
+  const timeImgEl = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    titleEl.current?.classList.remove("song-fadeout");
+    timeEl.current?.classList.remove("song-fadeout");
+    timeImgEl.current?.classList.remove("image-fadeout");
+    titleEl.current?.classList.add("song-fadein");
+    timeEl.current?.classList.add("song-fadein");
+    timeImgEl.current?.classList.add("image-fadein");
+  }, []);
 
   return (
     <>
-      <div className="mx-auto mb-4 mt-1 grid h-auto w-full grid-cols-2 grid-rows-2 gap-3 px-3.5 sm:gap-5">
+      <div
+        ref={timeEl}
+        className="song-fadeout mx-auto mb-4 mt-1 grid h-auto w-full grid-cols-2 grid-rows-2 gap-3 px-3.5 duration-200 ease-in sm:gap-5"
+      >
         <Link
           to={`/playlists/${viral?.id}`}
           className="flex h-12 w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-800 shadow-sm outline-none transition-all ease-linear hover:text-yellow-500 hover:shadow-md hover:shadow-yellow-500 focus:bg-neutral-700 sm:h-full"
         >
           <img
+            ref={timeImgEl}
             src={viral?.image[0]?.url || fallbacktoday}
             alt="img"
             width={56}
             height={56}
             fetchPriority="high"
-            className="h-full w-12 sm:w-14"
+            className="image-fadeout h-full w-12 duration-200 ease-in sm:w-14"
             onError={(e) => (e.currentTarget.src = fallbacktoday)}
           />
-          <p className="sm:text-md p-3.5 px-3 text-left text-xs font-semibold text-yellow-400 sm:px-4 sm:text-base">
+          <p
+            ref={titleEl}
+            className="song-fadeout sm:text-md p-3.5 px-3 text-left text-xs font-semibold text-yellow-400 duration-200 ease-in sm:px-4 sm:text-base"
+          >
             Viral mix
           </p>
         </Link>
