@@ -1,9 +1,16 @@
 import { PlaylistOfList } from "../../types/GlobalTypes";
 import fallback from "../../assets/fallbacks/playlist-fallback.webp";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useRef } from "react";
 
-export default function Playlist({ id, image, name }: PlaylistOfList) {
+export default function Playlist({
+  id,
+  image,
+  name,
+  i,
+}: PlaylistOfList & { i: number }) {
   const navigate = useNavigate();
+  const playlistImgEl = useRef<HTMLImageElement>(null);
 
   const getPlaylistImage = () => {
     if (image) {
@@ -12,6 +19,13 @@ export default function Playlist({ id, image, name }: PlaylistOfList) {
     }
     return fallback;
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      playlistImgEl.current?.classList.remove("image-fadeout");
+      playlistImgEl.current?.classList.add("image-fadein");
+    }, i * 50);
+  }, []);
 
   return (
     <>
@@ -23,13 +37,14 @@ export default function Playlist({ id, image, name }: PlaylistOfList) {
       >
         <div className="h-[150px] w-[150px] overflow-hidden">
           <img
+            ref={playlistImgEl}
             src={getPlaylistImage()}
             alt="user-profile"
             loading="eager"
             fetchPriority="high"
             width={150}
             height={150}
-            className="scale-105 shadow-md shadow-black brightness-100 transition-all ease-linear hover:scale-100 group-hover:brightness-90 group-focus:scale-100 group-focus:brightness-90"
+            className="image-fadeout scale-105 shadow-md shadow-black brightness-100 transition-all ease-linear hover:scale-100 group-hover:brightness-90 group-focus:scale-100 group-focus:brightness-90"
             onError={(e) => (e.currentTarget.src = fallback)}
           />
         </div>
