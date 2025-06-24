@@ -145,7 +145,7 @@ export default function NowPlaying() {
 
   return (
     <div
-      className={`${!isMobilePlayer ? "translate-y-[100%]" : "translate-y-0"} absolute bottom-0 z-20 flex h-full w-full flex-col items-center justify-start overflow-y-scroll bg-black pb-10 outline-none transition-transform focus:ring-2 focus:ring-emerald-500 sm:h-fit sm:translate-y-0 sm:flex-row sm:items-center sm:justify-between sm:pb-0 2xl:border 2xl:border-neutral-900`}
+      className={`${!isMobilePlayer ? "translate-y-[100%]" : "translate-y-0"} absolute bottom-0 z-20 flex h-full w-full flex-col items-center justify-start overflow-y-scroll bg-black pb-10 outline-none transition-transform focus:ring-2 focus:ring-emerald-500 sm:h-fit sm:translate-y-0 sm:flex-row sm:items-center sm:justify-between sm:bg-black sm:pb-0 2xl:border 2xl:border-neutral-900`}
       role="region"
       aria-label="Now Playing Panel"
       tabIndex={0}
@@ -174,7 +174,7 @@ export default function NowPlaying() {
               onError={(e) => (e.currentTarget.src = songfallback)}
               fetchPriority="high"
               loading="eager"
-              className="mx-auto aspect-square h-auto w-auto rounded-sm sm:mr-3 sm:h-full sm:w-full"
+              className="mx-auto aspect-square h-auto w-auto rounded-sm shadow-2xl shadow-neutral-950 sm:mr-3 sm:h-full sm:w-full"
               aria-hidden={track?.name ? undefined : true}
             />
           </div>
@@ -185,7 +185,7 @@ export default function NowPlaying() {
         )}
       </div>
       <div
-        className="mt-12 flex h-auto w-full max-w-[500px] flex-col items-center space-y-1 sm:order-1 sm:-ml-3 sm:mt-0 sm:w-auto lg:w-[350px] xl:w-[450px] 2xl:w-[500px]"
+        className="mt-8 flex h-auto w-full max-w-[500px] flex-col items-center space-y-4 sm:order-1 sm:-ml-3 sm:mt-0 sm:w-auto sm:space-y-1 lg:w-[350px] xl:w-[450px] 2xl:w-[500px]"
         role="group"
         aria-label="Playback Controls and Progress"
       >
@@ -235,7 +235,10 @@ export default function NowPlaying() {
           aria-label="Quality and Download Options"
         >
           <div>
-            <label htmlFor="quality" className="text-base text-white sm:hidden">
+            <label
+              htmlFor="quality"
+              className="mr-2 text-base text-white sm:hidden"
+            >
               Quality
             </label>
             <select
@@ -293,7 +296,7 @@ export default function NowPlaying() {
       )}
       {isMobilePlayer && (
         <div
-          className="mt-14 w-full max-w-[500px] bg-neutral-950 p-4 px-5"
+          className="mt-14 w-full max-w-[500px] p-4 px-5"
           role="region"
           aria-label="Primary artists"
         >
@@ -313,7 +316,7 @@ const TrackInfo = memo(
   ({ name, artists }: { name: string; artists: ArtistInSong[] }) => {
     return (
       <div
-        className="flex h-fit w-full max-w-[85%] flex-col items-start justify-center overflow-hidden text-ellipsis pl-2.5 pt-1 sm:h-full sm:max-w-[250px] sm:p-0 sm:px-0"
+        className="z-10 flex h-fit w-full max-w-[85%] flex-col items-start justify-center overflow-hidden text-ellipsis pl-2.5 pt-1 sm:h-full sm:max-w-[250px] sm:p-0 sm:px-0"
         role="group"
         aria-label="Track information"
       >
@@ -358,7 +361,7 @@ const PlayButton = () => {
       <img
         src={isPlaying ? pause : play}
         alt={isPlaying ? "Pause icon" : "Play icon"}
-        className={`h-10 w-10 sm:h-[25px] sm:w-[25px]`}
+        className={`h-10 w-10 sm:h-7 sm:w-7`}
       />
     </button>
   );
@@ -666,7 +669,7 @@ const Artist = (artist: ArtistInSong) => {
           navigate(`/artists/${artist.id}`);
         }
       }}
-      className="mb-2 flex w-full items-center justify-between bg-black pr-4 hover:cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+      className="mb-2 flex w-full items-center justify-between bg-black pr-2.5 hover:cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
     >
       <div className="flex w-auto items-center justify-start">
         <img
