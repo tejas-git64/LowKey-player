@@ -1,6 +1,5 @@
 import { PlaylistOfList } from "../../types/GlobalTypes";
 import fallback from "../../assets/fallbacks/playlist-fallback.webp";
-import { useNavigate } from "react-router-dom";
 import { useEffect, useRef } from "react";
 
 export default function Playlist({
@@ -8,8 +7,8 @@ export default function Playlist({
   image,
   name,
   i,
-}: PlaylistOfList & { i: number }) {
-  const navigate = useNavigate();
+  fadeOutNavigate,
+}: PlaylistOfList & { i: number; fadeOutNavigate: (str: string) => void }) {
   const playlistImgEl = useRef<HTMLImageElement>(null);
 
   const getPlaylistImage = () => {
@@ -33,7 +32,7 @@ export default function Playlist({
         key={id}
         tabIndex={0}
         className="group mr-4 flex h-[180px] w-[150px] flex-shrink-0 cursor-pointer list-none flex-col items-center overflow-hidden outline-none"
-        onClick={() => navigate(`/playlists/${id}`, { replace: true })}
+        onClick={() => fadeOutNavigate(`/playlists/${id}`)}
       >
         <div className="h-[150px] w-[150px] overflow-hidden">
           <img
