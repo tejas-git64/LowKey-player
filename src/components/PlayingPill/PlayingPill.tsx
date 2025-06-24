@@ -42,13 +42,15 @@ export default function PlayingPill() {
         onClick={() => setShowPlayer(true)}
         className={`${
           track?.id ? "flex" : "hidden"
-        } ml-0.5 h-[50px] w-[95%] cursor-pointer items-center justify-around overflow-hidden rounded-lg bg-black sm:hidden`}
+        } h-[50px] w-[94%] cursor-pointer items-center justify-between overflow-hidden rounded-sm bg-black sm:hidden`}
       >
         <img
           src={track?.image ? track.image[0]?.url : songfallback}
           alt="song-img"
+          fetchPriority="high"
+          loading="eager"
           onError={(e) => (e.currentTarget.src = songfallback)}
-          className="h-[50px] w-[50px] rounded-md"
+          className="h-[50px] w-[50px] rounded-sm"
         />
         <div className="flex h-full w-[87%] items-center justify-between">
           <div className="ml-3 flex h-[50px] w-[55%] flex-col items-start justify-center border-white leading-4">
