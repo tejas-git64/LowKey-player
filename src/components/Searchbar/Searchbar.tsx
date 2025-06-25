@@ -35,7 +35,7 @@ export default function Searchbar() {
           aria-label="searchbar"
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for songs, albums, playlists or artists"
-          className="h-full w-full border-none bg-neutral-700 px-2 font-medium tracking-wide text-neutral-300 outline-none placeholder:text-sm placeholder:font-medium placeholder:text-neutral-400 focus-within:bg-neutral-600"
+          className="h-full w-full border-none bg-neutral-700 px-2 font-medium tracking-wide text-neutral-300 outline-none placeholder:text-sm placeholder:font-medium placeholder:text-neutral-400 focus-within:bg-neutral-700"
         />
       </div>
     </>
