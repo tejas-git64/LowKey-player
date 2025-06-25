@@ -6,12 +6,14 @@ const handleCollectionPlayback = (
     | React.KeyboardEvent<Element>,
   collection: { id: string; name: string; image: any; songs: TrackDetails[] },
   isPlaying: boolean,
+  inQueue: boolean,
   setQueue: Function,
   setNowPlaying: Function,
   setIsPlaying: Function,
 ) => {
   e.stopPropagation();
-  if (!isPlaying) {
+  if (inQueue) setIsPlaying(!isPlaying);
+  else {
     setQueue({
       id: collection.id,
       name: collection.name,
@@ -19,9 +21,8 @@ const handleCollectionPlayback = (
       songs: collection.songs,
     });
     setNowPlaying(collection.songs[0]);
-    setIsPlaying(true);
-  } else {
-    setIsPlaying(false);
+    if (isPlaying) return;
+    setIsPlaying(!isPlaying);
   }
 };
 export default handleCollectionPlayback;
