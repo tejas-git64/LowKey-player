@@ -9,7 +9,7 @@ import offline from "../../assets/icons8-offline-28.png";
 import { memo, useEffect, useState } from "react";
 import { useBoundStore } from "../../store/store";
 import { AlbumById, PlaylistById, UserPlaylist } from "../../types/GlobalTypes";
-import userplaylist from "../../assets/svgs/userplaylist.svg";
+import playlistfallback from "../../assets/fallbacks/playlist-fallback-min.webp";
 import fallback from "../../assets/fallbacks/playlist-fallback.webp";
 
 export default function Menu() {
@@ -35,9 +35,9 @@ export default function Menu() {
   return (
     <nav
       role="navigation"
-      className="hidden h-full max-h-screen overflow-hidden border-l-2 border-black bg-neutral-950 sm:block sm:w-[60px] lg:w-72 xl:w-80 2xl:w-96"
+      className="hidden h-full max-h-screen overflow-hidden border-l-2 border-black bg-neutral-800 sm:block sm:w-[70px] lg:w-72 xl:w-80 2xl:w-96"
     >
-      <div className="flex h-auto w-full flex-col items-start justify-evenly overflow-hidden bg-neutral-800 lg:pl-1">
+      <div className="mx-auto flex h-auto w-[95%] flex-col items-start justify-evenly overflow-hidden bg-neutral-800 px-1 pt-2">
         <Link
           to={"/home"}
           className="flex w-full items-center justify-start p-3 outline-none transition-colors hover:bg-neutral-600 focus:bg-neutral-700"
@@ -45,7 +45,7 @@ export default function Menu() {
           <img
             src={home}
             alt="menu-icon"
-            className="mr-5 w-7 flex-shrink-0 xl:mr-6"
+            className="mr-[18px] w-7 flex-shrink-0 xl:mr-[22px]"
           />
           <p className="hidden text-base font-normal text-white sm:block">
             Home
@@ -65,8 +65,8 @@ export default function Menu() {
           </p>
         </Link>
       </div>
-      <div className="relative mt-[3px] flex h-[88.5%] w-full flex-col items-center justify-start overflow-hidden bg-neutral-800 lg:h-[88%] lg:pl-1">
-        <div className="h-[150px] w-full lg:h-[155px]">
+      <div className="relative mt-[2px] flex h-[88.5%] w-full flex-col items-center justify-start overflow-hidden bg-neutral-800 px-1 lg:h-[88%]">
+        <div className="mx-auto h-[150px] w-[95%] lg:h-[155px]">
           <Link
             to={"/library"}
             className="flex w-full items-center justify-start p-3 outline-none transition-colors hover:bg-neutral-600 focus:bg-neutral-700"
@@ -74,7 +74,7 @@ export default function Menu() {
             <img
               src={libraryImg}
               alt="menu-icon"
-              className="ml-0.5 mr-[24px] w-[23px] flex-shrink-0 xl:mr-[27px] 2xl:mr-[26px]"
+              className="ml-0.5 mr-[24px] w-[22px] flex-shrink-0 xl:mr-[27px] 2xl:mr-[26px]"
             />
             <p className="hidden text-base font-normal text-white sm:block">
               Library
@@ -87,7 +87,7 @@ export default function Menu() {
             <img
               src={heart}
               alt="menu-icon"
-              className="ml-0.5 mr-[21px] w-7 flex-shrink-0 xl:mr-6 xl:w-7"
+              className="ml-0.5 mr-[22px] w-[26px] flex-shrink-0 xl:mr-6 xl:w-7"
             />
             <p className="-mt-1 hidden text-base font-normal text-white sm:block">
               Favorites
@@ -102,7 +102,7 @@ export default function Menu() {
             <img
               src={add}
               alt="new-menu-icon"
-              className="mx-1 mr-[23px] w-6 flex-shrink-0 invert xl:mr-[26px]"
+              className="mx-1 mr-[23px] w-[21px] flex-shrink-0 invert xl:mr-[26px]"
             />
             <p className="-mt-0.5 hidden text-base font-normal text-white sm:block">
               New playlist
@@ -110,11 +110,11 @@ export default function Menu() {
           </div>
         </div>
         <RecentPlaylistsOrAlbums />
-        <div className="absolute bottom-[70px] flex w-full items-center justify-start bg-inherit p-3">
+        <div className="absolute bottom-[80px] left-[5px] flex w-full items-center justify-start bg-inherit p-3">
           <img
             src={isOnline ? online : offline}
             alt="menu-icon"
-            className="mr-4 h-7 w-7 xl:mr-6"
+            className="mr-6 h-7 w-7 xl:mr-6"
           />
           <p
             className={`hidden ${
@@ -136,7 +136,7 @@ const RecentPlaylistsOrAlbums = memo(() => {
   return (
     <div
       role="list"
-      className="mt-2 flex h-auto w-full flex-col items-center justify-center overflow-y-auto overflow-x-hidden pb-6 lg:ml-0.5 2xl:ml-1"
+      className="h-content mx-auto mt-2 flex w-[95%] flex-col items-center justify-center overflow-y-auto overflow-x-hidden pb-2"
     >
       {albums.map((album: AlbumById) => (
         <Link
@@ -144,13 +144,15 @@ const RecentPlaylistsOrAlbums = memo(() => {
           to={`/albums/${album.id}`}
           key={album.id}
           role="listitem"
-          className="flex h-[50px] w-full flex-shrink-0 items-center justify-start p-2 py-1 outline-none transition-colors hover:bg-neutral-900 focus:bg-neutral-700"
+          className="mb-2 flex h-[50px] w-full items-center justify-start outline-none transition-colors hover:bg-neutral-700 focus:bg-neutral-700"
         >
           <img
-            src={album.image[0]?.url || ""}
+            src={album.image[0]?.url || playlistfallback}
             alt="menu-icon"
-            onError={(e) => (e.currentTarget.src = userplaylist)}
-            className="mr-4 h-[35px] w-[35px] rounded-md shadow-md shadow-black xl:mr-6"
+            width={50}
+            height={50}
+            onError={(e) => (e.currentTarget.src = playlistfallback)}
+            className="mr-4 aspect-square h-[50px] w-[50px] flex-shrink-0 rounded-sm shadow-md shadow-black"
           />
           <p className="line-clamp-1 hidden text-ellipsis whitespace-nowrap text-sm text-neutral-200 sm:block">
             {album.name}
@@ -163,13 +165,15 @@ const RecentPlaylistsOrAlbums = memo(() => {
           to={`/playlists/${playlist.id}`}
           key={playlist.id}
           role="listitem"
-          className="flex h-[50px] w-full flex-shrink-0 items-center justify-start p-2 py-1 outline-none transition-colors hover:bg-neutral-900 focus:bg-neutral-700"
+          className="mb-2 flex h-[50px] w-full items-center justify-start outline-none transition-colors hover:bg-neutral-700 focus:bg-neutral-700"
         >
           <img
             src={playlist.image[0]?.url || fallback}
             alt="menu-icon"
-            onError={(e) => (e.currentTarget.src = userplaylist)}
-            className="mr-4 h-[35px] w-[35px] rounded-md shadow-md shadow-black xl:mr-6"
+            width={50}
+            height={50}
+            onError={(e) => (e.currentTarget.src = playlistfallback)}
+            className="mr-4 aspect-square h-[50px] w-[50px] flex-shrink-0 rounded-sm shadow-md shadow-black"
           />
           <p className="line-clamp-1 hidden text-ellipsis whitespace-nowrap text-sm text-neutral-200 sm:block">
             {playlist.name}
@@ -182,12 +186,14 @@ const RecentPlaylistsOrAlbums = memo(() => {
           to={`/userplaylists/${playlist.id}`}
           key={playlist.id}
           role="listitem"
-          className="flex h-[50px] w-full flex-shrink-0 items-center justify-start p-2 py-1 outline-none transition-colors hover:bg-neutral-900 focus:bg-neutral-700"
+          className="mb-2 flex h-[50px] w-full items-center justify-start outline-none transition-colors hover:bg-neutral-700 focus:bg-neutral-700"
         >
           <img
-            src={userplaylist}
+            src={playlistfallback}
+            width={50}
+            height={50}
             alt="menu-icon"
-            className="mr-4 h-[35px] w-[35px] rounded-md bg-emerald-500 shadow-md shadow-black xl:mr-6"
+            className="mr-4 h-[50px] w-[50px] flex-shrink-0 rounded-sm bg-emerald-500 shadow-md shadow-black"
           />
           <p className="line-clamp-1 hidden text-ellipsis whitespace-nowrap text-sm text-neutral-200 sm:block">
             {playlist.name}
