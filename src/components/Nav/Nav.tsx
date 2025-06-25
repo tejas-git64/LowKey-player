@@ -35,17 +35,17 @@ export default function Menu() {
   return (
     <nav
       role="navigation"
-      className="hidden h-full max-h-screen overflow-hidden border-l-2 border-black bg-neutral-800 sm:block sm:w-[70px] lg:w-72 xl:w-80 2xl:w-96"
+      className="hidden h-full max-h-screen overflow-hidden border-l-2 border-black bg-neutral-800 sm:block sm:w-20 lg:w-80 2xl:w-96"
     >
       <div className="mx-auto flex h-auto w-[95%] flex-col items-start justify-evenly overflow-hidden bg-neutral-800 px-1 pt-2">
         <Link
           to={"/home"}
-          className="flex w-full items-center justify-start p-3 outline-none transition-colors hover:bg-neutral-600 focus:bg-neutral-700"
+          className="flex w-full items-center justify-start p-3 pl-3.5 outline-none transition-colors hover:bg-neutral-600 focus:bg-neutral-700"
         >
           <img
             src={home}
             alt="menu-icon"
-            className="mr-[18px] w-7 flex-shrink-0 xl:mr-[22px]"
+            className="mr-7 w-7 flex-shrink-0 xl:mr-[22px]"
           />
           <p className="hidden text-base font-normal text-white sm:block">
             Home
@@ -53,12 +53,12 @@ export default function Menu() {
         </Link>
         <Link
           to={"/search"}
-          className="flex w-full items-center justify-start p-3 outline-none transition-colors hover:bg-neutral-600 focus:bg-neutral-700"
+          className="flex w-full items-center justify-start p-3 pl-3.5 outline-none transition-colors hover:bg-neutral-600 focus:bg-neutral-700"
         >
           <img
             src={search}
             alt="menu-icon"
-            className="mr-[18px] w-7 flex-shrink-0 xl:mr-[22px]"
+            className="mr-7 w-7 flex-shrink-0 xl:mr-[22px]"
           />
           <p className="-mt-0.5 hidden text-base font-normal text-white sm:block">
             Search
@@ -66,7 +66,7 @@ export default function Menu() {
         </Link>
       </div>
       <div className="relative mt-[2px] flex h-[88.5%] w-full flex-col items-center justify-start overflow-hidden bg-neutral-800 px-1 lg:h-[88%]">
-        <div className="mx-auto h-[150px] w-[95%] lg:h-[155px]">
+        <div className="mx-auto h-[150px] w-[95%] px-1 lg:h-[155px]">
           <Link
             to={"/library"}
             className="flex w-full items-center justify-start p-3 outline-none transition-colors hover:bg-neutral-600 focus:bg-neutral-700"
@@ -74,7 +74,7 @@ export default function Menu() {
             <img
               src={libraryImg}
               alt="menu-icon"
-              className="ml-0.5 mr-[24px] w-[22px] flex-shrink-0 xl:mr-[27px] 2xl:mr-[26px]"
+              className="ml-0.5 mr-[30px] w-[22px] flex-shrink-0 xl:mr-[27px] 2xl:mr-[26px]"
             />
             <p className="hidden text-base font-normal text-white sm:block">
               Library
@@ -87,7 +87,7 @@ export default function Menu() {
             <img
               src={heart}
               alt="menu-icon"
-              className="ml-0.5 mr-[22px] w-[26px] flex-shrink-0 xl:mr-6 xl:w-7"
+              className="ml-0.5 mr-7 w-[26px] flex-shrink-0 xl:mr-6 xl:w-7"
             />
             <p className="-mt-1 hidden text-base font-normal text-white sm:block">
               Favorites
@@ -102,7 +102,7 @@ export default function Menu() {
             <img
               src={add}
               alt="new-menu-icon"
-              className="mx-1 mr-[23px] w-[21px] flex-shrink-0 invert xl:mr-[26px]"
+              className="mx-1 mr-[29px] w-[23px] flex-shrink-0 invert xl:mr-[26px]"
             />
             <p className="-mt-0.5 hidden text-base font-normal text-white sm:block">
               New playlist
@@ -110,7 +110,7 @@ export default function Menu() {
           </div>
         </div>
         <RecentPlaylistsOrAlbums />
-        <div className="absolute bottom-[80px] left-[5px] flex w-full items-center justify-start bg-inherit p-3">
+        <div className="absolute bottom-[80px] left-2 flex w-full items-center justify-start bg-inherit p-3">
           <img
             src={isOnline ? online : offline}
             alt="menu-icon"
@@ -136,7 +136,7 @@ const RecentPlaylistsOrAlbums = memo(() => {
   return (
     <div
       role="list"
-      className="h-content mx-auto mt-2 flex w-[95%] flex-col items-center justify-center overflow-y-auto overflow-x-hidden pb-2"
+      className="h-content mx-auto mt-2 flex w-[95%] flex-col items-center justify-center overflow-y-auto overflow-x-hidden pb-2 pl-1"
     >
       {albums.map((album: AlbumById) => (
         <Link
