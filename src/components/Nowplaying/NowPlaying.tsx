@@ -155,12 +155,12 @@ export default function NowPlaying() {
         role="group"
         aria-label="Track and Artist Info"
       >
-        <div className="relative z-0 h-full w-full sm:mr-3 sm:w-auto">
+        <div className="relative z-0 h-full w-full pt-2 sm:mr-3 sm:w-auto sm:pt-0">
           {isMobileWidth && (
             <button
               type="button"
               onClick={() => setShowPlayer(false)}
-              className="absolute right-2 top-2 rounded-full bg-black px-2 py-0.5"
+              className="absolute right-2 top-4 rounded-sm bg-black px-1 py-0.5"
               aria-label="hide now playing drawer"
             >
               <img src={down} alt="toggle-drawer" width={24} height={24} />
@@ -288,7 +288,7 @@ export default function NowPlaying() {
               <img
                 src={downloadIcon}
                 alt="download-icon"
-                className="w-9 flex-shrink-0 pl-2 sm:h-[23px] sm:w-auto sm:pl-0"
+                className="w-8 flex-shrink-0 pl-2 sm:h-[23px] sm:w-auto sm:pl-0"
               />
             </button>
           )}
@@ -481,7 +481,7 @@ const Controls = memo(
 
     return (
       <div
-        className="-ml-2 -mt-4 flex w-full max-w-[90%] flex-shrink-0 items-center justify-center space-x-[10%] sm:m-0 sm:space-x-5"
+        className="-ml-2 mt-2 flex w-full max-w-[90%] flex-shrink-0 items-center justify-center space-x-[10%] sm:m-0 sm:space-x-5 xl:ml-2"
         role="group"
         aria-label="Playback Controls"
       >
@@ -669,7 +669,7 @@ const Artist = (artist: ArtistInSong) => {
           navigate(`/artists/${artist.id}`);
         }
       }}
-      className="mb-2 flex w-full items-center justify-between bg-black pr-2.5 hover:cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+      className="mb-2 flex w-full items-center justify-between bg-black hover:cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
     >
       <div className="flex w-auto items-center justify-start">
         <img
