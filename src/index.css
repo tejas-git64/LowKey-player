@@ -36,3 +36,51 @@ h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
+
+.intro-fadeout {
+  @apply -translate-y-4 opacity-0;
+}
+
+.intro-fadein {
+  @apply translate-y-0 opacity-100;
+}
+
+.card-fadeout {
+  @apply scale-95 translate-y-4 rounded-3xl opacity-0;
+}
+
+.card-fadein {
+  @apply scale-100 translate-y-0 rounded-lg opacity-100;
+}
+
+.home-fadeout {
+  @apply opacity-0;
+}
+
+.home-fadein {
+  @apply opacity-100;
+}
+
+.widget-banner-fadeout {
+  @apply opacity-0 blur-lg grayscale;
+}
+
+.widget-banner-fadein {
+  @apply opacity-100 blur-0 grayscale-0;
+}
+
+.song-fadeout {
+  @apply opacity-0;
+}
+
+.song-fadein {
+  @apply opacity-100 duration-200;
+}
+
+.image-fadein {
+  @apply opacity-100 blur-0;
+}
+
+.image-fadeout {
+  @apply opacity-0 blur-xl;
+}
