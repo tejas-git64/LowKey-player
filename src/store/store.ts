@@ -111,8 +111,8 @@ export type StoreType = {
   setHistory: (data: TrackDetails) => void;
   setActivity: (message: string) => void;
   setSearch: (data: SearchType) => void;
-  setPlaylist: (data: PlaylistById) => void;
-  setAlbum: (data: AlbumById) => void;
+  setPlaylist: (data: PlaylistById | null) => void;
+  setAlbum: (data: AlbumById | null) => void;
   setArtistDetails: (data: ArtistType | null) => void;
   setArtistAlbums: (data: AlbumType[]) => void;
   setArtistSongs: (data: TrackDetails[]) => void;
@@ -246,12 +246,12 @@ export const useBoundStore = create<StoreType>()(
           }),
         ),
       playlist: null,
-      setPlaylist: (data: PlaylistById) =>
+      setPlaylist: (data: PlaylistById | null) =>
         set((state) => {
           state.playlist = data;
         }),
       album: null,
-      setAlbum: (data: AlbumById) =>
+      setAlbum: (data: AlbumById | null) =>
         set((state) => {
           state.album = data;
         }),
