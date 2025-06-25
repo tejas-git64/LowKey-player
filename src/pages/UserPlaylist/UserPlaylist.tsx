@@ -10,8 +10,9 @@ import {
   UserPlaylist,
 } from "../../types/GlobalTypes";
 import Song from "../../components/Song/Song";
-import { memo, useEffect, useMemo } from "react";
+import { memo, useEffect, useMemo, useRef } from "react";
 import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
+import { animateScreen } from "../../helpers/animateScreen";
 
 export default function UserPlaylistPage() {
   const queue = useBoundStore((state) => state.nowPlaying.queue);
@@ -19,6 +20,7 @@ export default function UserPlaylistPage() {
   const setUserPlaylist = useBoundStore((state) => state.setUserPlaylist);
   const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
   const { id } = useParams();
+  const upEl = useRef(null);
   const playlist: UserPlaylist | undefined = useMemo(
     () =>
       userPlaylists.find(
@@ -41,11 +43,15 @@ export default function UserPlaylistPage() {
         ) ?? null;
       if (playlist !== null) setUserPlaylist(playlist);
     }
+    animateScreen(upEl);
   }, []);
 
   return (
     <>
-      <div className="h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth">
+      <div
+        ref={upEl}
+        className="h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth"
+      >
         <div className="relative flex h-[210px] w-full items-end justify-between border-b border-black bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 px-4 py-3 sm:h-fit sm:pb-6 sm:pt-4">
           <div className="absolute right-2 top-2 h-auto w-auto">
             <RouteNav />
@@ -56,8 +62,13 @@ export default function UserPlaylistPage() {
         <div className="mx-auto h-auto min-h-[80dvh] w-full bg-neutral-900">
           {playlist?.songs?.length ? (
             <ul className="flex h-auto max-h-fit w-full flex-col items-start justify-start bg-transparent px-4 pb-28 pt-4 sm:pb-20">
-              {playlist?.songs.map((song: TrackDetails) => (
-                <Song key={song.id} track={song} isWidgetSong={false} />
+              {playlist?.songs.map((song: TrackDetails, i) => (
+                <Song
+                  key={song.id}
+                  index={i}
+                  track={song}
+                  isWidgetSong={false}
+                />
               ))}
             </ul>
           ) : (
@@ -101,6 +112,7 @@ const UserPlaylistControls = memo(({ id, songs, name }: UserPlaylist) => {
   const setQueue = useBoundStore((state) => state.setQueue);
   const queueId = useBoundStore((state) => state.nowPlaying.queue?.id);
   const isPlayable = songs && songs.length > 0;
+  const inQueue = useMemo(() => queueId === String(id), [id]);
 
   const handleKeyDown = () => (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
@@ -114,6 +126,7 @@ const UserPlaylistControls = memo(({ id, songs, name }: UserPlaylist) => {
           songs: songs,
         },
         isPlaying,
+        inQueue,
         setQueue,
         setNowPlaying,
         setIsPlaying,
@@ -187,6 +200,7 @@ const UserPlaylistControls = memo(({ id, songs, name }: UserPlaylist) => {
                     songs: songs,
                   },
                   isPlaying,
+                  inQueue,
                   setQueue,
                   setNowPlaying,
                   setIsPlaying,

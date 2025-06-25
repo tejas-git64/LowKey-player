@@ -4,11 +4,13 @@ import nf768 from "../../assets/images/notfound/notfound-landscape-768px.webp";
 import nf1024 from "../../assets/images/notfound/notfound-landscape-1024px.webp";
 import nf1280 from "../../assets/images/notfound/notfound-landscape-1280px.webp";
 import nf1536 from "../../assets/images/notfound/notfound-landscape-1536px.webp";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { animateScreen } from "../../helpers/animateScreen";
 
 export default function NotFound() {
   const [nfImg, setNfImg] = useState<string>("");
+  const nfEl = useRef<HTMLImageElement>(null);
 
   function imageResize() {
     switch (true) {
@@ -37,6 +39,7 @@ export default function NotFound() {
   }
 
   useEffect(() => {
+    animateScreen(nfEl);
     imageResize();
     window.addEventListener("load", imageResize);
     window.addEventListener("resize", imageResize);
@@ -49,13 +52,14 @@ export default function NotFound() {
   return (
     <>
       <div
+        ref={nfEl}
         style={{
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
           backgroundImage: `url(${nfImg})`,
         }}
-        className="flex h-full w-full items-center justify-center shadow-inner shadow-black"
+        className="home-fadeout flex h-full w-full items-center justify-center shadow-inner shadow-black duration-200 ease-in"
       >
         <div className="flex h-[80%] w-[80%] flex-col items-center justify-around sm:h-full">
           <div className="text-center">

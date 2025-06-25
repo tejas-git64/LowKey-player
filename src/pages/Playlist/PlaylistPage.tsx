@@ -20,6 +20,7 @@ import ListLoading from "./Loading";
 import RouteNav from "../../components/RouteNav/RouteNav";
 import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
 import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
+import { animateScreen } from "../../helpers/animateScreen";
 
 export default function PlaylistPage() {
   const { id } = useParams();
@@ -40,18 +41,15 @@ export default function PlaylistPage() {
 
   useEffect(() => {
     setPlaylist(null);
-    setTimeout(() => {
-      playEl.current?.classList.remove("intro-fadeout");
-      playEl.current?.classList.add("intro-fadein");
-    }, 20);
-  }, []);
+    animateScreen(playEl);
+  }, [id]);
 
   return (
     <>
       <Suspense fallback={<ListLoading />}>
         <div
           ref={playEl}
-          className="intro-fadeout h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth pb-20"
+          className="home-fadeout h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth pb-20 duration-200 ease-in"
         >
           <div className="relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 p-3 sm:h-[223px] sm:p-4">
             <div className="absolute right-2 top-2 h-auto w-auto">
@@ -99,6 +97,7 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
     () => playlists.some((playlist: PlaylistById) => playlist?.id === id),
     [playlists],
   );
+  const inQueue = queue?.id === id;
   const isPlaylistPlaying = isPlaying && queue?.id === id;
 
   const handlePlaylist = (
@@ -214,6 +213,7 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
             e,
             playlist,
             isPlaying,
+            inQueue,
             setQueue,
             setNowPlaying,
             setIsPlaying,

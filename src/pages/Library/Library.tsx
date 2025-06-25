@@ -14,11 +14,12 @@ import pause from "../../assets/svgs/pause-icon.svg";
 import artistfallback from "../../assets/fallbacks/artist-fallback.png";
 import userplaylist from "../../assets/fallbacks/playlist-fallback.webp";
 import playlistIcon from "../../assets/svgs/playlist-icon.svg";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
 import { FollowButton } from "../../components/FollowButton/FollowButton";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
+import { animateScreen } from "../../helpers/animateScreen";
 
 export default function Library() {
   const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
@@ -31,6 +32,8 @@ export default function Library() {
   const playlists = useBoundStore((state) => state.library.playlists);
   const albums = useBoundStore((state) => state.library.albums);
   const followings = useBoundStore((state) => state.library.followings);
+  const libElRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   const [hydrated, setHydrated] = useState(false);
 
   function createNewPlaylist(
@@ -39,6 +42,14 @@ export default function Library() {
     e.stopPropagation();
     setCreationMenu(true);
     setRevealCreation(true);
+  }
+
+  function fadeOutNavigate(str: string) {
+    libElRef.current?.classList.add("home-fadeout");
+    libElRef.current?.classList.remove("home-fadein");
+    setTimeout(() => {
+      navigate(str);
+    }, 150);
   }
 
   useEffect(() => {
@@ -56,6 +67,7 @@ export default function Library() {
       lastFollowings?.forEach(setFollowing);
     }
     setHydrated(true);
+    animateScreen(libElRef);
   }, []);
 
   useEffect(() => {
@@ -70,8 +82,11 @@ export default function Library() {
   }, [userPlaylists, playlists, albums, followings]);
 
   return (
-    <div className="relative max-h-fit min-h-full w-full scroll-smooth bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 pb-56">
-      <div className="flex h-auto w-auto items-center justify-between bg-inherit px-3 py-2">
+    <div
+      ref={libElRef}
+      className="home-fadeout relative max-h-fit min-h-full w-full scroll-smooth bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 pb-56 duration-200 ease-in"
+    >
+      <div className="flex h-auto w-auto items-center justify-between bg-inherit px-3 py-1">
         <h2 className="text-2xl font-semibold text-white">Library</h2>
         <RouteNav />
       </div>
@@ -93,35 +108,41 @@ export default function Library() {
           {userPlaylists && userPlaylists.length > 0 && (
             <div className="mb-3 flex h-full max-h-max w-full items-start justify-start">
               {userPlaylists && (
-                <CustomPlaylists userPlaylists={userPlaylists} />
+                <CustomPlaylists
+                  userPlaylists={userPlaylists}
+                  fadeOutNavigate={fadeOutNavigate}
+                />
               )}
             </div>
           )}
           {playlists && playlists.length > 0 && (
             <div className="mb-3 h-[215px] w-full overflow-x-hidden">
-              <LibraryPlaylists playlists={playlists} />
+              <LibraryPlaylists
+                playlists={playlists}
+                fadeOutNavigate={fadeOutNavigate}
+              />
             </div>
           )}
           {albums && albums.length > 0 && (
             <div className="mb-3 h-[215px] w-full overflow-x-hidden">
-              <LibraryAlbums albums={albums} />
+              <LibraryAlbums
+                albums={albums}
+                fadeOutNavigate={fadeOutNavigate}
+              />
             </div>
           )}
-          {followings &&
-            followings.length > 0 &&
-            followings.map((following: ArtistInSong) => (
-              <div className="mt-1 h-auto w-full">
-                <h2 className="text-md w-full font-semibold text-white">
-                  Followings
-                </h2>
-                <div
-                  key={following.id}
-                  className="h-auto w-full overflow-hidden"
-                >
-                  <Following {...following} />
-                </div>
+          {followings && (
+            <div className="mt-1 h-auto w-full">
+              <h2 className="text-md w-full font-semibold text-white">
+                Followings
+              </h2>
+              <div className="mt-3 h-auto w-full overflow-hidden">
+                {followings.map((following: ArtistInSong) => (
+                  <Following key={following.id} {...following} />
+                ))}
               </div>
-            ))}
+            </div>
+          )}
         </div>
       ) : (
         <div className="flex h-[70dvh] w-full flex-col items-center justify-center">
@@ -139,11 +160,11 @@ export default function Library() {
   );
 }
 
-const Following = memo(({ id, name, image }: any) => {
+const Following = memo(({ id, name, image, fadeOutNavigate }: any) => {
   return (
-    <Link
-      to={`/artists/${id}`}
-      className="flex h-[50px] w-full items-center justify-between bg-inherit p-3 pr-4 transition-colors hover:bg-neutral-800"
+    <div
+      onClick={() => fadeOutNavigate(`/artists/${id}`)}
+      className="flex h-[50px] w-full items-center justify-between bg-inherit px-1.5 transition-colors hover:bg-neutral-800"
     >
       <div className="flex h-full w-[80%] items-center justify-start">
         <img
@@ -167,17 +188,27 @@ const Following = memo(({ id, name, image }: any) => {
           url: "",
         }}
       />
-    </Link>
+    </div>
   );
 });
 
 const CustomPlaylists = memo(
-  ({ userPlaylists }: { userPlaylists: UserPlaylist[] }) => {
+  ({
+    userPlaylists,
+    fadeOutNavigate,
+  }: {
+    userPlaylists: UserPlaylist[];
+    fadeOutNavigate(str: string): void;
+  }) => {
     const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
     const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
     const queueId = useBoundStore((state) => state.nowPlaying.queue?.id);
-    const setQueue = useBoundStore((state) => state.setQueue);
     const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
+    const setQueue = useBoundStore((state) => state.setQueue);
+    const inQueue = useMemo(
+      () => userPlaylists.some((u) => u.id === Number(queueId)),
+      [userPlaylists],
+    );
     const removeUserPlaylist = useBoundStore(
       (state) => state.removeUserPlaylist,
     );
@@ -190,10 +221,10 @@ const CustomPlaylists = memo(
           </h2>
           <div className="flex h-auto w-full items-start justify-start overflow-x-scroll">
             {userPlaylists?.map((playlist) => (
-              <Link
-                to={`/userplaylists/${playlist.id}`}
+              <div
+                onClick={() => fadeOutNavigate(`/userplaylists/${playlist.id}`)}
                 key={playlist.id}
-                className="group relative h-fit w-fit"
+                className="group relative h-fit w-fit cursor-pointer"
               >
                 <div className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 list-none flex-col items-center justify-center">
                   <div className="h-[150px] w-[150px] overflow-hidden">
@@ -211,11 +242,11 @@ const CustomPlaylists = memo(
                     {playlist.name}
                   </p>
                 </div>
-                <div className="absolute left-0 top-0 flex h-[150px] w-full items-center justify-center bg-transparent opacity-0 transition-all ease-in group-hover:opacity-100">
+                <div className="absolute left-0 top-0 -ml-2 flex h-[150px] w-full items-center justify-center bg-transparent opacity-0 transition-all ease-in group-hover:opacity-100">
                   {playlist.songs.length > 0 && (
                     <button
                       type="button"
-                      className="mx-2 -ml-4 rounded-full bg-emerald-400 p-2"
+                      className="mx-2 rounded-full bg-emerald-400 p-2"
                       onClick={(e) =>
                         handleCollectionPlayback(
                           e,
@@ -226,6 +257,7 @@ const CustomPlaylists = memo(
                             songs: playlist.songs,
                           },
                           isPlaying,
+                          inQueue,
                           setQueue,
                           setNowPlaying,
                           setIsPlaying,
@@ -259,7 +291,7 @@ const CustomPlaylists = memo(
                     />
                   </button>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </div>
@@ -268,88 +300,112 @@ const CustomPlaylists = memo(
   },
 );
 
-const LibraryAlbums = memo(({ albums }: { albums: AlbumById[] }) => {
-  const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
-  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
-  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
-  const setQueue = useBoundStore((state) => state.setQueue);
-  const queueId = useBoundStore((state) => state.nowPlaying.queue?.id);
-  const removeLibraryAlbum = useBoundStore((state) => state.removeLibraryAlbum);
+const LibraryAlbums = memo(
+  ({
+    albums,
+    fadeOutNavigate,
+  }: { albums: AlbumById[] } & { fadeOutNavigate(str: string): void }) => {
+    const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
+    const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
+    const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
+    const setQueue = useBoundStore((state) => state.setQueue);
+    const queueId = useBoundStore((state) => state.nowPlaying.queue?.id);
+    const inQueue = useMemo(
+      () => albums.some((a) => a.id === queueId),
+      [albums],
+    );
+    const removeLibraryAlbum = useBoundStore(
+      (state) => state.removeLibraryAlbum,
+    );
 
-  return (
-    <>
-      <h2 className="text-md mb-2 w-full font-semibold text-white">Albums</h2>
-      <div className="flex h-[180px] w-full items-center justify-start overflow-y-hidden overflow-x-scroll">
-        {albums?.map((album: AlbumById) => (
-          <Link
-            to={`/albums/${album.id}`}
-            key={album.id}
-            className="group relative h-fit w-fit"
-          >
-            <Playlist
-              id={album.id}
-              userId={album.id}
-              name={album.name}
-              songCount={album.songCount}
-              username={""}
-              firstname={""}
-              lastname={""}
-              language={""}
-              image={album.image}
-              url={album.url}
-              songs={[]}
-            />
-            <div className="absolute left-0 top-0 flex h-[150px] w-full items-center justify-center bg-transparent opacity-0 transition-all ease-in hover:opacity-100">
-              <button
-                type="button"
-                className="rounded-full bg-emerald-400 p-2"
-                onClick={(e) =>
-                  handleCollectionPlayback(
-                    e,
-                    album,
-                    isPlaying,
-                    setQueue,
-                    setNowPlaying,
-                    setIsPlaying,
-                  )
-                }
-              >
-                <img
-                  src={isPlaying && queueId === album.id ? pause : play}
-                  alt="play album"
-                  className="h-7 w-7"
-                />
-              </button>
-              <button
-                type="button"
-                className="ml-2 rounded-full bg-white p-0"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  removeLibraryAlbum(album.id);
-                }}
-              >
-                <img
-                  src={close}
-                  alt="remove"
-                  className="h-6 w-6 rounded-full p-1"
-                />
-              </button>
+    return (
+      <>
+        <h2 className="text-md mb-2 w-full font-semibold text-white">Albums</h2>
+        <div className="flex h-[180px] w-full items-center justify-start overflow-y-hidden overflow-x-scroll">
+          {albums?.map((album: AlbumById, i) => (
+            <div
+              key={album.id}
+              onClick={() => fadeOutNavigate(`/albums/${album.id}`)}
+              className="group relative h-fit w-fit cursor-pointer"
+            >
+              <Playlist
+                i={i}
+                id={album.id}
+                userId={album.id}
+                name={album.name}
+                songCount={album.songCount}
+                username={""}
+                firstname={""}
+                lastname={""}
+                language={""}
+                image={album.image}
+                url={album.url}
+                songs={[]}
+                fadeOutNavigate={fadeOutNavigate}
+              />
+              <div className="absolute left-0 top-0 -ml-2 flex h-[150px] w-full items-center justify-center bg-transparent opacity-0 transition-all ease-in hover:opacity-100">
+                <button
+                  type="button"
+                  className="rounded-full bg-emerald-400 p-2"
+                  onClick={(e) =>
+                    handleCollectionPlayback(
+                      e,
+                      album,
+                      isPlaying,
+                      inQueue,
+                      setQueue,
+                      setNowPlaying,
+                      setIsPlaying,
+                    )
+                  }
+                >
+                  <img
+                    src={isPlaying && queueId === album.id ? pause : play}
+                    alt="play album"
+                    className="h-7 w-7"
+                  />
+                </button>
+                <button
+                  type="button"
+                  className="ml-2 rounded-full bg-white p-0"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    removeLibraryAlbum(album.id);
+                  }}
+                >
+                  <img
+                    src={close}
+                    alt="remove"
+                    className="h-6 w-6 rounded-full p-1"
+                  />
+                </button>
+              </div>
             </div>
-          </Link>
-        ))}
-      </div>
-    </>
-  );
-});
+          ))}
+        </div>
+      </>
+    );
+  },
+);
 
 const LibraryPlaylists = memo(
-  ({ playlists }: { playlists: PlaylistById[] }) => {
+  ({
+    playlists,
+    fadeOutNavigate,
+  }: {
+    playlists: PlaylistById[];
+    fadeOutNavigate(str: string): void;
+  }) => {
     const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
     const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
     const queueId = useBoundStore((state) => state.nowPlaying.queue?.id);
     const setQueue = useBoundStore((state) => state.setQueue);
     const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
+    const inQueue = useMemo(
+      () => playlists.some((p) => p.id === queueId),
+      [playlists],
+    );
     const removeLibraryPlaylist = useBoundStore(
       (state) => state.removeLibraryPlaylist,
     );
@@ -360,13 +416,14 @@ const LibraryPlaylists = memo(
           Playlists
         </h2>
         <div className="flex h-[180px] w-full items-center justify-start overflow-y-hidden overflow-x-scroll">
-          {playlists?.map((playlist) => (
-            <Link
-              to={`/playlists/${playlist.id}`}
+          {playlists?.map((playlist, i) => (
+            <div
               key={playlist.id}
-              className="group relative h-fit w-fit"
+              onClick={() => fadeOutNavigate(`/playlists/${playlist.id}`)}
+              className="group relative h-fit w-fit cursor-pointer"
             >
               <Playlist
+                i={i}
                 id={playlist.id}
                 userId={playlist.userId}
                 name={playlist.name}
@@ -378,8 +435,9 @@ const LibraryPlaylists = memo(
                 image={playlist.image}
                 url={playlist.url}
                 songs={[]}
+                fadeOutNavigate={fadeOutNavigate}
               />
-              <div className="absolute left-0 top-0 flex h-[150px] w-full items-center justify-center opacity-0 transition-all ease-in group-hover:opacity-100">
+              <div className="absolute left-0 top-0 -ml-2 flex h-[150px] w-full items-center justify-center opacity-0 transition-all ease-in group-hover:opacity-100">
                 <button
                   type="button"
                   className="rounded-full bg-emerald-400 p-2"
@@ -388,6 +446,7 @@ const LibraryPlaylists = memo(
                       e,
                       playlist,
                       isPlaying,
+                      inQueue,
                       setQueue,
                       setNowPlaying,
                       setIsPlaying,
@@ -402,7 +461,7 @@ const LibraryPlaylists = memo(
                 </button>
                 <button
                   type="button"
-                  className="ml-2 rounded-full bg-white p-0"
+                  className="ml-2 mt-1 rounded-full bg-white p-0"
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
@@ -416,7 +475,7 @@ const LibraryPlaylists = memo(
                   />
                 </button>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </>

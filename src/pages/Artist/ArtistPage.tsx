@@ -18,6 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import ArtistPageLoading from "./Loading";
 import RouteNav from "../../components/RouteNav/RouteNav";
 import { FollowButton } from "../../components/FollowButton/FollowButton";
+import { animateScreen } from "../../helpers/animateScreen";
 
 export default function ArtistPage() {
   const { id } = useParams();
@@ -26,10 +27,7 @@ export default function ArtistPage() {
 
   useEffect(() => {
     setArtistDetails(null);
-    setTimeout(() => {
-      artistEl.current?.classList.remove("home-fadeout");
-      artistEl.current?.classList.add("home-fadein");
-    }, 50);
+    animateScreen(artistEl);
   }, [id]);
 
   return (
@@ -52,6 +50,7 @@ const ArtistInfo = memo(({ id }: { id: string }) => {
   const intlFormatter = new Intl.NumberFormat("en-US");
   const artistImgEl = useRef<HTMLImageElement>(null);
   const artistTitleEl = useRef<HTMLParagraphElement>(null);
+  const artistEl = useRef<HTMLDivElement>(null);
   const followerCount = Number(details?.followerCount) ?? undefined;
   const fanCount = Number(details?.fanCount) ?? undefined;
   const followers = followerCount
@@ -74,16 +73,22 @@ const ArtistInfo = memo(({ id }: { id: string }) => {
   };
 
   useEffect(() => {
+    setArtistDetails(null);
     setTimeout(() => {
+      artistEl.current?.classList.remove("home-fadeout");
+      artistEl.current?.classList.add("home-fadein");
       artistImgEl.current?.classList.remove("image-fadeout");
       artistTitleEl.current?.classList.remove("song-fadeout");
       artistImgEl.current?.classList.add("image-fadein");
       artistTitleEl.current?.classList.add("song-fadein");
-    }, 150);
+    }, 10);
   }, [id]);
 
   return (
-    <div className="relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-600 via-neutral-800 to-black p-4 duration-200 ease-in sm:flex-row sm:items-end sm:justify-between sm:bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))]">
+    <div
+      ref={artistEl}
+      className="home-fadeout relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-600 via-neutral-800 to-black p-4 duration-200 ease-in sm:flex-row sm:items-end sm:justify-between sm:bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))]"
+    >
       <div className="absolute right-2 top-2 h-auto w-auto">
         <RouteNav />
       </div>

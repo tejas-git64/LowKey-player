@@ -1,4 +1,4 @@
-import { memo, useEffect } from "react";
+import { memo, Suspense, useEffect, useRef, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { getAlbumData } from "../../api/requests";
 import Song from "../../components/Song/Song";
@@ -16,14 +16,16 @@ import { useQuery } from "@tanstack/react-query";
 import RouteNav from "../../components/RouteNav/RouteNav";
 import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
 import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
+import { animateScreen } from "../../helpers/animateScreen";
 
 export default function AlbumPage() {
   const { id } = useParams();
   const setAlbum = useBoundStore((state) => state.setAlbum);
   const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
   const nowPlaying = useBoundStore((state) => state.nowPlaying);
+  const albumEl = useRef<HTMLDivElement>(null);
 
-  const { isPending: albumPending } = useQuery({
+  useQuery({
     queryKey: ["albumPage", id],
     queryFn: () => id && getAlbumData(id),
     select: (data) => setAlbum(data.data),
@@ -33,10 +35,18 @@ export default function AlbumPage() {
     nowPlaying.queue && setNowPlaying(nowPlaying.queue.songs[0]);
   }, [nowPlaying.queue?.id]);
 
+  useEffect(() => {
+    setAlbum(null);
+    animateScreen(albumEl);
+  }, []);
+
   return (
     <>
-      {!albumPending ? (
-        <div className="h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth pb-20">
+      <Suspense fallback={<ListLoading />}>
+        <div
+          ref={albumEl}
+          className="home-fadeout h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth pb-20 duration-200 ease-in"
+        >
           <div className="relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 p-3 sm:h-[223px] sm:px-4">
             <div className="absolute right-2 top-2 h-auto w-auto">
               <RouteNav />
@@ -49,9 +59,7 @@ export default function AlbumPage() {
           </div>
           <AlbumTracks />
         </div>
-      ) : (
-        <ListLoading />
-      )}
+      </Suspense>
     </>
   );
 }
@@ -73,8 +81,15 @@ const AlbumControls = memo(({ id }: { id: string }) => {
   const setLibraryAlbum = useBoundStore((state) => state.setLibraryAlbum);
   const removeLibraryAlbum = useBoundStore((state) => state.removeLibraryAlbum);
   const setQueue = useBoundStore((state) => state.setQueue);
-  const isAdded = libraryAlbums.some((playlist) => playlist?.id === id);
-  const isFavorite = albums.some((album: AlbumById) => album?.id === id);
+  const inQueue = queue?.id === id;
+  const isAdded = useMemo(
+    () => libraryAlbums.some((playlist) => playlist?.id === id),
+    [libraryAlbums],
+  );
+  const isFavorite = useMemo(
+    () => albums.some((album: AlbumById) => album?.id === id),
+    [albums],
+  );
   const isAlbumPlaying = isPlaying && queue?.id === id;
 
   const handleAlbum = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -188,6 +203,7 @@ const AlbumControls = memo(({ id }: { id: string }) => {
             e,
             album,
             isPlaying,
+            inQueue,
             setQueue,
             setNowPlaying,
             setIsPlaying,
@@ -211,21 +227,29 @@ AlbumControls.displayName = "AlbumControls";
 const AlbumInfo = memo(() => {
   const images = useBoundStore((state) => state.album?.image);
   const name = useBoundStore((state) => state.album?.name);
-
+  const imgEl = useRef<HTMLImageElement>(null);
+  const titleEl = useRef<HTMLParagraphElement>(null);
   const getAlbumImage = () => {
     if (images) {
       const obj = images.find((img) => img.quality === "150x150");
       if (obj) return obj.url;
     }
-    return fallback;
   };
 
+  useEffect(() => {
+    imgEl.current?.classList.remove("image-fadeout");
+    titleEl.current?.classList.remove("song-fadeout");
+    imgEl.current?.classList.add("image-fadein");
+    titleEl.current?.classList.add("song-fadein");
+  }, []);
+
   return (
-    <div className="flex h-auto w-full flex-col items-start justify-start pt-1 sm:flex-row sm:items-center">
+    <div className="flex h-auto w-full flex-col items-start justify-start pt-1 duration-200 ease-in sm:flex-row sm:items-center">
       <img
+        ref={imgEl}
         src={getAlbumImage()}
         alt="img"
-        className="mr-4 h-[150px] w-[150px]"
+        className="image-fadeout mr-4 h-[150px] w-[150px]"
         style={{
           boxShadow: "5px 5px 0px #000",
         }}
@@ -233,7 +257,10 @@ const AlbumInfo = memo(() => {
         loading="eager"
         onError={(e) => (e.currentTarget.src = fallback)}
       />
-      <p className="text-md mb-1 mt-2 line-clamp-1 h-auto w-[60%] text-ellipsis text-left text-xl font-semibold text-white sm:line-clamp-3 sm:w-[40%] sm:text-3xl sm:font-bold">
+      <p
+        ref={titleEl}
+        className="song-fadeout text-md mb-1 mt-2 line-clamp-1 h-auto w-[60%] text-ellipsis text-left text-xl font-semibold text-white sm:line-clamp-3 sm:w-[40%] sm:text-3xl sm:font-bold"
+      >
         {name}
       </p>
     </div>
@@ -258,10 +285,10 @@ const AlbumTracks = memo(() => {
   const songs = useBoundStore((state) => state.album?.songs);
 
   return (
-    <ul className="flex h-auto min-h-[71.5dvh] w-full flex-col items-start justify-start bg-neutral-900 px-3 py-2 pb-28 sm:pb-20">
+    <ul className="flex h-auto min-h-[71.5dvh] w-full flex-col items-start justify-start bg-neutral-900 p-3 pb-28 sm:p-4 sm:pb-20">
       {songs ? (
-        songs.map((song: TrackDetails) => (
-          <Song key={song.id} track={song} isWidgetSong={false} />
+        songs.map((song: TrackDetails, i) => (
+          <Song index={i} key={song.id} track={song} isWidgetSong={false} />
         ))
       ) : (
         <p className="m-auto text-xl text-neutral-500">No songs here...T_T</p>

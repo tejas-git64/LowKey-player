@@ -8,14 +8,16 @@ import favoritesImg from "../../assets/images/favorites.webp";
 import { useNavigate } from "react-router-dom";
 import fallback from "../../assets/fallbacks/playlist-fallback.webp";
 import close from "../../assets/svgs/close.svg";
-import { memo, useEffect } from "react";
+import { memo, useEffect, useMemo, useRef } from "react";
 import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
 import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
+import { animateScreen } from "../../helpers/animateScreen";
 
 export default function Favorites() {
   const albums = useBoundStore((state) => state.favorites.albums);
   const playlists = useBoundStore((state) => state.favorites.playlists);
   const songs = useBoundStore((state) => state.favorites.songs);
+  const favEl = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     saveToLocalStorage("local-favorites", {
@@ -25,8 +27,15 @@ export default function Favorites() {
     });
   }, [albums, playlists, songs]);
 
+  useEffect(() => {
+    animateScreen(favEl);
+  }, []);
+
   return (
-    <div className="h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth pb-20">
+    <div
+      ref={favEl}
+      className="home-fadeout h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth pb-20 duration-200 ease-in"
+    >
       <div className="relative flex h-[210px] w-full items-end justify-between border-b border-black bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 px-4 pb-3 sm:h-fit sm:py-5">
         <div className="absolute right-2 top-2 h-auto w-auto">
           <RouteNav />
@@ -69,6 +78,7 @@ const FavoriteControls = memo(() => {
   const setFavoritePlaylist = useBoundStore(
     (state) => state.setFavoritePlaylist,
   );
+  const queueSongs = useBoundStore((state) => state.nowPlaying.queue?.songs);
   const setFavoriteSong = useBoundStore((state) => state.setFavoriteSong);
   const id = useBoundStore((state) => state.nowPlaying.track?.id);
   const setQueue = useBoundStore((state) => state.setQueue);
@@ -77,6 +87,10 @@ const FavoriteControls = memo(() => {
   const isShuffling = useBoundStore((state) => state.isShuffling);
   const setIsShuffling = useBoundStore((state) => state.setIsShuffling);
   const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
+  const inQueue = useMemo(
+    () => favorites.songs.some((song) => queueSongs?.includes(song)),
+    [queueSongs],
+  );
   const isFavoritePlaying =
     isPlaying && favorites.songs?.some((song) => song.id === id);
 
@@ -147,6 +161,7 @@ const FavoriteControls = memo(() => {
             e,
             favoriteCollection,
             isPlaying,
+            inQueue,
             setQueue,
             setNowPlaying,
             setIsPlaying,
@@ -168,16 +183,8 @@ const FavoriteControls = memo(() => {
 
 const FavoriteAlbums = memo(() => {
   const albums = useBoundStore((state) => state.favorites.albums);
-  const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
   const queue = useBoundStore((state) => state.nowPlaying.queue);
-  const queueId = useBoundStore((state) => state.nowPlaying.queue?.id);
-  const setQueue = useBoundStore((state) => state.setQueue);
   const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
-  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
-  const removeFavoriteAlbum = useBoundStore(
-    (state) => state.removeFavoriteAlbum,
-  );
-  const navigate = useNavigate();
 
   useEffect(() => {
     queue && setNowPlaying(queue.songs[0]);
@@ -189,82 +196,13 @@ const FavoriteAlbums = memo(() => {
         <>
           <h2 className="p-4 py-2 font-semibold text-white">Albums</h2>
           <div className="flex h-[200px] max-h-fit w-full list-none overflow-y-hidden overflow-x-scroll whitespace-nowrap p-4 py-2">
-            {albums.map((album: AlbumById) => (
-              <div
-                tabIndex={0}
+            {albums.map((album: AlbumById, i) => (
+              <FavoriteAlbum
                 key={album.id}
-                className="group relative mr-4 flex h-[180px] w-[150px] flex-shrink-0 flex-col items-center bg-transparent outline-none"
-                onClick={() =>
-                  navigate(`/albums/${album.id}`, { replace: true })
-                }
-                role="link"
-                aria-label={`Go to album ${album.name}`}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    navigate(`/albums/${album.id}`, { replace: true });
-                  }
-                }}
-              >
-                <div className="h-[150px] w-[150px] overflow-hidden">
-                  <img
-                    src={album.image[1]?.url || fallback}
-                    alt="user-profile"
-                    width={150}
-                    height={150}
-                    className="scale-105 shadow-xl shadow-neutral-950 transition-transform group-hover:scale-100 group-focus:scale-100"
-                    onError={(e) => (e.currentTarget.src = fallback)}
-                  />
-                </div>
-                <p className="mt-1 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-xs font-semibold text-neutral-400 transition-colors group-hover:text-white group-focus:text-white">
-                  {album.name}
-                </p>
-                <div className="absolute left-0 top-0 flex h-[150px] w-full items-center justify-center bg-transparent opacity-0 transition-all ease-in group-hover:opacity-100 group-focus:opacity-100">
-                  <button
-                    type="button"
-                    tabIndex={0}
-                    className="rounded-full bg-emerald-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
-                    aria-label={
-                      isPlaying && album.id === queueId
-                        ? "Pause album"
-                        : "Play album"
-                    }
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleCollectionPlayback(
-                        e,
-                        album,
-                        isPlaying,
-                        setQueue,
-                        setNowPlaying,
-                        setIsPlaying,
-                      );
-                    }}
-                  >
-                    <img
-                      src={isPlaying && album.id === queueId ? pause : play}
-                      alt={isPlaying && album.id === queueId ? "Pause" : "Play"}
-                      className="h-12 w-12 p-2"
-                      aria-hidden="true"
-                    />
-                  </button>
-                  <button
-                    type="button"
-                    tabIndex={0}
-                    className="ml-2 h-auto w-auto rounded-full bg-white p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
-                    aria-label={`Remove album ${album.name} from favorites`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeFavoriteAlbum(album.id);
-                    }}
-                  >
-                    <img
-                      src={close}
-                      alt="remove"
-                      className="h-6 w-6 rounded-full p-1"
-                    />
-                  </button>
-                </div>
-              </div>
+                i={i}
+                album={album}
+                setNowPlaying={setNowPlaying}
+              />
             ))}
           </div>
         </>
@@ -273,17 +211,112 @@ const FavoriteAlbums = memo(() => {
   );
 });
 
-const FavoritePlaylists = memo(() => {
-  const playlists = useBoundStore((state) => state.favorites.playlists);
+const FavoriteAlbum = ({
+  album,
+  i,
+  setNowPlaying,
+}: {
+  album: AlbumById;
+  i: number;
+  setNowPlaying: (data: TrackDetails | null) => void;
+}) => {
+  const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
+  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
+  const removeFavoriteAlbum = useBoundStore(
+    (state) => state.removeFavoriteAlbum,
+  );
+  const favorites = useBoundStore((state) => state.favorites.albums);
   const queueId = useBoundStore((state) => state.nowPlaying.queue?.id);
   const setQueue = useBoundStore((state) => state.setQueue);
-  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
-  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
-  const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
-  const removeFavoritePlaylist = useBoundStore(
-    (state) => state.removeFavoritePlaylist,
-  );
   const navigate = useNavigate();
+  const albumImgEl = useRef<HTMLImageElement>(null);
+  const inQueue = useMemo(
+    () => favorites.some((a) => a.id === album.id),
+    [favorites],
+  );
+
+  useEffect(() => {
+    setTimeout(() => {
+      albumImgEl.current?.classList.remove("image-fadeout");
+      albumImgEl.current?.classList.add("image-fadein");
+    }, i * 50);
+  }, []);
+
+  return (
+    <div
+      tabIndex={0}
+      key={album.id}
+      className="group relative mr-4 flex h-[180px] w-[150px] flex-shrink-0 flex-col items-center bg-transparent outline-none"
+      onClick={() => navigate(`/albums/${album.id}`, { replace: true })}
+      role="link"
+      aria-label={`Go to album ${album.name}`}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          navigate(`/albums/${album.id}`, { replace: true });
+        }
+      }}
+    >
+      <div className="h-[150px] w-[150px] overflow-hidden">
+        <img
+          ref={albumImgEl}
+          src={album.image[1]?.url || fallback}
+          alt="user-profile"
+          width={150}
+          height={150}
+          className="image-fadeout scale-105 shadow-xl shadow-neutral-950 transition-transform duration-200 ease-in group-hover:scale-100 group-focus:scale-100"
+          onError={(e) => (e.currentTarget.src = fallback)}
+        />
+      </div>
+      <p className="mt-1 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-xs font-semibold text-neutral-400 transition-colors group-hover:text-white group-focus:text-white">
+        {album.name}
+      </p>
+      <div className="absolute left-0 top-0 flex h-[150px] w-full items-center justify-center bg-transparent opacity-0 transition-all ease-in group-hover:opacity-100 group-focus:opacity-100">
+        <button
+          type="button"
+          tabIndex={0}
+          className="rounded-full bg-emerald-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+          aria-label={
+            isPlaying && album.id === queueId ? "Pause album" : "Play album"
+          }
+          onClick={(e) => {
+            e.stopPropagation();
+            handleCollectionPlayback(
+              e,
+              album,
+              isPlaying,
+              inQueue,
+              setQueue,
+              setNowPlaying,
+              setIsPlaying,
+            );
+          }}
+        >
+          <img
+            src={isPlaying && album.id === queueId ? pause : play}
+            alt={isPlaying && album.id === queueId ? "Pause" : "Play"}
+            className="h-12 w-12 p-2"
+            aria-hidden="true"
+          />
+        </button>
+        <button
+          type="button"
+          tabIndex={0}
+          className="ml-2 h-auto w-auto rounded-full bg-white p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+          aria-label={`Remove album ${album.name} from favorites`}
+          onClick={(e) => {
+            e.stopPropagation();
+            removeFavoriteAlbum(album.id);
+          }}
+        >
+          <img src={close} alt="remove" className="h-6 w-6 rounded-full p-1" />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+const FavoritePlaylists = memo(() => {
+  const playlists = useBoundStore((state) => state.favorites.playlists);
 
   return (
     <>
@@ -291,85 +324,8 @@ const FavoritePlaylists = memo(() => {
         <>
           <h2 className="p-4 py-2 font-semibold text-white">Playlists</h2>
           <div className="flex h-[200px] max-h-fit w-full list-none overflow-y-hidden overflow-x-scroll whitespace-nowrap p-4 py-2">
-            {playlists.map((playlist: PlaylistById) => (
-              <div
-                key={playlist.id}
-                tabIndex={0}
-                className="group relative mr-4 flex h-[180px] w-[150px] flex-shrink-0 flex-col items-center bg-transparent outline-none"
-                onClick={() =>
-                  navigate(`/albums/${playlist.id}`, { replace: true })
-                }
-                role="link"
-                aria-label={`Go to playlist ${playlist.name}`}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    navigate(`/albums/${playlist.id}`, { replace: true });
-                  }
-                }}
-              >
-                <div className="h-[150px] w-[150px] overflow-hidden">
-                  <img
-                    src={playlist.image[1]?.url || fallback}
-                    alt="user-profile"
-                    width={150}
-                    height={150}
-                    className="scale-105 shadow-xl shadow-neutral-950 brightness-100 transition-all group-hover:scale-100 group-hover:brightness-95 group-focus:scale-100 group-focus:brightness-75"
-                    onError={(e) => (e.currentTarget.src = fallback)}
-                  />
-                </div>
-                <p className="mt-1 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-xs font-semibold text-neutral-400 transition-colors group-hover:text-white group-focus:text-white">
-                  {playlist.name}
-                </p>
-                <div className="absolute left-0 top-0 flex h-[150px] w-full items-center justify-center bg-transparent opacity-0 transition-all ease-in group-hover:opacity-100 group-focus:opacity-100">
-                  <button
-                    type="button"
-                    tabIndex={0}
-                    className="rounded-full bg-emerald-400 p-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
-                    aria-label={
-                      isPlaying && playlist.id === queueId
-                        ? "Pause playlist"
-                        : "Play playlist"
-                    }
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleCollectionPlayback(
-                        e,
-                        playlist,
-                        isPlaying,
-                        setQueue,
-                        setNowPlaying,
-                        setIsPlaying,
-                      );
-                    }}
-                  >
-                    <img
-                      src={isPlaying && playlist.id === queueId ? pause : play}
-                      alt={
-                        isPlaying && playlist.id === queueId ? "Pause" : "Play"
-                      }
-                      className="h-8 w-8"
-                      aria-hidden="true"
-                    />
-                  </button>
-                  <button
-                    type="button"
-                    tabIndex={0}
-                    className="ml-2 rounded-full bg-white p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
-                    aria-label={`Remove playlist ${playlist.name} from favorites`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeFavoritePlaylist(playlist.id);
-                    }}
-                  >
-                    <img
-                      src={close}
-                      alt="remove"
-                      className="h-[28px] w-[28px] rounded-full p-1.5"
-                      aria-hidden="true"
-                    />
-                  </button>
-                </div>
-              </div>
+            {playlists.map((playlist: PlaylistById, i) => (
+              <FavoritePlaylist key={playlist.id} i={i} playlist={playlist} />
             ))}
           </div>
         </>
@@ -377,6 +333,115 @@ const FavoritePlaylists = memo(() => {
     </>
   );
 });
+
+const FavoritePlaylist = ({
+  i,
+  playlist,
+}: {
+  i: number;
+  playlist: PlaylistById;
+}) => {
+  const queueId = useBoundStore((state) => state.nowPlaying.queue?.id);
+  const setQueue = useBoundStore((state) => state.setQueue);
+  const favorites = useBoundStore((state) => state.favorites.playlists);
+  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
+  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
+  const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
+  const inQueue = useMemo(
+    () => favorites.some((p) => p.id === playlist.id),
+    [favorites],
+  );
+  const removeFavoritePlaylist = useBoundStore(
+    (state) => state.removeFavoritePlaylist,
+  );
+  const navigate = useNavigate();
+  const playlistImgEl = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      playlistImgEl.current?.classList.remove("image-fadeout");
+      playlistImgEl.current?.classList.add("image-fadein");
+    }, i * 50);
+  }, []);
+
+  return (
+    <div
+      key={playlist.id}
+      tabIndex={0}
+      className="group relative mr-4 flex h-[180px] w-[150px] flex-shrink-0 flex-col items-center bg-transparent outline-none"
+      onClick={() => navigate(`/albums/${playlist.id}`, { replace: true })}
+      role="link"
+      aria-label={`Go to playlist ${playlist.name}`}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          navigate(`/albums/${playlist.id}`, { replace: true });
+        }
+      }}
+    >
+      <div className="h-[150px] w-[150px] overflow-hidden">
+        <img
+          src={playlist.image[1]?.url || fallback}
+          alt="user-profile"
+          width={150}
+          height={150}
+          className="image-fadeout scale-105 shadow-xl shadow-neutral-950 brightness-100 transition-all duration-200 ease-in group-hover:scale-100 group-hover:brightness-95 group-focus:scale-100 group-focus:brightness-75"
+          onError={(e) => (e.currentTarget.src = fallback)}
+        />
+      </div>
+      <p className="mt-1 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-xs font-semibold text-neutral-400 transition-colors group-hover:text-white group-focus:text-white">
+        {playlist.name}
+      </p>
+      <div className="absolute left-0 top-0 flex h-[150px] w-full items-center justify-center bg-transparent opacity-0 transition-all ease-in group-hover:opacity-100 group-focus:opacity-100">
+        <button
+          type="button"
+          tabIndex={0}
+          className="rounded-full bg-emerald-400 p-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+          aria-label={
+            isPlaying && playlist.id === queueId
+              ? "Pause playlist"
+              : "Play playlist"
+          }
+          onClick={(e) => {
+            e.stopPropagation();
+            handleCollectionPlayback(
+              e,
+              playlist,
+              isPlaying,
+              inQueue,
+              setQueue,
+              setNowPlaying,
+              setIsPlaying,
+            );
+          }}
+        >
+          <img
+            src={isPlaying && playlist.id === queueId ? pause : play}
+            alt={isPlaying && playlist.id === queueId ? "Pause" : "Play"}
+            className="h-8 w-8"
+            aria-hidden="true"
+          />
+        </button>
+        <button
+          type="button"
+          tabIndex={0}
+          className="ml-2 rounded-full bg-white p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+          aria-label={`Remove playlist ${playlist.name} from favorites`}
+          onClick={(e) => {
+            e.stopPropagation();
+            removeFavoritePlaylist(playlist.id);
+          }}
+        >
+          <img
+            src={close}
+            alt="remove"
+            className="h-[28px] w-[28px] rounded-full p-1.5"
+            aria-hidden="true"
+          />
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const FavoriteSongs = memo(() => {
   const songs = useBoundStore((state) => state.favorites.songs);
@@ -387,8 +452,8 @@ const FavoriteSongs = memo(() => {
         <div>
           <h2 className="p-4 py-2 font-semibold text-white">Songs</h2>
           <ul className="flex h-auto max-h-fit w-full flex-col items-start justify-start px-3 py-2">
-            {songs?.map((song: TrackDetails) => (
-              <Song key={song.id} track={song} isWidgetSong={false} />
+            {songs?.map((song: TrackDetails, i) => (
+              <Song index={i} key={song.id} track={song} isWidgetSong={false} />
             ))}
           </ul>
         </div>
