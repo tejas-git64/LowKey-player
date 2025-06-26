@@ -23,26 +23,6 @@ export const genres = [
   "soul",
 ];
 
-//ids for timely playlists
-export const timelyData = [
-  {
-    id: 1223482895,
-    timely: "viral",
-  },
-  {
-    id: 2252904,
-    timely: "weekly",
-  },
-  {
-    id: 158206266,
-    timely: "monthly",
-  },
-  {
-    id: 1210453303,
-    timely: "latest",
-  },
-];
-
 export const defaultSearchData = {
   topQuery: {
     results: [],
