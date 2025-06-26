@@ -74,11 +74,11 @@ export default function Search() {
               )}
               {search.playlists?.results &&
                 search.playlists?.results.length > 0 && <QueryPlaylists />}
-              {search.artists?.results &&
-                search.artists?.results.length > 0 && <QueryArtists />}
               {search.albums?.results && search.albums?.results.length > 0 && (
                 <QueryAlbums />
               )}
+              {search.artists?.results &&
+                search.artists?.results.length > 0 && <QueryArtists />}
             </div>
           ) : (
             <div className="mx-auto -mt-6 flex h-[88dvh] w-full flex-col items-center justify-center rounded-md font-medium sm:h-[83dvh]">
