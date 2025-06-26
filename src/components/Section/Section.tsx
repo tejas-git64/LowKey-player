@@ -50,7 +50,7 @@ const Section = memo(
           <h1 className="mb-2 px-4 text-left text-xl font-semibold capitalize text-white">
             {genre}
           </h1>
-          <ul className="flex h-[180px] w-full overflow-y-hidden overflow-x-scroll whitespace-nowrap px-4">
+          <div className="flex h-[180px] w-full overflow-y-hidden overflow-x-scroll whitespace-nowrap px-4">
             {data?.map((playlist: PlaylistOfList, i: number) => (
               <div
                 key={playlist.id}
@@ -64,7 +64,7 @@ const Section = memo(
                 />
               </div>
             ))}
-          </ul>
+          </div>
         </div>
       </Suspense>
     );
