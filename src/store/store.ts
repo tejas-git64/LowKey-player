@@ -1,16 +1,9 @@
 import { create } from "zustand";
 import {
   AlbumById,
-  AlbumType,
-  ArtistType,
-  ChartType,
-  GlobalHome,
   PlaylistById,
-  PlaylistOfList,
-  PlaylistType,
   SongQueue,
   SearchType,
-  Song,
   TrackDetails,
   UserPlaylist,
   ArtistInSong,
@@ -22,59 +15,9 @@ import { devtools } from "zustand/middleware";
 export type StoreType = {
   greeting: string;
   changeGreeting: (str: string) => void;
-  home: {
-    widget: PlaylistById | null;
-    timely: {
-      viral: PlaylistById | null;
-      weekly: PlaylistById | null;
-      monthly: PlaylistById | null;
-      latest: PlaylistById | null;
-    };
-    default: {
-      albums: AlbumType[];
-      charts: ChartType[];
-      playlists: PlaylistType[];
-      trending: {
-        songs: Song[];
-        albums: AlbumType[];
-      };
-    };
-    genres: {
-      [key: string]: PlaylistOfList[];
-      pop: PlaylistOfList[];
-      hiphop: PlaylistOfList[];
-      love: PlaylistOfList[];
-      rap: PlaylistOfList[];
-      workout: PlaylistOfList[];
-      jazz: PlaylistOfList[];
-      rock: PlaylistOfList[];
-      melody: PlaylistOfList[];
-      lofi: PlaylistOfList[];
-      chill: PlaylistOfList[];
-      focus: PlaylistOfList[];
-      instrumental: PlaylistOfList[];
-      indie: PlaylistOfList[];
-      edm: PlaylistOfList[];
-      metal: PlaylistOfList[];
-      punk: PlaylistOfList[];
-      party: PlaylistOfList[];
-      folk: PlaylistOfList[];
-      devotional: PlaylistOfList[];
-      ambient: PlaylistOfList[];
-      sleep: PlaylistOfList[];
-      soul: PlaylistOfList[];
-    };
-  };
   recents: {
     history: TrackDetails[] | null;
     activity: string[];
-  };
-  playlist: PlaylistById | null;
-  album: AlbumById | null;
-  artist: {
-    details: ArtistType | null;
-    songs: TrackDetails[];
-    albums: AlbumType[];
   };
   search: SearchType;
   nowPlaying: {
@@ -101,21 +44,9 @@ export type StoreType = {
   revealCreation: boolean;
   creationTrack: TrackDetails | null;
   notifications: boolean;
-  setWidgetData: (data: PlaylistById) => void;
-  setDefault: (data: GlobalHome) => void;
-  setGenres: (genre: string, data: PlaylistOfList[]) => void;
-  setViral: (data: PlaylistById) => void;
-  setWeekly: (data: PlaylistById) => void;
-  setMonthly: (data: PlaylistById) => void;
-  setLatest: (data: PlaylistById) => void;
   setHistory: (data: TrackDetails) => void;
   setActivity: (message: string) => void;
   setSearch: (data: SearchType) => void;
-  setPlaylist: (data: PlaylistById | null) => void;
-  setAlbum: (data: AlbumById | null) => void;
-  setArtistDetails: (data: ArtistType | null) => void;
-  setArtistAlbums: (data: AlbumType[]) => void;
-  setArtistSongs: (data: TrackDetails[]) => void;
   setNowPlaying: (data: TrackDetails | null) => void;
   setIsPlaying: (status: boolean) => void;
   setShowPlayer: (isShow: boolean) => void;
@@ -153,76 +84,6 @@ export const useBoundStore = create<StoreType>()(
         set(() => ({
           greeting: str,
         })),
-      home: {
-        widget: null,
-        timely: {
-          viral: null,
-          weekly: null,
-          monthly: null,
-          latest: null,
-        },
-        default: {
-          albums: [],
-          charts: [],
-          playlists: [],
-          trending: {
-            songs: [],
-            albums: [],
-          },
-        },
-        genres: {
-          pop: [],
-          hiphop: [],
-          love: [],
-          rap: [],
-          workout: [],
-          jazz: [],
-          rock: [],
-          melody: [],
-          lofi: [],
-          chill: [],
-          focus: [],
-          instrumental: [],
-          indie: [],
-          edm: [],
-          metal: [],
-          punk: [],
-          party: [],
-          folk: [],
-          devotional: [],
-          ambient: [],
-          sleep: [],
-          soul: [],
-        },
-      },
-      setWidgetData: (data: PlaylistById) =>
-        set((state) => {
-          state.home.widget = data;
-        }),
-      setDefault: (data: GlobalHome) =>
-        set((state) => {
-          state.home.default = data;
-        }),
-      setGenres: (genre, data) =>
-        set((state) => {
-          state.home.genres[genre] = data;
-        }),
-      setViral: (data: PlaylistById) =>
-        set((state) => {
-          state.home.timely.viral = data;
-        }),
-      setWeekly: (data: PlaylistById) =>
-        set((state) => {
-          state.home.timely.weekly = data;
-        }),
-      setMonthly: (data: PlaylistById) =>
-        set((state) => {
-          state.home.timely.monthly = data;
-        }),
-      setLatest: (data: PlaylistById) =>
-        set((state) => {
-          state.home.timely.latest = data;
-        }),
       recents: {
         history: [],
         activity: [],
@@ -245,33 +106,6 @@ export const useBoundStore = create<StoreType>()(
             state.recents.activity.unshift(message);
           }),
         ),
-      playlist: null,
-      setPlaylist: (data: PlaylistById | null) =>
-        set((state) => {
-          state.playlist = data;
-        }),
-      album: null,
-      setAlbum: (data: AlbumById | null) =>
-        set((state) => {
-          state.album = data;
-        }),
-      artist: {
-        details: null,
-        songs: [],
-        albums: [],
-      },
-      setArtistDetails: (data: ArtistType | null) =>
-        set((state) => {
-          state.artist.details = data;
-        }),
-      setArtistSongs: (data: TrackDetails[]) =>
-        set((state) => {
-          state.artist.songs = data;
-        }),
-      setArtistAlbums: (data: AlbumType[]) =>
-        set((state) => {
-          state.artist.albums = data;
-        }),
       search: {
         topQuery: null,
         songs: null,
