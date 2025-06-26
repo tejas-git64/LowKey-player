@@ -1,9 +1,9 @@
 import { PlaylistOfList } from "../../types/GlobalTypes";
 import Playlist from "../Playlist/Playlist";
-import { useBoundStore } from "../../store/store";
 import { memo, Suspense, useEffect, useRef, useState } from "react";
 import SectionLoading from "./Loading";
 import { getPlaylist } from "../../api/requests";
+import { useQuery } from "@tanstack/react-query";
 
 const Section = memo(
   ({
@@ -13,33 +13,33 @@ const Section = memo(
     genre: string;
     fadeOutNavigate: (str: string) => void;
   }) => {
-    const playlists = useBoundStore((state) => state.home.genres[genre]);
     const sectionRef = useRef<HTMLDivElement | null>(null);
-    const [isFetched, setIsFetched] = useState<boolean>(false);
+    const [isIntersecting, setIsIntersecting] = useState(false);
+
+    const { data } = useQuery({
+      queryKey: ["genre-playlists", genre],
+      queryFn: () => getPlaylist(genre),
+      enabled: isIntersecting,
+      refetchOnReconnect: "always",
+      _optimisticResults: "isRestoring",
+      staleTime: 1000 * 60 * 10,
+      gcTime: 1000 * 60 * 10,
+    });
 
     useEffect(() => {
       if (!sectionRef.current) return;
-      let observer = null;
-      if (!isFetched) {
-        observer = new IntersectionObserver(
-          (entries) => {
-            const [entry] = entries;
-            if (playlists.length === 0 && entry.isIntersecting) {
-              setIsFetched(true);
-              getPlaylist(genre);
-            }
-          },
-          {
-            rootMargin: "100px",
-            threshold: 0.4,
-          },
-        );
-        observer.observe(sectionRef.current);
-      }
+      const observer = new IntersectionObserver(
+        ([entry]) => setIsIntersecting(entry.isIntersecting),
+        {
+          rootMargin: "100px",
+          threshold: 0.4,
+        },
+      );
+      observer.observe(sectionRef.current);
       return () => {
         observer?.disconnect();
       };
-    }, [isFetched]);
+    }, []);
 
     return (
       <Suspense fallback={<SectionLoading />}>
@@ -51,26 +51,15 @@ const Section = memo(
             {genre}
           </h1>
           <ul className="flex h-[180px] w-full overflow-y-hidden overflow-x-scroll whitespace-nowrap px-4">
-            {playlists.map(({ id, image, name }: PlaylistOfList, i) => (
+            {data?.map((playlist: PlaylistOfList, i: number) => (
               <div
-                key={id}
-                onClick={() => fadeOutNavigate(`/playlists/${id}`)}
+                key={playlist.id}
+                onClick={() => fadeOutNavigate(`/playlists/${playlist.id}`)}
                 className="h-full w-auto"
               >
                 <Playlist
                   i={i}
-                  id={id}
-                  key={id}
-                  userId={""}
-                  name={name}
-                  songCount={""}
-                  username={""}
-                  firstname={""}
-                  lastname={""}
-                  language={""}
-                  image={image}
-                  url={""}
-                  songs={[]}
+                  {...playlist}
                   fadeOutNavigate={fadeOutNavigate}
                 />
               </div>
