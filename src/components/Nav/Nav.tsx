@@ -12,7 +12,7 @@ import { AlbumById, PlaylistById, UserPlaylist } from "../../types/GlobalTypes";
 import playlistfallback from "../../assets/fallbacks/playlist-fallback-min.webp";
 import fallback from "../../assets/fallbacks/playlist-fallback.webp";
 
-export default function Menu() {
+const Nav = memo(() => {
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
   const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
   const setCreationMenu = useBoundStore((state) => state.setCreationMenu);
@@ -127,7 +127,9 @@ export default function Menu() {
       </div>
     </nav>
   );
-}
+});
+export default Nav;
+Nav.displayName = "Nav";
 
 const RecentPlaylistsOrAlbums = memo(() => {
   const albums = useBoundStore((state) => state.library.albums);
