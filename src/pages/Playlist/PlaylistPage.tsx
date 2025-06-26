@@ -11,6 +11,7 @@ import addPlaylist from "../../assets/svgs/icons8-addplaylist-28.svg";
 import addedToPlaylist from "../../assets/svgs/tick.svg";
 import Song from "../../components/Song/Song";
 import {
+  Image,
   LocalLibrary,
   PlaylistById,
   TrackDetails,
@@ -21,18 +22,22 @@ import RouteNav from "../../components/RouteNav/RouteNav";
 import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
 import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
 import { animateScreen } from "../../helpers/animateScreen";
+import { cleanString } from "../../helpers/cleanString";
 
 export default function PlaylistPage() {
   const { id } = useParams();
-  const setPlaylist = useBoundStore((state) => state.setPlaylist);
   const queue = useBoundStore((state) => state.nowPlaying.queue);
   const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
   const playEl = useRef<HTMLDivElement>(null);
 
-  useQuery({
+  const { data } = useQuery({
     queryKey: ["playlistPage", id],
     queryFn: () => id && getPlaylistData(id),
-    select: (data) => setPlaylist(data.data),
+    enabled: true,
+    refetchOnReconnect: "always",
+    _optimisticResults: "isRestoring",
+    staleTime: 1000 * 60 * 10,
+    gcTime: 1000 * 60 * 10,
   });
 
   useEffect(() => {
@@ -40,7 +45,6 @@ export default function PlaylistPage() {
   }, [queue?.id]);
 
   useEffect(() => {
-    setPlaylist(null);
     animateScreen(playEl);
   }, [id]);
 
@@ -55,20 +59,23 @@ export default function PlaylistPage() {
             <div className="absolute right-2 top-2 h-auto w-auto">
               <RouteNav />
             </div>
-            <PlaylistInfo />
+            <PlaylistInfo images={data?.image} name={data?.name} />
             <div className="flex h-auto w-full items-center justify-between sm:mt-2">
-              <PlaylistCount />
-              <PlaylistControls id={id || ""} />
+              <PlaylistCount
+                followerCount={data?.followerCount}
+                songCount={data?.songCount}
+              />
+              <PlaylistControls playlist={data} />
             </div>
           </div>
-          <PlaylistTracks />
+          <PlaylistTracks songs={data?.songs} />
         </div>
       </Suspense>
     </>
   );
 }
 
-const PlaylistControls = memo(({ id }: { id: string }) => {
+const PlaylistControls = memo(({ playlist }: { playlist: PlaylistById }) => {
   const isShuffling = useBoundStore((state) => state.isShuffling);
   const setIsShuffling = useBoundStore((state) => state.setIsShuffling);
   const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
@@ -77,7 +84,6 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
   const libraryPlaylists = useBoundStore((state) => state.library.playlists);
   const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
   const queue = useBoundStore((state) => state.nowPlaying.queue);
-  const playlist = useBoundStore((state) => state.playlist);
   const setFavoritePlaylist = useBoundStore(
     (state) => state.setFavoritePlaylist,
   );
@@ -90,22 +96,23 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
   );
   const setQueue = useBoundStore((state) => state.setQueue);
   const isAdded = useMemo(
-    () => libraryPlaylists.some((playlist) => playlist?.id === id),
+    () => libraryPlaylists.some((playlist) => playlist?.id === playlist?.id),
     [libraryPlaylists],
   );
   const isFavorite = useMemo(
-    () => playlists.some((playlist: PlaylistById) => playlist?.id === id),
+    () =>
+      playlists.some((playlist: PlaylistById) => playlist?.id === playlist?.id),
     [playlists],
   );
-  const inQueue = queue?.id === id;
-  const isPlaylistPlaying = isPlaying && queue?.id === id;
+  const inQueue = queue?.id === playlist?.id;
+  const isPlaylistPlaying = isPlaying && queue?.id === playlist?.id;
 
   const handlePlaylist = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     e.stopPropagation();
     if (isAdded) {
-      id && removeLibraryPlaylist(id);
+      playlist && removeLibraryPlaylist(playlist.id);
     } else {
       playlist && setLibraryPlaylist(playlist);
     }
@@ -234,55 +241,59 @@ const PlaylistControls = memo(({ id }: { id: string }) => {
 });
 PlaylistControls.displayName = "PlaylistControls";
 
-const PlaylistInfo = memo(() => {
-  const images = useBoundStore((state) => state.playlist?.image);
-  const name = useBoundStore((state) => state.playlist?.name);
+const PlaylistInfo = memo(
+  ({ images, name }: { images: Image[]; name: string }) => {
+    const getPlaylistImage = () => {
+      if (images) {
+        const obj = images.find((img: Image) => img.quality === "150x150");
+        if (obj) return obj.url;
+      }
+      return fallback;
+    };
 
-  const getPlaylistImage = () => {
-    if (images) {
-      const obj = images.find((img) => img.quality === "150x150");
-      if (obj) obj.url;
-    }
-    return fallback;
-  };
-
-  return (
-    <div className="flex h-auto w-full flex-col items-start justify-start pt-1 sm:flex-row sm:items-center">
-      <img
-        src={getPlaylistImage()}
-        alt="img"
-        className="mr-4 h-[150px] w-[150px]"
-        style={{
-          boxShadow: "5px 5px 0px #000",
-        }}
-        fetchPriority="high"
-        loading="eager"
-        onError={(e) => (e.currentTarget.src = fallback)}
-      />
-      <p className="text-md mb-1 mt-2 line-clamp-1 h-auto w-[60%] text-ellipsis text-left text-xl font-semibold text-white sm:line-clamp-3 sm:w-[40%] sm:text-3xl sm:font-bold">
-        {name}
-      </p>
-    </div>
-  );
-});
+    return (
+      <div className="flex h-auto w-full flex-col items-start justify-start pt-1 sm:flex-row sm:items-center">
+        <img
+          src={getPlaylistImage()}
+          alt="img"
+          className="mr-4 h-[150px] w-[150px]"
+          style={{
+            boxShadow: "5px 5px 0px #000",
+          }}
+          fetchPriority="high"
+          loading="eager"
+          onError={(e) => (e.currentTarget.src = fallback)}
+        />
+        <p className="text-md mb-1 mt-2 line-clamp-1 h-auto w-[60%] text-ellipsis text-left text-xl font-semibold text-white sm:line-clamp-3 sm:w-[40%] sm:text-3xl sm:font-bold">
+          {cleanString(name)}
+        </p>
+      </div>
+    );
+  },
+);
 PlaylistInfo.displayName = "PlaylistAlbumInfo";
 
-const PlaylistCount = memo(() => {
-  const songCount = useBoundStore((state) => state.playlist?.songCount);
-  const followerCount = useBoundStore((state) => state.playlist?.followerCount);
-
-  return (
-    <div className="flex h-full w-[50%] flex-col items-start justify-center sm:w-[320px] sm:justify-start">
-      <p className="mr-2 text-sm text-neutral-400">{followerCount} Followers</p>
-      <p className="text-sm text-neutral-400">{songCount} Tracks</p>
-    </div>
-  );
-});
+const PlaylistCount = memo(
+  ({
+    followerCount,
+    songCount,
+  }: {
+    followerCount: string;
+    songCount: string;
+  }) => {
+    return (
+      <div className="flex h-full w-[50%] flex-col items-start justify-center sm:w-[320px] sm:justify-start">
+        <p className="mr-2 text-sm text-neutral-400">
+          {followerCount} Followers
+        </p>
+        <p className="text-sm text-neutral-400">{songCount} Tracks</p>
+      </div>
+    );
+  },
+);
 PlaylistCount.displayName = "PlaylistAlbumCount";
 
-const PlaylistTracks = memo(() => {
-  const songs = useBoundStore((state) => state.playlist?.songs);
-
+const PlaylistTracks = memo(({ songs }: { songs: TrackDetails[] }) => {
   return (
     <ul className="flex h-auto min-h-[71.5dvh] w-full flex-col items-start justify-start bg-neutral-900 p-3 pb-28 sm:p-4 sm:pb-20">
       {songs && songs.length > 0 ? (

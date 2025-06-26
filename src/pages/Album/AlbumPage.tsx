@@ -3,7 +3,12 @@ import { useParams } from "react-router-dom";
 import { getAlbumData } from "../../api/requests";
 import Song from "../../components/Song/Song";
 import { useBoundStore } from "../../store/store";
-import { AlbumById, LocalLibrary, TrackDetails } from "../../types/GlobalTypes";
+import {
+  AlbumById,
+  Image,
+  LocalLibrary,
+  TrackDetails,
+} from "../../types/GlobalTypes";
 import favorite from "../../assets/svgs/icons8-heart.svg";
 import favorited from "../../assets/svgs/icons8-favorited.svg";
 import fallback from "../../assets/fallbacks/playlist-fallback.webp";
@@ -17,18 +22,22 @@ import RouteNav from "../../components/RouteNav/RouteNav";
 import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
 import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
 import { animateScreen } from "../../helpers/animateScreen";
+import { cleanString } from "../../helpers/cleanString";
 
 export default function AlbumPage() {
   const { id } = useParams();
-  const setAlbum = useBoundStore((state) => state.setAlbum);
   const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
   const nowPlaying = useBoundStore((state) => state.nowPlaying);
   const albumEl = useRef<HTMLDivElement>(null);
 
-  useQuery({
+  const { data } = useQuery({
     queryKey: ["albumPage", id],
     queryFn: () => id && getAlbumData(id),
-    select: (data) => setAlbum(data.data),
+    enabled: true,
+    refetchOnReconnect: "always",
+    _optimisticResults: "isRestoring",
+    staleTime: 1000 * 60 * 10,
+    gcTime: 1000 * 60 * 10,
   });
 
   useEffect(() => {
@@ -36,9 +45,8 @@ export default function AlbumPage() {
   }, [nowPlaying.queue?.id]);
 
   useEffect(() => {
-    setAlbum(null);
     animateScreen(albumEl);
-  }, []);
+  }, [id]);
 
   return (
     <>
@@ -51,20 +59,23 @@ export default function AlbumPage() {
             <div className="absolute right-2 top-2 h-auto w-auto">
               <RouteNav />
             </div>
-            <AlbumInfo />
+            <AlbumInfo images={data?.image} name={data?.name} />
             <div className="flex h-auto w-full items-center justify-between sm:mt-2">
-              <AlbumCount />
-              <AlbumControls id={id || ""} />
+              <AlbumCount
+                primaryArtists={data?.primaryArtists}
+                songCount={data?.songCount}
+              />
+              <AlbumControls album={data} />
             </div>
           </div>
-          <AlbumTracks />
+          <AlbumTracks songs={data?.songs} />
         </div>
       </Suspense>
     </>
   );
 }
 
-const AlbumControls = memo(({ id }: { id: string }) => {
+const AlbumControls = memo(({ album }: { album: AlbumById }) => {
   const isShuffling = useBoundStore((state) => state.isShuffling);
   const setIsShuffling = useBoundStore((state) => state.setIsShuffling);
   const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
@@ -73,7 +84,6 @@ const AlbumControls = memo(({ id }: { id: string }) => {
   const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
   const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
   const queue = useBoundStore((state) => state.nowPlaying.queue);
-  const album = useBoundStore((state) => state.album);
   const setFavoriteAlbum = useBoundStore((state) => state.setFavoriteAlbum);
   const removeFavoriteAlbum = useBoundStore(
     (state) => state.removeFavoriteAlbum,
@@ -81,21 +91,20 @@ const AlbumControls = memo(({ id }: { id: string }) => {
   const setLibraryAlbum = useBoundStore((state) => state.setLibraryAlbum);
   const removeLibraryAlbum = useBoundStore((state) => state.removeLibraryAlbum);
   const setQueue = useBoundStore((state) => state.setQueue);
-  const inQueue = queue?.id === id;
-  const isAdded = useMemo(
-    () => libraryAlbums.some((playlist) => playlist?.id === id),
-    [libraryAlbums],
-  );
+  const inQueue = queue?.id === album?.id;
+  const isAdded = useMemo(() => {
+    return libraryAlbums.some((a) => a.id === album?.id);
+  }, [libraryAlbums]);
   const isFavorite = useMemo(
-    () => albums.some((album: AlbumById) => album?.id === id),
+    () => albums.some((a: AlbumById) => a.id === album?.id),
     [albums],
   );
-  const isAlbumPlaying = isPlaying && queue?.id === id;
+  const isAlbumPlaying = isPlaying && queue?.id === album?.id;
 
   const handleAlbum = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
     if (isAdded) {
-      id && removeLibraryAlbum(id);
+      album && removeLibraryAlbum(album.id);
     } else {
       album && setLibraryAlbum(album);
     }
@@ -189,7 +198,7 @@ const AlbumControls = memo(({ id }: { id: string }) => {
         <img
           src={isFavorite ? favorited : favorite}
           alt={isFavorite ? "Favorited" : "Favorite"}
-          className="h-[28px] w-[28px]"
+          className="h-7 w-7"
           aria-hidden="true"
         />
       </button>
@@ -224,66 +233,69 @@ const AlbumControls = memo(({ id }: { id: string }) => {
 });
 AlbumControls.displayName = "AlbumControls";
 
-const AlbumInfo = memo(() => {
-  const images = useBoundStore((state) => state.album?.image);
-  const name = useBoundStore((state) => state.album?.name);
-  const imgEl = useRef<HTMLImageElement>(null);
-  const titleEl = useRef<HTMLParagraphElement>(null);
-  const getAlbumImage = () => {
-    if (images) {
-      const obj = images.find((img) => img.quality === "150x150");
-      if (obj) return obj.url;
-    }
-  };
+const AlbumInfo = memo(
+  ({ images, name }: { images: Image[]; name: string }) => {
+    const imgEl = useRef<HTMLImageElement>(null);
+    const titleEl = useRef<HTMLParagraphElement>(null);
+    const getAlbumImage = () => {
+      if (images) {
+        const obj = images.find((img) => img.quality === "150x150");
+        if (obj) return obj.url;
+      }
+    };
 
-  useEffect(() => {
-    imgEl.current?.classList.remove("image-fadeout");
-    titleEl.current?.classList.remove("song-fadeout");
-    imgEl.current?.classList.add("image-fadein");
-    titleEl.current?.classList.add("song-fadein");
-  }, []);
+    useEffect(() => {
+      imgEl.current?.classList.remove("image-fadeout");
+      titleEl.current?.classList.remove("song-fadeout");
+      imgEl.current?.classList.add("image-fadein");
+      titleEl.current?.classList.add("song-fadein");
+    }, []);
 
-  return (
-    <div className="flex h-auto w-full flex-col items-start justify-start pt-1 duration-200 ease-in sm:flex-row sm:items-center">
-      <img
-        ref={imgEl}
-        src={getAlbumImage()}
-        alt="img"
-        className="image-fadeout mr-4 h-[150px] w-[150px]"
-        style={{
-          boxShadow: "5px 5px 0px #000",
-        }}
-        fetchPriority="high"
-        loading="eager"
-        onError={(e) => (e.currentTarget.src = fallback)}
-      />
-      <p
-        ref={titleEl}
-        className="song-fadeout text-md mb-1 mt-2 line-clamp-1 h-auto w-[60%] text-ellipsis text-left text-xl font-semibold text-white sm:line-clamp-3 sm:w-[40%] sm:text-3xl sm:font-bold"
-      >
-        {name}
-      </p>
-    </div>
-  );
-});
+    return (
+      <div className="flex h-auto w-full flex-col items-start justify-start pt-1 sm:flex-row sm:items-center">
+        <img
+          ref={imgEl}
+          src={getAlbumImage()}
+          alt="img"
+          className="image-fadeout mr-4 h-[150px] w-[150px]"
+          style={{
+            boxShadow: "5px 5px 0px #000",
+          }}
+          fetchPriority="high"
+          loading="eager"
+          onError={(e) => (e.currentTarget.src = fallback)}
+        />
+        <p
+          ref={titleEl}
+          className="song-fadeout mb-1 mt-2 line-clamp-1 h-auto w-[60%] text-ellipsis text-left text-base font-semibold text-white sm:line-clamp-3 sm:w-[40%] sm:text-3xl sm:font-bold"
+        >
+          {cleanString(name)}
+        </p>
+      </div>
+    );
+  },
+);
 AlbumInfo.displayName = "AlbumInfo";
 
-const AlbumCount = memo(() => {
-  const songCount = useBoundStore((state) => state.album?.songCount);
-  const primaryArtists = useBoundStore((state) => state.album?.primaryArtists);
-
-  return (
-    <div className="flex h-full w-[50%] flex-col items-start justify-center sm:w-[320px] sm:justify-start">
-      <p className="text-sm text-neutral-400">{songCount} Tracks</p>
-      <p className="mr-2 text-sm text-neutral-400">{primaryArtists}</p>
-    </div>
-  );
-});
+const AlbumCount = memo(
+  ({
+    songCount,
+    primaryArtists,
+  }: {
+    songCount: string;
+    primaryArtists: string;
+  }) => {
+    return (
+      <div className="flex h-full w-[50%] flex-col items-start justify-center sm:w-[320px] sm:justify-start">
+        <p className="text-sm text-neutral-400">{songCount} Tracks</p>
+        <p className="mr-2 text-sm text-neutral-400">{primaryArtists}</p>
+      </div>
+    );
+  },
+);
 AlbumCount.displayName = "AlbumCount";
 
-const AlbumTracks = memo(() => {
-  const songs = useBoundStore((state) => state.album?.songs);
-
+const AlbumTracks = memo(({ songs }: { songs: TrackDetails[] }) => {
   return (
     <ul className="flex h-auto min-h-[71.5dvh] w-full flex-col items-start justify-start bg-neutral-900 p-3 pb-28 sm:p-4 sm:pb-20">
       {songs ? (

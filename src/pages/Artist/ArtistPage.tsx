@@ -9,71 +9,71 @@ import {
   getArtistDetails,
   getArtistSongs,
 } from "../../api/requests";
-import { useBoundStore } from "../../store/store";
 import Song from "../../components/Song/Song";
-import { TrackDetails } from "../../types/GlobalTypes";
+import { AlbumById, Image, TrackDetails } from "../../types/GlobalTypes";
 import artistfallback from "../../assets/fallbacks/artist-fallback.png";
 import albumfallback from "../../assets/fallbacks/playlist-fallback.webp";
 import { useQuery } from "@tanstack/react-query";
-import ArtistPageLoading from "./Loading";
 import RouteNav from "../../components/RouteNav/RouteNav";
 import { FollowButton } from "../../components/FollowButton/FollowButton";
 import { animateScreen } from "../../helpers/animateScreen";
+import {
+  ArtistAlbumFallback,
+  ArtistInfoFallback,
+  ArtistSongsFallback,
+} from "./Loading";
 
 export default function ArtistPage() {
   const { id } = useParams();
   const artistEl = useRef<HTMLDivElement>(null);
-  const setArtistDetails = useBoundStore((state) => state.setArtistDetails);
 
   useEffect(() => {
-    setArtistDetails(null);
     animateScreen(artistEl);
   }, [id]);
 
   return (
-    <Suspense fallback={<ArtistPageLoading />}>
-      <div
-        ref={artistEl}
-        className="home-fadeout h-auto w-full bg-neutral-900 pb-32 duration-300 ease-in"
-      >
-        {id && <ArtistInfo id={id} />}
-        {id && <ArtistAlbums id={id} />}
-        {id && <ArtistSongs id={id} />}
-      </div>
-    </Suspense>
+    <div
+      ref={artistEl}
+      className="home-fadeout sm: h-auto w-full bg-neutral-900 pb-32 duration-300 ease-in sm:pb-0"
+    >
+      {id && <ArtistInfo id={id} />}
+      {id && <ArtistAlbums id={id} />}
+      {id && <ArtistSongs id={id} />}
+    </div>
   );
 }
 
 const ArtistInfo = memo(({ id }: { id: string }) => {
-  const details = useBoundStore((state) => state.artist.details);
-  const setArtistDetails = useBoundStore((state) => state.setArtistDetails);
   const intlFormatter = new Intl.NumberFormat("en-US");
   const artistImgEl = useRef<HTMLImageElement>(null);
   const artistTitleEl = useRef<HTMLParagraphElement>(null);
   const artistEl = useRef<HTMLDivElement>(null);
-  const followerCount = Number(details?.followerCount) ?? undefined;
-  const fanCount = Number(details?.fanCount) ?? undefined;
-  const followers = followerCount
-    ? `${intlFormatter.format(followerCount)} followers`
-    : "";
-  const fans = fanCount ? `${intlFormatter.format(fanCount)} fans` : "";
 
-  useQuery({
+  const { data } = useQuery({
     queryKey: ["artistdetails", id],
     queryFn: () => id && getArtistDetails(id),
-    select: (data: any) => setArtistDetails(data.data),
+    enabled: true,
+    refetchOnReconnect: "always",
+    _optimisticResults: "isRestoring",
+    staleTime: 1000 * 60 * 10,
+    gcTime: 1000 * 60 * 10,
   });
+  const followers = data?.followerCount
+    ? `${intlFormatter.format(data.followerCount)} followers`
+    : "";
+  const fans = data?.fanCount
+    ? `${intlFormatter.format(data.fanCount)} fans`
+    : "";
 
   const getArtistImage = () => {
-    if (details) {
-      const obj = details.image.find((img) => img.quality === "150x150");
+    if (data) {
+      const obj = data.image.find((img: Image) => img.quality === "150x150");
       if (obj) return obj.url;
     }
     return artistfallback;
   };
 
   useEffect(() => {
-    setArtistDetails(null);
     setTimeout(() => {
       artistEl.current?.classList.remove("home-fadeout");
       artistEl.current?.classList.add("home-fadein");
@@ -85,149 +85,155 @@ const ArtistInfo = memo(({ id }: { id: string }) => {
   }, [id]);
 
   return (
-    <div
-      ref={artistEl}
-      className="home-fadeout relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-600 via-neutral-800 to-black p-4 duration-200 ease-in sm:flex-row sm:items-end sm:justify-between sm:bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))]"
-    >
-      <div className="absolute right-2 top-2 h-auto w-auto">
-        <RouteNav />
-      </div>
-      <div className="flex h-full min-w-[80%] flex-col items-center justify-center text-center sm:h-full sm:w-[70%] sm:flex-row sm:justify-start sm:text-left">
-        <img
-          ref={artistImgEl}
-          src={getArtistImage()}
-          alt="artist-img"
-          onError={(e) => (e.currentTarget.src = artistfallback)}
-          loading="eager"
-          fetchPriority="high"
-          className="image-fadeout h-[150px] w-[150px] shadow-xl shadow-black duration-300 ease-in sm:mr-4"
-        />
-        <div>
-          <div className="flex h-fit w-full items-center justify-center sm:justify-start">
-            <p
-              ref={artistTitleEl}
-              className="song-fadeout sm:max-w-auto my-2 ml-5 line-clamp-2 w-full whitespace-pre-line text-center text-3xl font-bold capitalize text-white duration-200 ease-in sm:my-0 sm:ml-0 sm:min-w-min sm:text-left sm:text-4xl"
-            >
-              {details?.name || "Unknown Artist"}
+    <Suspense fallback={<ArtistInfoFallback />}>
+      <div
+        ref={artistEl}
+        className="home-fadeout relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neutral-600 via-neutral-800 to-black p-4 duration-200 ease-in sm:flex-row sm:items-end sm:justify-between sm:bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))]"
+      >
+        <div className="absolute right-2 top-2 h-auto w-auto">
+          <RouteNav />
+        </div>
+        <div className="flex h-full min-w-[80%] flex-col items-center justify-center text-center sm:h-full sm:w-[70%] sm:flex-row sm:justify-start sm:text-left">
+          <img
+            ref={artistImgEl}
+            src={getArtistImage()}
+            alt="artist-img"
+            onError={(e) => (e.currentTarget.src = artistfallback)}
+            loading="eager"
+            fetchPriority="high"
+            className="image-fadeout h-[150px] w-[150px] shadow-xl shadow-black duration-300 ease-in sm:mr-4"
+          />
+          <div>
+            <div className="flex h-fit w-full items-center justify-center sm:justify-start">
+              <p
+                ref={artistTitleEl}
+                className="song-fadeout sm:max-w-auto my-2 ml-5 line-clamp-2 w-full whitespace-pre-line text-center text-3xl font-bold capitalize text-white duration-200 ease-in sm:my-0 sm:ml-0 sm:min-w-min sm:text-left sm:text-4xl"
+              >
+                {data?.name || "Unknown Artist"}
+              </p>
+              <img
+                src={verified}
+                alt="verified"
+                className="h-[24px] w-[24px]"
+              />
+            </div>
+            <p className="text-md font-medium leading-5 text-neutral-400 sm:leading-7">
+              {followers}
             </p>
-            <img src={verified} alt="verified" className="h-[24px] w-[24px]" />
+            <p className="text-sm font-medium text-neutral-400 sm:leading-6">
+              {fans}
+            </p>
           </div>
-          <p className="text-md font-medium leading-5 text-neutral-400 sm:leading-7">
-            {followers}
-          </p>
-          <p className="text-sm font-medium text-neutral-400 sm:leading-6">
-            {fans}
-          </p>
+        </div>
+        <div className="flex h-full w-full flex-col items-center justify-between sm:h-[150px] sm:items-end">
+          <ul className="my-2.5 flex h-full w-[45%] items-center justify-evenly sm:w-fit sm:items-end sm:justify-end">
+            {data?.fb && (
+              <li
+                className="mr-4 outline-none focus:ring-2 focus:ring-emerald-500"
+                tabIndex={0}
+              >
+                <a href={data.fb} target="_blank" className="outline-none">
+                  <img
+                    src={meta}
+                    alt="meta"
+                    loading="eager"
+                    fetchPriority="high"
+                    className="h-[28px] w-[28px] sm:h-[24px] sm:w-[24px]"
+                  />
+                </a>
+              </li>
+            )}
+            {data?.twitter && (
+              <li
+                tabIndex={0}
+                className="mr-4 outline-none focus:ring-2 focus:ring-emerald-500"
+              >
+                <a href={data.twitter} target="_blank" className="outline-none">
+                  <img
+                    src={x}
+                    alt="x"
+                    loading="eager"
+                    fetchPriority="high"
+                    className="mb-0.5 h-[28px] w-[28px] sm:h-5 sm:w-5"
+                  />
+                </a>
+              </li>
+            )}
+            {data?.fb && (
+              <li
+                tabIndex={0}
+                className="outline-none focus:ring-2 focus:ring-emerald-500"
+              >
+                <a href={data.wiki} target="_blank" className="outline-none">
+                  <img
+                    src={wiki}
+                    alt="wiki"
+                    loading="eager"
+                    fetchPriority="high"
+                    className="h-[30px] w-[30px] sm:h-[24px] sm:w-[24px]"
+                  />
+                </a>
+              </li>
+            )}
+          </ul>
+          {data && (
+            <FollowButton
+              artist={{
+                id: data.id,
+                image: data.image,
+                name: data.name,
+                role: "",
+                type: "",
+                url: data.url,
+              }}
+            />
+          )}
         </div>
       </div>
-      <div className="flex h-full w-full flex-col items-center justify-between sm:h-[150px] sm:items-end">
-        <ul className="my-2.5 flex h-full w-[45%] items-center justify-evenly sm:w-fit sm:items-end sm:justify-end">
-          {details?.fb && (
-            <li
-              className="mr-4 outline-none focus:ring-2 focus:ring-emerald-500"
-              tabIndex={0}
-            >
-              <a href={details?.fb} target="_blank" className="outline-none">
-                <img
-                  src={meta}
-                  alt="meta"
-                  loading="eager"
-                  fetchPriority="high"
-                  className="h-[28px] w-[28px] sm:h-[24px] sm:w-[24px]"
-                />
-              </a>
-            </li>
-          )}
-          {details?.twitter && (
-            <li
-              tabIndex={0}
-              className="mr-4 outline-none focus:ring-2 focus:ring-emerald-500"
-            >
-              <a
-                href={details?.twitter}
-                target="_blank"
-                className="outline-none"
-              >
-                <img
-                  src={x}
-                  alt="x"
-                  loading="eager"
-                  fetchPriority="high"
-                  className="mb-0.5 h-[28px] w-[28px] sm:h-5 sm:w-5"
-                />
-              </a>
-            </li>
-          )}
-          {details?.fb && (
-            <li
-              tabIndex={0}
-              className="outline-none focus:ring-2 focus:ring-emerald-500"
-            >
-              <a href={details?.wiki} target="_blank" className="outline-none">
-                <img
-                  src={wiki}
-                  alt="wiki"
-                  loading="eager"
-                  fetchPriority="high"
-                  className="h-[30px] w-[30px] sm:h-[24px] sm:w-[24px]"
-                />
-              </a>
-            </li>
-          )}
-        </ul>
-        {details && (
-          <FollowButton
-            artist={{
-              id: details.id,
-              image: details.image,
-              name: details.name,
-              role: "",
-              type: "",
-              url: details.url,
-            }}
-          />
-        )}
-      </div>
-    </div>
+    </Suspense>
   );
 });
 ArtistInfo.displayName = "ArtistInfo";
 
 const ArtistAlbums = memo(({ id }: { id: string }) => {
   const navigate = useNavigate();
-  const albums = useBoundStore((state) => state.artist.albums);
-  const setArtistAlbums = useBoundStore((state) => state.setArtistAlbums);
 
-  useQuery({
+  const { data } = useQuery({
     queryKey: ["artistalbums", id],
     queryFn: () => id && getArtistAlbums(id),
-    select: (data: any) => setArtistAlbums(data.data.albums),
+    enabled: true,
+    refetchOnReconnect: "always",
+    _optimisticResults: "isRestoring",
+    staleTime: 1000 * 60 * 10,
+    gcTime: 1000 * 60 * 10,
   });
 
   const getAlbumImage = (id: string) => {
-    if (albums) {
-      const obj = albums.find((album) => album.id === id);
+    if (data) {
+      const obj = data.find((album: AlbumById) => album.id === id);
       if (obj) return obj.image[1].url;
     }
     return albumfallback;
   };
 
   return (
-    <div className="h-[240px] w-full px-4 py-3 pb-12">
-      <h2 className="text-xl font-semibold text-white">Albums</h2>
-      <ul className="mx-auto mt-2.5 flex h-full w-full cursor-pointer items-center justify-start overflow-y-hidden overflow-x-scroll">
-        {albums?.map((album, i) => (
-          <ArtistAlbum
-            key={album.id}
-            i={i}
-            id={album.id}
-            name={album.name}
-            navigate={navigate}
-            getAlbumImage={getAlbumImage}
-          />
-        ))}
-      </ul>
-    </div>
+    <Suspense fallback={<ArtistAlbumFallback />}>
+      <div className="h-[240px] w-full px-4 py-3 pb-12">
+        <h2 className="text-xl font-semibold text-white">Albums</h2>
+        <ul className="mx-auto mt-2.5 flex h-full w-full cursor-pointer items-center justify-start overflow-y-hidden overflow-x-scroll">
+          {data?.map((album: AlbumById, i: number) => (
+            <ArtistAlbum
+              key={album.id}
+              i={i}
+              id={album.id}
+              name={album.name}
+              navigate={navigate}
+              getAlbumImage={getAlbumImage}
+            />
+          ))}
+        </ul>
+      </div>
+    </Suspense>
   );
 });
 ArtistAlbums.displayName = "ArtistAlbums";
@@ -287,31 +293,36 @@ const ArtistAlbum = ({
 };
 
 const ArtistSongs = memo(({ id }: { id: string }) => {
-  const songs = useBoundStore((state) => state.artist.songs);
-  const setArtistSongs = useBoundStore((state) => state.setArtistSongs);
-
-  useQuery({
+  const { data } = useQuery({
     queryKey: ["artistsongs", id],
     queryFn: () => id && getArtistSongs(id),
-    select: (data: any) => setArtistSongs(data.data.songs),
+    enabled: true,
+    refetchOnReconnect: "always",
+    _optimisticResults: "isRestoring",
+    staleTime: 1000 * 60 * 10,
+    gcTime: 1000 * 60 * 10,
   });
 
   return (
-    <div className="max-h-auto h-full w-full px-4 py-2 pb-20">
-      <h2 className="pb-2 text-xl font-semibold text-white">Songs</h2>
-      <ul
-        id="artist-songs-list"
-        className="max-h-auto mx-auto mt-1 h-[60dvh] w-full overflow-hidden bg-neutral-900 pb-28 sm:pb-20"
-      >
-        {songs.length > 0 ? (
-          songs.map((song: TrackDetails, i) => (
-            <Song index={i} key={song.id} track={song} isWidgetSong={false} />
-          ))
-        ) : (
-          <p className="m-auto text-xl text-neutral-500">No songs here...T_T</p>
-        )}
-      </ul>
-    </div>
+    <Suspense fallback={<ArtistSongsFallback />}>
+      <div className="max-h-auto h-full w-full px-4 py-2 pb-20">
+        <h2 className="pb-2 text-xl font-semibold text-white">Songs</h2>
+        <ul
+          id="artist-songs-list"
+          className="max-h-auto mx-auto mt-1 h-[60dvh] w-full overflow-hidden bg-neutral-900 pb-28 sm:pb-20"
+        >
+          {data?.length > 0 ? (
+            data.map((song: TrackDetails, i: number) => (
+              <Song index={i} key={song.id} track={song} isWidgetSong={false} />
+            ))
+          ) : (
+            <p className="m-auto text-xl text-neutral-500">
+              No songs here...T_T
+            </p>
+          )}
+        </ul>
+      </div>
+    </Suspense>
   );
 });
 ArtistSongs.displayName = "ArtistSongs";
