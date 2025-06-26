@@ -11,7 +11,7 @@ export default function Searchbar() {
     if (trimmed !== "") {
       const handler = setTimeout(() => {
         getSearchResults(trimmed.replace(/\s+/g, "+"));
-      }, 500);
+      }, 800);
       return () => clearTimeout(handler);
     }
   }, [deferredQuery]);
