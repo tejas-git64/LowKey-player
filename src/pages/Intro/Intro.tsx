@@ -42,7 +42,7 @@ export default function Intro() {
     btnRef.current?.classList.add("intro-fadeout");
     setTimeout(() => {
       navigate("/home");
-    }, 500);
+    }, 150);
   }
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export default function Intro() {
       imageRef.current?.classList.add("intro-fadein");
       cardRef.current?.classList.add("card-fadein");
       btnRef.current?.classList.add("intro-fadein");
-    }, 10);
+    }, 150);
   }, []);
 
   return (
@@ -67,7 +67,7 @@ export default function Intro() {
           alt="background-image"
           loading="eager"
           fetchPriority="high"
-          className="intro-fadeout absolute left-0 top-0 h-full w-full object-cover transition-all duration-500 ease-in-out"
+          className="intro-fadeout absolute left-0 top-0 h-full w-full object-cover transition-all duration-200 ease-in-out"
         />
         <div
           ref={cardRef}
