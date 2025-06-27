@@ -40,13 +40,13 @@ export default function AlbumPage() {
     gcTime: 1000 * 60 * 10,
   });
 
+  function handleImageLoad() {
+    animateScreen(albumEl);
+  }
+
   useEffect(() => {
     nowPlaying.queue && setNowPlaying(nowPlaying.queue.songs[0]);
   }, [nowPlaying.queue?.id]);
-
-  useEffect(() => {
-    animateScreen(albumEl);
-  }, [id]);
 
   return (
     <>
@@ -59,7 +59,11 @@ export default function AlbumPage() {
             <div className="absolute right-2 top-2 h-auto w-auto">
               <RouteNav />
             </div>
-            <AlbumInfo images={data?.image} name={data?.name} />
+            <AlbumInfo
+              images={data?.image}
+              name={data?.name}
+              handleImageLoad={handleImageLoad}
+            />
             <div className="flex h-auto w-full items-center justify-between sm:mt-2">
               <AlbumCount
                 primaryArtists={data?.primaryArtists}
@@ -234,7 +238,15 @@ const AlbumControls = memo(({ album }: { album: AlbumById }) => {
 AlbumControls.displayName = "AlbumControls";
 
 const AlbumInfo = memo(
-  ({ images, name }: { images: Image[]; name: string }) => {
+  ({
+    images,
+    name,
+    handleImageLoad,
+  }: {
+    images: Image[];
+    name: string;
+    handleImageLoad: () => void;
+  }) => {
     const imgEl = useRef<HTMLImageElement>(null);
     const titleEl = useRef<HTMLParagraphElement>(null);
     const getAlbumImage = () => {
@@ -263,6 +275,7 @@ const AlbumInfo = memo(
           }}
           fetchPriority="high"
           loading="eager"
+          onLoad={handleImageLoad}
           onError={(e) => (e.currentTarget.src = fallback)}
         />
         <p

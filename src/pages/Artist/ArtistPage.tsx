@@ -73,16 +73,14 @@ const ArtistInfo = memo(({ id }: { id: string }) => {
     return artistfallback;
   };
 
-  useEffect(() => {
-    setTimeout(() => {
-      artistEl.current?.classList.remove("home-fadeout");
-      artistEl.current?.classList.add("home-fadein");
-      artistImgEl.current?.classList.remove("image-fadeout");
-      artistTitleEl.current?.classList.remove("song-fadeout");
-      artistImgEl.current?.classList.add("image-fadein");
-      artistTitleEl.current?.classList.add("song-fadein");
-    }, 10);
-  }, [id]);
+  function handleImageLoad() {
+    artistEl.current?.classList.remove("home-fadeout");
+    artistEl.current?.classList.add("home-fadein");
+    artistImgEl.current?.classList.remove("image-fadeout");
+    artistTitleEl.current?.classList.remove("song-fadeout");
+    artistImgEl.current?.classList.add("image-fadein");
+    artistTitleEl.current?.classList.add("song-fadein");
+  }
 
   return (
     <Suspense fallback={<ArtistInfoFallback />}>
@@ -101,6 +99,7 @@ const ArtistInfo = memo(({ id }: { id: string }) => {
             onError={(e) => (e.currentTarget.src = artistfallback)}
             loading="eager"
             fetchPriority="high"
+            onLoad={handleImageLoad}
             className="image-fadeout h-[150px] w-[150px] shadow-xl shadow-black duration-300 ease-in sm:mr-4"
           />
           <div>
@@ -316,9 +315,9 @@ const ArtistSongs = memo(({ id }: { id: string }) => {
               <Song index={i} key={song.id} track={song} isWidgetSong={false} />
             ))
           ) : (
-            <p className="m-auto text-xl text-neutral-500">
-              No songs here...T_T
-            </p>
+            <div className="h-auto w-full text-center">
+              <p className="text-xl text-neutral-500">No songs here...T_T</p>
+            </div>
           )}
         </ul>
       </div>

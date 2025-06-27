@@ -40,13 +40,13 @@ export default function PlaylistPage() {
     gcTime: 1000 * 60 * 10,
   });
 
+  function handleImageLoad() {
+    animateScreen(playEl);
+  }
+
   useEffect(() => {
     queue && setNowPlaying(queue.songs[0]);
   }, [queue?.id]);
-
-  useEffect(() => {
-    animateScreen(playEl);
-  }, [id]);
 
   return (
     <>
@@ -59,7 +59,11 @@ export default function PlaylistPage() {
             <div className="absolute right-2 top-2 h-auto w-auto">
               <RouteNav />
             </div>
-            <PlaylistInfo images={data?.image} name={data?.name} />
+            <PlaylistInfo
+              images={data?.image}
+              name={data?.name}
+              handleImageLoad={handleImageLoad}
+            />
             <div className="flex h-auto w-full items-center justify-between sm:mt-2">
               <PlaylistCount
                 followerCount={data?.followerCount}
@@ -242,7 +246,15 @@ const PlaylistControls = memo(({ playlist }: { playlist: PlaylistById }) => {
 PlaylistControls.displayName = "PlaylistControls";
 
 const PlaylistInfo = memo(
-  ({ images, name }: { images: Image[]; name: string }) => {
+  ({
+    images,
+    name,
+    handleImageLoad,
+  }: {
+    images: Image[];
+    name: string;
+    handleImageLoad: () => void;
+  }) => {
     const getPlaylistImage = () => {
       if (images) {
         const obj = images.find((img: Image) => img.quality === "150x150");
@@ -262,6 +274,7 @@ const PlaylistInfo = memo(
           }}
           fetchPriority="high"
           loading="eager"
+          onLoad={handleImageLoad}
           onError={(e) => (e.currentTarget.src = fallback)}
         />
         <p className="text-md mb-1 mt-2 line-clamp-1 h-auto w-[60%] text-ellipsis text-left text-xl font-semibold text-white sm:line-clamp-3 sm:w-[40%] sm:text-3xl sm:font-bold">
