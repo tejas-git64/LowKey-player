@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import reactlogo from "../../assets/svgs/react.svg";
 import tailwindlogo from "../../assets/svgs/tailwindcss.svg";
 import bg480 from "../../assets/images/landing/landing-480px.webp";
@@ -45,16 +45,14 @@ export default function Intro() {
     }, 150);
   }
 
-  useEffect(() => {
-    setTimeout(() => {
-      imageRef.current?.classList.remove("intro-fadeout");
-      cardRef.current?.classList.remove("card-fadeout");
-      btnRef.current?.classList.remove("intro-fadeout");
-      imageRef.current?.classList.add("intro-fadein");
-      cardRef.current?.classList.add("card-fadein");
-      btnRef.current?.classList.add("intro-fadein");
-    }, 150);
-  }, []);
+  function loadImage() {
+    imageRef.current?.classList.remove("intro-fadeout");
+    cardRef.current?.classList.remove("card-fadeout");
+    btnRef.current?.classList.remove("intro-fadeout");
+    imageRef.current?.classList.add("intro-fadein");
+    cardRef.current?.classList.add("card-fadein");
+    btnRef.current?.classList.add("intro-fadein");
+  }
 
   return (
     <>
@@ -66,6 +64,7 @@ export default function Intro() {
           sizes={sizes}
           alt="background-image"
           loading="eager"
+          onLoad={loadImage}
           fetchPriority="high"
           className="intro-fadeout absolute left-0 top-0 h-full w-full object-cover transition-all duration-200 ease-in-out"
         />
