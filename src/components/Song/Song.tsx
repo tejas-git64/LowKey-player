@@ -152,7 +152,7 @@ const Song = memo(
               <button
                 tabIndex={0}
                 type="button"
-                className={`h-auto w-[20px] flex-shrink-0 bg-transparent p-0 opacity-0 transition-opacity group-hover:opacity-100 group-focus:opacity-100 group-focus:ring-2 group-focus:ring-emerald-500 ${isFavorited ? "opacity-100" : "opacity-0"}`}
+                className={`h-auto w-[20px] flex-shrink-0 bg-transparent p-0 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 group-focus-visible:ring-2 group-focus-visible:ring-emerald-500 ${isFavorited ? "opacity-100" : "opacity-0"}`}
                 onClick={(e) =>
                   track &&
                   toggleFavorite({

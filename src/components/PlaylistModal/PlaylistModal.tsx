@@ -68,11 +68,12 @@ export default function PlaylistModal({
             </h2>
             <button
               type="button"
+              tabIndex={0}
               onClick={() => {
                 setName("");
                 setRevealCreation(false);
               }}
-              className="flex-shrink-0 whitespace-nowrap bg-neutral-700 p-1 transition-all ease-out hover:bg-neutral-600"
+              className="flex-shrink-0 whitespace-nowrap bg-neutral-700 p-1 transition-all ease-out hover:bg-neutral-600 focus-visible:bg-neutral-500"
               aria-label="Close playlist modal"
             >
               <img
@@ -102,8 +103,9 @@ export default function PlaylistModal({
             />
             <button
               type="button"
+              tabIndex={0}
               onClick={createNew}
-              className="h-full whitespace-nowrap rounded-sm bg-neutral-400 px-3 text-sm font-semibold text-black transition-all ease-out hover:bg-white"
+              className="h-full whitespace-nowrap rounded-sm bg-neutral-400 px-3 text-sm font-semibold text-black transition-all ease-out hover:bg-white focus-visible:bg-white"
               aria-label="Create new playlist"
             >
               <img
@@ -189,12 +191,13 @@ const CustomPlaylist = memo(
         <li className="flex h-12 w-full items-center justify-start border-y border-neutral-950 bg-neutral-800 px-4">
           <label
             htmlFor={`new-playlist-${id}`}
-            className="mr-4 line-clamp-1 w-full cursor-pointer overflow-hidden text-ellipsis py-2 text-base font-semibold text-white"
+            className="mr-4 line-clamp-1 w-full cursor-pointer overflow-hidden text-ellipsis py-2 text-base font-semibold text-white focus-visible:bg-neutral-400"
           >
             {name}
           </label>
           <input
             type="checkbox"
+            tabIndex={0}
             name={`new-playlist-${id}`}
             id={`new-playlist-${id}`}
             checked={isInPlaylist}

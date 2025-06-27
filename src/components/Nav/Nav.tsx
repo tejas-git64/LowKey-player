@@ -40,7 +40,7 @@ const Nav = memo(() => {
       <div className="mx-auto flex h-auto w-[95%] flex-col items-start justify-evenly overflow-hidden bg-neutral-800 px-1 pt-2">
         <Link
           to={"/home"}
-          className="flex w-full items-center justify-start p-3 pl-3.5 outline-none transition-colors hover:bg-neutral-600 focus:bg-neutral-700"
+          className="flex w-full items-center justify-start p-3 pl-3.5 outline-none transition-colors hover:bg-neutral-600 focus-visible:bg-neutral-700"
         >
           <img
             src={home}
@@ -53,7 +53,7 @@ const Nav = memo(() => {
         </Link>
         <Link
           to={"/search"}
-          className="flex w-full items-center justify-start p-3 pl-3.5 outline-none transition-colors hover:bg-neutral-600 focus:bg-neutral-700"
+          className="flex w-full items-center justify-start p-3 pl-3.5 outline-none transition-colors hover:bg-neutral-600 focus-visible:bg-neutral-700"
         >
           <img
             src={search}
@@ -69,7 +69,7 @@ const Nav = memo(() => {
         <div className="mx-auto h-[150px] w-[95%] px-1 lg:h-[155px]">
           <Link
             to={"/library"}
-            className="flex w-full items-center justify-start p-3 outline-none transition-colors hover:bg-neutral-600 focus:bg-neutral-700"
+            className="flex w-full items-center justify-start p-3 outline-none transition-colors hover:bg-neutral-600 focus-visible:bg-neutral-700"
           >
             <img
               src={libraryImg}
@@ -82,7 +82,7 @@ const Nav = memo(() => {
           </Link>
           <Link
             to={"/favorites"}
-            className="flex w-full items-center justify-start p-3 pl-2.5 outline-none transition-colors hover:bg-neutral-600 focus:bg-neutral-700"
+            className="flex w-full items-center justify-start p-3 pl-2.5 outline-none transition-colors hover:bg-neutral-600 focus-visible:bg-neutral-700"
           >
             <img
               src={heart}
@@ -96,7 +96,7 @@ const Nav = memo(() => {
           <div
             role="button"
             tabIndex={0}
-            className="-mt-0.5 flex w-full items-center justify-start px-3 pl-2.5 outline-none transition-colors hover:bg-neutral-600 focus:bg-neutral-700 lg:py-3"
+            className="-mt-0.5 flex w-full items-center justify-start px-3 pl-2.5 outline-none transition-colors hover:bg-neutral-600 focus-visible:bg-neutral-700 lg:py-3"
             onClick={showCreationMenu}
           >
             <img
@@ -146,7 +146,7 @@ const RecentPlaylistsOrAlbums = memo(() => {
           to={`/albums/${album.id}`}
           key={album.id}
           role="listitem"
-          className="mb-2 flex h-[50px] w-full items-center justify-start outline-none transition-colors hover:bg-neutral-700 focus:bg-neutral-700"
+          className="mb-2 flex h-[50px] w-full items-center justify-start outline-none transition-colors hover:bg-neutral-700 focus-visible:bg-neutral-700"
         >
           <img
             src={album.image[0]?.url || playlistfallback}
@@ -167,7 +167,7 @@ const RecentPlaylistsOrAlbums = memo(() => {
           to={`/playlists/${playlist.id}`}
           key={playlist.id}
           role="listitem"
-          className="mb-2 flex h-[50px] w-full items-center justify-start outline-none transition-colors hover:bg-neutral-700 focus:bg-neutral-700"
+          className="mb-2 flex h-[50px] w-full items-center justify-start outline-none transition-colors hover:bg-neutral-700 focus-visible:bg-neutral-700"
         >
           <img
             src={playlist.image[0]?.url || fallback}
@@ -188,7 +188,7 @@ const RecentPlaylistsOrAlbums = memo(() => {
           to={`/userplaylists/${playlist.id}`}
           key={playlist.id}
           role="listitem"
-          className="mb-2 flex h-[50px] w-full items-center justify-start outline-none transition-colors hover:bg-neutral-700 focus:bg-neutral-700"
+          className="mb-2 flex h-[50px] w-full items-center justify-start outline-none transition-colors hover:bg-neutral-700 focus-visible:bg-neutral-700"
         >
           <img
             src={playlistfallback}

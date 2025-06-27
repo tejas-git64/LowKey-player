@@ -1,5 +1,5 @@
 import { useBoundStore } from "../../store/store";
-import logo from "../../assets/logo/sound-waves.png";
+import logo from "../../assets/logo/sound-waves.webp";
 import notifimg from "../../assets/svgs/bell-svgrepo-com.svg";
 import { ActivityType } from "../../types/GlobalTypes";
 
@@ -56,7 +56,7 @@ const NotificationButton = () => {
           type="button"
           tabIndex={0}
           onClick={toggleNotifications}
-          className="relative h-6 w-6 bg-transparent p-0 outline-none focus:ring-2 focus:ring-emerald-500 xl:hidden"
+          className="relative h-6 w-6 bg-transparent p-0 outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 xl:hidden"
         >
           <img
             src={notifimg}

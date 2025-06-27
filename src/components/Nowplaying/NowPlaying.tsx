@@ -145,7 +145,7 @@ export default function NowPlaying() {
 
   return (
     <div
-      className={`${!isMobilePlayer ? "translate-y-[100%]" : "translate-y-0"} absolute bottom-0 z-20 flex h-full w-full flex-col items-center justify-start overflow-y-scroll bg-black pb-10 outline-none transition-transform focus:ring-2 focus:ring-emerald-500 sm:h-fit sm:translate-y-0 sm:flex-row sm:items-center sm:justify-between sm:bg-black sm:pb-0 2xl:border 2xl:border-neutral-900`}
+      className={`${!isMobilePlayer ? "translate-y-[100%]" : "translate-y-0"} absolute bottom-0 z-20 flex h-full w-full flex-col items-center justify-start overflow-y-scroll bg-black pb-10 outline-none transition-transform focus-visible:ring-2 focus-visible:ring-emerald-500 sm:h-fit sm:translate-y-0 sm:flex-row sm:items-center sm:justify-between sm:bg-black sm:pb-0 2xl:border 2xl:border-neutral-900`}
       role="region"
       aria-label="Now Playing Panel"
       tabIndex={0}
@@ -253,7 +253,7 @@ export default function NowPlaying() {
               }}
               aria-label="Song quality selection"
               disabled={track.downloadUrl?.length <= 1}
-              className="mr-4 cursor-pointer rounded-sm bg-transparent p-0.5 text-center text-base outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:text-neutral-800 sm:mr-0 sm:bg-black sm:px-0 sm:text-xs"
+              className="mr-4 cursor-pointer rounded-sm bg-transparent p-0.5 text-center text-base outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:text-neutral-800 sm:mr-0 sm:bg-black sm:px-0 sm:text-xs"
             >
               {track?.downloadUrl?.map((d, i) => (
                 <option
@@ -278,7 +278,7 @@ export default function NowPlaying() {
                 }
               }}
               disabled={!track?.downloadUrl[audioIndex]?.url}
-              className={`flex w-auto items-center justify-center bg-transparent px-0 py-1 text-lg text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 sm:py-0 ${
+              className={`flex w-auto items-center justify-center bg-transparent px-0 py-1 text-lg text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 sm:py-0 ${
                 !track?.downloadUrl[audioIndex]?.url &&
                 "pointer-events-none cursor-not-allowed bg-neutral-700"
               }`}
@@ -354,7 +354,7 @@ const PlayButton = () => {
       onClick={() => {
         setIsPlaying(!isPlaying);
       }}
-      className={`h-auto w-auto flex-shrink-0 rounded-full border-none bg-neutral-100 p-2 outline-none focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:cursor-not-allowed disabled:bg-neutral-600 sm:p-1`}
+      className={`h-auto w-auto flex-shrink-0 rounded-full border-none bg-neutral-100 p-2 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:bg-neutral-600 sm:p-1`}
       disabled={!id}
       aria-label={isPlaying ? "Pause" : "Play"}
     >
@@ -413,7 +413,7 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
           setShowPlayer(false);
           setRevealCreation(true);
         }}
-        className="border bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:invert-[0.5]"
+        className="border bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:invert-[0.5]"
         disabled={!track}
         aria-label={playlist?.id ? "Remove from Playlist" : "Add to Playlist"}
       >
@@ -438,7 +438,7 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
             startTransition,
           })
         }
-        className="mx-3 border-none bg-transparent p-0 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:invert-[0.5]"
+        className="mx-3 border-none bg-transparent p-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:invert-[0.5]"
         disabled={!track?.id}
         aria-label={isFavorited ? "Remove from Favorites" : "Add to Favorites"}
       >
@@ -488,7 +488,7 @@ const Controls = memo(
         <button
           type="button"
           tabIndex={queueSongs?.length === 0 ? -1 : 0}
-          className="bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed"
+          className="bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed"
           onClick={(e) => {
             setIsShuffling(!isShuffling);
             e.stopPropagation();
@@ -526,7 +526,7 @@ const Controls = memo(
           type="button"
           tabIndex={!queueSongs ? -1 : 0}
           onClick={handlePreviousTrack}
-          className="border-none bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:invert-[0.5]"
+          className="border-none bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:invert-[0.5]"
           disabled={!queueSongs}
           aria-label="Previous Track"
         >
@@ -542,7 +542,7 @@ const Controls = memo(
           type="button"
           tabIndex={!queueSongs ? -1 : 0}
           onClick={handleNextTrack}
-          className="border-none bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:invert-[0.5]"
+          className="border-none bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:invert-[0.5]"
           disabled={!queueSongs}
           aria-label="Next Track"
         >
@@ -556,7 +556,7 @@ const Controls = memo(
         <button
           type="button"
           tabIndex={id ? 0 : -1}
-          className="border-none bg-transparent p-0 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:invert-[0.5]"
+          className="border-none bg-transparent p-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:invert-[0.5]"
           onClick={() => setIsReplay(!isReplay)}
           disabled={!id}
           aria-pressed={isReplay}
@@ -616,7 +616,7 @@ const VolumeControl = memo(
           id="volumeSlider"
           tabIndex={name === "" ? -1 : 0}
           min={0}
-          className="h-auto w-full cursor-pointer appearance-none shadow-inner shadow-neutral-950 transition-all ease-linear focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed"
+          className="h-auto w-full cursor-pointer appearance-none shadow-inner shadow-neutral-950 transition-all ease-linear focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed"
           max={1}
           step={0.1}
           aria-label="Volume"
@@ -669,7 +669,7 @@ const Artist = (artist: ArtistInSong) => {
           navigate(`/artists/${artist.id}`);
         }
       }}
-      className="mb-2 flex w-full items-center justify-between bg-black hover:cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+      className="mb-2 flex w-full items-center justify-between bg-black hover:cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
     >
       <div className="flex w-auto items-center justify-start">
         <img
