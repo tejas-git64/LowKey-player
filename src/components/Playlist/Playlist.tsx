@@ -15,6 +15,7 @@ export default function Playlist({
     if (image) {
       const obj = image.find((img) => img.quality === "150x150");
       if (obj) return obj.url;
+      else return fallback;
     }
     return fallback;
   };
@@ -29,6 +30,7 @@ export default function Playlist({
   return (
     <>
       <div
+        data-testid="playlist"
         tabIndex={0}
         className="group mr-4 flex h-[180px] w-[150px] flex-shrink-0 cursor-pointer list-none flex-col items-center overflow-hidden outline-none"
         onClick={() => fadeOutNavigate(`/playlists/${id}`)}
