@@ -3,7 +3,7 @@ import logo from "../../assets/logo/sound-waves.webp";
 import notifimg from "../../assets/svgs/bell-svgrepo-com.svg";
 import { ActivityType } from "../../types/GlobalTypes";
 
-export default function Nav() {
+export default function Banner() {
   const greeting = useBoundStore((state) => state.greeting);
   return (
     <>
@@ -36,7 +36,7 @@ const Activity = ({ message }: ActivityType) => {
   );
 };
 
-const NotificationButton = () => {
+export const NotificationButton = () => {
   const recents = useBoundStore((state) => state.recents);
   const notifications = useBoundStore((state) => state.notifications);
   const setNotifications = useBoundStore((state) => state.setNotifications);
@@ -50,7 +50,10 @@ const NotificationButton = () => {
     }
   }
   return (
-    <div className="flex w-auto items-center justify-between xl:justify-end">
+    <div
+      data-testid="notifs"
+      className="flex w-auto items-center justify-between xl:justify-end"
+    >
       <div className="flex w-10 items-center">
         <button
           type="button"
