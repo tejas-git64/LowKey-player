@@ -15,12 +15,6 @@ import fallback from "../../assets/fallbacks/playlist-fallback.webp";
 const Nav = memo(() => {
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
   const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
-  const setCreationMenu = useBoundStore((state) => state.setCreationMenu);
-
-  function showCreationMenu() {
-    setRevealCreation(true);
-    setCreationMenu(true);
-  }
 
   useEffect(() => {
     const handleNetworkChange = () => setIsOnline(navigator.onLine);
@@ -44,7 +38,7 @@ const Nav = memo(() => {
         >
           <img
             src={home}
-            alt="menu-icon"
+            alt="home-icon"
             className="mr-7 w-7 flex-shrink-0 xl:mr-[22px]"
           />
           <p className="hidden text-base font-normal text-white sm:block">
@@ -57,7 +51,7 @@ const Nav = memo(() => {
         >
           <img
             src={search}
-            alt="menu-icon"
+            alt="search-icon"
             className="mr-7 w-7 flex-shrink-0 xl:mr-[22px]"
           />
           <p className="-mt-0.5 hidden text-base font-normal text-white sm:block">
@@ -73,7 +67,7 @@ const Nav = memo(() => {
           >
             <img
               src={libraryImg}
-              alt="menu-icon"
+              alt="library-icon"
               className="ml-0.5 mr-[30px] w-[22px] flex-shrink-0 xl:mr-[27px] 2xl:mr-[26px]"
             />
             <p className="hidden text-base font-normal text-white sm:block">
@@ -86,7 +80,7 @@ const Nav = memo(() => {
           >
             <img
               src={heart}
-              alt="menu-icon"
+              alt="favorites-icon"
               className="ml-0.5 mr-7 w-[26px] flex-shrink-0 xl:mr-6 xl:w-7"
             />
             <p className="-mt-1 hidden text-base font-normal text-white sm:block">
@@ -97,11 +91,11 @@ const Nav = memo(() => {
             role="button"
             tabIndex={0}
             className="-mt-0.5 flex w-full items-center justify-start px-3 pl-2.5 outline-none transition-colors hover:bg-neutral-600 focus-visible:bg-neutral-700 lg:py-3"
-            onClick={showCreationMenu}
+            onClick={() => setRevealCreation(true)}
           >
             <img
               src={add}
-              alt="new-menu-icon"
+              alt="create-icon"
               className="mx-1 mr-[29px] w-[23px] flex-shrink-0 invert xl:mr-[26px]"
             />
             <p className="-mt-0.5 hidden text-base font-normal text-white sm:block">
@@ -117,6 +111,7 @@ const Nav = memo(() => {
             className="mr-6 h-7 w-7 xl:mr-6"
           />
           <p
+            data-testid="network-status"
             className={`hidden ${
               isOnline ? "text-white" : "text-red-600"
             } text-sm sm:block`}
@@ -145,12 +140,12 @@ const RecentPlaylistsOrAlbums = memo(() => {
           tabIndex={0}
           to={`/albums/${album.id}`}
           key={album.id}
-          role="listitem"
+          data-testid="album-listitem"
           className="mb-2 flex h-[50px] w-full items-center justify-start outline-none transition-colors hover:bg-neutral-700 focus-visible:bg-neutral-700"
         >
           <img
             src={album.image[0]?.url || playlistfallback}
-            alt="menu-icon"
+            alt="album-menu-icon"
             width={50}
             height={50}
             onError={(e) => (e.currentTarget.src = playlistfallback)}
@@ -166,12 +161,12 @@ const RecentPlaylistsOrAlbums = memo(() => {
           tabIndex={0}
           to={`/playlists/${playlist.id}`}
           key={playlist.id}
-          role="listitem"
+          data-testid="playlist-listitem"
           className="mb-2 flex h-[50px] w-full items-center justify-start outline-none transition-colors hover:bg-neutral-700 focus-visible:bg-neutral-700"
         >
           <img
             src={playlist.image[0]?.url || fallback}
-            alt="menu-icon"
+            alt="playlist-menu-icon"
             width={50}
             height={50}
             onError={(e) => (e.currentTarget.src = playlistfallback)}
@@ -187,14 +182,14 @@ const RecentPlaylistsOrAlbums = memo(() => {
           tabIndex={0}
           to={`/userplaylists/${playlist.id}`}
           key={playlist.id}
-          role="listitem"
+          data-testid="userplaylist-listitem"
           className="mb-2 flex h-[50px] w-full items-center justify-start outline-none transition-colors hover:bg-neutral-700 focus-visible:bg-neutral-700"
         >
           <img
             src={playlistfallback}
             width={50}
             height={50}
-            alt="menu-icon"
+            alt="userplaylist-menu-icon"
             className="mr-4 h-[50px] w-[50px] flex-shrink-0 rounded-sm bg-emerald-500 shadow-md shadow-black"
           />
           <p className="line-clamp-1 hidden text-ellipsis whitespace-nowrap text-sm text-neutral-200 sm:block">
