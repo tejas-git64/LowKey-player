@@ -20,6 +20,7 @@ export default defineConfig({
         "src/vite-env.d.ts",
         "src/types/*",
         "src/global.d.ts",
+        "src/App.test.tsx",
       ],
       all: false,
     },

@@ -33,6 +33,36 @@ import { sampleTrack, sampleUserPlaylist } from "../../api/samples";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 
+const mockOn = vi.fn();
+const mockLoad = vi.fn();
+const mockPlay = vi.fn();
+const mockPause = vi.fn();
+const mockDestroy = vi.fn();
+const mockGetCurrentTime = vi.fn();
+const mockUn = vi.fn();
+const mockUnAll = vi.fn();
+const mockSetVolume = vi.fn();
+const mockSeekTo = vi.fn();
+let handlers: Record<string, Function[]> = {};
+export const instance = {
+  on: (event: string, cb: Function) => {
+    handlers[event] = handlers[event] || [];
+    handlers[event].push(cb);
+    mockOn(event, cb);
+  },
+  un: (event: string, cb: Function) => {
+    mockUn(event, cb);
+    handlers[event] = (handlers[event] || []).filter((fn) => fn !== cb);
+  },
+  load: (url: string) => mockLoad(url),
+  play: () => mockPlay(),
+  pause: () => mockPause(),
+  destroy: () => mockDestroy(),
+  getCurrentTime: () => mockGetCurrentTime(),
+  unAll: () => mockUnAll(),
+  setVolume: (v: number) => mockSetVolume(v),
+  seekTo: (v: number) => mockSeekTo(v),
+};
 const useNavigateMock = vi.fn();
 vi.mock("react-router-dom", async (importOriginal) => {
   const actual = (await importOriginal()) as any;
@@ -41,6 +71,11 @@ vi.mock("react-router-dom", async (importOriginal) => {
     useNavigate: () => useNavigateMock,
   };
 });
+vi.mock("wavesurfer.js", () => ({
+  default: {
+    create: vi.fn(() => instance),
+  },
+}));
 
 const {
   setShowPlayer,
@@ -165,19 +200,6 @@ describe("NowPlaying", () => {
     const nowPlaying = screen.getByTestId("now-playing");
     expect(nowPlaying).toHaveClass("translate-y-[100%]");
   });
-  // describe("continuePlayback", () => {
-  //   afterEach(() => {
-  //     vi.restoreAllMocks();
-  //   });
-
-  //   test('should play the song from the queue if the queue is not empty', () => {
-  //     render(
-  //       <MemoryRouter>
-  //         <NowPlaying />
-  //       </MemoryRouter>,
-  //     );
-  //   });
-  // });
   describe("Drop down button", () => {
     beforeAll(() => {
       window.innerWidth = 480;
@@ -367,7 +389,7 @@ describe("NowPlaying", () => {
       fireEvent.click(downloadBtn);
       expect(handleDownload).not.toHaveBeenCalled();
     });
-    test("should download the track if there's a valid url", () => {
+    test("should download the track if there's a valid url", async () => {
       render(
         <MemoryRouter>
           <NowPlaying />
@@ -414,7 +436,7 @@ describe("NowPlaying", () => {
       fireEvent.change(select, { target: { value: "0" } });
       expect(select.value).toBe("0");
       fireEvent.click(downloadBtn);
-      await expect(handleDownload()).rejects.toThrow("Download failed!");
+      await expect(handleDownload).rejects.toThrow("Download failed!");
     });
   });
   describe("Play button", () => {

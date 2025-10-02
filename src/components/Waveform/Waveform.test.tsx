@@ -52,7 +52,7 @@ let getItemMock: MockInstance<(key: string) => string | null>,
 let store: Record<string, string> = {};
 
 let handlers: Record<string, Function[]> = {};
-const instance = {
+export const instance = {
   on: (event: string, cb: Function) => {
     handlers[event] = handlers[event] || [];
     handlers[event].push(cb);
