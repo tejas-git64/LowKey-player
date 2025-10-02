@@ -56,7 +56,10 @@ export default function Intro() {
 
   return (
     <>
-      <div className="relative flex h-full w-full items-center shadow-inner shadow-black">
+      <div
+        data-testid="intro-page"
+        className="relative flex h-full w-full items-center shadow-inner shadow-black"
+      >
         <img
           ref={imageRef}
           src={bg768}
@@ -70,6 +73,7 @@ export default function Intro() {
         />
         <div
           ref={cardRef}
+          data-testid="intro-card"
           className="card-fadeout relative mx-auto flex h-auto w-[calc(100%-5%)] flex-col items-center border border-[#ffffff25] bg-[#0000004f] px-4 py-4 backdrop-blur-md transition-all duration-500 ease-in-out sm:w-[430px] md:px-5"
         >
           <h2 className="w-full bg-gradient-to-r from-purple-400 via-teal-500 to-cyan-400 bg-clip-text pl-1.5 text-left text-3xl font-semibold text-transparent xl:text-4xl">
