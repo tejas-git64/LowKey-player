@@ -2,7 +2,7 @@ import { TrackDetails } from "../types/GlobalTypes";
 import songfallback from "../assets/fallbacks/song-fallback.webp";
 
 export const getTrackImage = (
-  images: TrackDetails["image"],
+  images: TrackDetails["image"] | undefined,
   isMobile: boolean,
 ) => {
   if (!images) return songfallback;
