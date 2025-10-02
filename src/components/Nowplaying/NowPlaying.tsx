@@ -78,11 +78,6 @@ export default function NowPlaying() {
 
   const continuePlayback = () => {
     if (queueSongs) {
-      if (!queueSongs.length) {
-        setIsPlaying(false);
-        return;
-      }
-
       if (isShuffling) {
         let randomIndex = Math.floor(Math.random() * queueSongs.length);
         if (queueSongs.length > 1 && queueSongs[randomIndex].id === track?.id) {
@@ -99,6 +94,8 @@ export default function NowPlaying() {
       } else {
         setIsPlaying(false);
       }
+    } else {
+      setIsPlaying(false);
     }
   };
 
@@ -145,6 +142,7 @@ export default function NowPlaying() {
 
   return (
     <div
+      data-testid="now-playing"
       className={`${!isMobilePlayer ? "translate-y-[100%]" : "translate-y-0"} absolute bottom-0 z-20 flex h-full w-full flex-col items-center justify-start overflow-y-scroll bg-black pb-10 outline-none transition-transform focus-visible:ring-2 focus-visible:ring-emerald-500 sm:h-fit sm:translate-y-0 sm:flex-row sm:items-center sm:justify-between sm:bg-black sm:pb-0 2xl:border 2xl:border-neutral-900`}
       role="region"
       aria-label="Now Playing Panel"
@@ -159,6 +157,7 @@ export default function NowPlaying() {
           {isMobileWidth && (
             <button
               type="button"
+              data-testid="drop-down-btn"
               onClick={() => setShowPlayer(false)}
               className="absolute right-2 top-4 rounded-sm bg-black px-1 py-0.5"
               aria-label="hide now playing drawer"
@@ -170,7 +169,8 @@ export default function NowPlaying() {
             <img
               src={getTrackImage(track?.image as Image[], isMobileWidth)}
               id="songImg"
-              alt={track?.name ? `Cover art for ${track.name}` : "song-img"}
+              data-testid="song-image"
+              alt={track?.name ? `Cover art for ${track.name}` : "song image"}
               onError={(e) => (e.currentTarget.src = songfallback)}
               fetchPriority="high"
               loading="eager"
@@ -244,6 +244,7 @@ export default function NowPlaying() {
             <select
               name="quality"
               id="quality"
+              data-testid="quality"
               value={audioIndex}
               defaultValue={undefined}
               tabIndex={track.downloadUrl?.length > 1 ? 0 : -1}
@@ -267,19 +268,20 @@ export default function NowPlaying() {
               ))}
             </select>
           </div>
-          {track.downloadUrl && (
+          {track?.downloadUrl && (
             <button
-              tabIndex={track?.downloadUrl[audioIndex]?.url ? 0 : -1}
+              tabIndex={track.downloadUrl[audioIndex]?.url ? 0 : -1}
               onClick={() => {
-                const url = track?.downloadUrl[audioIndex]?.url;
-                const filename = track?.name || "track";
+                const url = track.downloadUrl[audioIndex]?.url;
+                const filename = track.name || "track";
                 if (url) {
                   handleDownload(url, filename);
                 }
               }}
-              disabled={!track?.downloadUrl[audioIndex]?.url}
+              data-testid="download-btn"
+              disabled={!track.downloadUrl[audioIndex]?.url}
               className={`flex w-auto items-center justify-center bg-transparent px-0 py-1 text-lg text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 sm:py-0 ${
-                !track?.downloadUrl[audioIndex]?.url &&
+                !track.downloadUrl[audioIndex]?.url &&
                 "pointer-events-none cursor-not-allowed bg-neutral-700"
               }`}
               aria-label="Download song"
@@ -298,6 +300,7 @@ export default function NowPlaying() {
         <div
           className="mt-14 w-full max-w-[500px] p-4 px-5"
           role="region"
+          data-testid="primary-artists"
           aria-label="Primary artists"
         >
           <h2 className="text-xl font-semibold">Primary artists</h2>
@@ -350,6 +353,7 @@ const PlayButton = () => {
   return (
     <button
       type="button"
+      data-testid="play-btn"
       tabIndex={0}
       onClick={() => {
         setIsPlaying(!isPlaying);
@@ -359,6 +363,7 @@ const PlayButton = () => {
       aria-label={isPlaying ? "Pause" : "Play"}
     >
       <img
+        data-testid="play-icon"
         src={isPlaying ? pause : play}
         alt={isPlaying ? "Pause icon" : "Play icon"}
         className={`h-10 w-10 sm:h-7 sm:w-7`}
@@ -378,40 +383,44 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
   const removeFavorite = useBoundStore((state) => state.removeFavorite);
   const favorites = useBoundStore((state) => state.favorites);
   const isFavorited = useMemo(
-    () => favorites.songs?.some((song) => song.id === track?.id),
+    () => favorites?.songs?.some((song) => song.id === track?.id),
     [favorites],
   );
   const playlist: UserPlaylist | undefined = useMemo(
     () =>
-      userPlaylists.find((obj) => {
+      userPlaylists?.find((obj) => {
         return obj.songs.find((song) => {
           return song.id === track?.id;
         });
       }),
     [userPlaylists, track?.id],
-  ); //Provides the playlist of the track
+  );
 
   useEffect(() => {
-    track !== null && setHistory(track);
+    if (track !== null) setHistory(track);
     saveToLocalStorage("last-recents", {
       history: recents,
     });
-  }, [track?.id]);
+  }, [track]);
 
   return (
     <div
       className="absolute -bottom-[35px] right-0 z-20 flex h-auto w-auto flex-shrink-0 items-center justify-end space-x-4 bg-black bg-inherit px-3 sm:static sm:w-16 sm:space-x-3 sm:bg-transparent sm:p-0 sm:pr-0.5"
       role="group"
+      data-testid="player-options"
       aria-label="Player Options"
     >
       <button
         type="button"
         tabIndex={track ? 0 : -1}
+        data-testid="playlist-btn"
         onClick={(e) => {
           e.stopPropagation();
-          track && setCreationTrack(track);
-          setShowPlayer(false);
-          setRevealCreation(true);
+          startTransition(() => {
+            track && setCreationTrack(track);
+            setShowPlayer(false);
+            setRevealCreation(true);
+          });
         }}
         className="border bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:invert-[0.5]"
         disabled={!track}
@@ -419,6 +428,7 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
       >
         <img
           src={playlist?.id ? tick : add}
+          data-testid="playlist-icon"
           alt={playlist?.id ? "In playlist" : "Add to playlist"}
           className="h-6 w-6 sm:h-[20px] sm:w-[20px]"
           aria-hidden="true"
@@ -426,6 +436,7 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
       </button>
       <button
         type="button"
+        data-testid="favorite-btn"
         tabIndex={track?.id ? 0 : -1}
         onClick={(e) =>
           track &&
@@ -444,6 +455,7 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
       >
         <img
           src={isFavorited ? favorited : favorite}
+          data-testid="favorite-icon"
           alt={isFavorited ? "Favorited" : "Favorite"}
           className="h-7 w-7 bg-transparent sm:h-[22px] sm:w-[22px]"
           aria-hidden="true"
@@ -471,7 +483,7 @@ const Controls = memo(
     };
 
     const handleNextTrack = () => {
-      if (queueSongs && songIndex < queueSongs.length) {
+      if (queueSongs && songIndex < queueSongs.length - 1) {
         setNowPlaying(queueSongs[songIndex + 1]);
         setIsPlaying(true);
       } else {
@@ -481,6 +493,7 @@ const Controls = memo(
 
     return (
       <div
+        data-testid="controls"
         className="-ml-2 mt-2 flex w-full max-w-[90%] flex-shrink-0 items-center justify-center space-x-[10%] sm:m-0 sm:space-x-5 xl:ml-2"
         role="group"
         aria-label="Playback Controls"
@@ -524,6 +537,7 @@ const Controls = memo(
         </button>
         <button
           type="button"
+          data-testid="previous-btn"
           tabIndex={!queueSongs ? -1 : 0}
           onClick={handlePreviousTrack}
           className="border-none bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:invert-[0.5]"
@@ -540,6 +554,7 @@ const Controls = memo(
         <PlayButton />
         <button
           type="button"
+          data-testid="next-btn"
           tabIndex={!queueSongs ? -1 : 0}
           onClick={handleNextTrack}
           className="border-none bg-transparent p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:invert-[0.5]"
@@ -555,6 +570,7 @@ const Controls = memo(
         </button>
         <button
           type="button"
+          data-testid="replay-btn"
           tabIndex={id ? 0 : -1}
           className="border-none bg-transparent p-0 outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:invert-[0.5]"
           onClick={() => setIsReplay(!isReplay)}
@@ -574,6 +590,7 @@ const Controls = memo(
             strokeLinecap="round"
             strokeLinejoin="round"
             color="#000000"
+            data-testid="replay-icon"
             className={`-mt-1 h-[35px] w-[35px] bg-transparent sm:-mt-0.5 sm:h-6 sm:w-6 ${isReplay ? "text-emerald-500" : "text-white"} ease duration-250 transition-colors`}
             aria-hidden="true"
           >
@@ -609,10 +626,12 @@ const VolumeControl = memo(
         className="ml-1 mr-auto flex h-fit w-[90%] flex-shrink-0 flex-row-reverse items-center justify-end sm:mx-0 sm:ml-0 sm:mr-1.5 sm:mt-1.5 sm:w-auto sm:flex-row"
         role="group"
         aria-label="Volume Control"
+        data-testid="volume-controls"
       >
         <input
           type="range"
           name="song-volume"
+          data-testid="song-volume"
           id="volumeSlider"
           tabIndex={name === "" ? -1 : 0}
           min={0}
@@ -640,6 +659,7 @@ const VolumeControl = memo(
                 ? "Low volume"
                 : "High volume"
           }
+          data-testid="slider-img"
           className={`mx-2 h-10 w-10 bg-transparent sm:-mr-2 sm:h-7 sm:w-7 ${
             id === "" ? "invert-[0.4]" : ""
           } disabled:cursor-not-allowed disabled:bg-neutral-900`}
@@ -657,6 +677,7 @@ const Artist = (artist: ArtistInSong) => {
   return (
     <div
       role="link"
+      data-testid="artist"
       tabIndex={0}
       aria-label={`Go to artist page for ${artist.name}`}
       onClick={() => {
@@ -673,8 +694,9 @@ const Artist = (artist: ArtistInSong) => {
     >
       <div className="flex w-auto items-center justify-start">
         <img
+          data-testid="artist-image"
           src={artist.image[0]?.url || artistfallback}
-          alt={artist.name ? `${artist.name} artist image` : "artist-image"}
+          alt={artist.name ? `${artist.name}` : "artist-image"}
           className="mr-4 h-[50px] w-[50px] rounded-sm"
           aria-hidden="true"
         />
