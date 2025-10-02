@@ -2,7 +2,10 @@ import SongFallback from "../../components/Song/SongFallback";
 
 export const Widgetfallback = () => {
   return (
-    <div className="h-auto max-h-max w-full px-3.5 sm:pt-0.5">
+    <div
+      data-testid="widget-fallback"
+      className="h-auto max-h-max w-full px-3.5 sm:pt-0.5"
+    >
       <section className="relative z-0 mx-auto mb-7 flex h-80 w-full flex-col overflow-hidden rounded-sm bg-neutral-900 sm:my-3 sm:h-[40vw] sm:flex-row sm:bg-transparent md:h-80">
         <div className="h-auto w-auto flex-shrink-0 cursor-pointer rounded-sm bg-neutral-700 duration-500 ease-in sm:z-10 sm:h-[40vw] sm:w-[40vw] md:h-80 md:w-80"></div>
         <div className="absolute right-2.5 top-[105px] z-20 flex h-auto w-[95%] items-end justify-between sm:-left-16 sm:top-[80%] sm:h-12 sm:w-[48vw] sm:justify-end sm:p-2 md:w-[370px] md:py-1">
@@ -24,7 +27,10 @@ export const Widgetfallback = () => {
 
 export const TimelyFallback = () => {
   return (
-    <div className="mx-auto mb-5 mt-2 grid h-32 w-full grid-cols-2 grid-rows-2 gap-3 px-3.5 sm:gap-5">
+    <div
+      data-testid="timely-fallback"
+      className="mx-auto mb-5 mt-2 grid h-32 w-full grid-cols-2 grid-rows-2 gap-3 px-3.5 sm:gap-5"
+    >
       <div className="flex h-12 w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-800 shadow-sm sm:h-14">
         <div className="h-full w-12 animate-pulse bg-neutral-500 sm:w-14"></div>
         <div className="mx-4 h-4 w-[50%] animate-pulse bg-neutral-600 sm:h-6"></div>
@@ -48,7 +54,10 @@ export const TimelyFallback = () => {
 export const Loading = () => {
   return (
     <>
-      <div className="h-auto w-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700">
+      <div
+        data-testid="home-fallback"
+        className="h-auto w-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700"
+      >
         <div className="h-auto w-full pt-4 sm:pt-2 xl:w-full">
           <div className="mx-4 -mb-0.5 h-5 w-44 animate-pulse rounded-md bg-neutral-700 sm:hidden"></div>
           <div className="mx-4 -mb-1 h-6 w-44 animate-pulse rounded-lg bg-neutral-700"></div>
