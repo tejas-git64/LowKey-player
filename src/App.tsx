@@ -22,30 +22,26 @@ const UserPlaylistPage = lazy(
 const NotFound = lazy(() => import("./pages/NotFound/NotFound"));
 const AlbumPage = lazy(() => import("./pages/Album/AlbumPage"));
 
-export default function App() {
-  const queryClient = new QueryClient();
-  const router = createBrowserRouter(
-    createRoutesFromElements(
-      <Route path="/" element={<Layout />}>
-        <Route index element={<Intro />} />
-        <Route path="/*" element={<NotFound />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/search" element={<Search />} />
-        <Route path="albums/:id" element={<AlbumPage />} />
-        <Route path="playlists/:id" element={<PlaylistPage />} />
-        <Route path="userplaylists/:id" element={<UserPlaylistPage />} />
-        <Route path="/library" element={<Library />} />
-        <Route path="/favorites" element={<Favorites />} />
-        <Route path="/artists/:id" element={<ArtistPage />} />
-      </Route>,
-    ),
-  );
+export const routes = createRoutesFromElements(
+  <Route path="/" element={<Layout />}>
+    <Route index element={<Intro />} />
+    <Route path="/*" element={<NotFound />} />
+    <Route path="/home" element={<Home />} />
+    <Route path="/search" element={<Search />} />
+    <Route path="/albums/:id" element={<AlbumPage />} />
+    <Route path="/playlists/:id" element={<PlaylistPage />} />
+    <Route path="/userplaylists/:id" element={<UserPlaylistPage />} />
+    <Route path="/library" element={<Library />} />
+    <Route path="/favorites" element={<Favorites />} />
+    <Route path="/artists/:id" element={<ArtistPage />} />
+  </Route>,
+);
+const router = createBrowserRouter(routes);
 
+export default function App() {
   return (
-    <>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
-    </>
+    <QueryClientProvider client={new QueryClient()}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   );
 }
