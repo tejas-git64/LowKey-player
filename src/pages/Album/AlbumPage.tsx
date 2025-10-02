@@ -1,4 +1,11 @@
-import { memo, Suspense, useEffect, useRef, useMemo } from "react";
+import {
+  memo,
+  Suspense,
+  useEffect,
+  useRef,
+  useMemo,
+  startTransition,
+} from "react";
 import { useParams } from "react-router-dom";
 import { getAlbumData } from "../../api/requests";
 import Song from "../../components/Song/Song";
@@ -27,13 +34,13 @@ import { cleanString } from "../../helpers/cleanString";
 export default function AlbumPage() {
   const { id } = useParams();
   const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
-  const nowPlaying = useBoundStore((state) => state.nowPlaying);
+  const queue = useBoundStore((state) => state.nowPlaying.queue);
   const albumEl = useRef<HTMLDivElement>(null);
 
   const { data } = useQuery({
     queryKey: ["albumPage", id],
     queryFn: () => id && getAlbumData(id),
-    enabled: true,
+    enabled: !!id,
     refetchOnReconnect: "always",
     _optimisticResults: "isRestoring",
     staleTime: 1000 * 60 * 10,
@@ -45,37 +52,36 @@ export default function AlbumPage() {
   }
 
   useEffect(() => {
-    nowPlaying.queue && setNowPlaying(nowPlaying.queue.songs[0]);
-  }, [nowPlaying.queue?.id]);
+    if (queue && queue.songs) setNowPlaying(queue.songs[0]);
+  }, [queue]);
 
   return (
-    <>
-      <Suspense fallback={<ListLoading />}>
-        <div
-          ref={albumEl}
-          className="home-fadeout h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth pb-20 duration-200 ease-in"
-        >
-          <div className="relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 p-3 sm:h-[223px] sm:px-4">
-            <div className="absolute right-2 top-2 h-auto w-auto">
-              <RouteNav />
-            </div>
-            <AlbumInfo
-              images={data?.image}
-              name={data?.name}
-              handleImageLoad={handleImageLoad}
-            />
-            <div className="flex h-auto w-full items-center justify-between sm:mt-2">
-              <AlbumCount
-                primaryArtists={data?.primaryArtists}
-                songCount={data?.songCount}
-              />
-              <AlbumControls album={data} />
-            </div>
+    <Suspense fallback={<ListLoading />}>
+      <div
+        data-testid="album-page"
+        ref={albumEl}
+        className="home-fadeout h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth pb-20 duration-200 ease-in"
+      >
+        <div className="relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 p-3 sm:h-[223px] sm:px-4">
+          <div className="absolute right-2 top-2 h-auto w-auto">
+            <RouteNav />
           </div>
-          <AlbumTracks songs={data?.songs} />
+          <AlbumInfo
+            images={data ? data.image : []}
+            name={data ? data.name : "Unknown Album"}
+            handleImageLoad={handleImageLoad}
+          />
+          <div className="flex h-auto w-full items-center justify-between sm:mt-2">
+            <AlbumCount
+              primaryArtists={data ? data.primaryArtists : "Unknown Artist"}
+              songCount={data ? data.songCount : 0}
+            />
+            <AlbumControls album={data} />
+          </div>
         </div>
-      </Suspense>
-    </>
+        <AlbumTracks songs={data ? data.songs : []} />
+      </div>
+    </Suspense>
   );
 }
 
@@ -97,10 +103,10 @@ const AlbumControls = memo(({ album }: { album: AlbumById }) => {
   const setQueue = useBoundStore((state) => state.setQueue);
   const inQueue = queue?.id === album?.id;
   const isAdded = useMemo(() => {
-    return libraryAlbums.some((a) => a.id === album?.id);
+    return libraryAlbums?.some((a) => a.id === album?.id);
   }, [libraryAlbums]);
   const isFavorite = useMemo(
-    () => albums.some((a: AlbumById) => a.id === album?.id),
+    () => albums?.some((a: AlbumById) => a.id === album?.id),
     [albums],
   );
   const isAlbumPlaying = isPlaying && queue?.id === album?.id;
@@ -145,7 +151,10 @@ const AlbumControls = memo(({ album }: { album: AlbumById }) => {
   }, [albums, libraryAlbums]);
 
   return (
-    <div className="mr-1 flex w-[170px] items-center justify-between sm:mr-0">
+    <div
+      data-testid="album-controls"
+      className="mr-1 flex w-[170px] items-center justify-between sm:mr-0"
+    >
       <button
         type="button"
         title="shuffle-button"
@@ -179,6 +188,7 @@ const AlbumControls = memo(({ album }: { album: AlbumById }) => {
         </svg>
       </button>
       <button
+        data-testid="add-btn"
         type="button"
         tabIndex={0}
         aria-label={isAdded ? "Remove from Library" : "Add to Library"}
@@ -186,6 +196,7 @@ const AlbumControls = memo(({ album }: { album: AlbumById }) => {
         className="border border-white bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
       >
         <img
+          data-testid="add-icon"
           src={isAdded ? addedToAlbum : addAlbum}
           alt={isAdded ? "Added to library" : "Add to library"}
           className="h-6 w-6"
@@ -193,6 +204,7 @@ const AlbumControls = memo(({ album }: { album: AlbumById }) => {
         />
       </button>
       <button
+        data-testid="album-favorite-btn"
         type="button"
         tabIndex={0}
         aria-label={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
@@ -200,6 +212,7 @@ const AlbumControls = memo(({ album }: { album: AlbumById }) => {
         className="border border-white bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
       >
         <img
+          data-testid="favorite-icon"
           src={isFavorite ? favorited : favorite}
           alt={isFavorite ? "Favorited" : "Favorite"}
           className="h-7 w-7"
@@ -207,6 +220,7 @@ const AlbumControls = memo(({ album }: { album: AlbumById }) => {
         />
       </button>
       <button
+        data-testid="album-playback"
         type="button"
         tabIndex={album ? 0 : -1}
         aria-label={isAlbumPlaying ? "Pause album" : "Play album"}
@@ -215,6 +229,7 @@ const AlbumControls = memo(({ album }: { album: AlbumById }) => {
           handleCollectionPlayback(
             e,
             album,
+            startTransition,
             isPlaying,
             inQueue,
             setQueue,
@@ -226,6 +241,7 @@ const AlbumControls = memo(({ album }: { album: AlbumById }) => {
         disabled={!album}
       >
         <img
+          data-testid="album-playback-icon"
           src={isAlbumPlaying ? pause : play}
           alt={isAlbumPlaying ? "Pause" : "Play"}
           className="h-7 w-7"
@@ -264,11 +280,15 @@ const AlbumInfo = memo(
     }, []);
 
     return (
-      <div className="flex h-auto w-full flex-col items-start justify-start pt-1 sm:flex-row sm:items-center">
+      <div
+        data-testid="album-info"
+        className="flex h-auto w-full flex-col items-start justify-start pt-1 sm:flex-row sm:items-center"
+      >
         <img
           ref={imgEl}
           src={getAlbumImage()}
           alt="img"
+          data-testid="album-info-image"
           className="image-fadeout mr-4 h-[150px] w-[150px]"
           style={{
             boxShadow: "5px 5px 0px #000",
@@ -299,9 +319,16 @@ const AlbumCount = memo(
     primaryArtists: string;
   }) => {
     return (
-      <div className="flex h-full w-[50%] flex-col items-start justify-center sm:w-[320px] sm:justify-start">
-        <p className="text-sm text-neutral-400">{songCount} Tracks</p>
-        <p className="mr-2 text-sm text-neutral-400">{primaryArtists}</p>
+      <div
+        data-testid="album-count"
+        className="flex h-full w-[50%] flex-col items-start justify-center sm:w-[320px] sm:justify-start"
+      >
+        {Number(songCount) > 0 && (
+          <p className="text-sm text-neutral-400">{songCount} Tracks</p>
+        )}
+        {Number(primaryArtists) > 0 && (
+          <p className="mr-2 text-sm text-neutral-400">{primaryArtists}</p>
+        )}
       </div>
     );
   },
