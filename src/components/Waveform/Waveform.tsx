@@ -1,7 +1,7 @@
 import { RefObject, useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
-import secondsToHMS from "../../utils/utils";
 import { useBoundStore } from "../../store/store";
+import secondsToHMS from "../../helpers/secondsToHMS";
 
 type WaveformType = {
   waveform: {
@@ -79,70 +79,71 @@ const Waveform = ({
   }, [isMobileWidth]);
 
   useEffect(() => {
-    if (!waveSurferRef.current) return;
-    const isNewTrack = lastTrackRef.current !== id;
+    if (waveSurferRef.current) {
+      const isNewTrack = lastTrackRef.current !== id;
 
-    if (!isNewTrack) {
-      lastTimeRef.current = waveSurferRef.current.getCurrentTime();
-    } else {
-      lastTimeRef.current = 0;
-    }
-    if (!audioUrl.includes("https")) {
-      const secureUrl = audioUrl.replace("http", "https");
-      waveSurferRef.current.load(secureUrl);
-    } else {
-      waveSurferRef.current.load(audioUrl);
-    }
-
-    const handleReady = () => {
-      if (isNewTrack) {
-        const storedStr = localStorage.getItem("last-waveform");
-        const stored = storedStr
-          ? (JSON.parse(storedStr) as WaveformType["localSave"])
-          : null;
-        if (stored && stored.url === audioUrl) {
-          waveSurferRef.current?.seekTo(stored.time / (stored.duration || 1));
+      if (!isNewTrack) {
+        lastTimeRef.current = waveSurferRef.current.getCurrentTime();
+      } else {
+        lastTimeRef.current = 0;
+      }
+      if (audioUrl) {
+        if (!audioUrl.startsWith("https")) {
+          const secureUrl = audioUrl.replace("http", "https");
+          waveSurferRef.current.load(secureUrl);
+        } else {
+          waveSurferRef.current.load(audioUrl);
         }
-      } else if (lastTimeRef.current > 0) {
-        waveSurferRef.current?.seekTo(
-          lastTimeRef.current / (trackDuration || 1),
+      }
+      const handleReady = () => {
+        if (isNewTrack) {
+          const storedStr = localStorage.getItem("last-waveform");
+          const stored = storedStr
+            ? (JSON.parse(storedStr) as WaveformType["localSave"])
+            : null;
+          if (stored && stored.url === audioUrl) {
+            waveSurferRef.current?.seekTo(stored.time / (stored.duration || 1));
+          }
+        } else if (lastTimeRef.current > 0) {
+          waveSurferRef.current?.seekTo(
+            lastTimeRef.current / (trackDuration || 1),
+          );
+        }
+        isPlaying
+          ? waveSurferRef.current?.play()
+          : waveSurferRef.current?.pause();
+      };
+      waveSurferRef.current.on("ready", handleReady);
+      waveSurferRef.current.on("timeupdate", () => {
+        setCurrentTime(
+          Math.floor(waveSurferRef.current?.getCurrentTime() as number) || 0,
         );
-      }
-      isPlaying
-        ? waveSurferRef.current?.play()
-        : waveSurferRef.current?.pause();
-    };
-    waveSurferRef.current.on("ready", handleReady);
-    waveSurferRef.current.on("timeupdate", () => {
-      setCurrentTime(
-        Math.floor(waveSurferRef.current?.getCurrentTime() as number) || 0,
-      );
-    });
-    lastTrackRef.current = id;
+      });
+      lastTrackRef.current = id;
 
-    const saveToLocalStorage = () => {
-      localStorage.setItem(
-        "last-waveform",
-        JSON.stringify({
-          url: audioUrl,
-          time: waveSurferRef.current?.getCurrentTime() || 0,
-          duration: trackDuration || "0",
-        }),
-      );
-    };
-    window.addEventListener("beforeunload", saveToLocalStorage);
-    return () => {
-      if (waveSurferRef.current) {
-        waveSurferRef.current.un("ready", handleReady);
-      }
-      window.removeEventListener("beforeunload", saveToLocalStorage);
-    };
+      const saveToLocalStorage = () => {
+        localStorage.setItem(
+          "last-waveform",
+          JSON.stringify({
+            url: audioUrl,
+            time: waveSurferRef.current?.getCurrentTime() || 0,
+            duration: trackDuration || "0",
+          }),
+        );
+      };
+      window.addEventListener("beforeunload", saveToLocalStorage);
+      return () => {
+        waveSurferRef.current?.un("ready", handleReady);
+        window.removeEventListener("beforeunload", saveToLocalStorage);
+      };
+    }
   }, [audioUrl, id, trackDuration]);
 
   useEffect(() => {
-    if (!waveSurferRef.current) return;
-    if (isPlaying) waveSurferRef.current.play();
-    else waveSurferRef.current.pause();
+    if (waveSurferRef.current) {
+      if (isPlaying) waveSurferRef.current.play();
+      else waveSurferRef.current.pause();
+    }
   }, [isPlaying]);
 
   useEffect(() => {
@@ -162,7 +163,6 @@ const Waveform = ({
           continuePlayback();
         }
       } else {
-        console.log(songIndex);
         if (
           songIndex !== -1 &&
           queueSongs &&
@@ -186,14 +186,21 @@ const Waveform = ({
   }, [isReplay, queue?.songs, songIndex]);
 
   return (
-    <div className="my-10 flex w-full flex-shrink-0 items-center justify-center space-x-3 pb-0.5 sm:mb-6">
+    <div
+      data-testid="waveform-container"
+      className="my-10 flex w-full flex-shrink-0 items-center justify-center space-x-3 pb-0.5 sm:mb-6"
+    >
       <Progress progress={currentTime} />
       <div
         ref={waveformRef}
         id="wave"
+        data-testid="waveform"
         className="flex w-[70%] items-center justify-center overflow-hidden sm:w-[185px] lg:w-[300px] xl:max-w-[400px] 2xl:w-[500px]"
       />
-      <p className="h-full flex-shrink-0 text-center text-xs text-white sm:text-[10px]">
+      <p
+        data-testid="duration"
+        className="h-full flex-shrink-0 text-center text-xs text-white sm:text-[10px]"
+      >
         {trackDuration ? secondsToHMS(Number(trackDuration)) : "--:--"}
       </p>
     </div>
