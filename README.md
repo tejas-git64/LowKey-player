@@ -2,7 +2,7 @@
 
 _A web based music player inspired by Spotify and SoundCloud._
 
-![Lowkey banner](/public/lowkey-banner.webp)
+<img width="1601" height="996" alt="Screenshot 2025-10-02 215415" src="https://github.com/user-attachments/assets/d5240017-bdba-45eb-9d06-8ceb521638c8" />
 
 Visit it live, [here](https://lowkeymusic-v2.netlify.app)
 
