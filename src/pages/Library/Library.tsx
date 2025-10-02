@@ -4,6 +4,7 @@ import { useBoundStore } from "../../store/store";
 import {
   AlbumById,
   ArtistInSong,
+  Image,
   LocalLibrary,
   PlaylistById,
   UserPlaylist,
@@ -17,13 +18,19 @@ import playlistIcon from "../../assets/svgs/playlist-icon.svg";
 import { useNavigate } from "react-router-dom";
 import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
 import { FollowButton } from "../../components/FollowButton/FollowButton";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import {
+  memo,
+  startTransition,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
 import { animateScreen } from "../../helpers/animateScreen";
 
 export default function Library() {
   const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
-  const setCreationMenu = useBoundStore((state) => state.setCreationMenu);
   const userPlaylists = useBoundStore((state) => state.library.userPlaylists);
   const setUserPlaylist = useBoundStore((state) => state.setUserPlaylist);
   const setLibraryPlaylist = useBoundStore((state) => state.setLibraryPlaylist);
@@ -40,13 +47,14 @@ export default function Library() {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) {
     e.stopPropagation();
-    setCreationMenu(true);
     setRevealCreation(true);
   }
 
   function fadeOutNavigate(str: string) {
-    libElRef.current?.classList.add("home-fadeout");
-    libElRef.current?.classList.remove("home-fadein");
+    if (libElRef.current) {
+      libElRef.current.classList.add("home-fadeout");
+      libElRef.current.classList.remove("home-fadein");
+    }
     setTimeout(() => {
       navigate(str);
     }, 150);
@@ -83,6 +91,7 @@ export default function Library() {
 
   return (
     <div
+      data-testid="library-page"
       ref={libElRef}
       className="home-fadeout relative max-h-fit min-h-full w-full scroll-smooth bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 pb-56 duration-200 ease-in"
     >
@@ -94,6 +103,7 @@ export default function Library() {
         <button
           type="button"
           tabIndex={0}
+          data-testid="playlist-btn"
           onClick={(e) => createNewPlaylist(e)}
           className="h-auto w-auto rounded-sm bg-neutral-400 px-3 py-1.5 text-sm font-semibold text-black transition-colors ease-in hover:bg-neutral-200 focus-visible:bg-white"
         >
@@ -104,9 +114,15 @@ export default function Library() {
       playlists.length > 0 ||
       albums.length > 0 ||
       followings.length > 0 ? (
-        <div className="h-auto w-full overflow-x-hidden overflow-y-scroll px-3">
+        <div
+          data-testid="library-container"
+          className="h-auto w-full overflow-x-hidden overflow-y-scroll px-3"
+        >
           {userPlaylists && userPlaylists.length > 0 && (
-            <div className="mb-3 flex h-full max-h-max w-full items-start justify-start">
+            <div
+              data-testid="customplaylist-container"
+              className="mb-3 flex h-full max-h-max w-full items-start justify-start"
+            >
               {userPlaylists && (
                 <CustomPlaylists
                   userPlaylists={userPlaylists}
@@ -116,7 +132,10 @@ export default function Library() {
             </div>
           )}
           {playlists && playlists.length > 0 && (
-            <div className="mb-3 h-[215px] w-full overflow-x-hidden">
+            <div
+              data-testid="playlists-container"
+              className="mb-3 h-[215px] w-full overflow-x-hidden"
+            >
               <LibraryPlaylists
                 playlists={playlists}
                 fadeOutNavigate={fadeOutNavigate}
@@ -124,7 +143,10 @@ export default function Library() {
             </div>
           )}
           {albums && albums.length > 0 && (
-            <div className="mb-3 h-[215px] w-full overflow-x-hidden">
+            <div
+              data-testid="albums-container"
+              className="mb-3 h-[215px] w-full overflow-x-hidden"
+            >
               <LibraryAlbums
                 albums={albums}
                 fadeOutNavigate={fadeOutNavigate}
@@ -132,20 +154,30 @@ export default function Library() {
             </div>
           )}
           {followings && (
-            <div className="mt-1 h-auto w-full">
+            <div
+              data-testid="followings-container"
+              className="mt-1 h-auto w-full"
+            >
               <h2 className="text-md w-full font-semibold text-white">
                 Followings
               </h2>
               <div className="mt-3 h-auto w-full overflow-hidden">
                 {followings.map((following: ArtistInSong) => (
-                  <Following key={following.id} {...following} />
+                  <Following
+                    key={following.id}
+                    {...following}
+                    fadeOutNavigate={fadeOutNavigate}
+                  />
                 ))}
               </div>
             </div>
           )}
         </div>
       ) : (
-        <div className="flex h-[70dvh] w-full flex-col items-center justify-center">
+        <div
+          data-testid="empty-message"
+          className="flex h-[70dvh] w-full flex-col items-center justify-center"
+        >
           <img
             src={playlistIcon}
             alt="playlist-icon"
@@ -160,37 +192,50 @@ export default function Library() {
   );
 }
 
-const Following = memo(({ id, name, image, fadeOutNavigate }: any) => {
-  return (
-    <div
-      onClick={() => fadeOutNavigate(`/artists/${id}`)}
-      className="flex h-[50px] w-full items-center justify-between bg-inherit px-1.5 transition-colors hover:bg-neutral-800"
-    >
-      <div className="flex h-full w-[80%] items-center justify-start">
-        <img
-          src={image[0]?.url || artistfallback}
-          alt="artist"
-          loading="eager"
-          fetchPriority="high"
-          className="mr-4 h-[40px] w-[40px] rounded-sm"
+const Following = memo(
+  ({
+    id,
+    name,
+    image,
+    fadeOutNavigate,
+  }: {
+    id: string;
+    name: string;
+    image: Image[];
+    fadeOutNavigate: (str: string) => void;
+  }) => {
+    return (
+      <div
+        data-testid="following"
+        onClick={() => fadeOutNavigate(`/artists/${id}`)}
+        className="flex h-[50px] w-full items-center justify-between bg-inherit px-1.5 transition-colors hover:bg-neutral-800"
+      >
+        <div className="flex h-full w-[80%] items-center justify-start">
+          <img
+            src={image[0]?.url || artistfallback}
+            alt="artist"
+            loading="eager"
+            fetchPriority="high"
+            className="mr-4 h-[40px] w-[40px] rounded-sm"
+          />
+          <p className="text-sm font-medium text-white">
+            {name || "Unknown Artist"}
+          </p>
+        </div>
+        <FollowButton
+          artist={{
+            id: id,
+            name: name,
+            role: "",
+            image: image,
+            type: "",
+            url: "",
+          }}
         />
-        <p className="text-sm font-medium text-white">
-          {name || "Unknown Artist"}
-        </p>
       </div>
-      <FollowButton
-        artist={{
-          id: id,
-          name: name,
-          role: "",
-          image: image,
-          type: "",
-          url: "",
-        }}
-      />
-    </div>
-  );
-});
+    );
+  },
+);
 
 const CustomPlaylists = memo(
   ({
@@ -215,13 +260,17 @@ const CustomPlaylists = memo(
 
     return (
       <>
-        <div className="flex h-full w-full flex-col items-start justify-start">
+        <div
+          data-test="custom-playlists"
+          className="flex h-full w-full flex-col items-start justify-start"
+        >
           <h2 className="mb-3 w-auto text-base font-semibold text-white">
             Your playlists
           </h2>
           <div className="flex h-auto w-full items-start justify-start overflow-x-scroll">
             {userPlaylists?.map((playlist) => (
               <div
+                data-testid="userplaylist"
                 onClick={() => fadeOutNavigate(`/userplaylists/${playlist.id}`)}
                 key={playlist.id}
                 className="group relative h-fit w-fit cursor-pointer"
@@ -246,6 +295,7 @@ const CustomPlaylists = memo(
                   {playlist.songs.length > 0 && (
                     <button
                       type="button"
+                      data-testid="custom-playlist-btn"
                       className="mx-2 rounded-full bg-emerald-400 p-2"
                       onClick={(e) =>
                         handleCollectionPlayback(
@@ -256,6 +306,7 @@ const CustomPlaylists = memo(
                             name: playlist.name,
                             songs: playlist.songs,
                           },
+                          startTransition,
                           isPlaying,
                           inQueue,
                           setQueue,
@@ -277,6 +328,7 @@ const CustomPlaylists = memo(
                   )}
                   <button
                     type="button"
+                    data-testid="remove-customplaylist-btn"
                     className="rounded-full bg-white p-0"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -325,6 +377,7 @@ const LibraryAlbums = memo(
           {albums?.map((album: AlbumById, i) => (
             <div
               key={album.id}
+              data-testid="album-container"
               onClick={() => fadeOutNavigate(`/albums/${album.id}`)}
               className="group relative h-fit w-fit cursor-pointer"
             >
@@ -346,11 +399,13 @@ const LibraryAlbums = memo(
               <div className="absolute left-0 top-0 -ml-2 flex h-[150px] w-full items-center justify-center bg-transparent opacity-0 transition-all ease-in hover:opacity-100">
                 <button
                   type="button"
+                  data-testid="album-play-btn"
                   className="rounded-full bg-emerald-400 p-2"
                   onClick={(e) =>
                     handleCollectionPlayback(
                       e,
                       album,
+                      startTransition,
                       isPlaying,
                       inQueue,
                       setQueue,
@@ -367,6 +422,7 @@ const LibraryAlbums = memo(
                 </button>
                 <button
                   type="button"
+                  data-testid="album-remove-btn"
                   className="ml-2 rounded-full bg-white p-0"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -419,6 +475,7 @@ const LibraryPlaylists = memo(
           {playlists?.map((playlist, i) => (
             <div
               key={playlist.id}
+              data-testid="playlist-container"
               onClick={() => fadeOutNavigate(`/playlists/${playlist.id}`)}
               className="group relative h-fit w-fit cursor-pointer"
             >
@@ -440,11 +497,13 @@ const LibraryPlaylists = memo(
               <div className="absolute left-0 top-0 -ml-2 flex h-[150px] w-full items-center justify-center opacity-0 transition-all ease-in group-hover:opacity-100">
                 <button
                   type="button"
+                  data-testid="playlist-play-btn"
                   className="rounded-full bg-emerald-400 p-2"
                   onClick={(e) =>
                     handleCollectionPlayback(
                       e,
                       playlist,
+                      startTransition,
                       isPlaying,
                       inQueue,
                       setQueue,
@@ -461,6 +520,7 @@ const LibraryPlaylists = memo(
                 </button>
                 <button
                   type="button"
+                  data-testid="playlist-remove-btn"
                   className="ml-2 mt-1 rounded-full bg-white p-0"
                   onClick={(e) => {
                     e.stopPropagation();
