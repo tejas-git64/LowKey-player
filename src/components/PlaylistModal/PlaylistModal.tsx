@@ -37,7 +37,7 @@ export default function PlaylistModal({
       if (revealCreation) {
         ref.current.style.overflow = "hidden";
       } else {
-        ref.current.style.overflow = "";
+        ref.current.style.overflow = "auto";
       }
     }
   }, [revealCreation]);
@@ -57,8 +57,9 @@ export default function PlaylistModal({
   return (
     <>
       <div
+        data-testid="playlist-modal"
         className={` ${
-          !revealCreation ? "hidden" : "flex"
+          revealCreation ? "flex" : "hidden"
         } absolute inset-0 z-10 h-full w-full flex-col items-center justify-center overflow-hidden bg-[#00000098]`}
       >
         <div className="-mt-14 flex h-auto w-[90%] flex-col items-start justify-between rounded-sm bg-neutral-800 p-3 px-4 sm:w-[600px]">
@@ -69,6 +70,7 @@ export default function PlaylistModal({
             <button
               type="button"
               tabIndex={0}
+              data-testid="close-btn"
               onClick={() => {
                 setName("");
                 setRevealCreation(false);
@@ -93,7 +95,7 @@ export default function PlaylistModal({
               value={name}
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
+                if (e.key === "Enter") {
                   createNew();
                 }
               }}
@@ -104,6 +106,7 @@ export default function PlaylistModal({
             <button
               type="button"
               tabIndex={0}
+              data-testid="create-playlist-btn"
               onClick={createNew}
               className="h-full whitespace-nowrap rounded-sm bg-neutral-400 px-3 text-sm font-semibold text-black transition-all ease-out hover:bg-white focus-visible:bg-white"
               aria-label="Create new playlist"
@@ -117,11 +120,15 @@ export default function PlaylistModal({
             </button>
           </div>
           <div
+            data-testid="userplaylists-container"
             className={`max-h-auto h-auto w-full flex-col items-center justify-center ${
               creationTrack ? "block" : "hidden"
             }`}
           >
-            <ul className="my-4 min-h-48 w-full list-none flex-col overflow-y-scroll rounded-sm border border-black bg-neutral-950">
+            <ul
+              data-testid="userplaylists"
+              className="my-4 min-h-48 w-full list-none flex-col overflow-y-scroll rounded-sm border border-black bg-neutral-950"
+            >
               {userPlaylists.length > 0 ? (
                 userPlaylists.map((playlist: UserPlaylist) => (
                   <CustomPlaylist
@@ -187,25 +194,26 @@ const CustomPlaylist = memo(
     }, [userPlaylists]);
 
     return (
-      <>
-        <li className="flex h-12 w-full items-center justify-start border-y border-neutral-950 bg-neutral-800 px-4">
-          <label
-            htmlFor={`new-playlist-${id}`}
-            className="mr-4 line-clamp-1 w-full cursor-pointer overflow-hidden text-ellipsis py-2 text-base font-semibold text-white focus-visible:bg-neutral-400"
-          >
-            {name}
-          </label>
-          <input
-            type="checkbox"
-            tabIndex={0}
-            name={`new-playlist-${id}`}
-            id={`new-playlist-${id}`}
-            checked={isInPlaylist}
-            onChange={(e) => setPlaylist(e)}
-            className="mx-1 h-[18px] w-[18px] cursor-pointer accent-emerald-500"
-          />
-        </li>
-      </>
+      <li
+        data-testid="custom playlist"
+        className="flex h-12 w-full items-center justify-start border-y border-neutral-950 bg-neutral-800 px-4"
+      >
+        <label
+          htmlFor={`new-playlist-${id}`}
+          className="mr-4 line-clamp-1 w-full cursor-pointer overflow-hidden text-ellipsis py-2 text-base font-semibold text-white focus-visible:bg-neutral-400"
+        >
+          {name}
+        </label>
+        <input
+          type="checkbox"
+          tabIndex={0}
+          name={`new-playlist-${id}`}
+          id={`new-playlist-${id}`}
+          checked={isInPlaylist}
+          onChange={(e) => setPlaylist(e)}
+          className="mx-1 h-[18px] w-[18px] cursor-pointer accent-emerald-500"
+        />
+      </li>
     );
   },
 );
