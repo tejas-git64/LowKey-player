@@ -6,14 +6,10 @@ import { defaultSearchData } from "../utils/utils";
 export async function getWidgetData() {
   try {
     const res = await fetch(
-      `https://lowkey-backend.vercel.app/api/playlists?id=47599074`,
-      {
-        method: "GET",
-        mode: "cors",
-      },
+      `https://lowkey-backend.vercel.app/api/playlists?id=1265154514`,
     );
-    const data = await res.json();
-    return data.data;
+    const { data } = await res.json();
+    return data || null;
   } catch (err) {
     console.error(err);
   }
@@ -49,8 +45,8 @@ export const getPlaylist = async (genre: string) => {
     const res = await fetch(
       `https://lowkey-backend.vercel.app/api/search/playlists?query=${genre}`,
     );
-    const playlist = await res.json();
-    return playlist.data.results;
+    const { data } = await res.json();
+    return data?.results || null;
   } catch (err) {
     console.error(err);
   }
@@ -62,8 +58,8 @@ export const getPlaylistData = async (id: string) => {
     const res = await fetch(
       `https://lowkey-backend.vercel.app/api/playlists?id=${id}`,
     );
-    const data = await res.json();
-    return data.data;
+    const { data } = await res.json();
+    return data || null;
   } catch (err) {
     console.error(err);
   }
@@ -74,8 +70,8 @@ export const getAlbumData = async (id: string) => {
     const res = await fetch(
       `https://lowkey-backend.vercel.app/api/albums?id=${id}`,
     );
-    const data = await res.json();
-    return data.data;
+    const { data } = await res.json();
+    return data || null;
   } catch (err) {
     console.error(err);
   }
@@ -83,18 +79,22 @@ export const getAlbumData = async (id: string) => {
 
 //search query
 export const getSearchResults = async (query: string) => {
-  const res = await fetch(
-    `https://lowkey-backend.vercel.app/api/search?query=${query}`,
-  );
-  const searchresults = await res.json();
   if (query !== "" && query.length >= 2) {
-    if (res.ok && searchresults.data) {
-      useBoundStore.getState().setSearch(searchresults.data);
-    } else {
-      useBoundStore.getState().setSearch(defaultSearchData);
+    try {
+      const res = await fetch(
+        `https://lowkey-backend.vercel.app/api/search?query=${query}`,
+      );
+      if (res.ok) {
+        const data = await res.json();
+        if (data.data) {
+          useBoundStore.getState().setSearch(data.data);
+        } else {
+          useBoundStore.getState().setSearch(defaultSearchData);
+        }
+      }
+    } catch (err) {
+      console.error(err);
     }
-  } else {
-    useBoundStore.getState().setSearch(defaultSearchData);
   }
 };
 
@@ -104,8 +104,8 @@ export const getArtistDetails = async (id: string) => {
     const res = await fetch(
       `https://lowkey-backend.vercel.app/api/artists/${id}`,
     );
-    const data = await res.json();
-    return data.data;
+    const { data } = await res.json();
+    return data || null;
   } catch (err) {
     console.error(err);
   }
@@ -117,8 +117,8 @@ export const getArtistAlbums = async (id: string) => {
     const res = await fetch(
       `https://lowkey-backend.vercel.app/api/artists/${id}/albums?page=0`,
     );
-    const data = await res.json();
-    return data.data.albums;
+    const { data } = await res.json();
+    return data?.albums || null;
   } catch (err) {
     console.error(err);
   }
@@ -130,8 +130,8 @@ export const getArtistSongs = async (id: string) => {
     const res = await fetch(
       `https://lowkey-backend.vercel.app/api/artists/${id}/songs?page=0`,
     );
-    const data = await res.json();
-    return data.data.songs;
+    const { data } = await res.json();
+    return data?.songs || null;
   } catch (err) {
     console.error(err);
   }
