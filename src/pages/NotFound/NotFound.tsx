@@ -52,6 +52,7 @@ export default function NotFound() {
   return (
     <>
       <div
+        data-testid="notfound"
         ref={nfEl}
         style={{
           backgroundPosition: "center",
