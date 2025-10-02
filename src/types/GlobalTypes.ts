@@ -8,6 +8,13 @@ export type Image = {
   url: string | undefined;
 };
 
+export type TimelyDataType = {
+  viral: PlaylistById | null;
+  weekly: PlaylistById | null;
+  monthly: PlaylistById | null;
+  latest: PlaylistById | null;
+};
+
 export type ArtistInSong = {
   id: string;
   name: string;
@@ -62,19 +69,24 @@ export type ArtistType = {
   id: string;
   name: string;
   url: string;
-  image: Image[];
-  followerCount: string;
+  type: string;
+  followerCount: string | null;
   fanCount: string;
-  isVerified: false;
-  dominantLanguage: string;
-  dominantType: string;
-  bio: [];
-  dob: string;
-  fb: string;
-  twitter: string;
-  wiki: string;
+  isVerified: false | null;
+  dominantLanguage: string | null;
+  dominantType: string | null;
+  bio: null;
+  dob: string | null;
+  fb: string | null;
+  twitter: string | null;
+  wiki: string | null;
   availableLanguages: string[];
-  isRadioPresent: boolean;
+  isRadioPresent: boolean | null;
+  image: Image[];
+  topSongs: [] | unknown;
+  topAlbums: [] | unknown;
+  singles: [] | unknown;
+  similarArtists: [] | unknown;
 };
 
 export type GlobalHome = {
@@ -112,8 +124,8 @@ export type AlbumById = {
   url: string;
   primaryArtistsId: string;
   primaryArtists: string;
-  featuredArtists: [];
-  artists: [];
+  featuredArtists: string[];
+  artists: string[];
   image: Image[];
   songs: TrackDetails[];
 };
@@ -260,12 +272,12 @@ export type TrackDetails = {
   type: string;
   year: string;
   releaseDate: string;
-  duration: string;
+  duration: string | number;
   label: string;
-  explicitContent: number;
+  explicitContent: number | boolean;
   playCount: number;
   language: string;
-  hasLyrics: string;
+  hasLyrics: string | boolean;
   lyricsId: any;
   url: string;
   copyright: string;
