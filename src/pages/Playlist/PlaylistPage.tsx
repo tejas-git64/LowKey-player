@@ -1,4 +1,11 @@
-import { memo, Suspense, useEffect, useMemo, useRef } from "react";
+import {
+  memo,
+  startTransition,
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 import { useParams } from "react-router-dom";
 import { getPlaylistData } from "../../api/requests";
 import { useBoundStore } from "../../store/store";
@@ -33,7 +40,7 @@ export default function PlaylistPage() {
   const { data } = useQuery({
     queryKey: ["playlistPage", id],
     queryFn: () => id && getPlaylistData(id),
-    enabled: true,
+    enabled: !!id,
     refetchOnReconnect: "always",
     _optimisticResults: "isRestoring",
     staleTime: 1000 * 60 * 10,
@@ -52,6 +59,7 @@ export default function PlaylistPage() {
     <>
       <Suspense fallback={<ListLoading />}>
         <div
+          data-testid="playlist-page"
           ref={playEl}
           className="home-fadeout h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth pb-20 duration-200 ease-in"
         >
@@ -100,7 +108,7 @@ const PlaylistControls = memo(({ playlist }: { playlist: PlaylistById }) => {
   );
   const setQueue = useBoundStore((state) => state.setQueue);
   const isAdded = useMemo(
-    () => libraryPlaylists.some((playlist) => playlist?.id === playlist?.id),
+    () => libraryPlaylists.some((p) => p?.id === playlist?.id),
     [libraryPlaylists],
   );
   const isFavorite = useMemo(
@@ -153,7 +161,10 @@ const PlaylistControls = memo(({ playlist }: { playlist: PlaylistById }) => {
   }, [playlists, libraryPlaylists]);
 
   return (
-    <div className="mr-1 flex w-[170px] items-center justify-between sm:mr-0">
+    <div
+      data-testid="playlist-controls"
+      className="mr-1 flex w-[170px] items-center justify-between sm:mr-0"
+    >
       <button
         type="button"
         title="shuffle-button"
@@ -187,6 +198,7 @@ const PlaylistControls = memo(({ playlist }: { playlist: PlaylistById }) => {
         </svg>
       </button>
       <button
+        data-testid="add-btn"
         type="button"
         tabIndex={0}
         aria-label={isAdded ? "Remove from Library" : "Add to Library"}
@@ -194,6 +206,7 @@ const PlaylistControls = memo(({ playlist }: { playlist: PlaylistById }) => {
         className="border border-white bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
       >
         <img
+          data-testid="add-icon"
           src={isAdded ? addedToPlaylist : addPlaylist}
           alt={isAdded ? "Added to library" : "Add to library"}
           className="h-6 w-6"
@@ -201,6 +214,7 @@ const PlaylistControls = memo(({ playlist }: { playlist: PlaylistById }) => {
         />
       </button>
       <button
+        data-testid="playlist-favorite-btn"
         type="button"
         tabIndex={0}
         aria-label={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
@@ -208,6 +222,7 @@ const PlaylistControls = memo(({ playlist }: { playlist: PlaylistById }) => {
         className="border border-white bg-transparent p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
       >
         <img
+          data-testid="favorite-icon"
           src={isFavorite ? favorited : favorite}
           alt={isFavorite ? "Favorited" : "Favorite"}
           className="h-[28px] w-[28px]"
@@ -216,6 +231,7 @@ const PlaylistControls = memo(({ playlist }: { playlist: PlaylistById }) => {
       </button>
       <button
         type="button"
+        data-testid="playlist-playback"
         tabIndex={playlist ? 0 : -1}
         aria-label={isPlaylistPlaying ? "Pause playlist" : "Play playlist"}
         onClick={(e) =>
@@ -223,6 +239,7 @@ const PlaylistControls = memo(({ playlist }: { playlist: PlaylistById }) => {
           handleCollectionPlayback(
             e,
             playlist,
+            startTransition,
             isPlaying,
             inQueue,
             setQueue,
@@ -234,6 +251,7 @@ const PlaylistControls = memo(({ playlist }: { playlist: PlaylistById }) => {
         disabled={!playlist}
       >
         <img
+          data-testid="playlist-playback-icon"
           src={isPlaylistPlaying ? pause : play}
           alt={isPlaylistPlaying ? "Pause" : "Play"}
           className="h-7 w-7"
@@ -264,8 +282,12 @@ const PlaylistInfo = memo(
     };
 
     return (
-      <div className="flex h-auto w-full flex-col items-start justify-start pt-1 sm:flex-row sm:items-center">
+      <div
+        data-testid="playlist-info"
+        className="flex h-auto w-full flex-col items-start justify-start pt-1 sm:flex-row sm:items-center"
+      >
         <img
+          data-testid="playlist-info-image"
           src={getPlaylistImage()}
           alt="img"
           className="mr-4 h-[150px] w-[150px]"
@@ -295,11 +317,18 @@ const PlaylistCount = memo(
     songCount: string;
   }) => {
     return (
-      <div className="flex h-full w-[50%] flex-col items-start justify-center sm:w-[320px] sm:justify-start">
-        <p className="mr-2 text-sm text-neutral-400">
-          {followerCount} Followers
-        </p>
-        <p className="text-sm text-neutral-400">{songCount} Tracks</p>
+      <div
+        data-testid="playlist-count"
+        className="flex h-full w-[50%] flex-col items-start justify-center sm:w-[320px] sm:justify-start"
+      >
+        {Number(followerCount) > 0 && (
+          <p className="mr-2 text-sm text-neutral-400">
+            {followerCount} Followers
+          </p>
+        )}
+        {Number(songCount) > 0 && (
+          <p className="text-sm text-neutral-400">{songCount} Tracks</p>
+        )}
       </div>
     );
   },
