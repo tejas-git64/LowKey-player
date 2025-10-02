@@ -16,7 +16,7 @@ export type StoreType = {
   greeting: string;
   changeGreeting: (str: string) => void;
   recents: {
-    history: TrackDetails[] | null;
+    history: TrackDetails[];
     activity: string[];
   };
   search: SearchType;
@@ -40,7 +40,6 @@ export type StoreType = {
   };
   isShuffling: boolean;
   isReplay: boolean;
-  isCreationMenu: boolean;
   revealCreation: boolean;
   creationTrack: TrackDetails | null;
   notifications: boolean;
@@ -64,7 +63,6 @@ export type StoreType = {
   removeFollowing: (id: string) => void;
   removeLibraryAlbum: (id: string) => void;
   removeLibraryPlaylist: (id: string) => void;
-  setCreationMenu: (show: boolean) => void;
   setToUserPlaylist: (song: TrackDetails, id: number) => void;
   setUserPlaylist: (playlist: UserPlaylist) => void;
   removeFromUserPlaylist: (id: number, songid: string) => void;
@@ -91,19 +89,21 @@ export const useBoundStore = create<StoreType>()(
       setHistory: (data: TrackDetails) =>
         set(
           produce((state) => {
-            const existingIndex = state.recents.history?.findIndex(
+            const existingIndex = state.recents.history.findIndex(
               (song: TrackDetails) => song.id === data?.id,
             );
             if (existingIndex !== -1) {
-              state.recents.history?.splice(existingIndex, 1);
+              state.recents.history.splice(existingIndex, 1);
             }
-            state.recents.history?.unshift(data);
+            state.recents.history.unshift(data);
           }),
         ),
       setActivity: (message: string) =>
         set(
           produce((state) => {
-            state.recents.activity.unshift(message);
+            state.recents.activity = Array.from(
+              new Set([message, ...state.recents.activity]),
+            );
           }),
         ),
       search: {
@@ -125,9 +125,12 @@ export const useBoundStore = create<StoreType>()(
         queue: null,
       },
       setNowPlaying: (data: TrackDetails | null) =>
-        set((state) => {
-          state.nowPlaying.track = data;
-        }),
+        set((state) => ({
+          nowPlaying: {
+            ...state.nowPlaying,
+            track: data,
+          },
+        })),
       setIsPlaying: (status: boolean) =>
         set((state) => {
           state.nowPlaying.isPlaying = status;
@@ -303,8 +306,9 @@ export const useBoundStore = create<StoreType>()(
             if (
               !playlist ||
               playlist.songs.some((s: TrackDetails) => s.id === track.id)
-            )
+            ) {
               return state;
+            }
             return {
               library: {
                 ...state.library,
@@ -361,11 +365,6 @@ export const useBoundStore = create<StoreType>()(
       setIsReplay: (replay: boolean) =>
         set((state) => {
           state.isReplay = replay;
-        }),
-      isCreationMenu: false,
-      setCreationMenu: (show: boolean) =>
-        set((state) => {
-          state.isCreationMenu = show;
         }),
       revealCreation: false,
       setRevealCreation: (isRevealed: boolean) =>
