@@ -39,13 +39,14 @@ export default function PlayingPill() {
   const Pill = ({ track }: { track: TrackDetails }) => {
     return (
       <div
+        data-testid="playing-pill"
         onClick={() => setShowPlayer(true)}
         className={`${
-          track?.id ? "flex" : "hidden"
+          track.id ? "flex" : "hidden"
         } h-[50px] w-[94%] cursor-pointer items-center justify-between overflow-hidden rounded-sm bg-black sm:hidden`}
       >
         <img
-          src={track?.image ? track.image[0]?.url : songfallback}
+          src={track.image[0] ? track.image[0].url : songfallback}
           alt="song-img"
           fetchPriority="high"
           loading="eager"
@@ -55,14 +56,20 @@ export default function PlayingPill() {
         <div className="flex h-full w-[87%] items-center justify-between">
           <div className="ml-3 flex h-[50px] w-[55%] flex-col items-start justify-center border-white leading-4">
             <p className="line-clamp-1 h-auto w-full text-sm text-white">
-              {track ? cleanString(track?.name) : ""}
+              {track.name ? cleanString(track.name) : ""}
             </p>
-            <p className="line-clamp-1 h-auto w-full text-ellipsis whitespace-nowrap text-xs text-neutral-400">
-              {track ? cleanString(track?.artists?.primary[0].name) : ""}
+            <p
+              data-testid="primary-artist-name"
+              className="line-clamp-1 h-auto w-full text-ellipsis whitespace-nowrap text-xs text-neutral-400"
+            >
+              {track.artists.primary[0]
+                ? cleanString(track.artists.primary[0].name)
+                : ""}
             </p>
           </div>
           <div className="flex h-full w-[130px] items-center justify-around">
             <button
+              data-testid="add-to-playlist-btn"
               className="h-auto w-auto px-1"
               onClick={(e) => {
                 e.stopPropagation();
@@ -77,6 +84,7 @@ export default function PlayingPill() {
               />
             </button>
             <button
+              data-testid="favorite-btn"
               onClick={(e) =>
                 track &&
                 toggleFavorite({
@@ -97,6 +105,7 @@ export default function PlayingPill() {
               />
             </button>
             <button
+              data-testid="play-btn"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsPlaying(!isPlaying);
@@ -109,7 +118,7 @@ export default function PlayingPill() {
             >
               <img
                 src={isPlaying ? pause : play}
-                alt="play-btn"
+                alt="play-icon"
                 className="h-9 w-9 invert-[1]"
               />
             </button>
