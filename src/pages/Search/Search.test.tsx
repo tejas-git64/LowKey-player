@@ -11,6 +11,7 @@ import {
   beforeEach,
   describe,
   expect,
+  Mock,
   test,
   vi,
 } from "vitest";
@@ -23,38 +24,52 @@ import { MemoryRouter } from "react-router-dom";
 import { useBoundStore } from "../../store/store";
 import { sampleSearchResults, sampleTrack } from "../../api/samples";
 import { userEvent } from "@testing-library/user-event";
+import { defaultSearchData } from "../../utils/utils";
 
 vi.mock("react-router-dom", async (importOriginal) => {
-  const actual = (await importOriginal()) as any;
+  const actual = await importOriginal();
   return {
-    ...actual,
+    ...(actual as Mock),
     useNavigate: () => mockedNavigate,
   };
 });
 const mockedNavigate = vi.fn();
-const originalFetch = global.fetch;
-const { setSearch, setNowPlaying, setIsPlaying } = useBoundStore.getState();
+const originalFetch = globalThis.fetch;
+const store = useBoundStore;
+const initialStoreState = store.getState();
+const { setSearch, setNowPlaying } = useBoundStore.getState();
+let setSearchMock: ReturnType<typeof vi.spyOn>;
 
 beforeEach(() => {
+  setSearchMock = vi.fn();
   act(() => {
-    setSearch(sampleSearchResults);
-    setNowPlaying(null);
-    setIsPlaying(false);
+    store.setState(initialStoreState, true);
+    store.setState((state) => ({
+      ...state,
+      setSearch: setSearchMock,
+      search: sampleSearchResults,
+      nowPlaying: {
+        track: null,
+        isPlaying: false,
+        isMobilePlayer: false,
+        isFavorite: false,
+        queue: null,
+      },
+      isPlaying: false,
+    }));
   });
 });
 
 afterEach(() => {
   act(() => {
-    setSearch({
-      topQuery: null,
-      albums: null,
-      artists: null,
-      playlists: null,
-      songs: null,
-    });
+    store.setState((state) => ({
+      ...state,
+      search: defaultSearchData,
+    }));
   });
+
+  globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
-  global.fetch = originalFetch;
   cleanup();
 });
 
@@ -81,13 +96,7 @@ describe("Search", () => {
   });
   test("should render search fallback", () => {
     act(() => {
-      setSearch({
-        topQuery: null,
-        albums: null,
-        artists: null,
-        playlists: null,
-        songs: null,
-      });
+      setSearch(defaultSearchData);
     });
     render(
       <QueryClientProvider client={new QueryClient()}>
@@ -120,14 +129,12 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const topResult = screen.getByTestId("top-result") as HTMLLIElement;
-      const topTitle = screen.getByTestId(
-        "query-title",
-      ) as HTMLParagraphElement;
-      const queryImage = screen.getByAltText("query-img") as HTMLImageElement;
+      const topResult = screen.getByTestId("top-result");
+      const topTitle = screen.getByTestId("query-title");
+      const queryImage = screen.getByAltText("query-img");
       expect(topResult.ariaLabel).toBe("Some query result");
       expect(topTitle.textContent).toBe("Some query result");
-      expect(queryImage.src).toContain("artist%20url");
+      expect((queryImage as HTMLImageElement).src).toContain("artist%20url");
     });
     test("should not contain the top query's image, title and aria-label as title if not available", () => {
       act(() => {
@@ -152,14 +159,14 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const topResult = screen.getByTestId("top-result") as HTMLLIElement;
-      const topTitle = screen.getByTestId(
-        "query-title",
-      ) as HTMLParagraphElement;
-      const queryImage = screen.getByAltText("query-img") as HTMLImageElement;
+      const topResult = screen.getByTestId("top-result");
+      const topTitle = screen.getByTestId("query-title");
+      const queryImage = screen.getByAltText("query-img");
       expect(topResult.ariaLabel).toBe("artist");
       expect(topTitle.textContent).toBe("Unknown title");
-      expect(queryImage.src).not.toContain("artist%20url");
+      expect((queryImage as HTMLImageElement).src).not.toContain(
+        "artist%20url",
+      );
     });
     test("should navigate to that route on clicking the top query result", () => {
       render(
@@ -176,7 +183,6 @@ describe("Search", () => {
     });
     describe("should navigate to that route onKeyDown", () => {
       test("using Enter key", async () => {
-        // const user = userEvent.setup();
         render(
           <QueryClientProvider client={new QueryClient()}>
             <MemoryRouter initialEntries={["/search"]}>
@@ -186,8 +192,6 @@ describe("Search", () => {
         );
         const topResult = screen.getByTestId("top-result");
         expect(topResult).toBeInTheDocument();
-        // topResult.focus();
-        // await user.keyboard("{Enter}");
         fireEvent.keyDown(topResult, {
           key: "Enter",
           code: "Enter",
@@ -196,7 +200,6 @@ describe("Search", () => {
         expect(mockedNavigate).toHaveBeenCalledWith("/artists/568648");
       });
       test("using Space key", async () => {
-        // const user = userEvent.setup();
         render(
           <QueryClientProvider client={new QueryClient()}>
             <MemoryRouter initialEntries={["/search"]}>
@@ -206,8 +209,6 @@ describe("Search", () => {
         );
         const topResult = screen.getByTestId("top-result");
         expect(topResult).toBeInTheDocument();
-        // topResult.focus();
-        // await user.keyboard("{ }");
         fireEvent.keyDown(topResult, {
           key: " ",
           code: "Space",
@@ -254,16 +255,14 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const songResult = screen.getByTestId("query-song") as HTMLLIElement;
-      const songTitle = screen.getByTestId(
-        "query-song-title",
-      ) as HTMLParagraphElement;
-      const songImage = screen.getByAltText(
-        "query-song-img",
-      ) as HTMLImageElement;
+      const songResult = screen.getByTestId("query-song");
+      const songTitle = screen.getByTestId("query-song-title");
+      const songImage = screen.getByAltText("query-song-img");
       expect(songResult.ariaLabel).toBe("Track1");
       expect(songTitle.textContent).toBe("Track1");
-      expect(songImage.src).toContain("song%20image%20url");
+      expect((songImage as HTMLImageElement).src).toContain(
+        "song%20image%20url",
+      );
     });
     test("should not contain the top query's image, title and aria-label as title if not available", () => {
       act(() => {
@@ -288,16 +287,14 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const songResult = screen.getByTestId("query-song") as HTMLLIElement;
-      const songTitle = screen.getByTestId(
-        "query-song-title",
-      ) as HTMLParagraphElement;
-      const songImage = screen.getByAltText(
-        "query-song-img",
-      ) as HTMLImageElement;
+      const songResult = screen.getByTestId("query-song");
+      const songTitle = screen.getByTestId("query-song-title");
+      const songImage = screen.getByAltText("query-song-img");
       expect(songResult.ariaLabel).toBe("song");
       expect(songTitle.textContent).toBe("Unknown song");
-      expect(songImage.src).not.toContain("song%20image%20url");
+      expect((songImage as HTMLImageElement).src).not.toContain(
+        "song%20image%20url",
+      );
     });
     test("should contain songfallback as the top query's image onError", () => {
       act(() => {
@@ -321,11 +318,9 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const songImage = screen.getByAltText(
-        "query-song-img",
-      ) as HTMLImageElement;
+      const songImage = screen.getByAltText("query-song-img");
       fireEvent.error(songImage);
-      expect(songImage.src).toContain(songfallback);
+      expect((songImage as HTMLImageElement).src).toContain(songfallback);
     });
     test("should set the track on clicking the song result", () => {
       render(
@@ -342,12 +337,12 @@ describe("Search", () => {
     });
     describe("should set the track onKeyDown", () => {
       test("using Enter key", () => {
-        global.fetch = vi.fn(() =>
+        globalThis.fetch = vi.fn(() =>
           Promise.resolve({
             ok: true,
             json: () => Promise.resolve({ data: [sampleTrack] }),
           }),
-        ) as any;
+        ) as Mock;
         render(
           <QueryClientProvider client={new QueryClient()}>
             <MemoryRouter initialEntries={["/search"]}>
@@ -367,12 +362,12 @@ describe("Search", () => {
         });
       });
       test("using Space key", () => {
-        global.fetch = vi.fn(() =>
+        globalThis.fetch = vi.fn(() =>
           Promise.resolve({
             ok: true,
             json: () => Promise.resolve({ data: [sampleTrack] }),
           }),
-        ) as any;
+        ) as Mock;
         render(
           <QueryClientProvider client={new QueryClient()}>
             <MemoryRouter initialEntries={["/search"]}>
@@ -407,7 +402,9 @@ describe("Search", () => {
       expect(useBoundStore.getState().nowPlaying.track).toBeNull();
     });
     test("should log error if the track is not found", async () => {
-      global.fetch = vi.fn(() => Promise.reject(new Error("Network error")));
+      globalThis.fetch = vi.fn(() =>
+        Promise.reject(new Error("Network error")),
+      );
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/search"]}>
@@ -421,7 +418,7 @@ describe("Search", () => {
         code: "Space",
         charCode: 32,
       });
-      await expect(global.fetch("")).rejects.toThrow("Network error");
+      await expect(globalThis.fetch("")).rejects.toThrow("Network error");
     });
   });
   describe("QueryPlaylists", () => {
@@ -463,18 +460,12 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const playlistResult = screen.getByTestId(
-        "query-playlist",
-      ) as HTMLLIElement;
-      const playlistTitle = screen.getByTestId(
-        "query-playlist-title",
-      ) as HTMLParagraphElement;
-      const playlistImage = screen.getByAltText(
-        "query-playlist-img",
-      ) as HTMLImageElement;
+      const playlistResult = screen.getByTestId("query-playlist");
+      const playlistTitle = screen.getByTestId("query-playlist-title");
+      const playlistImage = screen.getByAltText("query-playlist-img");
       expect(playlistResult).toBeInTheDocument();
       expect(playlistTitle.textContent).toContain("Some title");
-      expect(playlistImage.src).toContain("some%20url");
+      expect((playlistImage as HTMLImageElement).src).toContain("some%20url");
     });
     test("should not contain fallback as playlist image and 'Unknown playlist' as title if not available", () => {
       act(() => {
@@ -499,14 +490,10 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const playlistTitle = screen.getByTestId(
-        "query-playlist-title",
-      ) as HTMLParagraphElement;
-      const playlistImage = screen.getByAltText(
-        "query-playlist-img",
-      ) as HTMLImageElement;
+      const playlistTitle = screen.getByTestId("query-playlist-title");
+      const playlistImage = screen.getByAltText("query-playlist-img");
       expect(playlistTitle.textContent).toContain("Unknown playlist");
-      expect(playlistImage.src).toContain(fallback);
+      expect((playlistImage as HTMLImageElement).src).toContain(fallback);
     });
     test("should contain fallback as playlist image onError ", () => {
       render(
@@ -517,11 +504,9 @@ describe("Search", () => {
         </QueryClientProvider>,
       );
 
-      const playlistImage = screen.getByAltText(
-        "query-playlist-img",
-      ) as HTMLImageElement;
+      const playlistImage = screen.getByAltText("query-playlist-img");
       fireEvent.error(playlistImage);
-      expect(playlistImage.src).toContain(fallback);
+      expect((playlistImage as HTMLImageElement).src).toContain(fallback);
     });
   });
   describe("QueryArtists", () => {
@@ -543,16 +528,12 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const artistResult = screen.getByTestId("query-artist") as HTMLLIElement;
-      const artistTitle = screen.getByTestId(
-        "query-artist-title",
-      ) as HTMLParagraphElement;
-      const artistImage = screen.getByAltText(
-        "query-artist-img",
-      ) as HTMLImageElement;
+      const artistResult = screen.getByTestId("query-artist");
+      const artistTitle = screen.getByTestId("query-artist-title");
+      const artistImage = screen.getByAltText("query-artist-img");
       expect(artistResult).toBeInTheDocument();
       expect(artistTitle.textContent).toContain("Encore");
-      expect(artistImage.src).toContain("some%20url");
+      expect((artistImage as HTMLImageElement).src).toContain("some%20url");
     });
     test("should not contain fallback as image and 'Unknown Artist' if not available", () => {
       act(() => {
@@ -577,14 +558,10 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const artistTitle = screen.getByTestId(
-        "query-artist-title",
-      ) as HTMLParagraphElement;
-      const artistImage = screen.getByAltText(
-        "query-artist-img",
-      ) as HTMLImageElement;
+      const artistTitle = screen.getByTestId("query-artist-title");
+      const artistImage = screen.getByAltText("query-artist-img");
       expect(artistTitle.textContent).toContain("Unknown Artist");
-      expect(artistImage.src).toContain(artistfallback);
+      expect((artistImage as HTMLImageElement).src).toContain(artistfallback);
     });
     test("should contain fallback as artist image onError ", () => {
       render(
@@ -594,11 +571,9 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const artistImage = screen.getByAltText(
-        "query-artist-img",
-      ) as HTMLImageElement;
+      const artistImage = screen.getByAltText("query-artist-img");
       fireEvent.error(artistImage);
-      expect(artistImage.src).toContain(artistfallback);
+      expect((artistImage as HTMLImageElement).src).toContain(artistfallback);
     });
   });
   describe("QueryAlbums", () => {
@@ -635,16 +610,12 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const albumResult = screen.getByTestId("query-artist") as HTMLLIElement;
-      const albumTitle = screen.getByTestId(
-        "query-album-title",
-      ) as HTMLParagraphElement;
-      const albumImage = screen.getByAltText(
-        "query-album-img",
-      ) as HTMLImageElement;
+      const albumResult = screen.getByTestId("query-artist");
+      const albumTitle = screen.getByTestId("query-album-title");
+      const albumImage = screen.getByAltText("query-album-img");
       expect(albumResult).toBeInTheDocument();
       expect(albumTitle.textContent).toContain("Encore");
-      expect(albumImage.src).toContain("some%20url");
+      expect((albumImage as HTMLImageElement).src).toContain("some%20url");
     });
     test("should not contain fallback as image and 'Unknown Album' if not available", () => {
       act(() => {
@@ -669,14 +640,10 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const albumTitle = screen.getByTestId(
-        "query-album-title",
-      ) as HTMLParagraphElement;
-      const albumImage = screen.getByAltText(
-        "query-album-img",
-      ) as HTMLImageElement;
+      const albumTitle = screen.getByTestId("query-album-title");
+      const albumImage = screen.getByAltText("query-album-img");
       expect(albumTitle.textContent).toContain("Unknown Album");
-      expect(albumImage.src).toContain(fallback);
+      expect((albumImage as HTMLImageElement).src).toContain(fallback);
     });
     test("should contain fallback as album image onError ", () => {
       render(
@@ -687,11 +654,9 @@ describe("Search", () => {
         </QueryClientProvider>,
       );
 
-      const albumImage = screen.getByAltText(
-        "query-album-img",
-      ) as HTMLImageElement;
+      const albumImage = screen.getByAltText("query-album-img");
       fireEvent.error(albumImage);
-      expect(albumImage.src).toContain(fallback);
+      expect((albumImage as HTMLImageElement).src).toContain(fallback);
     });
   });
 });
