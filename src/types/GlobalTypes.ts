@@ -83,10 +83,10 @@ export type ArtistType = {
   availableLanguages: string[];
   isRadioPresent: boolean | null;
   image: Image[];
-  topSongs: [] | unknown;
-  topAlbums: [] | unknown;
-  singles: [] | unknown;
-  similarArtists: [] | unknown;
+  topSongs: [];
+  topAlbums: [];
+  singles: [];
+  similarArtists: [];
 };
 
 export type GlobalHome = {
@@ -278,7 +278,7 @@ export type TrackDetails = {
   playCount: number;
   language: string;
   hasLyrics: string | boolean;
-  lyricsId: any;
+  lyricsId: unknown;
   url: string;
   copyright: string;
   artists: {
