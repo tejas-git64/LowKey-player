@@ -1,6 +1,6 @@
 export function saveToLocalStorage(
   storageKey: string,
-  updates: Record<string, any>,
+  updates: Record<string, unknown>,
 ) {
   try {
     const prev = JSON.parse(localStorage.getItem(storageKey) || "{}");
@@ -11,7 +11,7 @@ export function saveToLocalStorage(
         ...updates,
       }),
     );
-  } catch (e) {
+  } catch {
     localStorage.setItem(storageKey, JSON.stringify(updates));
   }
 }
