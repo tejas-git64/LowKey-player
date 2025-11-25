@@ -44,7 +44,10 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-async function fetchSuccessWithData(fn: () => any, sampleResponse: any) {
+async function fetchSuccessWithData(
+  fn: () => unknown,
+  sampleResponse: unknown,
+) {
   const mockPayload = sampleResponse;
   const mockApiResponse = { data: mockPayload };
 
@@ -58,7 +61,7 @@ async function fetchSuccessWithData(fn: () => any, sampleResponse: any) {
   });
 }
 
-async function fetchSuccessWithNull(fn: () => any) {
+async function fetchSuccessWithNull(fn: () => unknown) {
   const mockNullResponse = { message: "no data found" };
 
   (fetch as Mock).mockResolvedValue({
@@ -69,7 +72,7 @@ async function fetchSuccessWithNull(fn: () => any) {
   expect(failedRes).toBeNull();
 }
 
-async function fetchRejection(fn: () => Promise<any>) {
+async function fetchRejection(fn: () => Promise<unknown>) {
   globalThis.fetch = vi.fn().mockRejectedValueOnce(errorObj);
   const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -154,12 +157,9 @@ describe("Testing APIs", () => {
 
     test("fetches and sets search results when data.data exists", async () => {
       const mockData = { data: [{ id: "1", title: "Song" }] };
-      global.fetch = vi.fn(() =>
-        Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve(mockData),
-        }),
-      ) as any;
+      const mockJson = vi.fn().mockResolvedValue(mockData);
+      const mockResponse = { ok: true, json: mockJson };
+      globalThis.fetch = vi.fn().mockResolvedValue(mockResponse);
 
       await getSearchResults("some query");
       expect(fetch).toHaveBeenCalledWith(expect.stringContaining("some query"));
@@ -168,20 +168,16 @@ describe("Testing APIs", () => {
 
     test("sets default data when data.data is not present", async () => {
       const mockData = {};
-      global.fetch = vi.fn(() =>
-        Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve(mockData),
-        }),
-      ) as any;
+      const mockJson = vi.fn().mockResolvedValue(mockData);
+      const mockResponse = { ok: true, json: mockJson };
+      globalThis.fetch = vi.fn().mockResolvedValue(mockResponse);
 
       await getSearchResults("validQuery");
       expect(mockSetSearch).toHaveBeenCalledWith(defaultSearchData);
     });
 
     test("does not fetch when query is empty or less than 2 chars", async () => {
-      global.fetch = vi.fn();
-
+      globalThis.fetch = vi.fn();
       await getSearchResults("");
       await getSearchResults("a");
       expect(fetch).not.toHaveBeenCalled();
@@ -192,7 +188,7 @@ describe("Testing APIs", () => {
         .spyOn(console, "error")
         .mockImplementation(() => {});
       const error = new Error("fetch failed");
-      global.fetch = vi.fn(() => Promise.reject(error)) as any;
+      globalThis.fetch = vi.fn(() => Promise.reject(error)) as Mock;
 
       await getSearchResults("validQuery");
       expect(consoleSpy).toHaveBeenCalledWith(error);
