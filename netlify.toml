@@ -1,7 +1,7 @@
 [[headers]]
 for = "/*"
 [headers.values]
-Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self';"
+Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' https://lowkey-backend.vercel.app https://www.w3.org https://fontawesome.com https://c.saavncdn.com; connect-src 'self' https://github.com https://lowkey-backend.vercel.app https://www.jiosaavn.com https://twitter.com https://x.com https://facebook.com https://en.wikipedia.org; media-src 'self' https://aac.saavncdn.com"
 X-Content-Type-Options = "nosniff"
 X-XSS-Protection = "1; mode=block"
 X-Frame-Options = "DENY"
