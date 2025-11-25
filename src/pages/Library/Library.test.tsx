@@ -171,8 +171,8 @@ describe("Library", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const followingImage = screen.getByAltText("artist") as HTMLImageElement;
-      expect(followingImage.src).toContain("image%20url");
+      const followingImage = screen.getByAltText("artist");
+      expect((followingImage as HTMLImageElement).src).toContain("image%20url");
       expect(screen.getByText("sample song")).toBeInTheDocument();
     });
     test("should have artistfallback and name as 'Unknown Artist' on not having following data", () => {
@@ -188,8 +188,10 @@ describe("Library", () => {
         setFollowing({ ...sampleArtistInSong, name: "", image: [] });
       });
 
-      const followingImage = screen.getByAltText("artist") as HTMLImageElement;
-      expect(followingImage.src).toContain(artistfallback);
+      const followingImage = screen.getByAltText("artist");
+      expect((followingImage as HTMLImageElement).src).toContain(
+        artistfallback,
+      );
       expect(screen.getByText("Unknown Artist")).toBeInTheDocument();
     });
     test("should navigate to the artist onClick", () => {
@@ -231,11 +233,10 @@ describe("Library", () => {
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/library"]}>
             <Library />
-            <UserPlaylistPage />
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const playlistBtn = screen.getByTestId("custom-playlist-btn");
+      const playlistBtn = screen.getAllByTestId("hover-playlist-btn")[0];
       act(() => {
         fireEvent.click(playlistBtn);
       });
@@ -250,7 +251,7 @@ describe("Library", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const removeBtn = screen.getByTestId("remove-customplaylist-btn");
+      const removeBtn = screen.getByTestId("menu-close-btn");
       act(() => {
         fireEvent.click(removeBtn);
       });
@@ -363,7 +364,7 @@ describe("Library", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const playBtn = screen.getByTestId("playlist-play-btn");
+      const playBtn = screen.getAllByTestId("hover-playlist-btn")[0];
       act(() => {
         fireEvent.click(playBtn);
       });

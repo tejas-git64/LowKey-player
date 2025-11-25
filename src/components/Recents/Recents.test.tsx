@@ -40,7 +40,7 @@ describe("Recents", () => {
   describe("RecentComponent useEffect localStorage", () => {
     let mockSetHistory: ReturnType<typeof vi.fn>;
     let mockSetActivity: ReturnType<typeof vi.fn>;
-    let store: Record<string, string> = {};
+    const store: Record<string, string> = {};
 
     beforeEach(() => {
       mockSetHistory = vi.fn();

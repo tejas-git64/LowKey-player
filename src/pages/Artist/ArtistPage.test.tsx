@@ -44,33 +44,33 @@ import {
 } from "../../mocks/mocks.test";
 
 vi.mock("react-router-dom", async (importOriginal) => {
-  const actual = (await importOriginal()) as any;
+  const actual = await importOriginal();
   return {
-    ...actual,
+    ...(actual as Mock),
     useParams: vi.fn(),
   };
 });
 vi.mock("@tanstack/react-query", async (importOriginal) => {
-  const actual = (await importOriginal()) as any;
+  const actual = await importOriginal();
   return {
-    ...actual,
+    ...(actual as Mock),
     useQuery: vi.fn(),
   };
 });
-let id = "652969";
+const id = "652969";
 const mockedUseQuery = vi.mocked(useQuery);
 const mockedUseParams = vi.mocked(useParams);
 
 beforeEach(() => {
   vi.useFakeTimers();
-  global.fetch = vi.fn();
+  globalThis.fetch = vi.fn();
   mockedUseParams.mockReturnValue({ id: id });
-  mockedUseQuery.mockImplementation((options: any) => {
+  mockedUseQuery.mockImplementation((options) => {
     const queryKey = options.queryKey[0];
 
     switch (queryKey) {
       case "artistdetails":
-        return mockedArtistData as UseQueryResult<ArtistType>;
+        return mockedArtistData as unknown as UseQueryResult<ArtistType>;
 
       case "artistalbums":
         return mockedArtistAlbumData as UseQueryResult<AlbumById[]>;
@@ -81,7 +81,7 @@ beforeEach(() => {
       default:
         return {
           promise: Promise.resolve([sampleAlbum] as AlbumById[]),
-          refetch: vi.fn() as Mock,
+          refetch: vi.fn(),
           data: [sampleAlbum],
           ...mockedDataProps,
         } as UseQueryResult<AlbumById[]>;
@@ -160,9 +160,9 @@ describe("ArtistPage", () => {
             </MemoryRouter>
           </QueryClientProvider>,
         );
-        const image = screen.getByAltText("artist-image") as HTMLImageElement;
+        const image = screen.getByAltText("artist-image");
         fireEvent.error(image);
-        expect(image.src).toContain(artistfallback);
+        expect((image as HTMLImageElement).src).toContain(artistfallback);
       });
       describe("getArtistImage", () => {
         test("should return the image url if found", () => {
@@ -173,17 +173,17 @@ describe("ArtistPage", () => {
               </MemoryRouter>
             </QueryClientProvider>,
           );
-          const image = screen.getByAltText("artist-image") as HTMLImageElement;
+          const image = screen.getByAltText("artist-image");
           fireEvent.load(image);
           expect(image).toBeInTheDocument();
           expect(sampleArtist.image).toBeDefined();
-          expect(image.src).toContain("artist-image-url");
+          expect((image as HTMLImageElement).src).toContain("artist-image-url");
         });
         test("should return artistfallback if image is not found", () => {
           mockedUseQuery.mockReturnValue({
             ...mockedArtistData,
             data: { ...sampleArtist, image: [] },
-          } as UseQueryResult<ArtistType>);
+          } as unknown as UseQueryResult<ArtistType>);
           render(
             <QueryClientProvider client={new QueryClient()}>
               <MemoryRouter initialEntries={[`/artists/${id}`]}>
@@ -191,9 +191,9 @@ describe("ArtistPage", () => {
               </MemoryRouter>
             </QueryClientProvider>,
           );
-          const image = screen.getByAltText("artist-image") as HTMLImageElement;
+          const image = screen.getByAltText("artist-image");
           fireEvent.load(image);
-          expect(image.src).toContain(artistfallback);
+          expect((image as HTMLImageElement).src).toContain(artistfallback);
         });
       });
       test("handleImageLoad should toggle fadein classes", () => {
@@ -245,7 +245,7 @@ describe("ArtistPage", () => {
       mockedUseQuery.mockReturnValue({
         ...mockedArtistData,
         data: {} as ArtistType,
-      } as UseQueryResult<ArtistType>);
+      } as unknown as UseQueryResult<ArtistType>);
 
       render(
         <QueryClientProvider client={new QueryClient()}>
@@ -334,7 +334,7 @@ describe("ArtistPage", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      expect(screen.getByRole("list").childElementCount).toBe(0);
+      expect(screen.queryByTestId("albums-container")).toBeNull();
     });
     test("getAlbumImage should get the image url if available else return albumfallback", () => {
       const { unmount } = render(
@@ -344,11 +344,9 @@ describe("ArtistPage", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const image = screen.getByAltText(
-        "artist-album-image",
-      ) as HTMLImageElement;
+      const image = screen.getByAltText("artist-album-image");
       expect(image).toBeInTheDocument();
-      expect(image.src).toContain("image%20url");
+      expect((image as HTMLImageElement).src).toContain("image%20url");
 
       unmount();
 
@@ -365,12 +363,10 @@ describe("ArtistPage", () => {
         </QueryClientProvider>,
       );
 
-      const newImage = screen.getByAltText(
-        "artist-album-image",
-      ) as HTMLImageElement;
+      const newImage = screen.getByAltText("artist-album-image");
       expect(newImage).toBeInTheDocument();
       waitFor(() => {
-        expect(newImage.src).toContain(albumfallback);
+        expect((newImage as HTMLImageElement).src).toContain(albumfallback);
       });
     });
   });

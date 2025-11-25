@@ -16,7 +16,10 @@ import {
 } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 import { PlaylistOfList } from "../../types/GlobalTypes";
-import { mockedSectionData, mockedNullDataResult } from "../../mocks/mocks.test";
+import {
+  mockedSectionData,
+  mockedNullDataResult,
+} from "../../mocks/mocks.test";
 
 vi.mock("@tanstack/react-query", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@tanstack/react-query")>();
@@ -27,6 +30,7 @@ export class IntersectionObserverMock implements IntersectionObserver {
   callback: IntersectionObserverCallback;
   root: Element | null = null;
   rootMargin: string = "";
+  scrollMargin: string = "";
   thresholds: ReadonlyArray<number> = [];
 
   constructor(
@@ -40,9 +44,9 @@ export class IntersectionObserverMock implements IntersectionObserver {
         ? options.threshold
         : [options.threshold];
     }
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     observerInstance = this;
   }
-
   observe = vi.fn();
   unobserve = vi.fn();
   disconnect = vi.fn();

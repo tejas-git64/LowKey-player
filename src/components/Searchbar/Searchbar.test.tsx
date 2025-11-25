@@ -12,7 +12,7 @@ import * as api from "../../api/requests";
 import { useBoundStore } from "../../store/store";
 
 let input: HTMLInputElement;
-let mockGetSearchResults = vi.fn();
+const mockGetSearchResults = vi.fn();
 
 vi.mock("../../api/requests", () => ({
   getSearchResults: vi.fn(),
@@ -56,7 +56,10 @@ describe("Searchbar", () => {
     input = screen.getByTestId("searchinput") as HTMLInputElement;
     input.value = "";
     await user.click(input);
-    expect(useBoundStore.getState().search.topQuery).toBe(null);
+    expect(useBoundStore.getState().search.topQuery).toEqual({
+      position: 0,
+      results: [],
+    });
   });
   test("should not fetch results for whitespace input", async () => {
     const user = userEvent.setup();
@@ -64,7 +67,10 @@ describe("Searchbar", () => {
     input = screen.getByTestId("searchinput") as HTMLInputElement;
     input.value = "   ";
     await user.click(input);
-    expect(useBoundStore.getState().search.topQuery).toBe(null);
+    expect(useBoundStore.getState().search.topQuery).toEqual({
+      position: 0,
+      results: [],
+    });
   });
   test("should replace whitespace input with +", () => {
     vi.useFakeTimers();

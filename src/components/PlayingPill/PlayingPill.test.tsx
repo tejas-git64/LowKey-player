@@ -97,9 +97,8 @@ describe("PlayingPill", () => {
     });
     render(<PlayingPill />);
     waitFor(() => {
-      expect(
-        (screen.getByAltText("song-img") as HTMLImageElement).src,
-      ).toContain(songfallback);
+      const image = screen.getByAltText("song-img");
+      expect((image as HTMLImageElement).src).toContain(songfallback);
     });
   });
   test("should contain fallback image onError", () => {
@@ -152,10 +151,8 @@ describe("PlayingPill", () => {
   });
   test("should show add icon if the track is not added to a playlist", () => {
     render(<PlayingPill />);
-
-    expect(
-      (screen.getByAltText("add-to-playlist") as HTMLImageElement).src,
-    ).toContain(add);
+    const image = screen.getByAltText("add-to-playlist");
+    expect((image as HTMLImageElement).src).toContain(add);
   });
   test("should show tick icon if the song is added to a track", () => {
     act(() => {
@@ -167,9 +164,8 @@ describe("PlayingPill", () => {
       setToUserPlaylist(sampleTrack, 10);
     });
     render(<PlayingPill />);
-    expect(
-      (screen.getByAltText("add-to-playlist") as HTMLImageElement).src,
-    ).toContain(tick);
+    const image = screen.getByAltText("add-to-playlist");
+    expect((image as HTMLImageElement).src).toContain(tick);
   });
   test("should show play icon if not playing", () => {
     render(<PlayingPill />);

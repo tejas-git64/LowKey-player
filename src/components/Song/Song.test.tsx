@@ -5,7 +5,7 @@ import {
   render,
   screen,
 } from "@testing-library/react";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, Mock, test, vi } from "vitest";
 import Song from "./Song";
 import fallback from "../../assets/fallbacks/song-fallback.webp";
 import notfav from "../../assets/svgs/icons8-heart.svg";
@@ -18,7 +18,7 @@ import { useBoundStore } from "../../store/store";
 
 const useNavigateMock = vi.fn();
 vi.mock("react-router-dom", async (importOriginal) => {
-  const actual = (await importOriginal()) as any;
+  const actual = (await importOriginal()) as Mock;
   return {
     ...actual,
     useNavigate: () => useNavigateMock,

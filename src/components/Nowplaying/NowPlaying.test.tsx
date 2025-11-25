@@ -15,6 +15,7 @@ import {
   Mock,
   MockInstance,
   test,
+  TestFunction,
   vi,
 } from "vitest";
 import NowPlaying from "./NowPlaying";
@@ -43,14 +44,14 @@ const mockUn = vi.fn();
 const mockUnAll = vi.fn();
 const mockSetVolume = vi.fn();
 const mockSeekTo = vi.fn();
-let handlers: Record<string, Function[]> = {};
+const handlers: Record<string, TestFunction[]> = {};
 export const instance = {
-  on: (event: string, cb: Function) => {
+  on: (event: string, cb: () => unknown) => {
     handlers[event] = handlers[event] || [];
     handlers[event].push(cb);
     mockOn(event, cb);
   },
-  un: (event: string, cb: Function) => {
+  un: (event: string, cb: () => unknown) => {
     mockUn(event, cb);
     handlers[event] = (handlers[event] || []).filter((fn) => fn !== cb);
   },
@@ -65,7 +66,7 @@ export const instance = {
 };
 const useNavigateMock = vi.fn();
 vi.mock("react-router-dom", async (importOriginal) => {
-  const actual = (await importOriginal()) as any;
+  const actual = (await importOriginal()) as Promise<unknown>;
   return {
     ...actual,
     useNavigate: () => useNavigateMock,
@@ -88,12 +89,12 @@ const {
   removeFavorite,
   setQueue,
 } = useBoundStore.getState();
-let store: Record<string, string> = {};
+const store: Record<string, string> = {};
 let getItemMock: MockInstance<(key: string) => string | null>;
 let setItemMock: MockInstance<(key: string) => string | null>;
 
 beforeEach(() => {
-  vi.spyOn(window, "matchMedia").mockImplementation((query) => ({
+  vi.spyOn(globalThis, "matchMedia").mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -240,9 +241,8 @@ describe("NowPlaying", () => {
           <NowPlaying />
         </MemoryRouter>,
       );
-      expect(
-        (screen.getByTestId("song-image") as HTMLImageElement).src,
-      ).toContain("image%20url");
+      const songImage = screen.getByTestId("song-image");
+      expect((songImage as HTMLImageElement).src).toContain("image%20url");
     });
     test("should be songfallback if not available", () => {
       act(() => {
@@ -254,8 +254,8 @@ describe("NowPlaying", () => {
           <NowPlaying />
         </MemoryRouter>,
       );
-      const image = screen.getByTestId("song-image") as HTMLImageElement;
-      expect(image.src).toContain(songfallback);
+      const image = screen.getByTestId("song-image");
+      expect((image as HTMLImageElement).src).toContain(songfallback);
     });
     test("should be songfallback onError", () => {
       render(
@@ -263,9 +263,9 @@ describe("NowPlaying", () => {
           <NowPlaying />
         </MemoryRouter>,
       );
-      const image = screen.getByTestId("song-image") as HTMLImageElement;
+      const image = screen.getByTestId("song-image");
       fireEvent.error(image);
-      expect(image.src).toContain(songfallback);
+      expect((image as HTMLImageElement).src).toContain(songfallback);
     });
     test("should contain alt text as 'Cover art' for * if available", () => {
       render(
@@ -273,8 +273,8 @@ describe("NowPlaying", () => {
           <NowPlaying />
         </MemoryRouter>,
       );
-      const image = screen.getByTestId("song-image") as HTMLImageElement;
-      expect(image.alt).toBe("Cover art for Track3");
+      const image = screen.getByTestId("song-image");
+      expect((image as HTMLImageElement).alt).toBe("Cover art for Track3");
       expect(image.ariaHidden).toBeNull();
     });
     test("should contain alt text as 'song image 'if not available", () => {
@@ -286,8 +286,8 @@ describe("NowPlaying", () => {
       act(() => {
         setNowPlaying({ ...sampleTrack, name: "" });
       });
-      const image = screen.getByTestId("song-image") as HTMLImageElement;
-      expect(image.alt).toBe("song image");
+      const image = screen.getByTestId("song-image");
+      expect((image as HTMLImageElement).alt).toBe("song image");
       expect(image.ariaHidden).toBeTruthy();
     });
   });
@@ -314,7 +314,7 @@ describe("NowPlaying", () => {
       act(() => {
         setNowPlaying(obj);
       });
-      const select = screen.getByTestId("quality") as HTMLSelectElement;
+      const select = screen.getByTestId("quality");
       expect(select.tabIndex).toBe(0);
     });
     test("should contain tabIndex as -1 if song urls are not available", () => {
@@ -333,7 +333,7 @@ describe("NowPlaying", () => {
           <NowPlaying />
         </MemoryRouter>,
       );
-      const select = screen.getByTestId("quality") as HTMLSelectElement;
+      const select = screen.getByTestId("quality");
       expect(select.tabIndex).toBe(-1);
     });
     test("should set the audio index onClick", () => {
@@ -357,22 +357,22 @@ describe("NowPlaying", () => {
           <NowPlaying />
         </MemoryRouter>,
       );
-      const select = screen.getByTestId("quality") as HTMLSelectElement;
+      const select = screen.getByTestId("quality");
       fireEvent.change(select, { target: { value: "0" } });
-      expect(select.value).toBe("0");
+      expect((select as HTMLSelectElement).value).toBe("0");
     });
   });
   describe("Download button", () => {
-    let createObjectURLSpy = vi.fn(() => "mock-blob-url");
+    const createObjectURLSpy = vi.fn(() => "mock-blob-url");
     const revokeObjectURLSpy = vi.fn();
     const linkClickSpy = vi.fn();
     beforeEach(() => {
-      global.fetch = vi.fn().mockResolvedValue({
+      globalThis.fetch = vi.fn().mockResolvedValue({
         blob: () => Promise.resolve(new Blob(["test file content"])),
       });
 
-      window.URL.createObjectURL = createObjectURLSpy;
-      window.URL.revokeObjectURL = revokeObjectURLSpy;
+      globalThis.URL.createObjectURL = createObjectURLSpy;
+      globalThis.URL.revokeObjectURL = revokeObjectURLSpy;
 
       vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(
         linkClickSpy,
@@ -395,11 +395,11 @@ describe("NowPlaying", () => {
           <NowPlaying />
         </MemoryRouter>,
       );
-      const select = screen.getByTestId("quality") as HTMLSelectElement;
+      const select = screen.getByTestId("quality");
       const downloadBtn = screen.getByTestId("download-btn");
 
       fireEvent.change(select, { target: { value: "0" } });
-      expect(select.value).toBe("0");
+      expect((select as HTMLSelectElement).value).toBe("0");
 
       fireEvent.click(downloadBtn);
       waitFor(() => {
@@ -412,8 +412,10 @@ describe("NowPlaying", () => {
       });
     });
     test("should catch the error if download fails", async () => {
-      const handleDownload = vi.fn(() => Promise.reject("Download failed!"));
-      global.fetch = vi.fn().mockRejectedValue("Download failed!");
+      const handleDownload = vi.fn(() =>
+        Promise.reject(new Error("Download failed!")),
+      );
+      globalThis.fetch = vi.fn().mockRejectedValue("Download failed!");
       act(() => {
         setNowPlaying({
           ...sampleTrack,
@@ -430,11 +432,11 @@ describe("NowPlaying", () => {
           <NowPlaying />
         </MemoryRouter>,
       );
-      const select = screen.getByTestId("quality") as HTMLSelectElement;
+      const select = screen.getByTestId("quality");
       const downloadBtn = screen.getByTestId("download-btn");
 
       fireEvent.change(select, { target: { value: "0" } });
-      expect(select.value).toBe("0");
+      expect((select as HTMLSelectElement).value).toBe("0");
       fireEvent.click(downloadBtn);
       await expect(handleDownload).rejects.toThrow("Download failed!");
     });
@@ -477,7 +479,7 @@ describe("NowPlaying", () => {
             <NowPlaying />
           </MemoryRouter>,
         );
-        const playIcon = screen.getByTestId("play-icon") as HTMLImageElement;
+        const playIcon = screen.getByTestId("play-icon");
         expect(playIcon).toBeInTheDocument();
       });
       test("should contain respective icons and alt text if isPlaying is false", () => {
@@ -486,9 +488,9 @@ describe("NowPlaying", () => {
             <NowPlaying />
           </MemoryRouter>,
         );
-        const playIcon = screen.getByTestId("play-icon") as HTMLImageElement;
-        expect(playIcon.src).toContain(play);
-        expect(playIcon.alt).toBe("Play icon");
+        const playIcon = screen.getByTestId("play-icon");
+        expect((playIcon as HTMLImageElement).src).toContain(play);
+        expect((playIcon as HTMLImageElement).alt).toBe("Play icon");
       });
       test("should contain respective icons and alt text if isPlaying is true", () => {
         act(() => {
@@ -499,9 +501,9 @@ describe("NowPlaying", () => {
             <NowPlaying />
           </MemoryRouter>,
         );
-        const playIcon = screen.getByTestId("play-icon") as HTMLImageElement;
-        expect(playIcon.src).toContain(pause);
-        expect(playIcon.alt).toBe("Pause icon");
+        const playIcon = screen.getByTestId("play-icon");
+        expect((playIcon as HTMLImageElement).src).toContain(pause);
+        expect((playIcon as HTMLImageElement).alt).toBe("Pause icon");
       });
     });
   });
@@ -567,11 +569,9 @@ describe("NowPlaying", () => {
             <NowPlaying />
           </MemoryRouter>,
         );
-        const playlistIcon = screen.getByTestId(
-          "playlist-icon",
-        ) as HTMLImageElement;
-        expect(playlistIcon.src).toContain(add);
-        expect(playlistIcon.alt).toBe("Add to playlist");
+        const playlistIcon = screen.getByTestId("playlist-icon");
+        expect((playlistIcon as HTMLImageElement).src).toContain(add);
+        expect((playlistIcon as HTMLImageElement).alt).toBe("Add to playlist");
       });
       test("should contain respective icons and alt text on having the playlist id", () => {
         act(() => {
@@ -582,11 +582,9 @@ describe("NowPlaying", () => {
             <NowPlaying />
           </MemoryRouter>,
         );
-        const playlistIcon = screen.getByTestId(
-          "playlist-icon",
-        ) as HTMLImageElement;
-        expect(playlistIcon.src).toContain(tick);
-        expect(playlistIcon.alt).toBe("In playlist");
+        const playlistIcon = screen.getByTestId("playlist-icon");
+        expect((playlistIcon as HTMLImageElement).src).toContain(tick);
+        expect((playlistIcon as HTMLImageElement).alt).toBe("In playlist");
       });
     });
     describe("Favorite button", () => {
@@ -601,16 +599,14 @@ describe("NowPlaying", () => {
           </MemoryRouter>,
         );
         const favoriteBtn = screen.getByTestId("favorite-btn");
-        const favoriteIcon = screen.getByTestId(
-          "favorite-icon",
-        ) as HTMLImageElement;
+        const favoriteIcon = screen.getByTestId("favorite-icon");
         fireEvent.click(favoriteBtn);
         expect(useBoundStore.getState().favorites.songs).toContainEqual(
           sampleTrack,
         );
         expect(favoriteBtn.ariaLabel).toBe("Remove from Favorites");
-        expect(favoriteIcon.alt).toBe("Favorited");
-        expect(favoriteIcon.src).toBe(favorited);
+        expect((favoriteIcon as HTMLImageElement).alt).toBe("Favorited");
+        expect((favoriteIcon as HTMLImageElement).src).toBe(favorited);
       });
       test("should not favorite the track and show its respective icon", () => {
         render(
@@ -619,15 +615,13 @@ describe("NowPlaying", () => {
           </MemoryRouter>,
         );
         const favoriteBtn = screen.getByTestId("favorite-btn");
-        const favoriteIcon = screen.getByTestId(
-          "favorite-icon",
-        ) as HTMLImageElement;
+        const favoriteIcon = screen.getByTestId("favorite-icon");
         expect(useBoundStore.getState().favorites.songs).not.toContainEqual(
           sampleTrack,
         );
         expect(favoriteBtn.ariaLabel).toBe("Add to Favorites");
-        expect(favoriteIcon.alt).toBe("Favorite");
-        expect(favoriteIcon.src).toBe(favorite);
+        expect((favoriteIcon as HTMLImageElement).alt).toBe("Favorite");
+        expect((favoriteIcon as HTMLImageElement).src).toBe(favorite);
       });
     });
   });
@@ -830,9 +824,9 @@ describe("NowPlaying", () => {
           <NowPlaying />
         </MemoryRouter>,
       );
-      const slider = screen.getByTestId("song-volume") as HTMLInputElement;
+      const slider = screen.getByTestId("song-volume");
       fireEvent.change(slider, { target: { value: 0.3 } });
-      expect(slider.value).toBe("0.3");
+      expect((slider as HTMLInputElement).value).toBe("0.3");
     });
     test("should toggle playback onMouseUp", () => {
       render(
@@ -840,7 +834,7 @@ describe("NowPlaying", () => {
           <NowPlaying />
         </MemoryRouter>,
       );
-      const slider = screen.getByTestId("song-volume") as HTMLInputElement;
+      const slider = screen.getByTestId("song-volume");
       fireEvent.mouseUp(slider);
       expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
     });
@@ -851,13 +845,11 @@ describe("NowPlaying", () => {
             <NowPlaying />
           </MemoryRouter>,
         );
-        const slider = screen.getByTestId("song-volume") as HTMLInputElement;
-        const sliderImage = screen.getByTestId(
-          "slider-img",
-        ) as HTMLImageElement;
-        fireEvent.change(slider, { target: { value: 0.0 } });
-        expect(sliderImage.src).toContain(mute);
-        expect(sliderImage.alt).toBe("Muted");
+        const slider = screen.getByTestId("song-volume");
+        const sliderImage = screen.getByTestId("slider-img");
+        fireEvent.change(slider, { target: { value: 0 } });
+        expect((sliderImage as HTMLImageElement).src).toContain(mute);
+        expect((sliderImage as HTMLImageElement).alt).toBe("Muted");
       });
       test("should be vol if vol > 0.1 and < 0.75", () => {
         render(
@@ -865,13 +857,11 @@ describe("NowPlaying", () => {
             <NowPlaying />
           </MemoryRouter>,
         );
-        const slider = screen.getByTestId("song-volume") as HTMLInputElement;
-        const sliderImage = screen.getByTestId(
-          "slider-img",
-        ) as HTMLImageElement;
+        const slider = screen.getByTestId("song-volume");
+        const sliderImage = screen.getByTestId("slider-img");
         fireEvent.change(slider, { target: { value: 0.2 } });
-        expect(sliderImage.src).toContain(vol);
-        expect(sliderImage.alt).toBe("Low volume");
+        expect((sliderImage as HTMLImageElement).src).toContain(vol);
+        expect((sliderImage as HTMLImageElement).alt).toBe("Low volume");
       });
       test("should be vol if vol > 0.75", () => {
         render(
@@ -879,13 +869,11 @@ describe("NowPlaying", () => {
             <NowPlaying />
           </MemoryRouter>,
         );
-        const slider = screen.getByTestId("song-volume") as HTMLInputElement;
-        const sliderImage = screen.getByTestId(
-          "slider-img",
-        ) as HTMLImageElement;
+        const slider = screen.getByTestId("song-volume");
+        const sliderImage = screen.getByTestId("slider-img");
         fireEvent.change(slider, { target: { value: 0.8 } });
-        expect(sliderImage.src).toContain(high);
-        expect(sliderImage.alt).toBe("High volume");
+        expect((sliderImage as HTMLImageElement).src).toContain(high);
+        expect((sliderImage as HTMLImageElement).alt).toBe("High volume");
       });
     });
   });
@@ -973,8 +961,8 @@ describe("NowPlaying", () => {
           },
         });
       });
-      const image = screen.getByTestId("artist-image") as HTMLImageElement;
-      expect(image.alt).toBe("artist-image");
+      const image = screen.getByTestId("artist-image");
+      expect((image as HTMLImageElement).alt).toBe("artist-image");
     });
   });
 });

@@ -237,8 +237,8 @@ describe("Favorites", () => {
             </MemoryRouter>
           </QueryClientProvider>,
         );
-        const image = screen.getByAltText("album-image") as HTMLImageElement;
-        expect(image.src).toContain("image%20url");
+        const image = screen.getByAltText("album-image");
+        expect((image as HTMLImageElement).src).toContain("image%20url");
       });
       test("be fallback if not present", () => {
         act(() => {
@@ -253,8 +253,8 @@ describe("Favorites", () => {
             </MemoryRouter>
           </QueryClientProvider>,
         );
-        const image = screen.getByAltText("album-image") as HTMLImageElement;
-        expect(image.src).toContain(fallback);
+        const image = screen.getByAltText("album-image");
+        expect((image as HTMLImageElement).src).toContain(fallback);
       });
       test("be fallback onError", () => {
         act(() => {
@@ -267,9 +267,9 @@ describe("Favorites", () => {
             </MemoryRouter>
           </QueryClientProvider>,
         );
-        const image = screen.getByAltText("album-image") as HTMLImageElement;
+        const image = screen.getByAltText("album-image");
         fireEvent.error(image);
-        expect(image.src).toContain(fallback);
+        expect((image as HTMLImageElement).src).toContain(fallback);
       });
     });
     test("should have its play button as Pause album id if the queue id matches and isPlaying", () => {
@@ -353,9 +353,9 @@ describe("Favorites", () => {
             </MemoryRouter>
           </QueryClientProvider>,
         );
-        const image = screen.getByAltText("playlist-image") as HTMLImageElement;
+        const image = screen.getByAltText("playlist-image");
         waitFor(() => {
-          expect(image.src).toContain("image%20url");
+          expect((image as HTMLImageElement).src).toContain("image%20url");
         });
       });
       test("be fallback if not present", () => {
@@ -371,8 +371,8 @@ describe("Favorites", () => {
             </MemoryRouter>
           </QueryClientProvider>,
         );
-        const image = screen.getByAltText("playlist-image") as HTMLImageElement;
-        expect(image.src).toContain(fallback);
+        const image = screen.getByAltText("playlist-image");
+        expect((image as HTMLImageElement).src).toContain(fallback);
       });
       test("be fallback onError", () => {
         act(() => {
@@ -385,9 +385,9 @@ describe("Favorites", () => {
             </MemoryRouter>
           </QueryClientProvider>,
         );
-        const image = screen.getByAltText("playlist-image") as HTMLImageElement;
+        const image = screen.getByAltText("playlist-image");
         fireEvent.error(image);
-        expect(image.src).toContain(fallback);
+        expect((image as HTMLImageElement).src).toContain(fallback);
       });
     });
     test("should have its play button as Pause album id if the queue id matches and isPlaying", () => {

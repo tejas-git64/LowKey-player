@@ -134,13 +134,13 @@ describe("NotFound", () => {
       );
       window.innerWidth = 1425;
       act(() => {
-        window.dispatchEvent(new Event("resize"));
+        globalThis.dispatchEvent(new Event("resize"));
       });
       expect(getByTestId("notfound").style.backgroundImage).toContain(nf1536);
     });
 
     test("cleans up event listeners on unmount", () => {
-      const removeSpy = vi.spyOn(window, "removeEventListener");
+      const removeSpy = vi.spyOn(globalThis, "removeEventListener");
       const { unmount } = render(
         <MemoryRouter>
           <NotFound />
