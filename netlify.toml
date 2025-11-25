@@ -1,0 +1,10 @@
+[[headers]]
+for = "/*"
+[headers.values]
+Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self';"
+X-Content-Type-Options = "nosniff"
+X-XSS-Protection = "1; mode=block"
+X-Frame-Options = "DENY"
+Referrer-Policy = "no-referrer-when-downgrade"
+Permissions-Policy = "geolocation=(), microphone=()"
+Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
