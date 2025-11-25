@@ -321,19 +321,20 @@ export const useBoundStore = create<StoreType>()(
           }),
         );
       },
-      removeFromUserPlaylist: (id: number, songid: string) =>
+      removeFromUserPlaylist: (id: number, songId: string) =>
         set(
-          produce((state) => ({
-            library: {
-              ...state.library,
-              userPlaylists: state.library.userPlaylists.map(
-                (u: UserPlaylist) =>
-                  u.id === id
-                    ? { ...u, songs: u.songs.filter((s) => s.id !== songid) }
-                    : u,
-              ),
-            },
-          })),
+          produce((state) => {
+            const playlists = state.library.userPlaylists;
+            const targetIndex = playlists.findIndex(
+              (p: UserPlaylist) => p.id === id,
+            );
+            if (targetIndex === -1) return;
+            const target = playlists[targetIndex];
+            const filteredSongs = target.songs.filter(
+              (song: TrackDetails) => song.id !== songId,
+            );
+            playlists[targetIndex] = { ...target, songs: filteredSongs };
+          }),
         ),
       createNewUserPlaylist: (name: string, id: number) => {
         set(
