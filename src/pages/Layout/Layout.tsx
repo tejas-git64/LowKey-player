@@ -6,11 +6,41 @@ import PlayingPill from "../../components/PlayingPill/PlayingPill";
 import MobileNav from "../../components/MobileNav/MobileNav";
 import NowPlaying from "../../components/Nowplaying/NowPlaying";
 import Creation from "../../components/PlaylistModal/PlaylistModal";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import { useBoundStore } from "../../store/store";
+import { LocalLibrary } from "../../types/GlobalTypes";
 
 export default function Layout() {
   const path = useLocation().pathname;
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const setUserPlaylist = useBoundStore((state) => state.setUserPlaylist);
+  const setLibraryPlaylist = useBoundStore((state) => state.setLibraryPlaylist);
+  const setLibraryAlbum = useBoundStore((state) => state.setLibraryAlbum);
+  const setFollowing = useBoundStore((state) => state.setFollowing);
+
+  useEffect(() => {
+    const localSaves = localStorage.getItem("local-library");
+    if (localSaves !== null) {
+      const {
+        albums: lastAlbums,
+        followings: lastFollowings,
+        playlists: lastPlaylists,
+        userPlaylists: lastUserPlaylists,
+      }: LocalLibrary = JSON.parse(localSaves);
+      for (const l of lastAlbums || []) {
+        setLibraryAlbum(l);
+      }
+      for (const l of lastUserPlaylists || []) {
+        setUserPlaylist(l);
+      }
+      for (const l of lastPlaylists || []) {
+        setLibraryPlaylist(l);
+      }
+      for (const l of lastFollowings || []) {
+        setFollowing(l);
+      }
+    }
+  }, [setFollowing, setLibraryAlbum, setLibraryPlaylist, setUserPlaylist]);
 
   return (
     <div
@@ -21,14 +51,14 @@ export default function Layout() {
       <div
         data-testid="layout-inner-container"
         className={`relative flex h-full w-full flex-row items-start justify-start overflow-hidden ${
-          path !== "/" ? "sm:h-[95vh]" : "sm:h-full"
+          path === "/" ? "sm:h-full" : "sm:h-[95vh]"
         }`}
       >
         {path !== "/" && <Nav />}
         <div
           data-testid="outlet-container"
           className={`h-full w-full overflow-x-hidden ${
-            path !== "/" ? "sm:h-[95vh]" : "sm:h-full"
+            path === "/" ? "sm:h-full" : "sm:h-[95vh]"
           }`}
         >
           <div
