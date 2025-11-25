@@ -64,12 +64,12 @@ describe("Nav", () => {
       );
       const image = screen.getByAltText("menu-icon");
       expect(image).toBeInTheDocument();
-      Object.defineProperty(window.navigator, "onLine", {
+      Object.defineProperty(globalThis.navigator, "onLine", {
         configurable: true,
         get: () => true,
       });
       act(() => {
-        window.dispatchEvent(new Event("online"));
+        globalThis.dispatchEvent(new Event("online"));
       });
       expect(image).toHaveAttribute("src", online);
     });
@@ -81,12 +81,12 @@ describe("Nav", () => {
         </MemoryRouter>,
       );
       const image = screen.getByAltText("menu-icon");
-      Object.defineProperty(window.navigator, "onLine", {
+      Object.defineProperty(globalThis.navigator, "onLine", {
         configurable: true,
         get: () => false,
       });
       act(() => {
-        window.dispatchEvent(new Event("offline"));
+        globalThis.dispatchEvent(new Event("offline"));
       });
       expect(image).toHaveAttribute("src", offline);
     });
@@ -99,12 +99,12 @@ describe("Nav", () => {
           <Nav />
         </MemoryRouter>,
       );
-      Object.defineProperty(window.navigator, "onLine", {
+      Object.defineProperty(globalThis.navigator, "onLine", {
         configurable: true,
         get: () => true,
       });
       act(() => {
-        window.dispatchEvent(new Event("online"));
+        globalThis.dispatchEvent(new Event("online"));
       });
       expect(screen.getByText("Online")).toBeInTheDocument();
     });
@@ -115,12 +115,12 @@ describe("Nav", () => {
           <Nav />
         </MemoryRouter>,
       );
-      Object.defineProperty(window.navigator, "onLine", {
+      Object.defineProperty(globalThis.navigator, "onLine", {
         configurable: true,
         get: () => false,
       });
       act(() => {
-        window.dispatchEvent(new Event("offline"));
+        globalThis.dispatchEvent(new Event("offline"));
       });
 
       expect(screen.getByText("Offline")).toBeInTheDocument();
@@ -163,10 +163,8 @@ describe("Nav", () => {
             <Nav />
           </MemoryRouter>,
         );
-        const image = screen.getByAltText(
-          "album-menu-icon",
-        ) as HTMLImageElement;
-        expect(image.src).toContain("image%20url");
+        const image = screen.getByAltText("album-menu-icon");
+        expect((image as HTMLImageElement).src).toContain("image%20url");
       });
       test("should contain playlistfallback as src if there is no image", () => {
         act(() => {
@@ -179,10 +177,8 @@ describe("Nav", () => {
             <Nav />
           </MemoryRouter>,
         );
-        const image = screen.getByAltText(
-          "album-menu-icon",
-        ) as HTMLImageElement;
-        expect(image.src).toContain(playlistfallback);
+        const image = screen.getByAltText("album-menu-icon");
+        expect((image as HTMLImageElement).src).toContain(playlistfallback);
       });
       test("should have its image revert to playlistfallback onError", () => {
         act(() => {
@@ -193,12 +189,10 @@ describe("Nav", () => {
             <Nav />
           </MemoryRouter>,
         );
-        const image = screen.getByAltText(
-          "album-menu-icon",
-        ) as HTMLImageElement;
-        expect(image.src).toContain("image%20url");
+        const image = screen.getByAltText("album-menu-icon");
+        expect((image as HTMLImageElement).src).toContain("image%20url");
         fireEvent.error(image);
-        expect(image.src).toContain(playlistfallback);
+        expect((image as HTMLImageElement).src).toContain(playlistfallback);
       });
     });
     describe("Recent Playlists", () => {
@@ -229,10 +223,8 @@ describe("Nav", () => {
             <Nav />
           </MemoryRouter>,
         );
-        const image = screen.getByAltText(
-          "playlist-menu-icon",
-        ) as HTMLImageElement;
-        expect(image.src).toContain("image%20url");
+        const image = screen.getByAltText("playlist-menu-icon");
+        expect((image as HTMLImageElement).src).toContain("image%20url");
       });
       test("should contain fallback as src if there is no image", () => {
         act(() => {
@@ -245,10 +237,8 @@ describe("Nav", () => {
             <Nav />
           </MemoryRouter>,
         );
-        const image = screen.getByAltText(
-          "playlist-menu-icon",
-        ) as HTMLImageElement;
-        expect(image.src).toContain(fallback);
+        const image = screen.getByAltText("playlist-menu-icon");
+        expect((image as HTMLImageElement).src).toContain(fallback);
       });
       test("should have its image revert to playlistfallback onError", () => {
         act(() => {
@@ -259,14 +249,12 @@ describe("Nav", () => {
             <Nav />
           </MemoryRouter>,
         );
-        const image = screen.getByAltText(
-          "playlist-menu-icon",
-        ) as HTMLImageElement;
-        expect(image.src).toContain("image%20url");
+        const image = screen.getByAltText("playlist-menu-icon");
+        expect((image as HTMLImageElement).src).toContain("image%20url");
 
         fireEvent.error(image);
 
-        expect(image.src).toContain(playlistfallback);
+        expect((image as HTMLImageElement).src).toContain(playlistfallback);
       });
     });
     describe("Recent UserPlaylists", () => {
@@ -305,10 +293,8 @@ describe("Nav", () => {
             <Nav />
           </MemoryRouter>,
         );
-        expect(
-          (screen.getByAltText("userplaylist-menu-icon") as HTMLImageElement)
-            .src,
-        ).toContain(playlistfallback);
+        const image = screen.getByAltText("userplaylist-menu-icon");
+        expect((image as HTMLImageElement).src).toContain(playlistfallback);
         unmount();
       });
     });
