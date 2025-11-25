@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { cleanString } from "./cleanString";
 import { getTrackImage } from "./getTrackImage";
@@ -54,8 +55,8 @@ describe("cleanString", () => {
 
 describe("saveToLocalStorage", () => {
   const storageKey = "testKey";
-  let getItemSpy: unknown | any;
-  let setItemSpy: unknown | any;
+  let getItemSpy: any;
+  let setItemSpy: any;
   beforeEach(() => {
     getItemSpy = vi.spyOn(Storage.prototype, "getItem");
     setItemSpy = vi.spyOn(Storage.prototype, "setItem");
