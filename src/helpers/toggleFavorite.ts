@@ -16,9 +16,9 @@ export function toggleFavorite({
   startTransition: (cb: () => void) => void;
 }) {
   e.stopPropagation();
-  if (!isFavorited) {
-    startTransition(() => setFavoriteSong(track));
-  } else {
+  if (isFavorited) {
     removeFavorite(track.id);
+  } else {
+    startTransition(() => setFavoriteSong(track));
   }
 }
