@@ -1,7 +1,7 @@
-import { memo, Suspense, useEffect, useRef } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef } from "react";
 import { useBoundStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
-import { Image, TrackDetails } from "../../types/GlobalTypes";
+import { Image, PlaylistById, TrackDetails } from "../../types/GlobalTypes";
 import Section from "../../components/Section/Section";
 import play from "../../assets/svgs/play-icon.svg";
 import pause from "../../assets/svgs/pause-icon.svg";
@@ -15,14 +15,16 @@ import { getTimelyData, getWidgetData } from "../../api/requests";
 import { genres } from "../../utils/utils";
 import widgetfallback from "../../assets/fallbacks/widget-fallback.webp";
 import { TimelyFallback, Widgetfallback } from "./Loading";
+import useClearTimer from "../../hooks/useClearTimer";
 
 export default function Home() {
   const changeGreeting = useBoundStore((state) => state.changeGreeting);
   const greeting = useBoundStore((state) => state.greeting);
   const homeRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const timerRef = useRef<NodeJS.Timeout>(null);
 
-  const setGreeting = () => {
+  const setGreeting = useCallback(() => {
     const hour = new Date().getHours();
     if (hour >= 6 && hour <= 12) {
       changeGreeting("Good morning");
@@ -35,23 +37,24 @@ export default function Home() {
     } else {
       changeGreeting("Jump back in");
     }
-  };
+  }, [changeGreeting]);
 
   function fadeOutNavigate(str: string) {
     homeRef.current?.classList.remove("home-fadein");
     homeRef.current?.classList.add("home-fadeout");
-    setTimeout(() => {
+    timerRef.current = setTimeout(() => {
       navigate(str);
     }, 150);
   }
 
+  useClearTimer(timerRef);
   useEffect(() => {
-    setTimeout(() => {
+    if (greeting === "") setGreeting();
+    timerRef.current = setTimeout(() => {
       homeRef.current?.classList.remove("home-fadeout");
       homeRef.current?.classList.add("home-fadein");
     }, 150);
-    if (greeting === "") setGreeting();
-  }, []);
+  }, [greeting, setGreeting]);
 
   return (
     <div
@@ -80,43 +83,26 @@ export default function Home() {
 
 export const Widget = memo(
   ({ fadeOutNavigate }: { fadeOutNavigate: (str: string) => void }) => {
-    const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
-    const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
-    const setQueue = useBoundStore((state) => state.setQueue);
-    const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
-    const iRef = useRef<HTMLImageElement>(null);
-    const widgetRef = useRef<HTMLDivElement>(null);
-    const { data } = useQuery({
+    const { data, isLoading } = useQuery({
       queryKey: ["widget"],
       queryFn: getWidgetData,
       enabled: true,
       refetchOnReconnect: "always",
-      _optimisticResults: "isRestoring",
+      _optimisticResults: "optimistic",
       staleTime: 1000 * 60 * 10,
       gcTime: 1000 * 60 * 10,
     });
 
+    const iRef = useRef<HTMLImageElement>(null);
+    const widgetRef = useRef<HTMLDivElement>(null);
     const lcpImg =
       data?.image?.find((img: Image) => img.quality === "500x500")?.url ??
       widgetfallback;
-
-    const handlePlaylist = (
-      e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    ) => {
-      e.stopPropagation();
-      if (!isPlaying) {
-        setQueue({
-          id: data?.id || "",
-          name: data?.name || "",
-          image: data?.image || [],
-          songs: data?.songs || [],
-        });
-        data !== null && setNowPlaying(data.songs[0]);
-        setIsPlaying(true);
-      } else {
-        setIsPlaying(false);
-      }
-    };
+    const queue = useBoundStore((state) => state.nowPlaying.queue);
+    const inQueue = useMemo(
+      () => queue !== null && queue.name === data?.name,
+      [queue, data],
+    );
 
     function handleImageLoad() {
       iRef.current?.classList.remove("widget-banner-fadeout");
@@ -125,56 +111,51 @@ export const Widget = memo(
       widgetRef.current?.classList.add("song-fadein");
     }
 
-    return (
-      <Suspense fallback={<Widgetfallback />}>
+    if (isLoading) {
+      return <Widgetfallback />;
+    }
+
+    if (data) {
+      return (
         <div
           ref={widgetRef}
           data-testid="widget"
           className="song-fadeout h-auto max-h-max w-full px-3.5 sm:pt-0.5"
         >
           <section className="relative z-0 mx-auto mb-7 flex h-80 w-full flex-col overflow-hidden rounded-sm bg-transparent sm:my-3 sm:h-[40vw] sm:flex-row md:h-80">
-            <img
-              ref={iRef}
-              src={lcpImg}
-              alt="img"
-              fetchPriority="high"
-              loading="eager"
-              data-testid="widget-image"
-              className="widget-banner-fadeout aspect-square h-auto w-auto flex-shrink-0 cursor-pointer rounded-sm brightness-75 duration-200 ease-in contain-layout sm:z-10 sm:h-[40vw] sm:w-[40vw] sm:brightness-100 md:h-80 md:w-80"
+            <div
+              tabIndex={0}
               onClick={() =>
                 data !== null &&
                 data.id !== "" &&
                 fadeOutNavigate(`/playlists/${data.id}`)
               }
-              onLoad={handleImageLoad}
-              onError={(e) => (e.currentTarget.src = widgetfallback)}
-            />
+              role="link"
+              className="h-auto w-auto flex-shrink-0 cursor-pointer overflow-hidden rounded-sm duration-200 ease-in contain-layout sm:z-10"
+            >
+              <img
+                ref={iRef}
+                src={lcpImg}
+                alt="img"
+                fetchPriority="high"
+                loading="eager"
+                data-testid="widget-image"
+                className="widget-banner-fadeout aspect-square h-auto w-auto flex-shrink-0 cursor-pointer brightness-75 duration-200 ease-in contain-layout sm:h-[40vw] sm:w-[40vw] sm:brightness-100 md:h-80 md:w-80"
+                onLoad={handleImageLoad}
+                onError={(e) => (e.currentTarget.src = widgetfallback)}
+              />
+            </div>
             <div className="absolute right-2.5 top-[105px] z-20 flex h-auto w-[95%] items-end justify-between sm:-left-16 sm:top-[80%] sm:h-12 sm:w-[48vw] sm:justify-end sm:p-2 md:w-[370px] md:py-1">
               <p className="left-0 top-0 line-clamp-1 h-auto w-[80%] text-3xl font-bold text-white sm:hidden sm:text-xl">
                 {data !== null && data?.name}
               </p>
-              <button
-                style={{
-                  border: "1px solid #000",
-                }}
-                tabIndex={data ? 0 : -1}
-                onClick={handlePlaylist}
-                data-testid="widget-btn"
-                className="rounded-full bg-emerald-500 p-1.5 focus-visible:outline-none focus-visible:ring-8 focus-visible:ring-black"
-              >
-                <img
-                  src={isPlaying ? pause : play}
-                  alt="play"
-                  loading="lazy"
-                  className="h-8 w-8"
-                />
-              </button>
+              <WidgetButton key={data.name} data={data} inQueue={inQueue} />
             </div>
             <ul
               id="widget-container"
               className="absolute bottom-1.5 left-[1.75%] h-[158px] w-[96.5%] list-none overflow-x-hidden overflow-y-scroll rounded-sm bg-neutral-900 sm:static sm:ml-3 sm:mt-0 sm:h-full"
             >
-              {data && data.songs?.length > 0 ? (
+              {data.songs?.length > 0 ? (
                 data.songs.map((song: TrackDetails, i: number) => (
                   <Song
                     index={i}
@@ -191,17 +172,65 @@ export const Widget = memo(
             </ul>
           </section>
         </div>
-      </Suspense>
-    );
+      );
+    }
   },
 );
+Widget.displayName = "Widget";
+
+const WidgetButton = ({
+  data,
+  inQueue,
+}: {
+  data: PlaylistById;
+  inQueue: boolean;
+}) => {
+  const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
+  const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
+  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
+  const setQueue = useBoundStore((state) => state.setQueue);
+
+  const handlePlaylist = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    e.stopPropagation();
+    if (isPlaying) {
+      setIsPlaying(false);
+    } else {
+      setQueue({
+        id: data?.id || "",
+        name: data?.name || "",
+        image: data?.image || [],
+        songs: data?.songs || [],
+      });
+      if (data !== null) setNowPlaying(data.songs[0]);
+      setIsPlaying(true);
+    }
+  };
+
+  return (
+    <button
+      style={{
+        border: "1px solid #000",
+      }}
+      tabIndex={0}
+      onClick={handlePlaylist}
+      data-testid="widget-btn"
+      className="rounded-full bg-emerald-500 p-1.5 focus-visible:outline-none focus-visible:ring-8 focus-visible:ring-black"
+    >
+      <img
+        src={isPlaying && inQueue ? pause : play}
+        alt="play"
+        loading="lazy"
+        className="h-8 w-8"
+      />
+    </button>
+  );
+};
 
 export const TimelyPlaylists = memo(
   ({ fadeOutNavigate }: { fadeOutNavigate: (str: string) => void }) => {
-    const timeEl = useRef<HTMLDivElement>(null);
-    const loadedCount = useRef(0);
-
-    const { data } = useQuery({
+    const { data, isLoading } = useQuery({
       queryKey: ["timely"],
       queryFn: getTimelyData,
       enabled: true,
@@ -211,6 +240,8 @@ export const TimelyPlaylists = memo(
       gcTime: 1000 * 60 * 10,
     });
     const { viral, weekly, monthly, latest } = data || {};
+    const timeEl = useRef<HTMLDivElement>(null);
+    const loadedCount = useRef(0);
 
     function handleLoadedImage() {
       loadedCount.current += 1;
@@ -220,21 +251,26 @@ export const TimelyPlaylists = memo(
       }
     }
 
-    return (
-      <Suspense fallback={<TimelyFallback />}>
+    if (isLoading) {
+      return <TimelyFallback />;
+    }
+
+    if (data) {
+      return (
         <div
           ref={timeEl}
           data-testid="timely-playlists"
-          className="song-fadeout mx-auto mb-4 mt-1 grid h-auto w-full cursor-pointer grid-cols-2 grid-rows-2 gap-3 px-3.5 duration-200 ease-in sm:gap-5"
+          className="song-fadeout mx-auto mb-3 mt-1 grid h-auto w-full cursor-pointer grid-cols-2 grid-rows-2 gap-3 px-3.5 duration-200 ease-in sm:gap-5"
         >
           <div
             tabIndex={0}
             data-testid="today-playlist"
+            role="link"
             onClick={() => fadeOutNavigate(`/playlists/${viral?.id}`)}
             className="flex h-[50px] w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-800 shadow-sm outline-none transition-all ease-linear hover:text-yellow-500 hover:shadow-md hover:shadow-yellow-500 focus-visible:bg-neutral-700 sm:h-full"
           >
             <img
-              src={(viral && viral.image[0]?.url) || fallbacktoday}
+              src={viral?.image[0]?.url || fallbacktoday}
               alt="img"
               width={50}
               height={50}
@@ -252,11 +288,12 @@ export const TimelyPlaylists = memo(
           <div
             tabIndex={0}
             data-testid="weekly-playlist"
+            role="link"
             onClick={() => fadeOutNavigate(`/playlists/${weekly?.id}`)}
             className="flex h-[50px] w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-800 shadow-sm outline-none transition-all ease-linear hover:text-teal-500 hover:shadow-md hover:shadow-teal-500 focus-visible:bg-neutral-700 sm:h-auto"
           >
             <img
-              src={(weekly && weekly.image[0]?.url) || fallbackweekly}
+              src={weekly?.image[0]?.url || fallbackweekly}
               alt="img"
               width={50}
               height={50}
@@ -274,11 +311,12 @@ export const TimelyPlaylists = memo(
           <div
             tabIndex={0}
             data-testid="monthly-playlist"
+            role="link"
             onClick={() => fadeOutNavigate(`/playlists/${monthly?.id}`)}
             className="flex h-12 w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-800 shadow-sm outline-none transition-all ease-linear hover:text-rose-500 hover:shadow-md hover:shadow-rose-500 focus-visible:bg-neutral-700 sm:h-auto"
           >
             <img
-              src={(monthly && monthly.image[0]?.url) || fallbackmonthly}
+              src={monthly?.image[0]?.url || fallbackmonthly}
               alt="img"
               width={50}
               height={50}
@@ -296,11 +334,12 @@ export const TimelyPlaylists = memo(
           <div
             tabIndex={0}
             data-testid="yearly-playlist"
+            role="link"
             onClick={() => fadeOutNavigate(`/playlists/${latest?.id}`)}
             className="flex h-[50px] w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-800 shadow-sm outline-none transition-all ease-linear hover:text-purple-500 hover:shadow-md hover:shadow-purple-500 focus-visible:bg-neutral-700 sm:h-auto"
           >
             <img
-              src={(latest && latest.image[0]?.url) || fallbackyearly}
+              src={latest?.image[0]?.url || fallbackyearly}
               alt="img"
               width={50}
               height={50}
@@ -316,7 +355,8 @@ export const TimelyPlaylists = memo(
             </p>
           </div>
         </div>
-      </Suspense>
-    );
+      );
+    }
   },
 );
+TimelyPlaylists.displayName = "TimelyPlaylists";
