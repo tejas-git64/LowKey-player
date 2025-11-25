@@ -8,7 +8,7 @@ afterEach(() => {
   cleanup();
 });
 
-describe.skip("App", () => {
+describe("App", () => {
   test("should render", () => {
     act(() => {
       render(<App />);
