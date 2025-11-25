@@ -1,9 +1,10 @@
 /// <reference types="vitest/config" />
-import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
+import { defineConfig } from "vite";
+import { EsLinter, linterPlugin } from "vite-plugin-linter";
 import preload from "vite-plugin-preload";
 
-export default defineConfig({
+export default defineConfig((config) => ({
   test: {
     environment: "jsdom",
     include: ["**/*.{test,spec}.{js,jsx,ts,tsx}"],
@@ -27,10 +28,22 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    linterPlugin({
+      include: ["./src/**/*.ts", "./src/**/*.tsx"],
+      linters: [
+        new EsLinter({
+          configEnv: config,
+          serveOptions: { clearCacheOnStart: true },
+        }),
+      ],
+      build: {
+        includeMode: "filesInFolder",
+      },
+    }),
     preload({
       mode: "preload",
       includeCss: true,
       includeJs: true,
     }),
   ],
-});
+}));
