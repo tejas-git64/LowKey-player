@@ -1,9 +1,9 @@
 import { PlaylistOfList } from "../../types/GlobalTypes";
 import Playlist from "../Playlist/Playlist";
-import { memo, Suspense, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import SectionLoading from "./Loading";
 import { getPlaylist } from "../../api/requests";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 const Section = memo(
   ({
@@ -16,7 +16,7 @@ const Section = memo(
     const sectionRef = useRef<HTMLDivElement | null>(null);
     const [isIntersecting, setIsIntersecting] = useState(false);
 
-    const query = useQuery({
+    const { data, isLoading } = useQuery({
       queryKey: ["section", genre],
       queryFn: () => getPlaylist(genre),
       enabled: isIntersecting,
@@ -24,9 +24,9 @@ const Section = memo(
       _optimisticResults: "isRestoring",
       staleTime: 1000 * 60 * 10,
       gcTime: 1000 * 60 * 10,
-    }) as UseQueryResult<PlaylistOfList[] | null> | undefined;
+    });
 
-    const data = query?.data ?? null;
+    const sectionData = data ?? null;
 
     useEffect(() => {
       if (sectionRef.current) {
@@ -44,41 +44,43 @@ const Section = memo(
       }
     }, []);
 
+    if (isLoading) return <SectionLoading />;
+
     return (
-      <Suspense fallback={<SectionLoading />}>
+      <div
+        data-testid={genre}
+        ref={sectionRef}
+        className="flex h-auto w-full flex-col overflow-x-hidden bg-transparent py-2"
+      >
+        <h1 className="mb-2 px-4 text-left text-xl font-semibold capitalize text-white">
+          {genre}
+        </h1>
         <div
-          data-testid={genre}
-          ref={sectionRef}
-          className="flex h-auto w-full flex-col overflow-x-hidden bg-transparent py-2"
+          data-testid="playlist-container"
+          role="list"
+          className="flex h-[180px] w-full overflow-y-hidden overflow-x-scroll whitespace-nowrap px-4"
         >
-          <h1 className="mb-2 px-4 text-left text-xl font-semibold capitalize text-white">
-            {genre}
-          </h1>
-          <div
-            data-testid="playlist-container"
-            className="flex h-[180px] w-full overflow-y-hidden overflow-x-scroll whitespace-nowrap px-4"
-          >
-            {data?.map((playlist: PlaylistOfList, i: number) => (
-              <div
-                data-testid="playlist-item"
-                key={playlist.id}
-                onClick={() => fadeOutNavigate(`/playlists/${playlist.id}`)}
-                className="h-full w-auto"
-              >
-                {playlist && (
-                  <Playlist
-                    i={i}
-                    {...playlist}
-                    fadeOutNavigate={fadeOutNavigate}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
+          {sectionData?.map((playlist: PlaylistOfList, i: number) => (
+            <div
+              data-testid="playlist-item"
+              key={playlist.id}
+              role="listitem"
+              onClick={() => fadeOutNavigate(`/playlists/${playlist.id}`)}
+              className="h-full w-auto"
+            >
+              {playlist && (
+                <Playlist
+                  i={i}
+                  {...playlist}
+                  fadeOutNavigate={fadeOutNavigate}
+                />
+              )}
+            </div>
+          ))}
         </div>
-      </Suspense>
+      </div>
     );
   },
 );
-
+Section.displayName = "Section";
 export default Section;

@@ -53,23 +53,21 @@ const Waveform = ({
   const lastTimeRef = useRef<number>(0);
 
   useEffect(() => {
-    if (!waveSurferRef.current) {
-      waveSurferRef.current = WaveSurfer.create({
-        container: waveformRef.current as HTMLDivElement,
-        waveColor: "#666666",
-        cursorColor: "#10B981",
-        progressColor: "#10B981",
-        interact: true,
-        barHeight: isMobileWidth ? 8 : 2,
-        barWidth: isMobileWidth ? 3 : 2,
-        height: isMobileWidth ? 50 : 10,
-        width: isMobileWidth ? 350 : 400,
-        fillParent: true,
-        dragToSeek: true,
-        autoScroll: true,
-        normalize: true,
-      });
-    }
+    waveSurferRef.current ??= WaveSurfer.create({
+      container: waveformRef.current as HTMLDivElement,
+      waveColor: "#666666",
+      cursorColor: "#10B981",
+      progressColor: "#10B981",
+      interact: true,
+      barHeight: isMobileWidth ? 8 : 2,
+      barWidth: isMobileWidth ? 3 : 2,
+      height: isMobileWidth ? 50 : 10,
+      width: isMobileWidth ? 350 : 400,
+      fillParent: true,
+      dragToSeek: true,
+      autoScroll: true,
+      normalize: true,
+    });
 
     return () => {
       waveSurferRef.current?.unAll();
@@ -82,17 +80,17 @@ const Waveform = ({
     if (waveSurferRef.current) {
       const isNewTrack = lastTrackRef.current !== id;
 
-      if (!isNewTrack) {
-        lastTimeRef.current = waveSurferRef.current.getCurrentTime();
-      } else {
+      if (isNewTrack) {
         lastTimeRef.current = 0;
+      } else {
+        lastTimeRef.current = waveSurferRef.current.getCurrentTime();
       }
       if (audioUrl) {
-        if (!audioUrl.startsWith("https")) {
+        if (audioUrl.startsWith("https")) {
+          waveSurferRef.current.load(audioUrl);
+        } else {
           const secureUrl = audioUrl.replace("http", "https");
           waveSurferRef.current.load(secureUrl);
-        } else {
-          waveSurferRef.current.load(audioUrl);
         }
       }
       const handleReady = () => {
@@ -101,7 +99,7 @@ const Waveform = ({
           const stored = storedStr
             ? (JSON.parse(storedStr) as WaveformType["localSave"])
             : null;
-          if (stored && stored.url === audioUrl) {
+          if (stored?.url === audioUrl) {
             waveSurferRef.current?.seekTo(stored.time / (stored.duration || 1));
           }
         } else if (lastTimeRef.current > 0) {
@@ -109,9 +107,11 @@ const Waveform = ({
             lastTimeRef.current / (trackDuration || 1),
           );
         }
-        isPlaying
-          ? waveSurferRef.current?.play()
-          : waveSurferRef.current?.pause();
+        if (isPlaying) {
+          waveSurferRef.current?.play();
+        } else {
+          waveSurferRef.current?.pause();
+        }
       };
       waveSurferRef.current.on("ready", handleReady);
       waveSurferRef.current.on("timeupdate", () => {
@@ -137,7 +137,7 @@ const Waveform = ({
         window.removeEventListener("beforeunload", saveToLocalStorage);
       };
     }
-  }, [audioUrl, id, trackDuration]);
+  }, [audioUrl, id, isPlaying, trackDuration]);
 
   useEffect(() => {
     if (waveSurferRef.current) {
@@ -162,20 +162,18 @@ const Waveform = ({
           playCountRef.current = 0;
           continuePlayback();
         }
+      } else if (
+        songIndex !== -1 &&
+        queueSongs &&
+        songIndex < queueSongs.length - 1
+      ) {
+        setQueue({
+          ...queue,
+          songs: queueSongs.filter((_, idx) => idx !== songIndex),
+        });
+        continuePlayback();
       } else {
-        if (
-          songIndex !== -1 &&
-          queueSongs &&
-          songIndex < queueSongs.length - 1
-        ) {
-          setQueue({
-            ...queue,
-            songs: queueSongs.filter((_, idx) => idx !== songIndex),
-          });
-          continuePlayback();
-        } else {
-          setIsPlaying(false);
-        }
+        setIsPlaying(false);
       }
     }
 
@@ -183,7 +181,15 @@ const Waveform = ({
     return () => {
       waveSurferRef.current?.un("finish", handleCompletion);
     };
-  }, [isReplay, queue?.songs, songIndex]);
+  }, [
+    continuePlayback,
+    isReplay,
+    playCountRef,
+    queue,
+    setIsPlaying,
+    setQueue,
+    songIndex,
+  ]);
 
   return (
     <div

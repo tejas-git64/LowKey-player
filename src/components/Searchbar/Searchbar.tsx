@@ -1,20 +1,29 @@
-import { useDeferredValue, useEffect, useState } from "react";
+import { useDeferredValue, useEffect, useRef, useState } from "react";
 import { getSearchResults } from "../../api/requests";
 import searchIcon from "../../assets/svgs/icons8-search.svg";
+import { useBoundStore } from "../../store/store";
+import { defaultSearchData } from "../../utils/utils";
 
 export default function Searchbar() {
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);
+  const setSearch = useBoundStore((state) => state.setSearch);
+  const timerRef = useRef<NodeJS.Timeout>(null);
 
   useEffect(() => {
     const trimmed = deferredQuery.trim();
-    if (trimmed !== "") {
-      const handler = setTimeout(() => {
-        getSearchResults(trimmed.replace(/\s+/g, "+"));
+    if (trimmed === "") {
+      setSearch(defaultSearchData);
+      setQuery("");
+    } else {
+      timerRef.current = setTimeout(() => {
+        getSearchResults(trimmed.replaceAll(/\s+/g, "+"));
       }, 800);
-      return () => clearTimeout(handler);
     }
-  }, [deferredQuery]);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [deferredQuery, setSearch]);
 
   return (
     <div

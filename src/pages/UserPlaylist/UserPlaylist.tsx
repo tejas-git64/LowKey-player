@@ -13,6 +13,7 @@ import Song from "../../components/Song/Song";
 import { memo, startTransition, useEffect, useMemo, useRef } from "react";
 import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
 import { animateScreen } from "../../helpers/animateScreen";
+import useClearTimer from "../../hooks/useClearTimer";
 
 export default function UserPlaylistPage() {
   const queue = useBoundStore((state) => state.nowPlaying.queue);
@@ -21,18 +22,20 @@ export default function UserPlaylistPage() {
   const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
   const { id } = useParams();
   const upEl = useRef(null);
+  const timerRef = useRef<NodeJS.Timeout>(null);
   const playlist: UserPlaylist | undefined = useMemo(
     () =>
       userPlaylists.find(
         (playlist: UserPlaylist) => playlist.id === Number(id),
       ),
-    [userPlaylists],
+    [userPlaylists, id],
   );
 
   useEffect(() => {
-    queue && setNowPlaying(queue.songs[0]);
-  }, [queue]);
+    if (queue) setNowPlaying(queue.songs[0]);
+  }, [queue, setNowPlaying]);
 
+  useClearTimer(timerRef);
   useEffect(() => {
     const localSaves = localStorage.getItem("local-library");
     if (localSaves !== null) {
@@ -47,46 +50,39 @@ export default function UserPlaylistPage() {
         console.error("Failed to parse local library from localStorage:", err);
       }
     }
-    animateScreen(upEl);
-  }, []);
+    timerRef.current = animateScreen(upEl);
+  }, [id, setUserPlaylist]);
 
   return (
-    <>
-      <div
-        data-testid="userplaylist-page"
-        ref={upEl}
-        className="h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth"
-      >
-        <div className="relative flex h-[210px] w-full items-end justify-between border-b border-black bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 px-4 py-3 sm:h-fit sm:pb-6 sm:pt-4">
-          <div className="absolute right-2 top-2 h-auto w-auto">
-            <RouteNav />
-          </div>
-          {playlist?.name && <UserPlaylistInfo name={playlist.name} />}
-          {playlist && <UserPlaylistControls {...playlist} />}
+    <div
+      data-testid="userplaylist-page"
+      ref={upEl}
+      className="h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth"
+    >
+      <div className="relative flex h-[210px] w-full items-end justify-between border-b border-black bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 px-4 py-3 sm:h-fit sm:pb-6 sm:pt-4">
+        <div className="absolute right-2 top-2 h-auto w-auto">
+          <RouteNav />
         </div>
-        <div className="mx-auto h-auto min-h-[80dvh] w-full bg-neutral-900">
-          {playlist?.songs ? (
-            <ul
-              data-testid="playlist-container"
-              className="flex h-auto max-h-fit w-full flex-col items-start justify-start bg-transparent px-4 pb-28 pt-4 sm:pb-20"
-            >
-              {playlist.songs.map((song: TrackDetails, i) => (
-                <Song
-                  key={song.id}
-                  index={i}
-                  track={song}
-                  isWidgetSong={false}
-                />
-              ))}
-            </ul>
-          ) : (
-            <p className="m-auto w-full py-40 text-center text-xl text-neutral-400">
-              No songs here...T_T
-            </p>
-          )}
-        </div>
+        {playlist?.name && <UserPlaylistInfo name={playlist.name} />}
+        {playlist && <UserPlaylistControls {...playlist} />}
       </div>
-    </>
+      <div className="mx-auto h-auto min-h-[80dvh] w-full bg-neutral-900">
+        {playlist?.songs ? (
+          <ul
+            data-testid="playlist-container"
+            className="flex h-auto max-h-fit w-full flex-col items-start justify-start bg-transparent px-4 pb-28 pt-4 sm:pb-20"
+          >
+            {playlist.songs.map((song: TrackDetails, i) => (
+              <Song key={song.id} index={i} track={song} isWidgetSong={false} />
+            ))}
+          </ul>
+        ) : (
+          <p className="m-auto w-full py-40 text-center text-xl text-neutral-400">
+            No songs here...T_T
+          </p>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -123,8 +119,9 @@ const UserPlaylistControls = memo(({ id, songs, name }: UserPlaylist) => {
   const setQueue = useBoundStore((state) => state.setQueue);
   const queueId = useBoundStore((state) => state.nowPlaying.queue?.id);
   const isPlayable = songs && songs.length > 0;
-  const inQueue = useMemo(() => queueId === String(id), [id]);
-
+  const inQueue = useMemo(() => queueId === String(id), [id, queueId]);
+  const playStatus =
+    id === Number(queueId) && isPlaying ? "Pause playlist" : "Play playlist";
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
@@ -189,20 +186,8 @@ const UserPlaylistControls = memo(({ id, songs, name }: UserPlaylist) => {
       <button
         type="button"
         data-testid="play-btn"
-        title={
-          isPlayable
-            ? id === Number(queueId) && isPlaying
-              ? "Pause playlist"
-              : "Play playlist"
-            : "No songs to play"
-        }
-        aria-label={
-          isPlayable
-            ? id === Number(queueId) && isPlaying
-              ? "Pause playlist"
-              : "Play playlist"
-            : "No songs to play"
-        }
+        title={isPlayable ? playStatus : "No songs to play"}
+        aria-label={isPlayable ? playStatus : "No songs to play"}
         tabIndex={isPlayable ? 0 : -1}
         disabled={!isPlayable}
         onClick={
@@ -230,13 +215,7 @@ const UserPlaylistControls = memo(({ id, songs, name }: UserPlaylist) => {
       >
         <img
           src={id === Number(queueId) && isPlaying ? pause : play}
-          alt={
-            isPlayable
-              ? id === Number(queueId) && isPlaying
-                ? "Pause"
-                : "Play"
-              : "Unavailable"
-          }
+          alt={isPlayable ? playStatus : "Unavailable"}
           className="h-8 w-8"
           aria-hidden="true"
         />

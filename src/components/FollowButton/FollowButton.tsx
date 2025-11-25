@@ -40,3 +40,4 @@ export const FollowButton = memo(({ artist }: { artist: ArtistInSong }) => {
     </button>
   );
 });
+FollowButton.displayName = "FollowButton";

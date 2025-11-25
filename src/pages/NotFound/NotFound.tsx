@@ -7,10 +7,12 @@ import nf1536 from "../../assets/images/notfound/notfound-landscape-1536px.webp"
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { animateScreen } from "../../helpers/animateScreen";
+import useClearTimer from "../../hooks/useClearTimer";
 
 export default function NotFound() {
   const [nfImg, setNfImg] = useState<string>("");
   const nfEl = useRef<HTMLImageElement>(null);
+  const timerRef = useRef<NodeJS.Timeout>(null);
 
   function imageResize() {
     switch (true) {
@@ -38,8 +40,9 @@ export default function NotFound() {
     }
   }
 
+  useClearTimer(timerRef);
   useEffect(() => {
-    animateScreen(nfEl);
+    timerRef.current = animateScreen(nfEl);
     imageResize();
     window.addEventListener("load", imageResize);
     window.addEventListener("resize", imageResize);
@@ -50,35 +53,33 @@ export default function NotFound() {
   }, []);
 
   return (
-    <>
-      <div
-        data-testid="notfound"
-        ref={nfEl}
-        style={{
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-          backgroundImage: `url(${nfImg})`,
-        }}
-        className="home-fadeout flex h-full w-full items-center justify-center shadow-inner shadow-black duration-200 ease-in"
-      >
-        <div className="flex h-[80%] w-[80%] flex-col items-center justify-around sm:h-full">
-          <div className="text-center">
-            <h1 className="text-8xl font-extrabold text-black sm:text-9xl sm:text-neutral-950">
-              404
-            </h1>
-            <p className="font-medium text-black sm:text-lg sm:font-semibold sm:text-neutral-900">
-              Page not found
-            </p>
-          </div>
-          <Link
-            to={"/home"}
-            className="sm:text-md rounded-full bg-white p-2 px-6 text-sm text-black hover:text-black sm:bg-black sm:px-8 sm:py-3 sm:text-neutral-500 sm:hover:text-neutral-500"
-          >
-            Go home
-          </Link>
+    <div
+      data-testid="notfound"
+      ref={nfEl}
+      style={{
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundImage: `url(${nfImg})`,
+      }}
+      className="home-fadeout flex h-full w-full items-center justify-center shadow-inner shadow-black duration-200 ease-in"
+    >
+      <div className="flex h-[80%] w-[80%] flex-col items-center justify-around sm:h-full">
+        <div className="text-center">
+          <h1 className="text-8xl font-extrabold text-black sm:text-9xl sm:text-neutral-950">
+            404
+          </h1>
+          <p className="font-medium text-black sm:text-lg sm:font-semibold sm:text-neutral-900">
+            Page not found
+          </p>
         </div>
+        <Link
+          to={"/home"}
+          className="sm:text-md rounded-full bg-white p-2 px-6 text-sm text-black hover:text-black sm:bg-black sm:px-8 sm:py-3 sm:text-neutral-500 sm:hover:text-neutral-500"
+        >
+          Go home
+        </Link>
       </div>
-    </>
+    </div>
   );
 }

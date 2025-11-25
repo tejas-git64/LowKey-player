@@ -4,14 +4,14 @@ import { useBoundStore } from "../../store/store";
 import { ActivityType, TrackDetails } from "../../types/GlobalTypes";
 import songfallback from "../../assets/fallbacks/song-fallback.webp";
 import { cleanString } from "../../helpers/cleanString";
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 
 type RecentTypes = {
   history: TrackDetails[] | null;
   activity: string[];
 };
 
-export default function Recents() {
+const Recents = memo(() => {
   const recentTracks = useBoundStore((state) => state.recents.history);
   const recentActivity = useBoundStore((state) => state.recents.activity);
   const setHistory = useBoundStore((state) => state.setHistory);
@@ -21,10 +21,14 @@ export default function Recents() {
     const stored = localStorage.getItem("last-recents");
     if (stored) {
       const { history, activity }: RecentTypes = JSON.parse(stored);
-      history?.forEach(setHistory);
-      activity?.forEach(setActivity);
+      for (const h of history || []) {
+        setHistory(h);
+      }
+      for (const a of activity || []) {
+        setActivity(a);
+      }
     }
-  }, []);
+  }, [setActivity, setHistory]);
 
   return (
     <div
@@ -61,7 +65,9 @@ export default function Recents() {
       </div>
     </div>
   );
-}
+});
+Recents.displayName = "Recents";
+export default Recents;
 
 const RecentSong = ({
   id,
@@ -73,37 +79,38 @@ const RecentSong = ({
   const recentEl = useRef<HTMLLIElement>(null);
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       recentEl.current?.classList.remove("song-fadeout");
       recentEl.current?.classList.add("song-fadein");
     }, i * 50);
-  }, []);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [i]);
   return (
-    <>
-      <li
-        id={id}
-        ref={recentEl}
-        data-testid="recent-song"
-        className="song-fadeout mb-0.5 flex h-[50px] w-full flex-shrink-0 items-center justify-start overflow-hidden bg-black duration-200 ease-in"
-      >
-        <img
-          src={image[0] ? image[0].url : songfallback}
-          alt={`${name}-img`}
-          onError={(e) => (e.currentTarget.src = songfallback)}
-          className="mr-4 h-[50px] w-[50px] border-r border-black"
-        />
-        <div className="w-[65%] leading-5">
-          <p className="line-clamp-1 w-full text-ellipsis text-xs text-white">
-            {cleanString(name) || "Unknown track"}
-          </p>
-          <p className="line-clamp-1 text-xs text-neutral-500">
-            {artists.primary[0]
-              ? cleanString(artists.primary[0].name)
-              : "Unknown Artist"}
-          </p>
-        </div>
-      </li>
-    </>
+    <li
+      id={id}
+      ref={recentEl}
+      data-testid="recent-song"
+      className="song-fadeout mb-0.5 flex h-[50px] w-full flex-shrink-0 items-center justify-start overflow-hidden bg-black duration-200 ease-in"
+    >
+      <img
+        src={image[0] ? image[0].url : songfallback}
+        alt={`${name}-img`}
+        onError={(e) => (e.currentTarget.src = songfallback)}
+        className="mr-4 h-[50px] w-[50px] border-r border-black"
+      />
+      <div className="w-[65%] leading-5">
+        <p className="line-clamp-1 w-full text-ellipsis text-xs text-white">
+          {cleanString(name) || "Unknown track"}
+        </p>
+        <p className="line-clamp-1 text-xs text-neutral-400">
+          {artists.primary[0]
+            ? cleanString(artists.primary[0].name)
+            : "Unknown Artist"}
+        </p>
+      </div>
+    </li>
   );
 };
 
@@ -111,11 +118,14 @@ const Activity = ({ message, i }: ActivityType & { i: number }) => {
   const activityEl = useRef<HTMLLIElement>(null);
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       activityEl.current?.classList.remove("song-fadeout");
       activityEl.current?.classList.add("song-fadein");
     }, i * 50);
-  }, []);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [i]);
 
   return (
     <li
