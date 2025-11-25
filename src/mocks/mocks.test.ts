@@ -1,4 +1,4 @@
-import { vi, Mock } from "vitest";
+import { vi } from "vitest";
 import {
   samplePlaylist,
   samplePlaylistOfList,
@@ -10,7 +10,6 @@ import {
   PlaylistById,
   PlaylistOfList,
   AlbumById,
-  ArtistType,
   TrackDetails,
 } from "../types/GlobalTypes";
 
@@ -70,7 +69,7 @@ export const mockedWidgetData = {
   ...mockedDataProps,
   data: samplePlaylist as PlaylistById,
   promise: Promise.resolve(samplePlaylist as PlaylistById),
-  refetch: vi.fn() as Mock,
+  refetch: vi.fn(),
 };
 export const obj = {
   viral: samplePlaylist as PlaylistById,
@@ -81,50 +80,50 @@ export const obj = {
 export const mockedTimelyData = {
   data: obj,
   promise: Promise.resolve(obj),
-  refetch: vi.fn() as Mock,
+  refetch: vi.fn(),
   ...mockedDataProps,
 };
 export const mockedSectionData = {
   data: [samplePlaylistOfList] as PlaylistOfList[],
   promise: Promise.resolve([samplePlaylistOfList] as PlaylistOfList[]),
-  refetch: vi.fn() as Mock,
+  refetch: vi.fn(),
   ...mockedDataProps,
 };
 export const mockedAlbumSuccessData = {
   data: sampleAlbum as AlbumById,
   promise: Promise.resolve(sampleAlbum as AlbumById),
-  refetch: vi.fn() as Mock,
+  refetch: vi.fn(),
   ...mockedDataProps,
 };
 export const mockedArtistData = {
-  data: sampleArtist as ArtistType,
-  promise: Promise.resolve(sampleArtist as ArtistType),
-  refetch: vi.fn() as Mock,
+  data: sampleArtist,
+  promise: Promise.resolve(sampleArtist),
+  refetch: vi.fn(),
   ...mockedDataProps,
 };
 
 export const mockedArtistAlbumData = {
   data: [sampleAlbum] as AlbumById[],
   promise: Promise.resolve([sampleAlbum] as AlbumById[]),
-  refetch: vi.fn() as Mock,
+  refetch: vi.fn(),
   ...mockedDataProps,
 };
 
 export const mockedArtistSongData = {
   data: [sampleTrack] as TrackDetails[],
   promise: Promise.resolve([sampleTrack] as TrackDetails[]),
-  refetch: vi.fn() as Mock,
+  refetch: vi.fn(),
   ...mockedDataProps,
 };
 export const mockedPlaylistSuccessData = {
   data: samplePlaylist as PlaylistById,
   promise: Promise.resolve(samplePlaylist as PlaylistById),
-  refetch: vi.fn() as Mock,
+  refetch: vi.fn(),
   ...mockedDataProps,
 };
 export const mockedNullDataResult = {
   data: null,
   promise: Promise.resolve(null),
-  refetch: vi.fn() as Mock,
+  refetch: vi.fn(),
   ...mockedNullDataProps,
 };
