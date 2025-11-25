@@ -29,7 +29,7 @@ vi.mock("react-router-dom", async (importOriginal) => {
     useParams: vi.fn(),
   };
 });
-let setUserPlaylistMock = vi.fn();
+const setUserPlaylistMock = vi.fn();
 const mockedUseParams = vi.mocked(useParams);
 let getItemSpy: MockInstance<(key: string) => string | null>;
 const {
@@ -235,7 +235,7 @@ describe("UserPlaylist", () => {
             </MemoryRouter>
           </QueryClientProvider>,
         );
-        const playBtn = screen.getByTestId("play-btn") as HTMLButtonElement;
+        const playBtn = screen.getByTestId("play-btn");
         fireEvent.click(playBtn);
         expect(playBtn.title).toBe("Pause playlist");
         expect(playBtn.ariaLabel).toBe("Pause playlist");
@@ -251,7 +251,7 @@ describe("UserPlaylist", () => {
             </MemoryRouter>
           </QueryClientProvider>,
         );
-        const playBtn = screen.getByTestId("play-btn") as HTMLButtonElement;
+        const playBtn = screen.getByTestId("play-btn");
         expect(playBtn.title).toBe("Play playlist");
         expect(playBtn.ariaLabel).toBe("Play playlist");
       });
@@ -267,7 +267,7 @@ describe("UserPlaylist", () => {
             </MemoryRouter>
           </QueryClientProvider>,
         );
-        const playBtn = screen.getByTestId("play-btn") as HTMLButtonElement;
+        const playBtn = screen.getByTestId("play-btn");
         expect(playBtn.title).toBe("No songs to play");
         expect(playBtn.ariaLabel).toBe("No songs to play");
       });
@@ -280,7 +280,7 @@ describe("UserPlaylist", () => {
             </MemoryRouter>
           </QueryClientProvider>,
         );
-        const playBtn = screen.getByTestId("play-btn") as HTMLButtonElement;
+        const playBtn = screen.getByTestId("play-btn");
         playBtn.focus();
         user.keyboard("{Enter}");
         waitFor(() => {
@@ -299,7 +299,7 @@ describe("UserPlaylist", () => {
             </MemoryRouter>
           </QueryClientProvider>,
         );
-        const playBtn = screen.getByTestId("play-btn") as HTMLButtonElement;
+        const playBtn = screen.getByTestId("play-btn");
         playBtn.focus();
         user.keyboard("{ }");
         waitFor(() => {
