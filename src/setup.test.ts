@@ -8,7 +8,8 @@ afterEach(() => {
 });
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 globalThis.IntersectionObserver = IntersectionObserverMock as any;
-window.HTMLMediaElement.prototype.load = () => {};
-window.HTMLMediaElement.prototype.pause = () => {};
-window.HTMLMediaElement.prototype.play = () => Promise.resolve();
+globalThis.HTMLMediaElement.prototype.load = () => {};
+globalThis.HTMLMediaElement.prototype.pause = () => {};
+globalThis.HTMLMediaElement.prototype.play = () => Promise.resolve();
