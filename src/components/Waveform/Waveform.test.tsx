@@ -5,12 +5,11 @@ import {
   describe,
   expect,
   Mock,
-  MockInstance,
   test,
   vi,
 } from "vitest";
 import Waveform from "./Waveform";
-import { sampleSongQueue, sampleTrack } from "../../api/samples";
+import { sampleSongQueue } from "../../api/samples";
 import WaveSurfer from "wavesurfer.js";
 import { useBoundStore } from "../../store/store";
 
@@ -46,19 +45,15 @@ const mockUn = vi.fn();
 const mockUnAll = vi.fn();
 const mockSetVolume = vi.fn();
 const mockSeekTo = vi.fn();
-//@ts-ignore
-let getItemMock: MockInstance<(key: string) => string | null>,
-  setItemMock: MockInstance<(key: string) => string | null>;
-let store: Record<string, string> = {};
 
-let handlers: Record<string, Function[]> = {};
+const handlers: Record<string, (() => unknown)[]> = {};
 export const instance = {
-  on: (event: string, cb: Function) => {
+  on: (event: string, cb: () => unknown) => {
     handlers[event] = handlers[event] || [];
     handlers[event].push(cb);
     mockOn(event, cb);
   },
-  un: (event: string, cb: Function) => {
+  un: (event: string, cb: () => unknown) => {
     mockUn(event, cb);
     handlers[event] = (handlers[event] || []).filter((fn) => fn !== cb);
   },
@@ -90,17 +85,8 @@ beforeEach(() => {
     dispatchEvent: vi.fn(),
     load: vi.fn(),
   }));
-  getItemMock = vi
-    .spyOn(Storage.prototype, "getItem")
-    .mockImplementation((key: string): string | null => {
-      if (key === "last-audio") return JSON.stringify(sampleTrack);
-      if (key === "last-quality") return "2";
-      if (key === "last-volume") return "0.5";
-      return store[key] || null;
-    });
   vi.spyOn(window, "addEventListener");
   vi.spyOn(window, "removeEventListener");
-  setItemMock = vi.spyOn(Storage.prototype, "setItem");
 });
 
 afterEach(() => {
@@ -250,11 +236,12 @@ describe("Waveform", () => {
     act(() => {
       unloadHandler();
     });
-
-    expect(localStorage.setItem).toHaveBeenCalledWith(
-      "last-waveform",
-      expect.stringContaining('"time":33'),
-    );
+    waitFor(() => {
+      expect(localStorage.setItem).toHaveBeenCalledWith(
+        "last-waveform",
+        expect.stringContaining('"time":33'),
+      );
+    });
   });
   test("should remove window event listeners on unmount", () => {
     const { unmount } = render(<Waveform {...obj} />);
