@@ -6,7 +6,15 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  Mock,
+  test,
+  vi,
+} from "vitest";
 import fallback from "../../assets/fallbacks/playlist-fallback.webp";
 import favorite from "../../assets/svgs/icons8-heart.svg";
 import favorited from "../../assets/svgs/icons8-favorited.svg";
@@ -31,9 +39,9 @@ import {
 } from "../../mocks/mocks.test";
 
 vi.mock("@tanstack/react-query", async (importOriginal) => {
-  const actual = (await importOriginal()) as any;
+  const actual = await importOriginal();
   return {
-    ...actual,
+    ...(actual as Mock),
     useQuery: vi.fn(),
   };
 });
@@ -179,9 +187,9 @@ describe("PlaylistInfo", () => {
       </QueryClientProvider>,
     );
     vi.advanceTimersByTime(150);
-    const image = screen.getByTestId("playlist-info-image") as HTMLImageElement;
+    const image = screen.getByTestId("playlist-info-image");
     fireEvent.error(image);
-    expect(image.src).toContain(fallback);
+    expect((image as HTMLImageElement).src).toContain(fallback);
   });
 });
 describe("PlaylistControls", () => {
@@ -264,23 +272,23 @@ describe("PlaylistControls", () => {
     );
     vi.advanceTimersByTime(150);
     const addBtn = screen.getByTestId("add-btn");
-    const addIcon = screen.getByTestId("add-icon") as HTMLImageElement;
+    const addIcon = screen.getByTestId("add-icon");
 
     expect(addBtn.ariaLabel).toBe("Add to Library");
-    expect(addIcon.src).toBe(addAlbum);
-    expect(addIcon.alt).toBe("Add to library");
+    expect((addIcon as HTMLImageElement).src).toBe(addAlbum);
+    expect((addIcon as HTMLImageElement).alt).toBe("Add to library");
 
     fireEvent.click(addBtn);
 
     expect(addBtn.ariaLabel).toBe("Remove from Library");
-    expect(addIcon.src).toBe(addedToAlbum);
-    expect(addIcon.alt).toBe("Added to library");
+    expect((addIcon as HTMLImageElement).src).toBe(addedToAlbum);
+    expect((addIcon as HTMLImageElement).alt).toBe("Added to library");
 
     fireEvent.click(addBtn);
 
     expect(addBtn.ariaLabel).toBe("Add to Library");
-    expect(addIcon.src).toBe(addAlbum);
-    expect(addIcon.alt).toBe("Add to library");
+    expect((addIcon as HTMLImageElement).src).toBe(addAlbum);
+    expect((addIcon as HTMLImageElement).alt).toBe("Add to library");
   });
   test("toggling favorite button should toggle aria-label and icon", () => {
     render(
@@ -292,25 +300,23 @@ describe("PlaylistControls", () => {
     );
     vi.advanceTimersByTime(150);
     const favoriteBtn = screen.getByTestId("playlist-favorite-btn");
-    const favoriteIcon = screen.getByTestId(
-      "favorite-icon",
-    ) as HTMLImageElement;
+    const favoriteIcon = screen.getByTestId("favorite-icon");
 
     expect(favoriteBtn.ariaLabel).toBe("Add to Favorites");
-    expect(favoriteIcon.src).toBe(favorite);
-    expect(favoriteIcon.alt).toBe("Favorite");
+    expect((favoriteIcon as HTMLImageElement).src).toBe(favorite);
+    expect((favoriteIcon as HTMLImageElement).alt).toBe("Favorite");
 
     fireEvent.click(favoriteBtn);
 
     expect(favoriteBtn.ariaLabel).toBe("Remove from Favorites");
-    expect(favoriteIcon.src).toBe(favorited);
-    expect(favoriteIcon.alt).toBe("Favorited");
+    expect((favoriteIcon as HTMLImageElement).src).toBe(favorited);
+    expect((favoriteIcon as HTMLImageElement).alt).toBe("Favorited");
 
     fireEvent.click(favoriteBtn);
 
     expect(favoriteBtn.ariaLabel).toBe("Add to Favorites");
-    expect(favoriteIcon.src).toBe(favorite);
-    expect(favoriteIcon.alt).toBe("Favorite");
+    expect((favoriteIcon as HTMLImageElement).src).toBe(favorite);
+    expect((favoriteIcon as HTMLImageElement).alt).toBe("Favorite");
   });
   test("playback button should play/pause the album on click", () => {
     render(
@@ -322,14 +328,12 @@ describe("PlaylistControls", () => {
     );
     vi.advanceTimersByTime(150);
     const playbackBtn = screen.getByTestId("playlist-playback");
-    const playbackIcon = screen.getByTestId(
-      "playlist-playback-icon",
-    ) as HTMLImageElement;
+    const playbackIcon = screen.getByTestId("playlist-playback-icon");
 
     expect(playbackBtn.tabIndex).toBe(0);
     expect(playbackBtn.ariaLabel).toBe("Play playlist");
-    expect(playbackIcon.src).toBe(play);
-    expect(playbackIcon.alt).toBe("Play");
+    expect((playbackIcon as HTMLImageElement).src).toBe(play);
+    expect((playbackIcon as HTMLImageElement).alt).toBe("Play");
 
     act(() => {
       fireEvent.click(playbackBtn);
@@ -338,8 +342,8 @@ describe("PlaylistControls", () => {
     waitFor(() => {
       expect(playbackBtn.tabIndex).toBe(-1);
       expect(playbackBtn.ariaLabel).toBe("Pause playlist");
-      expect(playbackIcon.src).toBe(pause);
-      expect(playbackIcon.alt).toBe("Pause");
+      expect((playbackIcon as HTMLImageElement).src).toBe(pause);
+      expect((playbackIcon as HTMLImageElement).alt).toBe("Pause");
     });
   });
 });
