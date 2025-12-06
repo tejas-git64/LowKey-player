@@ -1,15 +1,18 @@
 import { useNavigate } from "react-router-dom";
-import { useRef } from "react";
-import reactlogo from "../../assets/svgs/react.svg";
-import tailwindlogo from "../../assets/svgs/tailwindcss.svg";
-import bg480 from "../../assets/images/landing/landing-480px.webp";
-import bg640 from "../../assets/images/landing/landing-640px.webp";
-import bg768 from "../../assets/images/landing/landing-768px.webp";
-import bg1024 from "../../assets/images/landing/landing-1024px.webp";
-import bg1280 from "../../assets/images/landing/landing-1280px.webp";
-import bg1536 from "../../assets/images/landing/landing-1536px.webp";
+import { useCallback, useRef } from "react";
+import reactlogo from "/svgs/react.svg";
+import tailwindlogo from "/svgs/tailwindcss.svg";
 import useClearTimer from "../../hooks/useClearTimer";
+import { preload } from "react-dom";
 
+const srcSet = `
+  /landing/landing-480px.webp 480w,
+  /landing/landing-640px.webp 640w,
+  /landing/landing-768px.webp 768w,
+  /landing/landing-1024px.webp 1024w,
+  /landing/landing-1280px.webp 1280w,
+  /landing/landing-1536px.webp 1536w
+`;
 const sizes = `
   (max-width: 480px) 480px,
   (max-width: 640px) 640px,
@@ -18,15 +21,12 @@ const sizes = `
   (max-width: 1280px) 1280px,
   (max-width: 1536px) 1536px
 `;
-
-const srcSet = `
-  ${bg480} 480w,
-  ${bg640} 640w,
-  ${bg768} 768w,
-  ${bg1024} 1024w,
-  ${bg1280} 1280w,
-  ${bg1536} 1536w
-`;
+preload("/landing/landing-1280px.webp", {
+  as: "image",
+  imageSizes: sizes,
+  imageSrcSet: srcSet,
+  fetchPriority: "high",
+});
 
 export default function Intro() {
   const navigate = useNavigate();
@@ -35,26 +35,23 @@ export default function Intro() {
   const btnRef = useRef<HTMLButtonElement | null>(null);
   const timerRef = useRef<NodeJS.Timeout>(null);
 
-  function fadeOutNavigate() {
-    imageRef.current?.classList.remove("intro-fadein");
-    cardRef.current?.classList.remove("card-fadein");
-    imageRef.current?.classList.add("intro-fadeout");
-    cardRef.current?.classList.add("card-fadeout");
-    btnRef.current?.classList.remove("intro-fadein");
-    btnRef.current?.classList.add("intro-fadeout");
+  const fadeOutNavigate = useCallback(() => {
+    if (imageRef.current) {
+      imageRef.current.classList.remove("animate-intro-fadein");
+      imageRef.current.classList.add("animate-intro-fadeout");
+    }
+    if (cardRef.current) {
+      cardRef.current.classList.remove("animate-card-fadein");
+      cardRef.current.classList.add("animate-card-fadeout");
+    }
+    if (btnRef.current) {
+      btnRef.current.classList.remove("animate-intro-fadein");
+      btnRef.current.classList.add("animate-intro-fadeout");
+    }
     timerRef.current = setTimeout(() => {
       navigate("/home");
     }, 150);
-  }
-
-  function loadImage() {
-    imageRef.current?.classList.remove("intro-fadeout");
-    cardRef.current?.classList.remove("card-fadeout");
-    btnRef.current?.classList.remove("intro-fadeout");
-    imageRef.current?.classList.add("intro-fadein");
-    cardRef.current?.classList.add("card-fadein");
-    btnRef.current?.classList.add("intro-fadein");
-  }
+  }, [navigate]);
 
   useClearTimer(timerRef);
 
@@ -65,19 +62,18 @@ export default function Intro() {
     >
       <img
         ref={imageRef}
-        src={bg768}
+        src={`/landing/landing-1280px.webp`}
         srcSet={srcSet}
         sizes={sizes}
         alt="background-image"
         loading="eager"
-        onLoad={loadImage}
         fetchPriority="high"
-        className="intro-fadeout absolute left-0 top-0 h-full w-full object-cover transition-all duration-200 ease-in-out"
+        className="absolute left-0 top-0 h-full w-full animate-intro-fadein object-cover"
       />
       <div
         ref={cardRef}
         data-testid="intro-card"
-        className="card-fadeout relative mx-auto flex h-auto w-[calc(100%-5%)] flex-col items-center border border-[#ffffff25] bg-[#0000004f] px-4 py-4 backdrop-blur-md transition-all duration-500 ease-in-out sm:w-[430px] md:px-5"
+        className="relative mx-auto flex h-auto w-[calc(100%-5%)] animate-card-fadein flex-col items-center rounded-lg border border-[#ffffff25] bg-[#0000004f] px-4 py-4 backdrop-blur-md sm:w-[430px] md:px-5"
       >
         <h2 className="w-full bg-gradient-to-r from-purple-400 via-teal-500 to-cyan-400 bg-clip-text pl-1.5 text-left text-3xl font-semibold text-transparent xl:text-4xl">
           Lowkey Music
@@ -144,7 +140,7 @@ export default function Intro() {
                 Vite
               </p>
               <img
-                src="/vite.svg"
+                src="/svgs/vite.svg"
                 loading="eager"
                 fetchPriority="high"
                 className="h-4 w-4 saturate-0 transition-colors duration-100 ease-in group-hover:saturate-100"
@@ -159,7 +155,7 @@ export default function Intro() {
             onClick={fadeOutNavigate}
             ref={btnRef}
             aria-label="Visit home"
-            className="intro-fadeout my-2 h-auto w-auto rounded-sm bg-[#f8f8f836] px-6 py-2 text-sm font-semibold tracking-wide text-white transition-colors duration-200 ease-linear hover:bg-[#c74fffc2] hover:text-violet-950 focus:bg-[#c74fffc2] focus:text-purple-950"
+            className="my-2 h-auto w-auto animate-intro-fadein rounded-sm bg-[#f8f8f836] px-6 py-2 text-sm font-semibold tracking-wide text-white transition-colors duration-200 ease-linear hover:bg-[#c74fffc2] hover:text-violet-950 focus:bg-[#c74fffc2] focus:text-purple-950"
           >
             Check it out
           </button>
