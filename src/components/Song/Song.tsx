@@ -13,12 +13,12 @@ import { toggleFavorite } from "../../helpers/toggleFavorite";
 import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
 import { TrackDetails, UserPlaylist } from "../../types/GlobalTypes";
 import secondsToHMS from "../../helpers/secondsToHMS";
-import fallback from "../../assets/fallbacks/song-fallback.webp";
-import notfav from "../../assets/svgs/icons8-heart.svg";
-import fav from "../../assets/svgs/icons8-favorited.svg";
-import playing from "../../assets/gifs/play-animation.gif";
-import add from "../../assets/svgs/icons8-addplaylist-28.svg";
-import tick from "../../assets/svgs/tick.svg";
+import fallback from "/fallbacks/song-fallback.webp";
+import notfav from "/svgs/icons8-heart.svg";
+import fav from "/svgs/icons8-favorited.svg";
+import playing from "/gifs/play-animation.gif";
+import add from "/svgs/icons8-addplaylist-28.svg";
+import tick from "/svgs/tick.svg";
 
 const Song = memo(
   ({

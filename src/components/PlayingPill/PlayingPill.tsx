@@ -1,11 +1,11 @@
 import { useBoundStore } from "../../store/store";
-import songfallback from "../../assets/fallbacks/song-fallback.webp";
-import play from "../../assets/svgs/play-icon.svg";
-import pause from "../../assets/svgs/pause-icon.svg";
-import add from "../../assets/svgs/icons8-addplaylist-28.svg";
-import favorite from "../../assets/svgs/icons8-heart.svg";
-import favorited from "../../assets/svgs/icons8-favorited.svg";
-import tick from "../../assets/svgs/icons8-tick.svg";
+import songfallback from "/fallbacks/song-fallback.webp";
+import play from "/svgs/play-icon.svg";
+import pause from "/svgs/pause-icon.svg";
+import add from "/svgs/icons8-addplaylist-28.svg";
+import favorite from "/svgs/icons8-heart.svg";
+import favorited from "/svgs/icons8-favorited.svg";
+import tick from "/svgs/icons8-tick.svg";
 import { toggleFavorite } from "../../helpers/toggleFavorite";
 import { memo, startTransition, useMemo } from "react";
 import { TrackDetails, UserPlaylist } from "../../types/GlobalTypes";

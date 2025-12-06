@@ -1,8 +1,8 @@
-import history from "../../assets/svgs/icons8-history.svg";
-import activity from "../../assets/svgs/icons8-activity.svg";
+import history from "/svgs/icons8-history.svg";
+import activity from "/svgs/icons8-activity.svg";
 import { useBoundStore } from "../../store/store";
 import { ActivityType, TrackDetails } from "../../types/GlobalTypes";
-import songfallback from "../../assets/fallbacks/song-fallback.webp";
+import songfallback from "/fallbacks/song-fallback.webp";
 import { cleanString } from "../../helpers/cleanString";
 import { memo, useEffect, useRef } from "react";
 

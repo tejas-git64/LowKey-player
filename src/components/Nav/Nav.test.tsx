@@ -7,10 +7,10 @@ import {
 } from "@testing-library/react";
 import { afterEach, describe, expect, test } from "vitest";
 import Nav from "./Nav";
-import playlistfallback from "../../assets/fallbacks/playlist-fallback-min.webp";
-import fallback from "../../assets/fallbacks/playlist-fallback.webp";
-import online from "../../assets/icons8-online-28.png";
-import offline from "../../assets/icons8-offline-28.png";
+import playlistfallback from "/fallbacks/playlist-fallback-min.webp";
+import fallback from "/fallbacks/playlist-fallback.webp";
+import online from "/icons/icons8-online-28.png";
+import offline from "/icons/icons8-offline-28.png";
 import { MemoryRouter } from "react-router-dom";
 import { useBoundStore } from "../../store/store";
 import { sampleAlbum, samplePlaylist, sampleTrack } from "../../api/samples";

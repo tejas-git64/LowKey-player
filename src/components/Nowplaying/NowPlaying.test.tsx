@@ -20,16 +20,16 @@ import {
 } from "vitest";
 import NowPlaying from "./NowPlaying";
 import { useBoundStore } from "../../store/store";
-import favorite from "../../assets/svgs/icons8-heart.svg";
-import favorited from "../../assets/svgs/icons8-favorited.svg";
-import add from "../../assets/svgs/icons8-addplaylist-28.svg";
-import high from "../../assets/svgs/volume-high.svg";
-import vol from "../../assets/svgs/volume-min-svgrepo.svg";
-import mute from "../../assets/svgs/mute-svgrepo-com.svg";
-import play from "../../assets/svgs/play-icon.svg";
-import pause from "../../assets/svgs/pause-icon.svg";
-import tick from "../../assets/svgs/tick.svg";
-import songfallback from "../../assets/fallbacks/song-fallback.webp";
+import favorite from "/svgs/icons8-heart.svg";
+import favorited from "/svgs/icons8-favorited.svg";
+import add from "/svgs/icons8-addplaylist-28.svg";
+import high from "/svgs/volume-high.svg";
+import vol from "/svgs/volume-min-svgrepo.svg";
+import mute from "/svgs/mute-svgrepo-com.svg";
+import play from "/svgs/play-icon.svg";
+import pause from "/svgs/pause-icon.svg";
+import tick from "/svgs/tick.svg";
+import songfallback from "/fallbacks/song-fallback.webp";
 import { sampleTrack, sampleUserPlaylist } from "../../api/samples";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
@@ -114,7 +114,7 @@ beforeEach(() => {
       return store[key] || null;
     });
   setItemMock = vi.spyOn(Storage.prototype, "setItem");
-  window.innerWidth = innerWidth;
+  globalThis.innerWidth = innerWidth;
 });
 
 afterEach(() => {
@@ -203,7 +203,7 @@ describe("NowPlaying", () => {
   });
   describe("Drop down button", () => {
     beforeAll(() => {
-      window.innerWidth = 480;
+      globalThis.innerWidth = 480;
     });
     test("should render if width is mobile width", () => {
       act(() => {
@@ -233,7 +233,7 @@ describe("NowPlaying", () => {
   });
   describe("Song image", () => {
     beforeAll(() => {
-      window.innerWidth = 1280;
+      globalThis.innerWidth = 1280;
     });
     test("should be shown if available", () => {
       render(
@@ -247,7 +247,7 @@ describe("NowPlaying", () => {
     test("should be songfallback if not available", () => {
       act(() => {
         setNowPlaying(null);
-        window.innerWidth = 480;
+        globalThis.innerWidth = 480;
       });
       render(
         <MemoryRouter>
@@ -358,7 +358,9 @@ describe("NowPlaying", () => {
         </MemoryRouter>,
       );
       const select = screen.getByTestId("quality");
-      fireEvent.change(select, { target: { value: "0" } });
+      act(() => {
+        fireEvent.change(select, { target: { value: "0" } });
+      });
       expect((select as HTMLSelectElement).value).toBe("0");
     });
   });
@@ -397,8 +399,9 @@ describe("NowPlaying", () => {
       );
       const select = screen.getByTestId("quality");
       const downloadBtn = screen.getByTestId("download-btn");
-
-      fireEvent.change(select, { target: { value: "0" } });
+      act(() => {
+        fireEvent.change(select, { target: { value: "0" } });
+      });
       expect((select as HTMLSelectElement).value).toBe("0");
 
       fireEvent.click(downloadBtn);
@@ -434,8 +437,9 @@ describe("NowPlaying", () => {
       );
       const select = screen.getByTestId("quality");
       const downloadBtn = screen.getByTestId("download-btn");
-
-      fireEvent.change(select, { target: { value: "0" } });
+      act(() => {
+        fireEvent.change(select, { target: { value: "0" } });
+      });
       expect((select as HTMLSelectElement).value).toBe("0");
       fireEvent.click(downloadBtn);
       await expect(handleDownload).rejects.toThrow("Download failed!");
@@ -468,7 +472,9 @@ describe("NowPlaying", () => {
           </MemoryRouter>,
         );
         const playBtn = screen.getByTestId("play-btn");
-        fireEvent.click(playBtn);
+        act(() => {
+          fireEvent.click(playBtn);
+        });
         expect(playBtn.ariaLabel).toBe("Pause");
       });
     });
@@ -537,7 +543,9 @@ describe("NowPlaying", () => {
           </MemoryRouter>,
         );
         const playlistBtn = screen.getByTestId("playlist-btn");
-        fireEvent.click(playlistBtn);
+        act(() => {
+          fireEvent.click(playlistBtn);
+        });
         expect(useBoundStore.getState().creationTrack).toEqual(sampleTrack);
         expect(useBoundStore.getState().nowPlaying.isMobilePlayer).toBe(false);
         expect(useBoundStore.getState().revealCreation).toBe(true);
@@ -600,7 +608,9 @@ describe("NowPlaying", () => {
         );
         const favoriteBtn = screen.getByTestId("favorite-btn");
         const favoriteIcon = screen.getByTestId("favorite-icon");
-        fireEvent.click(favoriteBtn);
+        act(() => {
+          fireEvent.click(favoriteBtn);
+        });
         expect(useBoundStore.getState().favorites.songs).toContainEqual(
           sampleTrack,
         );
@@ -669,7 +679,9 @@ describe("NowPlaying", () => {
         );
         const shuffleBtn = screen.getByTitle("shuffle-button");
         expect(shuffleBtn.tabIndex).toBe(0);
-        fireEvent.click(shuffleBtn);
+        act(() => {
+          fireEvent.click(shuffleBtn);
+        });
         expect(useBoundStore.getState().isShuffling).toBe(true);
       });
       test("should have tabIndex as -1 if there are no songs in the queue", () => {
@@ -708,7 +720,9 @@ describe("NowPlaying", () => {
           </MemoryRouter>,
         );
         const previous = screen.getByTestId("previous-btn");
-        fireEvent.click(previous);
+        act(() => {
+          fireEvent.click(previous);
+        });
         expect(useBoundStore.getState().nowPlaying.track).toEqual(obj);
         expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
       });
@@ -727,7 +741,9 @@ describe("NowPlaying", () => {
           </MemoryRouter>,
         );
         const previous = screen.getByTestId("previous-btn");
-        fireEvent.click(previous);
+        act(() => {
+          fireEvent.click(previous);
+        });
         expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(false);
       });
     });
@@ -757,7 +773,9 @@ describe("NowPlaying", () => {
           </MemoryRouter>,
         );
         const next = screen.getByTestId("next-btn");
-        fireEvent.click(next);
+        act(() => {
+          fireEvent.click(next);
+        });
         expect(useBoundStore.getState().nowPlaying.track).toEqual(obj);
         expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
       });
@@ -776,7 +794,9 @@ describe("NowPlaying", () => {
           </MemoryRouter>,
         );
         const next = screen.getByTestId("next-btn");
-        fireEvent.click(next);
+        act(() => {
+          fireEvent.click(next);
+        });
         expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(false);
       });
     });
@@ -803,7 +823,9 @@ describe("NowPlaying", () => {
         );
         const replayBtn = screen.getByTestId("replay-btn");
         const replayIcon = screen.getByTestId("replay-icon");
-        fireEvent.click(replayBtn);
+        act(() => {
+          fireEvent.click(replayBtn);
+        });
         expect(replayIcon).toHaveClass("text-emerald-500");
       });
     });
@@ -825,7 +847,9 @@ describe("NowPlaying", () => {
         </MemoryRouter>,
       );
       const slider = screen.getByTestId("song-volume");
-      fireEvent.change(slider, { target: { value: 0.3 } });
+      act(() => {
+        fireEvent.change(slider, { target: { value: 0.3 } });
+      });
       expect((slider as HTMLInputElement).value).toBe("0.3");
     });
     test("should toggle playback onMouseUp", () => {
@@ -835,7 +859,9 @@ describe("NowPlaying", () => {
         </MemoryRouter>,
       );
       const slider = screen.getByTestId("song-volume");
-      fireEvent.mouseUp(slider);
+      act(() => {
+        fireEvent.mouseUp(slider);
+      });
       expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
     });
     describe("Volume icons according to thresholds", () => {
@@ -847,7 +873,9 @@ describe("NowPlaying", () => {
         );
         const slider = screen.getByTestId("song-volume");
         const sliderImage = screen.getByTestId("slider-img");
-        fireEvent.change(slider, { target: { value: 0 } });
+        act(() => {
+          fireEvent.change(slider, { target: { value: 0 } });
+        });
         expect((sliderImage as HTMLImageElement).src).toContain(mute);
         expect((sliderImage as HTMLImageElement).alt).toBe("Muted");
       });
@@ -859,7 +887,9 @@ describe("NowPlaying", () => {
         );
         const slider = screen.getByTestId("song-volume");
         const sliderImage = screen.getByTestId("slider-img");
-        fireEvent.change(slider, { target: { value: 0.2 } });
+        act(() => {
+          fireEvent.change(slider, { target: { value: 0.2 } });
+        });
         expect((sliderImage as HTMLImageElement).src).toContain(vol);
         expect((sliderImage as HTMLImageElement).alt).toBe("Low volume");
       });
@@ -871,7 +901,9 @@ describe("NowPlaying", () => {
         );
         const slider = screen.getByTestId("song-volume");
         const sliderImage = screen.getByTestId("slider-img");
-        fireEvent.change(slider, { target: { value: 0.8 } });
+        act(() => {
+          fireEvent.change(slider, { target: { value: 0.8 } });
+        });
         expect((sliderImage as HTMLImageElement).src).toContain(high);
         expect((sliderImage as HTMLImageElement).alt).toBe("High volume");
       });
@@ -889,7 +921,9 @@ describe("NowPlaying", () => {
       );
       expect(useBoundStore.getState().nowPlaying.isMobilePlayer).toBe(true);
       const artist = screen.getByTestId("artist");
-      fireEvent.click(artist);
+      act(() => {
+        fireEvent.click(artist);
+      });
       expect(useBoundStore.getState().nowPlaying.isMobilePlayer).toBe(false);
       expect(useNavigateMock).toHaveBeenCalledWith("/artists/1431");
     });
@@ -903,7 +937,9 @@ describe("NowPlaying", () => {
         );
         const artist = screen.getByTestId("artist");
         artist.focus();
-        event.keyboard("{Enter}");
+        act(() => {
+          event.keyboard("{Enter}");
+        });
         waitFor(() => {
           expect(useBoundStore.getState().nowPlaying.isMobilePlayer).toBe(
             false,
@@ -920,7 +956,9 @@ describe("NowPlaying", () => {
         );
         const artist = screen.getByTestId("artist");
         artist.focus();
-        event.keyboard("{ }");
+        act(() => {
+          event.keyboard("{ }");
+        });
         waitFor(() => {
           expect(useBoundStore.getState().nowPlaying.isMobilePlayer).toBe(
             false,
@@ -938,7 +976,9 @@ describe("NowPlaying", () => {
       );
       const artist = screen.getByTestId("artist");
       artist.focus();
-      event.keyboard("{s}");
+      act(() => {
+        event.keyboard("{s}");
+      });
       expect(useBoundStore.getState().nowPlaying.isMobilePlayer).toBe(true);
       expect(useNavigateMock).not.toHaveBeenCalled();
     });

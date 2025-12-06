@@ -1,6 +1,6 @@
 import { useDeferredValue, useEffect, useRef, useState } from "react";
 import { getSearchResults } from "../../api/requests";
-import searchIcon from "../../assets/svgs/icons8-search.svg";
+import searchIcon from "/svgs/icons8-search.svg";
 import { useBoundStore } from "../../store/store";
 import { defaultSearchData } from "../../utils/utils";
 

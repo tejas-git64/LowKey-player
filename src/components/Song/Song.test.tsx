@@ -7,11 +7,11 @@ import {
 } from "@testing-library/react";
 import { afterEach, describe, expect, Mock, test, vi } from "vitest";
 import Song from "./Song";
-import fallback from "../../assets/fallbacks/song-fallback.webp";
-import notfav from "../../assets/svgs/icons8-heart.svg";
-import fav from "../../assets/svgs/icons8-favorited.svg";
-import add from "../../assets/svgs/icons8-addplaylist-28.svg";
-import tick from "../../assets/svgs/tick.svg";
+import fallback from "/fallbacks/song-fallback.webp";
+import notfav from "/svgs/icons8-heart.svg";
+import fav from "/svgs/icons8-favorited.svg";
+import add from "/svgs/icons8-addplaylist-28.svg";
+import tick from "/svgs/tick.svg";
 import { sampleTrack, sampleUserPlaylist } from "../../api/samples";
 import { MemoryRouter } from "react-router-dom";
 import { useBoundStore } from "../../store/store";
@@ -46,7 +46,9 @@ describe("Song", () => {
       </MemoryRouter>,
     );
     const song = screen.getByTestId("song");
-    fireEvent.click(song);
+    act(() => {
+      fireEvent.click(song);
+    });
     expect(useBoundStore.getState().nowPlaying.track).toEqual(sampleTrack);
     expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
   });

@@ -25,13 +25,13 @@ import {
 import Home, { TimelyPlaylists, Widget } from "./Home";
 import { samplePlaylist, sampleTrack } from "../../api/samples";
 import { PlaylistById, PlaylistOfList } from "../../types/GlobalTypes";
-import widgetfallback from "../../assets/fallbacks/widget-fallback.webp";
-import play from "../../assets/svgs/play-icon.svg";
-import pause from "../../assets/svgs/pause-icon.svg";
-import fallbacktoday from "../../assets/fallbacks/timely/icons8-timely-today.webp";
-import fallbackweekly from "../../assets/fallbacks/timely/icons8-timely-weekly.webp";
-import fallbackmonthly from "../../assets/fallbacks/timely/icons8-timely-monthly.webp";
-import fallbackyearly from "../../assets/fallbacks/timely/icons8-timely-yearly.webp";
+import widgetfallback from "/fallbacks/widget-fallback.webp";
+import play from "/svgs/play-icon.svg";
+import pause from "/svgs/pause-icon.svg";
+import fallbacktoday from "/fallbacks/timely/icons8-timely-today.webp";
+import fallbackweekly from "/fallbacks/timely/icons8-timely-weekly.webp";
+import fallbackmonthly from "/fallbacks/timely/icons8-timely-monthly.webp";
+import fallbackyearly from "/fallbacks/timely/icons8-timely-yearly.webp";
 import { IntersectionObserverMock } from "../../components/Section/Section.test";
 import { useBoundStore } from "../../store/store";
 import {
@@ -40,7 +40,7 @@ import {
   obj,
   mockedSectionData,
   mockedPlaylistSuccessData,
-} from "../../mocks/mocks.test";
+} from "../../mocks/mocks";
 
 vi.mock("@tanstack/react-query", async (importOriginal) => {
   const actual = await importOriginal();
@@ -298,7 +298,9 @@ describe("Home", () => {
         );
         vi.runAllTimers();
         const widgetBtn = screen.getByTestId("widget-btn");
-        fireEvent.click(widgetBtn);
+        act(() => {
+          fireEvent.click(widgetBtn);
+        });
         expect(useBoundStore.getState().nowPlaying.queue).toEqual(obj);
         expect(useBoundStore.getState().nowPlaying.track).toEqual(sampleTrack);
         expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
@@ -316,7 +318,9 @@ describe("Home", () => {
         );
         vi.runAllTimers();
         const widgetBtn = screen.getByTestId("widget-btn");
-        fireEvent.click(widgetBtn);
+        act(() => {
+          fireEvent.click(widgetBtn);
+        });
         expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(false);
       });
       test("should set playlist as queue & playback onClick", () => {
@@ -335,7 +339,9 @@ describe("Home", () => {
         );
         vi.runAllTimers();
         const widgetBtn = screen.getByTestId("widget-btn");
-        fireEvent.click(widgetBtn);
+        act(() => {
+          fireEvent.click(widgetBtn);
+        });
         waitFor(() => {
           expect(useBoundStore.getState().nowPlaying.queue).toEqual(obj);
           expect(useBoundStore.getState().nowPlaying.track).toEqual(
@@ -412,7 +418,9 @@ describe("Home", () => {
         );
         vi.runAllTimers();
         const timely = screen.getByTestId("today-playlist");
-        fireEvent.click(timely);
+        act(() => {
+          fireEvent.click(timely);
+        });
         expect(fadeOutNavigate).toHaveBeenCalledWith("/playlists/ae5fa1Ax");
       });
       describe("should have image", () => {
@@ -485,7 +493,9 @@ describe("Home", () => {
         );
         vi.runAllTimers();
         const timely = screen.getByTestId("weekly-playlist");
-        fireEvent.click(timely);
+        act(() => {
+          fireEvent.click(timely);
+        });
         expect(fadeOutNavigate).toHaveBeenCalledWith("/playlists/ae5fa1Ax");
       });
       describe("should have image", () => {
@@ -558,7 +568,9 @@ describe("Home", () => {
         );
         vi.runAllTimers();
         const timely = screen.getByTestId("monthly-playlist");
-        fireEvent.click(timely);
+        act(() => {
+          fireEvent.click(timely);
+        });
         expect(fadeOutNavigate).toHaveBeenCalledWith("/playlists/ae5fa1Ax");
       });
       describe("should have image", () => {
@@ -631,7 +643,9 @@ describe("Home", () => {
         );
         vi.runAllTimers();
         const timely = screen.getByTestId("yearly-playlist");
-        fireEvent.click(timely);
+        act(() => {
+          fireEvent.click(timely);
+        });
         expect(fadeOutNavigate).toHaveBeenCalledWith("/playlists/ae5fa1Ax");
       });
       describe("should have image", () => {

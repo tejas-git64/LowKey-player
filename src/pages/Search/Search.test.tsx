@@ -17,9 +17,9 @@ import {
 } from "vitest";
 import Search from "./Search";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import fallback from "../../assets/fallbacks/playlist-fallback.webp";
-import songfallback from "../../assets/fallbacks/song-fallback.webp";
-import artistfallback from "../../assets/fallbacks/artist-fallback.png";
+import fallback from "/fallbacks/playlist-fallback.webp";
+import songfallback from "/fallbacks/song-fallback.webp";
+import artistfallback from "/fallbacks/artist-fallback.png";
 import { MemoryRouter } from "react-router-dom";
 import { useBoundStore } from "../../store/store";
 import { sampleSearchResults, sampleTrack } from "../../api/samples";
@@ -178,7 +178,9 @@ describe("Search", () => {
       );
       const topResult = screen.getByTestId("top-result");
       expect(topResult).toBeInTheDocument();
-      fireEvent.click(topResult);
+      act(() => {
+        fireEvent.click(topResult);
+      });
       expect(mockedNavigate).toHaveBeenCalledWith("/artists/568648");
     });
     describe("should navigate to that route onKeyDown", () => {
@@ -192,10 +194,12 @@ describe("Search", () => {
         );
         const topResult = screen.getByTestId("top-result");
         expect(topResult).toBeInTheDocument();
-        fireEvent.keyDown(topResult, {
-          key: "Enter",
-          code: "Enter",
-          charCode: 13,
+        act(() => {
+          fireEvent.keyDown(topResult, {
+            key: "Enter",
+            code: "Enter",
+            charCode: 13,
+          });
         });
         expect(mockedNavigate).toHaveBeenCalledWith("/artists/568648");
       });
@@ -209,10 +213,12 @@ describe("Search", () => {
         );
         const topResult = screen.getByTestId("top-result");
         expect(topResult).toBeInTheDocument();
-        fireEvent.keyDown(topResult, {
-          key: " ",
-          code: "Space",
-          charCode: 32,
+        act(() => {
+          fireEvent.keyDown(topResult, {
+            key: " ",
+            code: "Space",
+            charCode: 32,
+          });
         });
         expect(mockedNavigate).toHaveBeenCalledWith("/artists/568648");
       });
@@ -229,7 +235,9 @@ describe("Search", () => {
       const topResult = screen.getByTestId("top-result");
       expect(topResult).toBeInTheDocument();
       topResult.focus();
-      user.keyboard("{s}");
+      act(() => {
+        user.keyboard("{s}");
+      });
       expect(mockedNavigate).not.toHaveBeenCalledWith("/artists/568648");
     });
   });
@@ -331,7 +339,9 @@ describe("Search", () => {
         </QueryClientProvider>,
       );
       const querySong = screen.getByTestId("query-song");
-      fireEvent.click(querySong);
+      act(() => {
+        fireEvent.click(querySong);
+      });
       const track = useBoundStore.getState().nowPlaying.track;
       if (track) expect(track.id).toBeDefined();
     });
@@ -351,10 +361,12 @@ describe("Search", () => {
           </QueryClientProvider>,
         );
         const querySong = screen.getByTestId("query-song");
-        fireEvent.keyDown(querySong, {
-          key: "Enter",
-          code: "Enter",
-          charCode: 13,
+        act(() => {
+          fireEvent.keyDown(querySong, {
+            key: "Enter",
+            code: "Enter",
+            charCode: 13,
+          });
         });
         waitFor(() => {
           expect(useBoundStore.getState().nowPlaying.track).toBeDefined();
@@ -376,10 +388,12 @@ describe("Search", () => {
           </QueryClientProvider>,
         );
         const querySong = screen.getByTestId("query-song");
-        fireEvent.keyDown(querySong, {
-          key: " ",
-          code: "Space",
-          charCode: 32,
+        act(() => {
+          fireEvent.keyDown(querySong, {
+            key: " ",
+            code: "Space",
+            charCode: 32,
+          });
         });
         waitFor(() => {
           expect(useBoundStore.getState().nowPlaying.track).toBeDefined();
@@ -398,7 +412,9 @@ describe("Search", () => {
       );
       const querySong = screen.getByTestId("query-song");
       querySong.focus();
-      user.keyboard("{s}");
+      act(() => {
+        user.keyboard("{s}");
+      });
       expect(useBoundStore.getState().nowPlaying.track).toBeNull();
     });
     test("should log error if the track is not found", async () => {
@@ -413,10 +429,12 @@ describe("Search", () => {
         </QueryClientProvider>,
       );
       const querySong = screen.getByTestId("query-song");
-      fireEvent.keyDown(querySong, {
-        key: " ",
-        code: "Space",
-        charCode: 32,
+      act(() => {
+        fireEvent.keyDown(querySong, {
+          key: " ",
+          code: "Space",
+          charCode: 32,
+        });
       });
       await expect(globalThis.fetch("")).rejects.toThrow("Network error");
     });

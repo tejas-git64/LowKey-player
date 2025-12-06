@@ -1,8 +1,8 @@
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { useBoundStore } from "../../store/store";
 import { TrackDetails, UserPlaylist } from "../../types/GlobalTypes";
-import close from "../../assets/svgs/close.svg";
-import add from "../../assets/svgs/icons8-plus.svg";
+import close from "/svgs/close.svg";
+import add from "/svgs/icons8-plus.svg";
 import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
 
 export default function PlaylistModal({
@@ -26,9 +26,11 @@ export default function PlaylistModal({
   }, [revealCreation, ref]);
 
   useEffect(() => {
-    saveToLocalStorage("local-library", {
-      userPlaylists,
-    });
+    if (userPlaylists.length > 0) {
+      saveToLocalStorage("local-library", {
+        userPlaylists,
+      });
+    }
   }, [userPlaylists]);
 
   return (

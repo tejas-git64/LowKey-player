@@ -11,7 +11,7 @@ import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import Favorites from "./Favorites";
 import { useBoundStore } from "../../store/store";
-import fallback from "../../assets/fallbacks/playlist-fallback.webp";
+import fallback from "/fallbacks/playlist-fallback.webp";
 import {
   sampleAlbum,
   samplePlaylist,
@@ -129,8 +129,9 @@ describe("Favorites", () => {
       );
       const shuffleBtn = screen.getByTitle("Shuffle button");
       expect(shuffleBtn.ariaLabel).toBe("Enable shuffle");
-
-      fireEvent.click(shuffleBtn);
+      act(() => {
+        fireEvent.click(shuffleBtn);
+      });
 
       expect(shuffleBtn.ariaLabel).toBe("Disable shuffle");
     });
@@ -188,7 +189,9 @@ describe("Favorites", () => {
         </QueryClientProvider>,
       );
       const playBtn = screen.getByTitle("Play button");
-      fireEvent.click(playBtn);
+      act(() => {
+        fireEvent.click(playBtn);
+      });
       expect(useBoundStore.getState().nowPlaying.track).toBe(sampleTrack);
     });
   });
@@ -219,7 +222,9 @@ describe("Favorites", () => {
         </QueryClientProvider>,
       );
       const favoriteAlbum = screen.getByTestId("favorite-album");
-      fireEvent.click(favoriteAlbum);
+      act(() => {
+        fireEvent.click(favoriteAlbum);
+      });
 
       waitFor(() => {
         expect(screen.getByTestId("album-page")).toBeInTheDocument();
@@ -287,7 +292,9 @@ describe("Favorites", () => {
         </QueryClientProvider>,
       );
       const playBtn = screen.getByTestId("album-play-btn");
-      fireEvent.click(playBtn);
+      act(() => {
+        fireEvent.click(playBtn);
+      });
       expect(playBtn.ariaLabel).toBe("Pause album");
     });
     test("should remove album onClick", () => {
@@ -302,7 +309,9 @@ describe("Favorites", () => {
         </QueryClientProvider>,
       );
       const playBtn = screen.getByTestId("album-remove-btn");
-      fireEvent.click(playBtn);
+      act(() => {
+        fireEvent.click(playBtn);
+      });
       expect(useBoundStore.getState().favorites.albums).not.toContainEqual(
         sampleAlbum,
       );
@@ -335,7 +344,9 @@ describe("Favorites", () => {
         </QueryClientProvider>,
       );
       const favoritePlaylist = screen.getByTestId("favorite-playlist");
-      fireEvent.click(favoritePlaylist);
+      act(() => {
+        fireEvent.click(favoritePlaylist);
+      });
 
       waitFor(() => {
         expect(screen.getByTestId("playlist-page")).toBeInTheDocument();
@@ -405,7 +416,9 @@ describe("Favorites", () => {
         </QueryClientProvider>,
       );
       const playBtn = screen.getByTestId("playlist-play-btn");
-      fireEvent.click(playBtn);
+      act(() => {
+        fireEvent.click(playBtn);
+      });
       expect(playBtn.ariaLabel).toBe("Pause playlist");
     });
     test("should remove album onClick", () => {
@@ -420,7 +433,9 @@ describe("Favorites", () => {
         </QueryClientProvider>,
       );
       const playBtn = screen.getByTestId("playlist-remove-btn");
-      fireEvent.click(playBtn);
+      act(() => {
+        fireEvent.click(playBtn);
+      });
       expect(useBoundStore.getState().favorites.playlists).not.toContainEqual(
         samplePlaylist,
       );

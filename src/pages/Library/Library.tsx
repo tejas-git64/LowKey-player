@@ -8,12 +8,12 @@ import {
   PlaylistById,
   UserPlaylist,
 } from "../../types/GlobalTypes";
-import close from "../../assets/svgs/close.svg";
-import play from "../../assets/svgs/play-icon.svg";
-import pause from "../../assets/svgs/pause-icon.svg";
-import artistfallback from "../../assets/fallbacks/artist-fallback.png";
-import userplaylist from "../../assets/fallbacks/playlist-fallback.webp";
-import playlistIcon from "../../assets/svgs/playlist-icon.svg";
+import close from "/svgs/close.svg";
+import play from "/svgs/play-icon.svg";
+import pause from "/svgs/pause-icon.svg";
+import artistfallback from "/fallbacks/artist-fallback.png";
+import userplaylist from "/fallbacks/playlist-fallback.webp";
+import playlistIcon from "/svgs/playlist-icon.svg";
 import { useNavigate } from "react-router-dom";
 import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
 import { FollowButton } from "../../components/FollowButton/FollowButton";

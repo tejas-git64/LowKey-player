@@ -15,7 +15,7 @@ import {
   test,
   vi,
 } from "vitest";
-import songfallback from "../../assets/fallbacks/song-fallback.webp";
+import songfallback from "/fallbacks/song-fallback.webp";
 import { useBoundStore } from "../../store/store";
 import { sampleTrack } from "../../api/samples";
 import Recents from "./Recents";

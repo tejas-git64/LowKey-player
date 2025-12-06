@@ -1,18 +1,18 @@
 import { Link } from "react-router-dom";
-import home from "../../assets/svgs/icons8-home.svg";
-import search from "../../assets/svgs/icons8-search.svg";
-import libraryImg from "../../assets/svgs/icons8-library.svg";
-import add from "../../assets/svgs/icons8-plus.svg";
-import heart from "../../assets/svgs/icons8-heart.svg";
-import online from "../../assets/icons8-online-28.png";
-import offline from "../../assets/icons8-offline-28.png";
-import { memo, useEffect, useState } from "react";
+import home from "/svgs/icons8-home.svg";
+import search from "/svgs/icons8-search.svg";
+import libraryImg from "/svgs/icons8-library.svg";
+import add from "/svgs/icons8-plus.svg";
+import heart from "/svgs/icons8-heart.svg";
+import online from "/icons/icons8-online-28.png";
+import offline from "/icons/icons8-offline-28.png";
+import { useEffect, useState } from "react";
 import { useBoundStore } from "../../store/store";
 import { AlbumById, PlaylistById, UserPlaylist } from "../../types/GlobalTypes";
-import playlistfallback from "../../assets/fallbacks/playlist-fallback-min.webp";
-import fallback from "../../assets/fallbacks/playlist-fallback.webp";
+import playlistfallback from "/fallbacks/playlist-fallback-min.webp";
+import fallback from "/fallbacks/playlist-fallback.webp";
 
-const Nav = memo(() => {
+const Nav = () => {
   return (
     <nav
       role="navigation"
@@ -77,9 +77,9 @@ const Nav = memo(() => {
       </div>
     </nav>
   );
-});
-export default Nav;
+};
 Nav.displayName = "Nav";
+export default Nav;
 
 const PlaylistCreationButton = () => {
   const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
@@ -135,7 +135,7 @@ const OnlineStatus = () => {
   );
 };
 
-const RecentPlaylistsOrAlbums = memo(() => {
+export function RecentPlaylistsOrAlbums() {
   const albums = useBoundStore((state) => state.library.albums);
   const playlists = useBoundStore((state) => state.library.playlists);
   const userPlaylists = useBoundStore((state) => state.library.userPlaylists);
@@ -211,5 +211,4 @@ const RecentPlaylistsOrAlbums = memo(() => {
       ))}
     </div>
   );
-});
-RecentPlaylistsOrAlbums.displayName = "RecentPlaylistsOrAlbums";
+}

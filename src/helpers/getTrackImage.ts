@@ -1,5 +1,5 @@
 import { TrackDetails } from "../types/GlobalTypes";
-import songfallback from "../assets/fallbacks/song-fallback.webp";
+import songfallback from "/fallbacks/song-fallback.webp";
 
 export const getTrackImage = (
   images: TrackDetails["image"] | undefined,

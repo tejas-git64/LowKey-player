@@ -7,9 +7,9 @@ import {
   SongAlbumResult,
   TrackDetails,
 } from "../../types/GlobalTypes";
-import fallback from "../../assets/fallbacks/playlist-fallback.webp";
-import songfallback from "../../assets/fallbacks/song-fallback.webp";
-import artistfallback from "../../assets/fallbacks/artist-fallback.png";
+import fallback from "/fallbacks/playlist-fallback.webp";
+import songfallback from "/fallbacks/song-fallback.webp";
+import artistfallback from "/fallbacks/artist-fallback.png";
 import { Link, useNavigate } from "react-router-dom";
 import RouteNav from "../../components/RouteNav/RouteNav";
 import { memo, useEffect, useRef } from "react";

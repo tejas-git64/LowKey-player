@@ -1,5 +1,5 @@
 import { PlaylistOfList } from "../../types/GlobalTypes";
-import fallback from "../../assets/fallbacks/playlist-fallback.webp";
+import fallback from "/fallbacks/playlist-fallback.webp";
 import { useEffect, useRef } from "react";
 
 export default function Playlist({
@@ -35,7 +35,7 @@ export default function Playlist({
       data-testid="playlist"
       tabIndex={0}
       role="group"
-      className="mr-4 flex h-[180px] w-[150px] flex-shrink-0 cursor-pointer list-none flex-col items-center overflow-hidden outline-none"
+      className="group mr-4 flex h-[180px] w-[150px] flex-shrink-0 cursor-pointer list-none flex-col items-center overflow-hidden outline-none"
       onClick={() => fadeOutNavigate(`/playlists/${id}`)}
     >
       <div className="h-[150px] w-[150px] overflow-hidden">

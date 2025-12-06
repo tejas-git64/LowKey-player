@@ -1,4 +1,5 @@
 import {
+  act,
   cleanup,
   fireEvent,
   render,
@@ -24,8 +25,8 @@ import {
 import { MemoryRouter, useLocation, useParams } from "react-router-dom";
 import { AlbumById, ArtistType, TrackDetails } from "../../types/GlobalTypes";
 import { sampleAlbum, sampleArtist, sampleTrack } from "../../api/samples";
-import artistfallback from "../../assets/fallbacks/artist-fallback.png";
-import albumfallback from "../../assets/fallbacks/playlist-fallback.webp";
+import artistfallback from "/fallbacks/artist-fallback.png";
+import albumfallback from "/fallbacks/playlist-fallback.webp";
 import ArtistPage, {
   ArtistAlbums,
   ArtistInfo,
@@ -41,7 +42,7 @@ import {
   mockedArtistAlbumData,
   mockedArtistSongData,
   mockedDataProps,
-} from "../../mocks/mocks.test";
+} from "../../mocks/mocks";
 
 vi.mock("react-router-dom", async (importOriginal) => {
   const actual = await importOriginal();
@@ -315,8 +316,9 @@ describe("ArtistPage", () => {
 
       const listitem = screen.getByTestId("artist-album");
       expect(listitem).toBeInTheDocument();
-
-      fireEvent.click(listitem);
+      act(() => {
+        fireEvent.click(listitem);
+      });
 
       waitFor(() => {
         expect(path).toBe(`/albums/${id}`);

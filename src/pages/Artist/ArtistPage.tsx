@@ -1,7 +1,7 @@
-import x from "../../assets/svgs/icons8-twitterx.svg";
-import meta from "../../assets/svgs/icons8-meta.svg";
-import wiki from "../../assets/svgs/icons8-wiki.svg";
-import verified from "../../assets/svgs/icons8-verified.svg";
+import x from "/svgs/icons8-twitterx.svg";
+import meta from "/svgs/icons8-meta.svg";
+import wiki from "/svgs/icons8-wiki.svg";
+import verified from "/svgs/icons8-verified.svg";
 import { memo, useEffect, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
@@ -11,8 +11,8 @@ import {
 } from "../../api/requests";
 import Song from "../../components/Song/Song";
 import { AlbumById, Image, TrackDetails } from "../../types/GlobalTypes";
-import artistfallback from "../../assets/fallbacks/artist-fallback.png";
-import albumfallback from "../../assets/fallbacks/playlist-fallback.webp";
+import artistfallback from "/fallbacks/artist-fallback.png";
+import albumfallback from "/fallbacks/playlist-fallback.webp";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import RouteNav from "../../components/RouteNav/RouteNav";
 import { FollowButton } from "../../components/FollowButton/FollowButton";
@@ -23,6 +23,7 @@ import {
   ArtistSongsFallback,
 } from "./Loading";
 import useClearTimer from "../../hooks/useClearTimer";
+import { preload } from "react-dom";
 
 export default function ArtistPage() {
   const { id } = useParams();
@@ -63,11 +64,16 @@ export const ArtistInfo = memo(({ id }: { id: string }) => {
     gcTime: 1000 * 60 * 10,
   });
 
+  const obj = data?.image?.find((img: Image) => img.quality === "150x150");
+  if (obj?.url) {
+    preload(obj.url, {
+      as: "image",
+      fetchPriority: "high",
+    });
+  }
+
   const getArtistImage = () => {
-    if (data) {
-      const obj = data.image?.find((img: Image) => img.quality === "150x150");
-      if (obj) return obj.url;
-    }
+    if (obj) return obj.url;
     return artistfallback;
   };
 

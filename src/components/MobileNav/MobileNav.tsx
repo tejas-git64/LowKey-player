@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import home from "../../assets/svgs/icons8-home.svg";
-import search from "../../assets/svgs/icons8-search.svg";
-import fav from "../../assets/svgs/icons8-heart.svg";
-import library from "../../assets/svgs/icons8-library.svg";
+import home from "/svgs/icons8-home.svg";
+import search from "/svgs/icons8-search.svg";
+import fav from "/svgs/icons8-heart.svg";
+import library from "/svgs/icons8-library.svg";
 
 export default function MobileNav() {
   return (

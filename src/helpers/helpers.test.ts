@@ -22,7 +22,7 @@ afterEach(() => {
 
 describe("getTrackImage", () => {
   test("Should resolve images", () => {
-    const fallback = "/src/assets/fallbacks/song-fallback.webp";
+    const fallback = "/fallbacks/song-fallback.webp";
     const images = [
       {
         url: "https://c.saavncdn.com/795/Pardesiya-From-Param-Sundari-Hindi-2025-20250729184535-50x50.jpg",

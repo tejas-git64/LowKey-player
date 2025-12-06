@@ -2,17 +2,23 @@ import RouteNav from "../../components/RouteNav/RouteNav";
 import Song from "../../components/Song/Song";
 import { useBoundStore } from "../../store/store";
 import { AlbumById, PlaylistById, TrackDetails } from "../../types/GlobalTypes";
-import play from "../../assets/svgs/play-icon.svg";
-import pause from "../../assets/svgs/pause-icon.svg";
-import favoritesImg from "../../assets/images/favorites.webp";
+import play from "/svgs/play-icon.svg";
+import pause from "/svgs/pause-icon.svg";
+import favoritesImg from "/favorites.webp";
 import { useNavigate } from "react-router-dom";
-import fallback from "../../assets/fallbacks/playlist-fallback.webp";
-import close from "../../assets/svgs/close.svg";
+import fallback from "/fallbacks/playlist-fallback.webp";
+import close from "/svgs/close.svg";
 import { memo, startTransition, useEffect, useMemo, useRef } from "react";
 import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
 import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
 import { animateScreen } from "../../helpers/animateScreen";
 import useClearTimer from "../../hooks/useClearTimer";
+import { preload } from "react-dom";
+
+preload(favoritesImg, {
+  as: "image",
+  fetchPriority: "high",
+});
 
 export default function Favorites() {
   const albums = useBoundStore((state) => state.favorites.albums);

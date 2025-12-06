@@ -9,13 +9,13 @@ import {
   LocalLibrary,
   TrackDetails,
 } from "../../types/GlobalTypes";
-import favorite from "../../assets/svgs/icons8-heart.svg";
-import favorited from "../../assets/svgs/icons8-favorited.svg";
-import fallback from "../../assets/fallbacks/playlist-fallback.webp";
-import play from "../../assets/svgs/play-icon.svg";
-import pause from "../../assets/svgs/pause-icon.svg";
-import addAlbum from "../../assets/svgs/icons8-addplaylist-28.svg";
-import addedToAlbum from "../../assets/svgs/tick.svg";
+import favorite from "/svgs/icons8-heart.svg";
+import favorited from "/svgs/icons8-favorited.svg";
+import fallback from "/fallbacks/playlist-fallback.webp";
+import play from "/svgs/play-icon.svg";
+import pause from "/svgs/pause-icon.svg";
+import addAlbum from "/svgs/icons8-addplaylist-28.svg";
+import addedToAlbum from "/svgs/tick.svg";
 import ListLoading from "../Playlist/Loading";
 import { useQuery } from "@tanstack/react-query";
 import RouteNav from "../../components/RouteNav/RouteNav";
@@ -25,6 +25,7 @@ import { animateScreen } from "../../helpers/animateScreen";
 import { cleanString } from "../../helpers/cleanString";
 import ShuffleButton from "../../components/ShuffleButton/ShuffleButton";
 import useClearTimer from "../../hooks/useClearTimer";
+import { preload } from "react-dom";
 
 export default function AlbumPage() {
   const { id } = useParams();
@@ -243,11 +244,17 @@ const AlbumInfo = memo(
   }) => {
     const imgEl = useRef<HTMLImageElement>(null);
     const titleEl = useRef<HTMLParagraphElement>(null);
+    const obj = images.find((img) => img.quality === "150x150");
+
+    if (obj?.url) {
+      preload(obj.url, {
+        as: "image",
+        fetchPriority: "high",
+      });
+    }
+
     const getAlbumImage = () => {
-      if (images) {
-        const obj = images.find((img) => img.quality === "150x150");
-        if (obj) return obj.url;
-      }
+      if (obj) return obj.url;
     };
 
     useEffect(() => {

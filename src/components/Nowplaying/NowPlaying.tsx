@@ -13,21 +13,21 @@ import {
   TrackDetails,
   UserPlaylist,
 } from "../../types/GlobalTypes";
-import favorite from "../../assets/svgs/icons8-heart.svg";
-import favorited from "../../assets/svgs/icons8-favorited.svg";
-import add from "../../assets/svgs/icons8-addplaylist-28.svg";
-import down from "../../assets/svgs/down.svg";
-import high from "../../assets/svgs/volume-high.svg";
-import vol from "../../assets/svgs/volume-min-svgrepo.svg";
-import mute from "../../assets/svgs/mute-svgrepo-com.svg";
-import previous from "../../assets/svgs/previous.svg";
-import next from "../../assets/svgs/next.svg";
-import play from "../../assets/svgs/play-icon.svg";
-import pause from "../../assets/svgs/pause-icon.svg";
-import tick from "../../assets/svgs/tick.svg";
-import downloadIcon from "../../assets/svgs/download-icon.svg";
-import songfallback from "../../assets/fallbacks/song-fallback.webp";
-import artistfallback from "../../assets/fallbacks/artist-fallback.png";
+import favorite from "/svgs/icons8-heart.svg";
+import favorited from "/svgs/icons8-favorited.svg";
+import add from "/svgs/icons8-addplaylist-28.svg";
+import down from "/svgs/down.svg";
+import high from "/svgs/volume-high.svg";
+import vol from "/svgs/volume-min-svgrepo.svg";
+import mute from "/svgs/mute-svgrepo-com.svg";
+import previous from "/svgs/previous.svg";
+import next from "/svgs/next.svg";
+import play from "/svgs/play-icon.svg";
+import pause from "/svgs/pause-icon.svg";
+import tick from "/svgs/tick.svg";
+import downloadIcon from "/svgs/download-icon.svg";
+import songfallback from "/fallbacks/song-fallback.webp";
+import artistfallback from "/fallbacks/artist-fallback.png";
 import "../../App.css";
 import Waveform from "../Waveform/Waveform";
 import { toggleFavorite } from "../../helpers/toggleFavorite";
@@ -103,14 +103,14 @@ const NowPlaying = memo(() => {
     try {
       const response = await fetch(url);
       const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
+      const blobUrl = globalThis.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = blobUrl;
       link.download = `${cleanString(filename)}.mp3`;
       document.body.appendChild(link);
       link.click();
       link.remove();
-      window.URL.revokeObjectURL(blobUrl);
+      globalThis.URL.revokeObjectURL(blobUrl);
     } catch (error) {
       console.error("Download failed:", error);
     }
@@ -130,9 +130,9 @@ const NowPlaying = memo(() => {
         localStorage.setItem("last-quality", String(audioIndex));
       }
     };
-    window.addEventListener("beforeunload", saveBeforeRefresh);
+    globalThis.addEventListener("beforeunload", saveBeforeRefresh);
     return () => {
-      window.removeEventListener("beforeunload", saveBeforeRefresh);
+      globalThis.removeEventListener("beforeunload", saveBeforeRefresh);
     };
   }, [track, volume, audioIndex]);
 

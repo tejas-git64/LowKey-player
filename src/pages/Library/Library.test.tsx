@@ -9,7 +9,7 @@ import {
 } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import artistfallback from "../../assets/fallbacks/artist-fallback.png";
+import artistfallback from "/fallbacks/artist-fallback.png";
 import Library from "./Library";
 import { useBoundStore } from "../../store/store";
 import {
@@ -73,7 +73,9 @@ describe("Library", () => {
       </QueryClientProvider>,
     );
     const playlistBtn = screen.getByTestId("playlist-btn");
-    fireEvent.click(playlistBtn);
+    act(() => {
+      fireEvent.click(playlistBtn);
+    });
     expect(useBoundStore.getState().revealCreation).toBe(true);
   });
   test("should render the library container", () => {
@@ -205,7 +207,9 @@ describe("Library", () => {
         </QueryClientProvider>,
       );
       const following = screen.getByTestId("following");
-      fireEvent.click(following);
+      act(() => {
+        fireEvent.click(following);
+      });
       vi.advanceTimersByTime(150);
 
       const artistPage = screen.getByTestId("artist-page");
@@ -225,7 +229,9 @@ describe("Library", () => {
         </QueryClientProvider>,
       );
       const playlist = screen.getByTestId("userplaylist");
-      fireEvent.click(playlist);
+      act(() => {
+        fireEvent.click(playlist);
+      });
       expect(screen.getByTestId("userplaylist-page")).toBeInTheDocument();
     });
     test("should playback track of the playlist onClick", () => {
@@ -284,6 +290,7 @@ describe("Library", () => {
       );
       const container = screen.getByTestId("album-container");
       fireEvent.click(container);
+
       vi.advanceTimersByTime(150);
       waitFor(() => {
         expect(fadeOutNavigate).toHaveBeenCalledWith(

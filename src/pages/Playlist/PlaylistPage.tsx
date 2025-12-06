@@ -2,13 +2,13 @@ import { memo, startTransition, useEffect, useMemo, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { getPlaylistData } from "../../api/requests";
 import { useBoundStore } from "../../store/store";
-import fallback from "../../assets/fallbacks/playlist-fallback.webp";
-import favorite from "../../assets/svgs/icons8-heart.svg";
-import favorited from "../../assets/svgs/icons8-favorited.svg";
-import play from "../../assets/svgs/play-icon.svg";
-import pause from "../../assets/svgs/pause-icon.svg";
-import addPlaylist from "../../assets/svgs/icons8-addplaylist-28.svg";
-import addedToPlaylist from "../../assets/svgs/tick.svg";
+import fallback from "/fallbacks/playlist-fallback.webp";
+import favorite from "/svgs/icons8-heart.svg";
+import favorited from "/svgs/icons8-favorited.svg";
+import play from "/svgs/play-icon.svg";
+import pause from "/svgs/pause-icon.svg";
+import addPlaylist from "/svgs/icons8-addplaylist-28.svg";
+import addedToPlaylist from "/svgs/tick.svg";
 import Song from "../../components/Song/Song";
 import {
   Image,
@@ -25,6 +25,7 @@ import { animateScreen } from "../../helpers/animateScreen";
 import { cleanString } from "../../helpers/cleanString";
 import ShuffleButton from "../../components/ShuffleButton/ShuffleButton";
 import useClearTimer from "../../hooks/useClearTimer";
+import { preload } from "react-dom";
 
 export default function PlaylistPage() {
   const { id } = useParams();
@@ -248,6 +249,12 @@ const PlaylistInfo = memo(
     handleImageLoad: () => void;
   }) => {
     const obj = images?.find((img: Image) => img.quality === "150x150") || null;
+    if (obj?.url) {
+      preload(obj.url, {
+        as: "image",
+        fetchPriority: "high",
+      });
+    }
 
     const getPlaylistImage = () => {
       if (obj !== null) return obj.url;

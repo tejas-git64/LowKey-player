@@ -10,14 +10,13 @@ import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import PlayingPill from "./PlayingPill";
 import { useBoundStore } from "../../store/store";
 import { sampleTrack } from "../../api/samples";
-import Layout from "../../pages/Layout/Layout";
-import play from "../../assets/svgs/play-icon.svg";
-import tick from "../../assets/svgs/icons8-tick.svg";
-import add from "../../assets/svgs/icons8-addplaylist-28.svg";
-import pause from "../../assets/svgs/pause-icon.svg";
-import favorite from "../../assets/svgs/icons8-heart.svg";
-import favorited from "../../assets/svgs/icons8-favorited.svg";
-import songfallback from "../../assets/fallbacks/song-fallback.webp";
+import play from "/svgs/play-icon.svg";
+import tick from "/svgs/icons8-tick.svg";
+import add from "/svgs/icons8-addplaylist-28.svg";
+import pause from "/svgs/pause-icon.svg";
+import favorite from "/svgs/icons8-heart.svg";
+import favorited from "/svgs/icons8-favorited.svg";
+import songfallback from "/fallbacks/song-fallback.webp";
 import { MemoryRouter } from "react-router-dom";
 
 const { setNowPlaying, setToUserPlaylist, setUserPlaylist } =
@@ -145,7 +144,9 @@ describe("PlayingPill", () => {
   });
   test("should set the track to be added to a playlist and show modal on button click", () => {
     render(<PlayingPill />);
-    fireEvent.click(screen.getByTestId("add-to-playlist-btn"));
+    act(() => {
+      fireEvent.click(screen.getByTestId("add-to-playlist-btn"));
+    });
     expect(useBoundStore.getState().creationTrack).toBe(sampleTrack);
     expect(useBoundStore.getState().revealCreation).toBe(true);
   });
@@ -174,17 +175,25 @@ describe("PlayingPill", () => {
   });
   test("should show pause icon if playing", () => {
     render(<PlayingPill />);
-    fireEvent.click(screen.getByTestId("play-btn"));
+    act(() => {
+      fireEvent.click(screen.getByTestId("play-btn"));
+    });
     expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
     expect(screen.getByAltText("play-icon")).toHaveAttribute("src", pause);
   });
   test("shows mobile player on clicking it", () => {
+    act(() => {
+      globalThis.innerWidth = 450;
+      useBoundStore.getState().setNowPlaying(sampleTrack);
+    });
     render(
-      <MemoryRouter>
-        <Layout />
+      <MemoryRouter initialEntries={["/search"]}>
+        <PlayingPill />
       </MemoryRouter>,
     );
-    fireEvent.click(screen.getByTestId("playing-pill"));
+    act(() => {
+      fireEvent.click(screen.getByTestId("playing-pill"));
+    });
     waitFor(() => {
       expect(screen.getByTestId("now-playing")).toBeInTheDocument();
     });
@@ -192,9 +201,9 @@ describe("PlayingPill", () => {
   test("should show relevant icons on calling toggleFavorite", () => {
     render(<PlayingPill />);
     expect(screen.getByAltText("favorite")).toHaveAttribute("src", favorite);
-
-    fireEvent.click(screen.getByTestId("favorite-btn"));
-
+    act(() => {
+      fireEvent.click(screen.getByTestId("favorite-btn"));
+    });
     expect(screen.getByAltText("favorite")).toHaveAttribute("src", favorited);
   });
 });

@@ -15,13 +15,13 @@ import {
   test,
   vi,
 } from "vitest";
-import fallback from "../../assets/fallbacks/playlist-fallback.webp";
-import favorite from "../../assets/svgs/icons8-heart.svg";
-import favorited from "../../assets/svgs/icons8-favorited.svg";
-import addAlbum from "../../assets/svgs/icons8-addplaylist-28.svg";
-import addedToAlbum from "../../assets/svgs/tick.svg";
-import play from "../../assets/svgs/play-icon.svg";
-import pause from "../../assets/svgs/pause-icon.svg";
+import fallback from "/fallbacks/playlist-fallback.webp";
+import favorite from "/svgs/icons8-heart.svg";
+import favorited from "/svgs/icons8-favorited.svg";
+import addAlbum from "/svgs/icons8-addplaylist-28.svg";
+import addedToAlbum from "/svgs/tick.svg";
+import play from "/svgs/play-icon.svg";
+import pause from "/svgs/pause-icon.svg";
 import AlbumPage from "./AlbumPage";
 import {
   QueryClient,
@@ -36,7 +36,7 @@ import { useBoundStore } from "../../store/store";
 import {
   mockedAlbumSuccessData,
   mockedNullDataResult,
-} from "../../mocks/mocks.test";
+} from "../../mocks/mocks";
 
 vi.mock("@tanstack/react-query", async (importOriginal) => {
   const actual = await importOriginal();
@@ -251,8 +251,9 @@ describe("AlbumControls", () => {
 
     const shuffleButton = screen.getByTitle("shuffle-button");
     expect(shuffleButton).toHaveAttribute("aria-label", "Enable shuffle");
-
-    fireEvent.click(shuffleButton);
+    act(() => {
+      fireEvent.click(shuffleButton);
+    });
 
     expect(screen.getByTitle("shuffle-button")).toHaveAttribute(
       "aria-label",
@@ -275,14 +276,16 @@ describe("AlbumControls", () => {
     expect(addBtn.ariaLabel).toBe("Add to Library");
     expect((addIcon as HTMLImageElement).src).toBe(addAlbum);
     expect((addIcon as HTMLImageElement).alt).toBe("Add to library");
-
-    fireEvent.click(addBtn);
+    act(() => {
+      fireEvent.click(addBtn);
+    });
 
     expect(addBtn.ariaLabel).toBe("Remove from Library");
     expect((addIcon as HTMLImageElement).src).toBe(addedToAlbum);
     expect((addIcon as HTMLImageElement).alt).toBe("Added to library");
-
-    fireEvent.click(addBtn);
+    act(() => {
+      fireEvent.click(addBtn);
+    });
 
     expect(addBtn.ariaLabel).toBe("Add to Library");
     expect((addIcon as HTMLImageElement).src).toBe(addAlbum);
@@ -303,14 +306,16 @@ describe("AlbumControls", () => {
     expect(favoriteBtn.ariaLabel).toBe("Add to Favorites");
     expect((favoriteIcon as HTMLImageElement).src).toBe(favorite);
     expect((favoriteIcon as HTMLImageElement).alt).toBe("Favorite");
-
-    fireEvent.click(favoriteBtn);
+    act(() => {
+      fireEvent.click(favoriteBtn);
+    });
 
     expect(favoriteBtn.ariaLabel).toBe("Remove from Favorites");
     expect((favoriteIcon as HTMLImageElement).src).toBe(favorited);
     expect((favoriteIcon as HTMLImageElement).alt).toBe("Favorited");
-
-    fireEvent.click(favoriteBtn);
+    act(() => {
+      fireEvent.click(favoriteBtn);
+    });
 
     expect(favoriteBtn.ariaLabel).toBe("Add to Favorites");
     expect((favoriteIcon as HTMLImageElement).src).toBe(favorite);

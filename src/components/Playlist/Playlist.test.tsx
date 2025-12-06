@@ -1,4 +1,5 @@
 import {
+  act,
   cleanup,
   fireEvent,
   render,
@@ -8,7 +9,7 @@ import {
 } from "@testing-library/react";
 import { afterAll, afterEach, describe, expect, test, vi } from "vitest";
 import Playlist from "./Playlist";
-import fallback from "../../assets/fallbacks/playlist-fallback.webp";
+import fallback from "/fallbacks/playlist-fallback.webp";
 import { samplePlaylistOfList } from "../../api/samples";
 import { MemoryRouter, useLocation } from "react-router-dom";
 
@@ -41,7 +42,9 @@ describe("Playlist", () => {
       wrapper: MemoryRouter,
     });
     const path = result.current.pathname;
-    fireEvent.click(screen.getByTestId("playlist"));
+    act(() => {
+      fireEvent.click(screen.getByTestId("playlist"));
+    });
     vi.advanceTimersByTime(150);
     waitFor(() => {
       expect(path).toBe(`/playlists/${samplePlaylistOfList.id}`);
