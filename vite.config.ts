@@ -5,6 +5,11 @@ import { EsLinter, linterPlugin } from "vite-plugin-linter";
 import preload from "vite-plugin-preload";
 
 export default defineConfig((config) => ({
+  build: {
+    rollupOptions: {
+      external: (id) => /\.(test|spec)\.(ts|js)x?$/.test(id),
+    },
+  },
   test: {
     environment: "jsdom",
     include: ["**/*.{test,spec}.{js,jsx,ts,tsx}"],
