@@ -3,19 +3,28 @@ import { useBoundStore } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import { Image, PlaylistById, TrackDetails } from "../../types/GlobalTypes";
 import Section from "../../components/Section/Section";
-import play from "../../assets/svgs/play-icon.svg";
-import pause from "../../assets/svgs/pause-icon.svg";
+import play from "/svgs/play-icon.svg";
+import pause from "/svgs/pause-icon.svg";
 import Song from "../../components/Song/Song";
-import fallbacktoday from "../../assets/fallbacks/timely/icons8-timely-today.webp";
-import fallbackweekly from "../../assets/fallbacks/timely/icons8-timely-weekly.webp";
-import fallbackmonthly from "../../assets/fallbacks/timely/icons8-timely-monthly.webp";
-import fallbackyearly from "../../assets/fallbacks/timely/icons8-timely-yearly.webp";
+import fallbacktoday from "/fallbacks/timely/icons8-timely-today.webp";
+import fallbackweekly from "/fallbacks/timely/icons8-timely-weekly.webp";
+import fallbackmonthly from "/fallbacks/timely/icons8-timely-monthly.webp";
+import fallbackyearly from "/fallbacks/timely/icons8-timely-yearly.webp";
 import { useQuery } from "@tanstack/react-query";
 import { getTimelyData, getWidgetData } from "../../api/requests";
 import { genres } from "../../utils/utils";
-import widgetfallback from "../../assets/fallbacks/widget-fallback.webp";
+import widgetfallback from "/fallbacks/widget-fallback.webp";
 import { TimelyFallback, Widgetfallback } from "./Loading";
 import useClearTimer from "../../hooks/useClearTimer";
+import { preload } from "react-dom";
+
+preload(
+  "https://c.saavncdn.com/editorial/PopHits2025English_20250708135249.jpg?bch=1752248614",
+  {
+    as: "image",
+    fetchPriority: "high",
+  },
+);
 
 export default function Home() {
   const changeGreeting = useBoundStore((state) => state.changeGreeting);

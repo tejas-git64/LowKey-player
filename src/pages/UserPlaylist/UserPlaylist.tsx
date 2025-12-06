@@ -1,7 +1,7 @@
 import RouteNav from "../../components/RouteNav/RouteNav";
-import playlistfallback from "../../assets/fallbacks/playlist-fallback.webp";
-import play from "../../assets/svgs/play-icon.svg";
-import pause from "../../assets/svgs/pause-icon.svg";
+import playlistfallback from "/fallbacks/playlist-fallback.webp";
+import play from "/svgs/play-icon.svg";
+import pause from "/svgs/pause-icon.svg";
 import { useBoundStore } from "../../store/store";
 import { useParams } from "react-router-dom";
 import {
@@ -14,6 +14,12 @@ import { memo, startTransition, useEffect, useMemo, useRef } from "react";
 import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
 import { animateScreen } from "../../helpers/animateScreen";
 import useClearTimer from "../../hooks/useClearTimer";
+import { preload } from "react-dom";
+
+preload(playlistfallback, {
+  as: "image",
+  fetchPriority: "high",
+});
 
 export default function UserPlaylistPage() {
   const queue = useBoundStore((state) => state.nowPlaying.queue);
