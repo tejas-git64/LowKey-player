@@ -16,10 +16,7 @@ import {
 } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 import { PlaylistOfList } from "../../types/GlobalTypes";
-import {
-  mockedSectionData,
-  mockedNullDataResult,
-} from "../../mocks/mocks.test";
+import { mockedSectionData, mockedNullDataResult } from "../../mocks/mocks";
 
 vi.mock("@tanstack/react-query", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@tanstack/react-query")>();
@@ -75,7 +72,7 @@ beforeEach(() => {
   mockedUseQuery.mockReturnValue(
     mockedSectionData as UseQueryResult<PlaylistOfList[]>,
   );
-  window.IntersectionObserver = vi.fn((cb) => {
+  globalThis.IntersectionObserver = vi.fn((cb) => {
     observerInstance = new IntersectionObserverMock(cb);
     return observerInstance;
   });
@@ -83,6 +80,7 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup();
+  vi.useRealTimers();
   vi.restoreAllMocks();
 });
 

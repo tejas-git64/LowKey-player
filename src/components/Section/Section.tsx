@@ -33,7 +33,7 @@ const Section = memo(
         const observer = new IntersectionObserver(
           ([entry]) => setIsIntersecting(entry.isIntersecting),
           {
-            rootMargin: "100px",
+            rootMargin: "200px",
             threshold: 0.4,
           },
         );
