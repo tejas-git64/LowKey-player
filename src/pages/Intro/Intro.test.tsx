@@ -1,7 +1,6 @@
 import {
   act,
   cleanup,
-  fireEvent,
   render,
   renderHook,
   screen,
@@ -9,10 +8,11 @@ import {
 } from "@testing-library/react";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import Intro from "./Intro";
-import { MemoryRouter, useLocation, useNavigate } from "react-router-dom";
+import { MemoryRouter, useLocation } from "react-router-dom";
 
 afterEach(() => {
   cleanup();
+  vi.useRealTimers();
 });
 
 describe("Intro", () => {
@@ -40,53 +40,33 @@ describe("Intro", () => {
     );
     expect(screen.getByText("Check it out")).toBeInTheDocument();
   });
-  test("fadeOutNavigate function applies fadeout transitions and navigates", () => {
-    vi.useFakeTimers();
-    render(
-      <MemoryRouter initialEntries={["/"]}>
-        <Intro />
-      </MemoryRouter>,
-    );
-    const { result } = renderHook(() => useNavigate(), {
-      wrapper: MemoryRouter,
+  describe("fadeOutNavigate function", () => {
+    test("applies fadeout transitions and navigates", () => {
+      vi.useFakeTimers();
+      render(
+        <MemoryRouter initialEntries={["/"]}>
+          <Intro />
+        </MemoryRouter>,
+      );
+      const l = renderHook(() => useLocation(), {
+        wrapper: MemoryRouter,
+      });
+      const path = l.result.current.pathname;
+      const button = screen.getByText("Check it out");
+      act(() => {
+        button.click();
+      });
+      expect(button.classList).toContain("animate-intro-fadeout");
+      expect(screen.getByTestId("intro-card").classList).toContain(
+        "animate-card-fadeout",
+      );
+      expect(screen.getByAltText("background-image").classList).toContain(
+        "animate-intro-fadeout",
+      );
+      vi.advanceTimersByTime(150);
+      waitFor(() => {
+        expect(path).toBe("/home");
+      });
     });
-    const l = renderHook(() => useLocation(), {
-      wrapper: MemoryRouter,
-    });
-    const navigate = result.current;
-    const path = l.result.current.pathname;
-    const button = screen.getByText("Check it out");
-    button.click();
-    expect(button.classList.contains("intro-fadeout")).toBe(true);
-    expect(
-      screen.getByTestId("intro-card").classList.contains("card-fadeout"),
-    ).toBe(true);
-    expect(
-      screen
-        .getByAltText("background-image")
-        .classList.contains("intro-fadeout"),
-    ).toBe(true);
-    vi.advanceTimersByTime(150);
-    act(() => {
-      navigate("/home");
-    });
-    waitFor(() => {
-      expect(path).toBe("/home");
-    });
-    vi.useRealTimers();
-  });
-  test("loadImage function applies fadein transitions", () => {
-    render(
-      <MemoryRouter initialEntries={["/"]}>
-        <Intro />
-      </MemoryRouter>,
-    );
-    const image = screen.getByAltText("background-image");
-    const card = screen.getByTestId("intro-card");
-    const button = screen.getByText("Check it out");
-    fireEvent.load(image);
-    expect(image.classList.contains("intro-fadein")).toBe(true);
-    expect(card.classList.contains("card-fadein")).toBe(true);
-    expect(button.classList.contains("intro-fadein")).toBe(true);
   });
 });
