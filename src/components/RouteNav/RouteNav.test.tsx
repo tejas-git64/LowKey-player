@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
 import { afterEach, describe, expect, test } from "vitest";
 import RouteNav from "./RouteNav";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
@@ -40,8 +46,9 @@ describe("RouteNav", () => {
     );
 
     expect(screen.getByTestId("location-display").textContent).toBe("/library");
-
-    fireEvent.click(screen.getByTestId("previous-route"));
+    act(() => {
+      fireEvent.click(screen.getByTestId("previous-route"));
+    });
     expect(screen.getByTestId("location-display").textContent).toBe("/search");
   });
 
@@ -56,8 +63,9 @@ describe("RouteNav", () => {
       </MemoryRouter>,
     );
     expect(screen.getByTestId("location-display").textContent).toBe("/search");
-
-    fireEvent.click(screen.getByTestId("next-route"));
+    act(() => {
+      fireEvent.click(screen.getByTestId("next-route"));
+    });
 
     expect(screen.getByTestId("location-display").textContent).toBe("/library");
   });

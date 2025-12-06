@@ -1,4 +1,5 @@
 import {
+  act,
   cleanup,
   fireEvent,
   render,
@@ -45,7 +46,9 @@ describe("Searchbar", () => {
     render(<Searchbar />);
     input = screen.getByTestId("searchinput") as HTMLInputElement;
     const inputObj = { target: { value: "new value" } };
-    fireEvent.change(input, inputObj);
+    act(() => {
+      fireEvent.change(input, inputObj);
+    });
     expect(input.value).toBe("new value");
     skipDelay();
     expect(api.getSearchResults).toHaveBeenCalledWith("new+value");

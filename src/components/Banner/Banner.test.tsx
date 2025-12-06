@@ -46,17 +46,20 @@ describe("Banner", () => {
           <Banner />
         </MemoryRouter>,
       );
-      const button = screen.getByTestId("notifs").querySelector("button");
+      const button = screen
+        .getByTestId("notifs")
+        .querySelector("button") as HTMLButtonElement;
       const notifs = useBoundStore.getState().notifications;
       expect(button).toBeInTheDocument();
       expect(notifs).toBe(false);
-      if (button) {
+      act(() => {
         fireEvent.click(button);
-        expect(useBoundStore.getState().notifications).toBe(true);
-
+      });
+      expect(useBoundStore.getState().notifications).toBe(true);
+      act(() => {
         fireEvent.click(button);
-        expect(useBoundStore.getState().notifications).toBe(false);
-      }
+      });
+      expect(useBoundStore.getState().notifications).toBe(false);
     });
     test("should contain activity list", () => {
       render(

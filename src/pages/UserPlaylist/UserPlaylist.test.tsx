@@ -194,7 +194,9 @@ describe("UserPlaylist", () => {
         </QueryClientProvider>,
       );
       const shuffleBtn = screen.getByTitle("Shuffle playlist");
-      fireEvent.click(shuffleBtn);
+      act(() => {
+        fireEvent.click(shuffleBtn);
+      });
       expect(shuffleBtn.ariaLabel).toBe("Disable shuffle");
     });
     test("shuffle icon color should be emerald if shuffling", () => {
@@ -236,7 +238,9 @@ describe("UserPlaylist", () => {
           </QueryClientProvider>,
         );
         const playBtn = screen.getByTestId("play-btn");
-        fireEvent.click(playBtn);
+        act(() => {
+          fireEvent.click(playBtn);
+        });
         expect(playBtn.title).toBe("Pause playlist");
         expect(playBtn.ariaLabel).toBe("Pause playlist");
       });

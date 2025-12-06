@@ -70,7 +70,9 @@ describe("Playlist Modal", () => {
   });
   test("should hide the modal on clicking the close button", () => {
     render(<PlaylistModal ref={ref} />);
-    fireEvent.click(screen.getByTestId("close-btn"));
+    act(() => {
+      fireEvent.click(screen.getByTestId("close-btn"));
+    });
     waitFor(() => {
       expect(screen.getByTestId("playlist-modal")).not.toBeInTheDocument();
     });
@@ -101,7 +103,7 @@ describe("Playlist Modal", () => {
       });
       test("should alert if a playlist already exists", async () => {
         const alertMock = vi
-          .spyOn(window, "alert")
+          .spyOn(globalThis, "alert")
           .mockImplementation(() => {});
         render(<PlaylistModal ref={ref} />);
         const input = screen.getByPlaceholderText("Playlist name here..");
@@ -137,7 +139,9 @@ describe("Playlist Modal", () => {
     const btn = screen.getByTestId("create-playlist-btn");
     const input = screen.getByPlaceholderText("Playlist name here..");
     (input as HTMLInputElement).value = "new playlist";
-    fireEvent.click(btn);
+    act(() => {
+      fireEvent.click(btn);
+    });
     waitFor(() => {
       expect(useBoundStore.getState().library.userPlaylists[0].name).toBe(
         (input as HTMLInputElement).value,
@@ -213,18 +217,19 @@ describe("Playlist Modal", () => {
           act(() => {
             useBoundStore.getState().createNewUserPlaylist("Bruh", 123);
           });
-          const checkbox = document.getElementById(`new-playlist-${123}`);
-          if (checkbox) {
-            userEvent.click(checkbox);
-            userEvent.click(checkbox);
-            waitFor(() => {
-              expect(mockRemoveFromUserPlaylist).toHaveBeenCalledWith(
-                sampleTrack,
-                8,
-              );
-              expect(checkbox).not.toBeChecked();
-            });
-          }
+          const checkbox = document.getElementById(
+            `new-playlist-${123}`,
+          ) as HTMLElement;
+
+          userEvent.click(checkbox);
+          userEvent.click(checkbox);
+          waitFor(() => {
+            expect(mockRemoveFromUserPlaylist).toHaveBeenCalledWith(
+              sampleTrack,
+              8,
+            );
+            expect(checkbox).not.toBeChecked();
+          });
         });
 
         test("does nothing when creationTrack is null", async () => {
@@ -232,17 +237,18 @@ describe("Playlist Modal", () => {
           act(() => {
             useBoundStore.getState().createNewUserPlaylist("Hmmm", 13);
           });
-          const checkbox = document.getElementById(`new-playlist-${13}`);
-          if (checkbox) {
-            act(() => {
-              userEvent.click(checkbox);
-            });
-            waitFor(() => {
-              expect(mockSetToUserPlaylist).not.toHaveBeenCalled();
-              expect(mockRemoveFromUserPlaylist).not.toHaveBeenCalled();
-              expect(checkbox).not.toBeChecked();
-            });
-          }
+          const checkbox = document.getElementById(
+            `new-playlist-${13}`,
+          ) as HTMLElement;
+
+          act(() => {
+            userEvent.click(checkbox);
+          });
+          waitFor(() => {
+            expect(mockSetToUserPlaylist).not.toHaveBeenCalled();
+            expect(mockRemoveFromUserPlaylist).not.toHaveBeenCalled();
+            expect(checkbox).not.toBeChecked();
+          });
         });
       });
       test("unchecked if the creation track is in not that playlist", () => {
