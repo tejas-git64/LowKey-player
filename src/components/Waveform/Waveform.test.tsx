@@ -74,7 +74,7 @@ vi.mock("wavesurfer.js", () => ({
 }));
 
 beforeEach(() => {
-  vi.spyOn(window, "matchMedia").mockImplementation((query) => ({
+  vi.spyOn(globalThis, "matchMedia").mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -85,8 +85,8 @@ beforeEach(() => {
     dispatchEvent: vi.fn(),
     load: vi.fn(),
   }));
-  vi.spyOn(window, "addEventListener");
-  vi.spyOn(window, "removeEventListener");
+  vi.spyOn(globalThis, "addEventListener");
+  vi.spyOn(globalThis, "removeEventListener");
 });
 
 afterEach(() => {
@@ -229,7 +229,7 @@ describe("Waveform", () => {
 
     render(<Waveform {...obj} />);
 
-    const unloadHandler = (window.addEventListener as Mock).mock.calls.find(
+    const unloadHandler = (globalThis.addEventListener as Mock).mock.calls.find(
       (c) => c[0] === "beforeunload",
     )?.[1];
 
@@ -243,11 +243,11 @@ describe("Waveform", () => {
       );
     });
   });
-  test("should remove window event listeners on unmount", () => {
+  test("should remove globalThis event listeners on unmount", () => {
     const { unmount } = render(<Waveform {...obj} />);
     unmount();
 
-    expect(window.removeEventListener).toHaveBeenCalledWith(
+    expect(globalThis.removeEventListener).toHaveBeenCalledWith(
       "beforeunload",
       expect.any(Function),
     );

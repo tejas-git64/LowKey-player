@@ -1,9 +1,9 @@
-import nf480 from "../../assets/images/notfound/notfound-480px.webp";
-import nf640 from "../../assets/images/notfound/notfound-640px.webp";
-import nf768 from "../../assets/images/notfound/notfound-landscape-768px.webp";
-import nf1024 from "../../assets/images/notfound/notfound-landscape-1024px.webp";
-import nf1280 from "../../assets/images/notfound/notfound-landscape-1280px.webp";
-import nf1536 from "../../assets/images/notfound/notfound-landscape-1536px.webp";
+import nf480 from "/notfound/notfound-480px.webp";
+import nf640 from "/notfound/notfound-640px.webp";
+import nf768 from "/notfound/notfound-landscape-768px.webp";
+import nf1024 from "/notfound/notfound-landscape-1024px.webp";
+import nf1280 from "/notfound/notfound-landscape-1280px.webp";
+import nf1536 from "/notfound/notfound-landscape-1536px.webp";
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { animateScreen } from "../../helpers/animateScreen";
@@ -44,11 +44,11 @@ export default function NotFound() {
   useEffect(() => {
     timerRef.current = animateScreen(nfEl);
     imageResize();
-    window.addEventListener("load", imageResize);
-    window.addEventListener("resize", imageResize);
+    globalThis.addEventListener("load", imageResize);
+    globalThis.addEventListener("resize", imageResize);
     return () => {
-      window.removeEventListener("load", imageResize);
-      window.removeEventListener("resize", imageResize);
+      globalThis.removeEventListener("load", imageResize);
+      globalThis.removeEventListener("resize", imageResize);
     };
   }, []);
 

@@ -131,10 +131,10 @@ const Waveform = ({
           }),
         );
       };
-      window.addEventListener("beforeunload", saveToLocalStorage);
+      globalThis.addEventListener("beforeunload", saveToLocalStorage);
       return () => {
         waveSurferRef.current?.un("ready", handleReady);
-        window.removeEventListener("beforeunload", saveToLocalStorage);
+        globalThis.removeEventListener("beforeunload", saveToLocalStorage);
       };
     }
   }, [audioUrl, id, isPlaying, trackDuration]);

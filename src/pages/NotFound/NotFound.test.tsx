@@ -1,9 +1,9 @@
-import nf480 from "../../assets/images/notfound/notfound-480px.webp";
-import nf640 from "../../assets/images/notfound/notfound-640px.webp";
-import nf768 from "../../assets/images/notfound/notfound-landscape-768px.webp";
-import nf1024 from "../../assets/images/notfound/notfound-landscape-1024px.webp";
-import nf1280 from "../../assets/images/notfound/notfound-landscape-1280px.webp";
-import nf1536 from "../../assets/images/notfound/notfound-landscape-1536px.webp";
+import nf480 from "/notfound/notfound-480px.webp";
+import nf640 from "/notfound/notfound-640px.webp";
+import nf768 from "/notfound/notfound-landscape-768px.webp";
+import nf1024 from "/notfound/notfound-landscape-1024px.webp";
+import nf1280 from "/notfound/notfound-landscape-1280px.webp";
+import nf1536 from "/notfound/notfound-landscape-1536px.webp";
 import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import NotFound from "./NotFound";
@@ -30,7 +30,7 @@ describe("NotFound", () => {
     });
 
     test("window width of 480px", () => {
-      window.innerWidth = 480;
+      globalThis.innerWidth = 480;
       const { getByTestId } = render(
         <MemoryRouter>
           <NotFound />
@@ -40,7 +40,7 @@ describe("NotFound", () => {
     });
 
     test("window width of 640px", () => {
-      window.innerWidth = 640;
+      globalThis.innerWidth = 640;
       const { getByTestId } = render(
         <MemoryRouter>
           <NotFound />
@@ -50,7 +50,7 @@ describe("NotFound", () => {
     });
 
     test("window width of 768px", () => {
-      window.innerWidth = 768;
+      globalThis.innerWidth = 768;
       const { getByTestId } = render(
         <MemoryRouter>
           <NotFound />
@@ -60,7 +60,7 @@ describe("NotFound", () => {
     });
 
     test("window width of 1024px", () => {
-      window.innerWidth = 1024;
+      globalThis.innerWidth = 1024;
       const { getByTestId } = render(
         <MemoryRouter>
           <NotFound />
@@ -70,7 +70,7 @@ describe("NotFound", () => {
     });
 
     test("window width of 1280px", () => {
-      window.innerWidth = 1280;
+      globalThis.innerWidth = 1280;
       const { getByTestId } = render(
         <MemoryRouter>
           <NotFound />
@@ -80,7 +80,7 @@ describe("NotFound", () => {
     });
 
     test("window width of 2500px", () => {
-      window.innerWidth = 2500;
+      globalThis.innerWidth = 2500;
       const { getByTestId } = render(
         <MemoryRouter>
           <NotFound />
@@ -90,7 +90,7 @@ describe("NotFound", () => {
     });
 
     test("default case", () => {
-      window.innerWidth = 2600;
+      globalThis.innerWidth = 2600;
       const { getByTestId } = render(
         <MemoryRouter>
           <NotFound />
@@ -132,7 +132,7 @@ describe("NotFound", () => {
           <NotFound />
         </MemoryRouter>,
       );
-      window.innerWidth = 1425;
+      globalThis.innerWidth = 1425;
       act(() => {
         globalThis.dispatchEvent(new Event("resize"));
       });
