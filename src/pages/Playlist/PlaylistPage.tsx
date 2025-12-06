@@ -29,8 +29,6 @@ import { preload } from "react-dom";
 
 export default function PlaylistPage() {
   const { id } = useParams();
-  const queue = useBoundStore((state) => state.nowPlaying.queue);
-  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
   const playEl = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout>(null);
 
@@ -49,9 +47,6 @@ export default function PlaylistPage() {
   }
 
   useClearTimer(timerRef);
-  useEffect(() => {
-    if (queue !== null) setNowPlaying(queue.songs[0]);
-  }, [queue, setNowPlaying]);
 
   return (
     <div

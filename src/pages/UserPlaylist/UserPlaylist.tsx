@@ -22,10 +22,8 @@ preload(playlistfallback, {
 });
 
 export default function UserPlaylistPage() {
-  const queue = useBoundStore((state) => state.nowPlaying.queue);
   const userPlaylists = useBoundStore((state) => state.library.userPlaylists);
   const setUserPlaylist = useBoundStore((state) => state.setUserPlaylist);
-  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
   const { id } = useParams();
   const upEl = useRef(null);
   const timerRef = useRef<NodeJS.Timeout>(null);
@@ -36,10 +34,6 @@ export default function UserPlaylistPage() {
       ),
     [userPlaylists, id],
   );
-
-  useEffect(() => {
-    if (queue) setNowPlaying(queue.songs[0]);
-  }, [queue, setNowPlaying]);
 
   useClearTimer(timerRef);
   useEffect(() => {
@@ -97,7 +91,7 @@ const UserPlaylistInfo = memo(({ name }: { name: string }) => {
     <div className="flex h-auto w-full flex-col items-start justify-start sm:flex-row sm:items-center">
       <img
         src={playlistfallback}
-        alt="img"
+        alt={name}
         style={{
           boxShadow: "5px 5px 0px #000",
         }}

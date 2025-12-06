@@ -29,8 +29,6 @@ import { preload } from "react-dom";
 
 export default function AlbumPage() {
   const { id } = useParams();
-  const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
-  const queue = useBoundStore((state) => state.nowPlaying.queue);
   const albumEl = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout>(null);
 
@@ -49,9 +47,6 @@ export default function AlbumPage() {
   }
 
   useClearTimer(timerRef);
-  useEffect(() => {
-    if (queue?.songs) setNowPlaying(queue.songs[0]);
-  }, [queue, setNowPlaying]);
 
   return (
     <div
@@ -272,7 +267,7 @@ const AlbumInfo = memo(
         <img
           ref={imgEl}
           src={getAlbumImage()}
-          alt="img"
+          alt={cleanString(name)}
           data-testid="album-info-image"
           className="image-fadeout mr-4 h-[150px] w-[150px]"
           style={{
