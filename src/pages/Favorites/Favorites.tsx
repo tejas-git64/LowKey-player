@@ -53,7 +53,7 @@ export default function Favorites() {
         <div className="flex h-auto w-full flex-col items-start justify-start sm:flex-row sm:items-center">
           <img
             src={favoritesImg}
-            alt="img"
+            alt="favorites"
             style={{
               boxShadow: "5px 5px 0px #000",
             }}

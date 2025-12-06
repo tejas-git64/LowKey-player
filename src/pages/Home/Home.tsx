@@ -145,7 +145,7 @@ export const Widget = memo(
               <img
                 ref={iRef}
                 src={lcpImg}
-                alt="img"
+                alt={data.name || "Unknown Playlist"}
                 fetchPriority="high"
                 loading="eager"
                 data-testid="widget-image"
@@ -229,7 +229,7 @@ const WidgetButton = ({
     >
       <img
         src={isPlaying && inQueue ? pause : play}
-        alt="play"
+        alt={isPlaying && inQueue ? "pause" : "play"}
         loading="lazy"
         className="h-8 w-8"
       />
@@ -280,7 +280,7 @@ export const TimelyPlaylists = memo(
           >
             <img
               src={viral?.image[0]?.url || fallbacktoday}
-              alt="img"
+              alt={"Viral mix"}
               width={50}
               height={50}
               fetchPriority="high"
@@ -303,7 +303,7 @@ export const TimelyPlaylists = memo(
           >
             <img
               src={weekly?.image[0]?.url || fallbackweekly}
-              alt="img"
+              alt={"Top weekly"}
               width={50}
               height={50}
               fetchPriority="high"
@@ -326,7 +326,7 @@ export const TimelyPlaylists = memo(
           >
             <img
               src={monthly?.image[0]?.url || fallbackmonthly}
-              alt="img"
+              alt={"Best of the month"}
               width={50}
               height={50}
               fetchPriority="high"
@@ -349,7 +349,7 @@ export const TimelyPlaylists = memo(
           >
             <img
               src={latest?.image[0]?.url || fallbackyearly}
-              alt="img"
+              alt={"Latest tracks"}
               width={50}
               height={50}
               fetchPriority="high"

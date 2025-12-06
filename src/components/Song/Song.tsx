@@ -96,7 +96,7 @@ const Song = memo(
           <img
             ref={imgEl}
             src={track?.image[0]?.url}
-            alt="img"
+            alt={track.name ? cleanString(track.name) : "Unknown track"}
             width={50}
             height={50}
             fetchPriority="high"

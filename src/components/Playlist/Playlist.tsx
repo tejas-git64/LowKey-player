@@ -42,7 +42,7 @@ export default function Playlist({
         <img
           ref={playlistImgEl}
           src={getPlaylistImage()}
-          alt="user-profile"
+          alt={name}
           loading="eager"
           fetchPriority="high"
           width={150}

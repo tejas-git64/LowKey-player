@@ -96,7 +96,7 @@ const RecentSong = ({
     >
       <img
         src={image[0] ? image[0].url : songfallback}
-        alt={`${name}-img`}
+        alt={name}
         onError={(e) => (e.currentTarget.src = songfallback)}
         className="mr-4 h-[50px] w-[50px] border-r border-black"
       />

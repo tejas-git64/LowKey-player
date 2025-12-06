@@ -52,7 +52,7 @@ const Pill = memo(({ track }: { track: TrackDetails }) => {
     >
       <img
         src={track.image[0] ? track.image[0].url : songfallback}
-        alt="song-img"
+        alt={track.name}
         fetchPriority="high"
         loading="eager"
         onError={(e) => (e.currentTarget.src = songfallback)}

@@ -198,7 +198,7 @@ const Following = memo(
         <div className="flex h-full w-[80%] items-center justify-start">
           <img
             src={image[0]?.url || artistfallback}
-            alt="artist"
+            alt={name || "Unknown Artist"}
             loading="eager"
             fetchPriority="high"
             className="mr-4 h-[40px] w-[40px] rounded-sm"
@@ -279,7 +279,7 @@ const CustomPlaylist = memo(
           <div className="h-[150px] w-[150px] overflow-hidden">
             <img
               src={userplaylist}
-              alt="user-profile"
+              alt={playlist.name}
               loading="eager"
               fetchPriority="high"
               width={150}

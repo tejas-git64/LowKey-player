@@ -101,7 +101,7 @@ export const ArtistInfo = memo(({ id }: { id: string }) => {
         <img
           ref={artistImgEl}
           src={getArtistImage()}
-          alt="artist-image"
+          alt={data.name || "Unknown Artist"}
           onError={(e) => (e.currentTarget.src = artistfallback)}
           loading="eager"
           fetchPriority="high"

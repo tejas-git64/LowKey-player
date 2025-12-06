@@ -65,7 +65,7 @@ export default function Intro() {
         src={`/landing/landing-1280px.webp`}
         srcSet={srcSet}
         sizes={sizes}
-        alt="background-image"
+        alt="background"
         loading="eager"
         fetchPriority="high"
         className="absolute left-0 top-0 h-full w-full animate-intro-fadein object-cover"
@@ -120,7 +120,7 @@ export default function Intro() {
                 loading="eager"
                 fetchPriority="high"
                 className="h-[15px] w-[15px] saturate-0 transition-all duration-100 ease-in group-hover:rotate-45 group-hover:saturate-100"
-                alt="tech-icon"
+                alt="React"
               />
             </li>
             <li className="group ml-3 flex h-auto w-auto cursor-pointer items-center justify-start">
@@ -132,7 +132,7 @@ export default function Intro() {
                 loading="eager"
                 fetchPriority="high"
                 className="h-[18px] w-[18px] saturate-0 transition-colors duration-100 ease-in group-hover:saturate-100"
-                alt="tech-icon"
+                alt="Tailwind"
               />
             </li>
             <li className="group ml-3.5 flex h-auto w-auto cursor-pointer items-center justify-start">
@@ -144,7 +144,7 @@ export default function Intro() {
                 loading="eager"
                 fetchPriority="high"
                 className="h-4 w-4 saturate-0 transition-colors duration-100 ease-in group-hover:saturate-100"
-                alt="tech-icon"
+                alt="Vite"
               />
             </li>
           </ul>

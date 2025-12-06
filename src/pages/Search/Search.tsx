@@ -157,7 +157,7 @@ const TopQuery = memo(
             >
               <img
                 src={res.image[0]?.url || undefined}
-                alt="query-img"
+                alt={res.title ? cleanString(res.title) : "Unknown title"}
                 className="mr-4 h-[50px] w-[50px] rounded-sm"
               />
               <p
@@ -247,7 +247,7 @@ const SearchSong = memo(
       >
         <img
           src={song.image[0]?.url || songfallback}
-          alt="query-song-img"
+          alt={song.title ? cleanString(song.title) : "Unknown song"}
           className="mr-4 h-[40px] w-[40px]"
           onError={(e) => (e.currentTarget.src = songfallback)}
         />
@@ -317,7 +317,7 @@ const QueryPlaylist = memo(
             height={150}
             fetchPriority="high"
             loading="eager"
-            alt="query-playlist-img"
+            alt={title ? cleanString(title) : "Unknown playlist"}
             className="image-fadeout h-[150px] w-[150px] shadow-md shadow-black duration-200 ease-in"
             onError={(e) => (e.currentTarget.src = fallback)}
           />
@@ -375,7 +375,7 @@ const QueryArtist = ({ id, title, image, i }: AlbumResult & { i: number }) => {
         <img
           ref={qaImgEl}
           src={image[1] ? image[1].url : artistfallback}
-          alt="query-artist-img"
+          alt={title ? cleanString(title) : "Unknown Artist"}
           className="image-fadeout h-[150px] w-[150px] rounded-full shadow-md shadow-black duration-200 ease-in"
           onError={(e) => (e.currentTarget.src = artistfallback)}
         />
@@ -436,7 +436,7 @@ const QueryAlbum = ({
         <img
           ref={qalImg}
           src={image[1] ? image[1].url : fallback}
-          alt="query-album-img"
+          alt={title ? cleanString(title) : "Unknown Album"}
           className="image-fadeout h-[150px] w-[150px] shadow-md shadow-black duration-200 ease-in"
           onError={(e) => (e.currentTarget.src = fallback)}
         />
