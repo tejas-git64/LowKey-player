@@ -88,7 +88,7 @@ describe("PlayingPill", () => {
   });
   test("should contain track image", () => {
     render(<PlayingPill />);
-    expect(screen.getByAltText("song-img")).toHaveAttribute("src", "image url");
+    expect(screen.getByAltText("Track3")).toHaveAttribute("src", "image url");
   });
   test("should contain songfallback if no track image", () => {
     act(() => {
@@ -96,17 +96,14 @@ describe("PlayingPill", () => {
     });
     render(<PlayingPill />);
     waitFor(() => {
-      const image = screen.getByAltText("song-img");
+      const image = screen.getByAltText("Track3");
       expect((image as HTMLImageElement).src).toContain(songfallback);
     });
   });
   test("should contain fallback image onError", () => {
     render(<PlayingPill />);
-    fireEvent.error(screen.getByAltText("song-img"));
-    expect(screen.getByAltText("song-img")).toHaveAttribute(
-      "src",
-      songfallback,
-    );
+    fireEvent.error(screen.getByAltText("Track3"));
+    expect(screen.getByAltText("Track3")).toHaveAttribute("src", songfallback);
   });
   test("should show track name if track is present", () => {
     render(<PlayingPill />);

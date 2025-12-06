@@ -120,7 +120,7 @@ describe("Recents", () => {
     });
     test("should use songfallback as image on error", () => {
       render(<Recents />);
-      const image = screen.getByAltText(`${sampleTrack.name}-img`);
+      const image = screen.getByAltText(sampleTrack.name);
       fireEvent.error(image);
       waitFor(() => {
         expect(screen.getByAltText(`${sampleTrack.name}-img`)).toHaveAttribute(

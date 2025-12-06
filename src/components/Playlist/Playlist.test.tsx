@@ -65,7 +65,7 @@ describe("Playlist", () => {
         fadeOutNavigate={fadeOutNavigate}
       />,
     );
-    expect(screen.getByAltText("user-profile")).toHaveAttribute(
+    expect(screen.getByAltText("Playlist 21")).toHaveAttribute(
       "src",
       "image url",
     );
@@ -74,34 +74,26 @@ describe("Playlist", () => {
     render(
       <Playlist {...samplePlaylistOfList} fadeOutNavigate={fadeOutNavigate} />,
     );
-    expect(screen.getByAltText("user-profile")).toHaveAttribute(
-      "src",
-      fallback,
-    );
+    expect(screen.getByAltText("Playlist 21")).toHaveAttribute("src", fallback);
   });
   test("image should be it's fallback onError", () => {
     render(
       <Playlist {...samplePlaylistOfList} fadeOutNavigate={fadeOutNavigate} />,
     );
-    fireEvent.error(screen.getByAltText("user-profile"));
-    expect(screen.getByAltText("user-profile")).toHaveAttribute(
-      "src",
-      fallback,
-    );
+    fireEvent.error(screen.getByAltText("Playlist 21"));
+    expect(screen.getByAltText("Playlist 21")).toHaveAttribute("src", fallback);
   });
   test("image should have transition applied on mount", () => {
     vi.useFakeTimers();
     render(
       <Playlist {...samplePlaylistOfList} fadeOutNavigate={fadeOutNavigate} />,
     );
-    expect(screen.getByAltText("user-profile")).toBeInTheDocument();
-    expect(screen.getByAltText("user-profile")).toHaveClass("image-fadeout");
-    expect(screen.getByAltText("user-profile")).not.toHaveClass("image-fadein");
+    expect(screen.getByAltText("Playlist 21")).toBeInTheDocument();
+    expect(screen.getByAltText("Playlist 21")).toHaveClass("image-fadeout");
+    expect(screen.getByAltText("Playlist 21")).not.toHaveClass("image-fadein");
     vi.advanceTimersByTime(samplePlaylistOfList.i * 50);
 
-    expect(screen.getByAltText("user-profile")).toHaveClass("image-fadein");
-    expect(screen.getByAltText("user-profile")).not.toHaveClass(
-      "image-fadeout",
-    );
+    expect(screen.getByAltText("Playlist 21")).toHaveClass("image-fadein");
+    expect(screen.getByAltText("Playlist 21")).not.toHaveClass("image-fadeout");
   });
 });

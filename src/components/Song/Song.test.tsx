@@ -58,7 +58,7 @@ describe("Song", () => {
         <Song index={0} isWidgetSong={false} track={sampleTrack} />
       </MemoryRouter>,
     );
-    const image = screen.getByAltText("img") as HTMLImageElement;
+    const image = screen.getByAltText("Track3") as HTMLImageElement;
     expect(image.src).toContain("image%20url");
   });
   test("should contain fallback as track image if not available", () => {
@@ -67,7 +67,7 @@ describe("Song", () => {
         <Song index={0} isWidgetSong={false} track={sampleTrack} />
       </MemoryRouter>,
     );
-    const image = screen.getByAltText("img") as HTMLImageElement;
+    const image = screen.getByAltText("Track3") as HTMLImageElement;
     fireEvent.error(image);
     expect(image.src).toContain(fallback);
   });
@@ -77,7 +77,7 @@ describe("Song", () => {
         <Song index={0} isWidgetSong={false} track={sampleTrack} />
       </MemoryRouter>,
     );
-    const image = screen.getByAltText("img") as HTMLImageElement;
+    const image = screen.getByAltText("Track3") as HTMLImageElement;
     fireEvent.error(image);
     expect(image.src).toContain(fallback);
   });

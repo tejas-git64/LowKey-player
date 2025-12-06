@@ -389,7 +389,7 @@ describe("Home", () => {
           </QueryClientProvider>,
         );
         vi.runAllTimers();
-        const image = screen.getByAltText("play");
+        const image = screen.getByAltText("pause");
         expect((image as HTMLImageElement).src).toContain(pause);
       });
     });

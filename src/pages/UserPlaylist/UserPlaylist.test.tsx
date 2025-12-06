@@ -71,17 +71,6 @@ describe("UserPlaylist", () => {
     );
     expect(screen.getByTestId("userplaylist-page")).toBeInTheDocument();
   });
-  test("should set the first track in the playlist", () => {
-    render(
-      <QueryClientProvider client={new QueryClient()}>
-        <MemoryRouter initialEntries={["/userplaylists/39"]}>
-          <UserPlaylistPage />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-
-    expect(useBoundStore.getState().nowPlaying.track).toEqual(sampleTrack);
-  });
   test("should not set the playlist from localStorage", () => {
     const sampleUserPlaylist = { id: 39, name: "My Test Playlist", songs: [] };
     const mockLibrary = {

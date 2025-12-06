@@ -131,7 +131,7 @@ describe("Search", () => {
       );
       const topResult = screen.getByTestId("top-result");
       const topTitle = screen.getByTestId("query-title");
-      const queryImage = screen.getByAltText("query-img");
+      const queryImage = screen.getByAltText("Some query result");
       expect(topResult.ariaLabel).toBe("Some query result");
       expect(topTitle.textContent).toBe("Some query result");
       expect((queryImage as HTMLImageElement).src).toContain("artist%20url");
@@ -161,7 +161,7 @@ describe("Search", () => {
       );
       const topResult = screen.getByTestId("top-result");
       const topTitle = screen.getByTestId("query-title");
-      const queryImage = screen.getByAltText("query-img");
+      const queryImage = screen.getByAltText("Unknown title");
       expect(topResult.ariaLabel).toBe("artist");
       expect(topTitle.textContent).toBe("Unknown title");
       expect((queryImage as HTMLImageElement).src).not.toContain(
@@ -265,7 +265,7 @@ describe("Search", () => {
       );
       const songResult = screen.getByTestId("query-song");
       const songTitle = screen.getByTestId("query-song-title");
-      const songImage = screen.getByAltText("query-song-img");
+      const songImage = screen.getByAltText("Track1");
       expect(songResult.ariaLabel).toBe("Track1");
       expect(songTitle.textContent).toBe("Track1");
       expect((songImage as HTMLImageElement).src).toContain(
@@ -297,7 +297,7 @@ describe("Search", () => {
       );
       const songResult = screen.getByTestId("query-song");
       const songTitle = screen.getByTestId("query-song-title");
-      const songImage = screen.getByAltText("query-song-img");
+      const songImage = screen.getByAltText("Unknown song");
       expect(songResult.ariaLabel).toBe("song");
       expect(songTitle.textContent).toBe("Unknown song");
       expect((songImage as HTMLImageElement).src).not.toContain(
@@ -326,7 +326,7 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const songImage = screen.getByAltText("query-song-img");
+      const songImage = screen.getByAltText("Track1");
       fireEvent.error(songImage);
       expect((songImage as HTMLImageElement).src).toContain(songfallback);
     });
@@ -480,7 +480,7 @@ describe("Search", () => {
       );
       const playlistResult = screen.getByTestId("query-playlist");
       const playlistTitle = screen.getByTestId("query-playlist-title");
-      const playlistImage = screen.getByAltText("query-playlist-img");
+      const playlistImage = screen.getByAltText("Some title");
       expect(playlistResult).toBeInTheDocument();
       expect(playlistTitle.textContent).toContain("Some title");
       expect((playlistImage as HTMLImageElement).src).toContain("some%20url");
@@ -509,7 +509,7 @@ describe("Search", () => {
         </QueryClientProvider>,
       );
       const playlistTitle = screen.getByTestId("query-playlist-title");
-      const playlistImage = screen.getByAltText("query-playlist-img");
+      const playlistImage = screen.getByAltText("Unknown playlist");
       expect(playlistTitle.textContent).toContain("Unknown playlist");
       expect((playlistImage as HTMLImageElement).src).toContain(fallback);
     });
@@ -522,7 +522,7 @@ describe("Search", () => {
         </QueryClientProvider>,
       );
 
-      const playlistImage = screen.getByAltText("query-playlist-img");
+      const playlistImage = screen.getByAltText("Some title");
       fireEvent.error(playlistImage);
       expect((playlistImage as HTMLImageElement).src).toContain(fallback);
     });
@@ -548,7 +548,7 @@ describe("Search", () => {
       );
       const artistResult = screen.getByTestId("query-artist");
       const artistTitle = screen.getByTestId("query-artist-title");
-      const artistImage = screen.getByAltText("query-artist-img");
+      const artistImage = screen.getAllByAltText("Encore")[0];
       expect(artistResult).toBeInTheDocument();
       expect(artistTitle.textContent).toContain("Encore");
       expect((artistImage as HTMLImageElement).src).toContain("some%20url");
@@ -577,7 +577,7 @@ describe("Search", () => {
         </QueryClientProvider>,
       );
       const artistTitle = screen.getByTestId("query-artist-title");
-      const artistImage = screen.getByAltText("query-artist-img");
+      const artistImage = screen.getByAltText("Unknown Artist");
       expect(artistTitle.textContent).toContain("Unknown Artist");
       expect((artistImage as HTMLImageElement).src).toContain(artistfallback);
     });
@@ -589,9 +589,11 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const artistImage = screen.getByAltText("query-artist-img");
+      const artistImage = screen.getAllByAltText("Encore")[0];
       fireEvent.error(artistImage);
-      expect((artistImage as HTMLImageElement).src).toContain(artistfallback);
+      waitFor(() => {
+        expect((artistImage as HTMLImageElement).src).toContain(artistfallback);
+      });
     });
   });
   describe("QueryAlbums", () => {
@@ -614,7 +616,7 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const image = screen.getByAltText("query-album-img");
+      const image = screen.getAllByAltText("Encore")[0];
       expect(image).toHaveClass("image-fadeout");
       vi.runAllTimers();
       expect(image).toHaveClass("image-fadein");
@@ -630,7 +632,7 @@ describe("Search", () => {
       );
       const albumResult = screen.getByTestId("query-artist");
       const albumTitle = screen.getByTestId("query-album-title");
-      const albumImage = screen.getByAltText("query-album-img");
+      const albumImage = screen.getAllByAltText("Encore")[0];
       expect(albumResult).toBeInTheDocument();
       expect(albumTitle.textContent).toContain("Encore");
       expect((albumImage as HTMLImageElement).src).toContain("some%20url");
@@ -659,7 +661,7 @@ describe("Search", () => {
         </QueryClientProvider>,
       );
       const albumTitle = screen.getByTestId("query-album-title");
-      const albumImage = screen.getByAltText("query-album-img");
+      const albumImage = screen.getByAltText("Unknown Album");
       expect(albumTitle.textContent).toContain("Unknown Album");
       expect((albumImage as HTMLImageElement).src).toContain(fallback);
     });
@@ -672,7 +674,7 @@ describe("Search", () => {
         </QueryClientProvider>,
       );
 
-      const albumImage = screen.getByAltText("query-album-img");
+      const albumImage = screen.getAllByAltText("Encore")[0];
       fireEvent.error(albumImage);
       expect((albumImage as HTMLImageElement).src).toContain(fallback);
     });

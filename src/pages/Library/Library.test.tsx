@@ -173,7 +173,7 @@ describe("Library", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const followingImage = screen.getByAltText("artist");
+      const followingImage = screen.getByAltText("sample song");
       expect((followingImage as HTMLImageElement).src).toContain("image%20url");
       expect(screen.getByText("sample song")).toBeInTheDocument();
     });
@@ -190,7 +190,7 @@ describe("Library", () => {
         setFollowing({ ...sampleArtistInSong, name: "", image: [] });
       });
 
-      const followingImage = screen.getByAltText("artist");
+      const followingImage = screen.getByAltText("Unknown Artist");
       expect((followingImage as HTMLImageElement).src).toContain(
         artistfallback,
       );

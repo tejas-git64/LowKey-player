@@ -60,7 +60,7 @@ describe("Intro", () => {
       expect(screen.getByTestId("intro-card").classList).toContain(
         "animate-card-fadeout",
       );
-      expect(screen.getByAltText("background-image").classList).toContain(
+      expect(screen.getByAltText("background").classList).toContain(
         "animate-intro-fadeout",
       );
       vi.advanceTimersByTime(150);

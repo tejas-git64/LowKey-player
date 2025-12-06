@@ -147,11 +147,9 @@ describe("ArtistPage", () => {
             </MemoryRouter>
           </QueryClientProvider>,
         );
-        expect(screen.getByAltText("artist-image")).toHaveClass(
-          "image-fadeout",
-        );
-        fireEvent.load(screen.getByAltText("artist-image"));
-        expect(screen.getByAltText("artist-image")).toHaveClass("image-fadein");
+        expect(screen.getByAltText("Artist name")).toHaveClass("image-fadeout");
+        fireEvent.load(screen.getByAltText("Artist name"));
+        expect(screen.getByAltText("Artist name")).toHaveClass("image-fadein");
       });
       test("should be artistfallback onError", () => {
         render(
@@ -161,7 +159,7 @@ describe("ArtistPage", () => {
             </MemoryRouter>
           </QueryClientProvider>,
         );
-        const image = screen.getByAltText("artist-image");
+        const image = screen.getByAltText("Artist name");
         fireEvent.error(image);
         expect((image as HTMLImageElement).src).toContain(artistfallback);
       });
@@ -174,7 +172,7 @@ describe("ArtistPage", () => {
               </MemoryRouter>
             </QueryClientProvider>,
           );
-          const image = screen.getByAltText("artist-image");
+          const image = screen.getByAltText("Artist name");
           fireEvent.load(image);
           expect(image).toBeInTheDocument();
           expect(sampleArtist.image).toBeDefined();
@@ -192,7 +190,7 @@ describe("ArtistPage", () => {
               </MemoryRouter>
             </QueryClientProvider>,
           );
-          const image = screen.getByAltText("artist-image");
+          const image = screen.getByAltText("Artist name");
           fireEvent.load(image);
           expect((image as HTMLImageElement).src).toContain(artistfallback);
         });
@@ -208,7 +206,7 @@ describe("ArtistPage", () => {
         vi.advanceTimersByTime(150);
 
         const artistInfo = screen.getByTestId("artist-info");
-        const artistImage = screen.getByAltText("artist-image");
+        const artistImage = screen.getByAltText("Artist name");
         const artistTitle = screen.getByTestId("artist-title");
 
         expect(artistInfo).toHaveClass("home-fadeout");

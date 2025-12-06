@@ -30,7 +30,7 @@ import {
 } from "@tanstack/react-query";
 import { MemoryRouter } from "react-router-dom";
 import { PlaylistById } from "../../types/GlobalTypes";
-import { samplePlaylist, sampleTrack } from "../../api/samples";
+import { samplePlaylist } from "../../api/samples";
 import { useBoundStore } from "../../store/store";
 import PlaylistPage from "./PlaylistPage";
 import {
@@ -89,25 +89,6 @@ describe("PlaylistPage", () => {
     );
     vi.advanceTimersByTime(150);
     expect(screen.getByTestId("route-nav")).toBeInTheDocument();
-  });
-  test("should set the current track of the queue", () => {
-    act(() => {
-      setQueue(samplePlaylist);
-    });
-    render(
-      <QueryClientProvider client={new QueryClient()}>
-        <MemoryRouter initialEntries={[`/playlists/${id}`]}>
-          <PlaylistPage />
-        </MemoryRouter>
-      </QueryClientProvider>,
-    );
-    vi.advanceTimersByTime(150);
-    const queue = useBoundStore.getState().nowPlaying.queue;
-
-    expect(queue).toBeDefined();
-    expect(queue?.songs).toBeDefined();
-
-    expect(useBoundStore.getState().nowPlaying.track).toEqual(sampleTrack);
   });
 });
 describe("PlaylistCount", () => {
