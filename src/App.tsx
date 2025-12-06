@@ -1,41 +1,102 @@
-import {
-  Route,
-  RouterProvider,
-  createBrowserRouter,
-  createRoutesFromElements,
-} from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./App.css";
-import { lazy } from "react";
+import { preconnect } from "react-dom";
 
-const Layout = lazy(() => import("./pages/Layout/Layout"));
-const Intro = lazy(() => import("./pages/Intro/Intro"));
-const Home = lazy(() => import("./pages/Home/Home"));
-const Search = lazy(() => import("./pages/Search/Search"));
-const PlaylistPage = lazy(() => import("./pages/Playlist/PlaylistPage"));
-const Library = lazy(() => import("./pages/Library/Library"));
-const Favorites = lazy(() => import("./pages/Favorites/Favorites"));
-const ArtistPage = lazy(() => import("./pages/Artist/ArtistPage"));
-const UserPlaylistPage = lazy(
-  () => import("./pages/UserPlaylist/UserPlaylist"),
-);
-const NotFound = lazy(() => import("./pages/NotFound/NotFound"));
-const AlbumPage = lazy(() => import("./pages/Album/AlbumPage"));
+preconnect("https://lowkey-backend.vercel.app");
 
-export const routes = createRoutesFromElements(
-  <Route path="/" element={<Layout />}>
-    <Route index element={<Intro />} />
-    <Route path="/*" element={<NotFound />} />
-    <Route path="/home" element={<Home />} />
-    <Route path="/search" element={<Search />} />
-    <Route path="/albums/:id" element={<AlbumPage />} />
-    <Route path="/playlists/:id" element={<PlaylistPage />} />
-    <Route path="/userplaylists/:id" element={<UserPlaylistPage />} />
-    <Route path="/library" element={<Library />} />
-    <Route path="/favorites" element={<Favorites />} />
-    <Route path="/artists/:id" element={<ArtistPage />} />
-  </Route>,
-);
+export const routes = [
+  {
+    path: "/",
+    lazy: async () => {
+      const { default: Layout } = await import("./pages/Layout/Layout");
+      return {
+        Component: Layout,
+      };
+    },
+    HydrateFallback: () => <div className="h-full w-full bg-transparent" />,
+    children: [
+      {
+        path: "/",
+        lazy: async () => {
+          const { default: Intro } = await import("./pages/Intro/Intro");
+          return {
+            Component: Intro,
+          };
+        },
+      },
+      {
+        path: "/*",
+        lazy: async () => {
+          const { default: NotFound } =
+            await import("./pages/NotFound/NotFound");
+          return { Component: NotFound };
+        },
+      },
+      {
+        path: "/home",
+        lazy: async () => {
+          const { default: Home } = await import("./pages/Home/Home");
+          return { Component: Home };
+        },
+      },
+      {
+        path: "/search",
+        lazy: async () => {
+          const { default: Search } = await import("./pages/Search/Search");
+          return { Component: Search };
+        },
+      },
+      {
+        path: "/albums/:id",
+        lazy: async () => {
+          const { default: AlbumPage } =
+            await import("./pages/Album/AlbumPage");
+          return { Component: AlbumPage };
+        },
+      },
+      {
+        path: "/playlists/:id",
+        lazy: async () => {
+          const { default: PlaylistPage } =
+            await import("./pages/Playlist/PlaylistPage");
+          return { Component: PlaylistPage };
+        },
+      },
+      {
+        path: "/userplaylists/:id",
+        lazy: async () => {
+          const { default: UserPlaylistPage } =
+            await import("./pages/UserPlaylist/UserPlaylist");
+          return { Component: UserPlaylistPage };
+        },
+      },
+      {
+        path: "/artists/:id",
+        lazy: async () => {
+          const { default: Artists } =
+            await import("./pages/Artist/ArtistPage");
+          return { Component: Artists };
+        },
+      },
+      {
+        path: "/library",
+        lazy: async () => {
+          const { default: Library } = await import("./pages/Library/Library");
+          return { Component: Library };
+        },
+      },
+      {
+        path: "/favorites",
+        lazy: async () => {
+          const { default: Favorites } =
+            await import("./pages/Favorites/Favorites");
+          return { Component: Favorites };
+        },
+      },
+    ],
+  },
+];
 const router = createBrowserRouter(routes);
 
 export default function App() {
