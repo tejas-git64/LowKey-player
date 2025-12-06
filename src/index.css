@@ -2,13 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  font-family: "Outfit", sans-serif;
+@font-face {
+  font-family: 'Outfit';
+  font-display: swap;
+  font-style: normal;
   font-weight: 400;
+  src: url('/fonts/Outfit-VariableFont_wght.woff2') format('woff2');
+}
+
+:root {
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
-  font-synthesis: none;
+  font-synthesis: weight;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -46,11 +52,11 @@ h1 {
 }
 
 .card-fadeout {
-  @apply scale-95 translate-y-4 rounded-3xl opacity-0;
+  @apply scale-95 translate-y-4 opacity-0;
 }
 
 .card-fadein {
-  @apply scale-100 translate-y-0 rounded-lg opacity-100;
+  @apply scale-100 translate-y-0 opacity-100;
 }
 
 .home-fadeout {
