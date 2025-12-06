@@ -1,14 +1,16 @@
+import { ComponentType, useCallback, useEffect, useRef, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import Banner from "../../components/Banner/Banner";
-import Nav from "../../components/Nav/Nav";
-import Recents from "../../components/Recents/Recents";
-import PlayingPill from "../../components/PlayingPill/PlayingPill";
-import MobileNav from "../../components/MobileNav/MobileNav";
-import NowPlaying from "../../components/Nowplaying/NowPlaying";
-import Creation from "../../components/PlaylistModal/PlaylistModal";
-import { useEffect, useRef } from "react";
+import PlaylistModal from "../../components/PlaylistModal/PlaylistModal";
 import { useBoundStore } from "../../store/store";
 import { LocalLibrary } from "../../types/GlobalTypes";
+import { useResponsiveLayout } from "../../hooks/useResponsiveLayout";
+
+type ModuleWithDefaultComponent = {
+  default: ComponentType<unknown>;
+};
+const components = import.meta.glob<ModuleWithDefaultComponent>(
+  "../../components/**/*.tsx",
+);
 
 export default function Layout() {
   const path = useLocation().pathname;
@@ -47,14 +49,20 @@ export default function Layout() {
       data-testid="layout"
       className="relative h-full w-full overflow-hidden bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 2xl:mx-auto 2xl:max-h-[1200px] 2xl:max-w-[1600px]"
     >
-      {path !== "/" && <Banner />}
+      <ConditionalComponent
+        filePath={"../../components/Banner/Banner.tsx"}
+        viewPortSize={"all"}
+      />
       <div
         data-testid="layout-inner-container"
         className={`relative flex h-full w-full flex-row items-start justify-start overflow-hidden ${
           path === "/" ? "sm:h-full" : "sm:h-[95vh]"
         }`}
       >
-        {path !== "/" && <Nav />}
+        <ConditionalComponent
+          filePath={"../../components/Nav/Nav.tsx"}
+          viewPortSize={"desktop"}
+        />
         <div
           data-testid="outlet-container"
           className={`h-full w-full overflow-x-hidden ${
@@ -66,7 +74,7 @@ export default function Layout() {
             className="relative h-full w-full border-x-2 border-black"
           >
             <Outlet />
-            <Creation ref={containerRef} />
+            <PlaylistModal ref={containerRef} />
           </div>
           <div
             data-testid="mobile-features"
@@ -74,13 +82,59 @@ export default function Layout() {
               path === "/" ? "hidden" : "sm:hidden"
             } flex h-auto w-screen flex-col items-center justify-end bg-gradient-to-t from-black via-[#000000dd] to-transparent pt-2`}
           >
-            <PlayingPill />
-            <MobileNav />
+            <ConditionalComponent
+              filePath={"../../components/PlayingPill/PlayingPill.tsx"}
+              viewPortSize={"mobile"}
+            />
+            <ConditionalComponent
+              filePath={"../../components/MobileNav/MobileNav.tsx"}
+              viewPortSize={"mobile"}
+            />
           </div>
         </div>
-        {path !== "/" && <Recents />}
+        <ConditionalComponent
+          filePath={"../../components/Recents/Recents.tsx"}
+          viewPortSize={"desktop"}
+        />
       </div>
-      {path !== "/" && <NowPlaying />}
+      <ConditionalComponent
+        filePath={"../../components/Nowplaying/NowPlaying.tsx"}
+        viewPortSize={"all"}
+      />
     </div>
   );
 }
+
+const ConditionalComponent = ({
+  filePath,
+  viewPortSize,
+}: {
+  filePath: string;
+  viewPortSize: string;
+}) => {
+  const path = useLocation().pathname;
+  const isMobile = useResponsiveLayout();
+  const [Component, setComponent] = useState<ComponentType | null>(null);
+
+  const getComponent = useCallback(() => {
+    const component = components[filePath];
+    if (path !== "/" && component) {
+      if (
+        viewPortSize === "all" ||
+        (viewPortSize === "mobile" && isMobile) ||
+        (viewPortSize === "desktop" && !isMobile)
+      ) {
+        component().then((mod) => {
+          setComponent(() => mod.default);
+        });
+      }
+    }
+  }, [filePath, isMobile, path, viewPortSize]);
+
+  useEffect(() => {
+    getComponent();
+  }, [getComponent]);
+
+  if (Component) return <Component />;
+  return null;
+};
