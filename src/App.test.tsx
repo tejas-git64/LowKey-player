@@ -9,11 +9,11 @@ afterEach(() => {
 });
 
 describe("App", () => {
-  test("should render", () => {
+  test("should render", async () => {
     act(() => {
       render(<App />);
     });
-    waitFor(() => {
+    await waitFor(() => {
       const app = screen.getByText("Lowkey Music");
       expect(app).toBeInTheDocument();
     });
@@ -27,7 +27,7 @@ describe("App", () => {
         <RouterProvider router={memoryRouter} />
       </QueryClientProvider>,
     );
-    waitFor(() => {
+    await waitFor(() => {
       const intro = screen.getByText("Lowkey Music");
       expect(intro).toBeInTheDocument();
     });
