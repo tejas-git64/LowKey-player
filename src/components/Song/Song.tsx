@@ -34,7 +34,7 @@ const Song = memo(
     const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
     const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
 
-    const songEl = useRef<HTMLLIElement>(null);
+    const songEl = useRef<HTMLDivElement>(null);
     const imgEl = useRef<HTMLImageElement>(null);
     const titleEl = useRef<HTMLParagraphElement>(null);
     const durationEl = useRef<HTMLParagraphElement>(null);
@@ -49,7 +49,12 @@ const Song = memo(
     }, [track]);
 
     const setPlay = useCallback(
-      (e: React.MouseEvent<HTMLLIElement, MouseEvent>, song: TrackDetails) => {
+      (
+        e:
+          | React.MouseEvent<HTMLDivElement, MouseEvent>
+          | React.KeyboardEvent<HTMLDivElement>,
+        song: TrackDetails,
+      ) => {
         e.stopPropagation();
         startTransition(() => {
           setNowPlaying(song);
@@ -82,10 +87,12 @@ const Song = memo(
     }, [index]);
 
     return (
-      <li
+      <div
         ref={songEl}
         onClick={(e) => setPlay(e, track)}
+        onKeyDown={(e) => setPlay(e, track)}
         tabIndex={0}
+        role="listitem"
         style={{
           transitionDelay: `${index * 10}ms`,
         }}
@@ -140,7 +147,7 @@ const Song = memo(
             <AddToPlaylistButton track={track} />
           </div>
         </div>
-      </li>
+      </div>
     );
   },
 );
@@ -237,6 +244,18 @@ const Artist = memo(
     const navigate = useNavigate();
     const artistEl = useRef<HTMLParagraphElement>(null);
 
+    const navigateToArtist = useCallback(
+      (
+        e:
+          | React.MouseEvent<HTMLDivElement, MouseEvent>
+          | React.KeyboardEvent<HTMLDivElement>,
+      ) => {
+        e.stopPropagation();
+        if (id) navigate(`/artists/${id}`);
+      },
+      [id, navigate],
+    );
+
     useEffect(() => {
       const timer = setTimeout(() => {
         artistEl.current?.classList.remove("song-fadeout");
@@ -248,18 +267,18 @@ const Artist = memo(
     }, [i]);
 
     return (
-      <p
+      <div
         key={id}
         ref={artistEl}
         data-testid="artist"
-        onClick={(e) => {
-          e.stopPropagation();
-          if (id) navigate(`/artists/${id}`);
-        }}
+        role="link"
+        onClick={navigateToArtist}
+        tabIndex={0}
+        onKeyDown={navigateToArtist}
         className="song-fadeout cursor-pointer whitespace-nowrap py-4 text-xs text-neutral-400 duration-200 ease-in hover:text-white"
       >
         {artistName ? cleanString(artistName) : "Unknown Artist"}
-      </p>
+      </div>
     );
   },
 );
