@@ -66,7 +66,7 @@ export const instance = {
 };
 const useNavigateMock = vi.fn();
 vi.mock("react-router-dom", async (importOriginal) => {
-  const actual = (await importOriginal()) as Promise<unknown>;
+  const actual = (await importOriginal()) as Mock;
   return {
     ...actual,
     useNavigate: () => useNavigateMock,
