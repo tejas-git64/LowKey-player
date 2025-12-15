@@ -66,6 +66,7 @@ const Section = memo(
               key={playlist.id}
               role="listitem"
               onClick={() => fadeOutNavigate(`/playlists/${playlist.id}`)}
+              onKeyUp={() => fadeOutNavigate(`/playlists/${playlist.id}`)}
               className="h-full w-auto"
             >
               {playlist && (

@@ -45,6 +45,7 @@ const Pill = memo(({ track }: { track: TrackDetails }) => {
     <div
       data-testid="playing-pill"
       onClick={() => setShowPlayer(true)}
+      onKeyUp={() => setShowPlayer(true)}
       role="toolbar"
       className={`${
         track.id ? "flex" : "hidden"
