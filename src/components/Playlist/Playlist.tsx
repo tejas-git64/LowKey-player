@@ -31,10 +31,8 @@ export default function Playlist({
   }, [i]);
 
   return (
-    <div
+    <button
       data-testid="playlist"
-      tabIndex={0}
-      role="group"
       className="group mr-4 flex h-[180px] w-[150px] flex-shrink-0 cursor-pointer list-none flex-col items-center overflow-hidden outline-none"
       onClick={() => fadeOutNavigate(`/playlists/${id}`)}
     >
@@ -54,6 +52,6 @@ export default function Playlist({
       <p className="mt-2 line-clamp-1 text-ellipsis whitespace-pre-line text-center text-xs text-neutral-400 transition-colors ease-linear group-hover:text-white group-focus:text-white">
         {name}
       </p>
-    </div>
+    </button>
   );
 }

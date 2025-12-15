@@ -144,15 +144,13 @@ const NowPlaying = memo(() => {
   }, [setNowPlaying]);
 
   return (
-    <div
+    <section
       data-testid="now-playing"
       className={`${isMobilePlayer ? "translate-y-0" : "translate-y-[100%]"} absolute bottom-0 z-20 flex h-full w-full flex-col items-center justify-start overflow-y-scroll bg-black pb-10 outline-none transition-transform sm:h-fit sm:translate-y-0 sm:flex-row sm:items-center sm:justify-between sm:bg-black sm:pb-0 2xl:border 2xl:border-neutral-900`}
-      role="region"
       aria-label="Now Playing Panel"
     >
-      <div
+      <details
         className="sm:h-12.5 flex h-max w-full max-w-[500px] flex-shrink-0 flex-col items-start justify-start p-2.5 sm:w-[30%] sm:max-w-[300px] sm:flex-row sm:items-center sm:justify-start"
-        role="group"
         aria-label="Track and Artist Info"
       >
         <div className="relative z-0 h-full w-full pt-2 sm:mr-3 sm:w-auto sm:pt-0">
@@ -185,7 +183,7 @@ const NowPlaying = memo(() => {
         {track?.artists?.all && (
           <TrackInfo name={track?.name} artists={uniqueArtists} />
         )}
-      </div>
+      </details>
       <div
         className="mt-8 flex h-auto w-full max-w-[500px] flex-col items-center space-y-4 sm:order-1 sm:-ml-3 sm:mt-0 sm:w-auto sm:space-y-1 lg:w-[350px] xl:w-[450px] 2xl:w-[500px]"
         role="group"
@@ -231,9 +229,8 @@ const NowPlaying = memo(() => {
         />
       </div>
       {track && (
-        <div
+        <optgroup
           className="mx-auto mt-8 flex h-auto w-[90%] max-w-[500px] items-center justify-evenly sm:absolute sm:-top-[25px] sm:right-16 sm:w-[120px]"
-          role="group"
           aria-label="Quality and Download Options"
         >
           <div>
@@ -296,12 +293,11 @@ const NowPlaying = memo(() => {
               />
             </button>
           )}
-        </div>
+        </optgroup>
       )}
       {isMobilePlayer && (
-        <div
+        <section
           className="mt-14 w-full max-w-[500px] p-4 px-5"
-          role="region"
           data-testid="primary-artists"
           aria-label="Primary artists"
         >
@@ -311,9 +307,9 @@ const NowPlaying = memo(() => {
               <Artist key={artist.id} {...artist} />
             ))}
           </div>
-        </div>
+        </section>
       )}
-    </div>
+    </section>
   );
 });
 NowPlaying.displayName = "NowPlaying";
@@ -322,9 +318,8 @@ export default NowPlaying;
 const TrackInfo = memo(
   ({ name, artists }: { name: string; artists: ArtistInSong[] }) => {
     return (
-      <div
+      <details
         className="z-10 flex h-fit w-full max-w-[85%] flex-col items-start justify-center overflow-hidden text-ellipsis pl-2.5 pt-1 sm:h-full sm:max-w-[250px] sm:p-0 sm:px-0"
-        role="group"
         aria-label="Track information"
       >
         <h2 className="line-clamp-1 w-[80%] flex-shrink-0 text-wrap text-xl font-bold text-white sm:w-full sm:text-sm">
@@ -344,7 +339,7 @@ const TrackInfo = memo(
             );
           })}
         </div>
-      </div>
+      </details>
     );
   },
 );
@@ -413,7 +408,6 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
   return (
     <div
       className="absolute -bottom-[35px] right-0 z-20 flex h-auto w-auto flex-shrink-0 items-center justify-end space-x-4 bg-black bg-inherit px-3 sm:static sm:w-16 sm:space-x-3 sm:bg-transparent sm:p-0 sm:pr-0.5"
-      role="group"
       data-testid="player-options"
       aria-label="Player Options"
     >
@@ -503,7 +497,6 @@ const Controls = memo(
       <div
         data-testid="controls"
         className="-ml-2 mt-2 flex w-full max-w-[90%] flex-shrink-0 items-center justify-center space-x-[10%] sm:m-0 sm:space-x-5 xl:ml-2"
-        role="group"
         aria-label="Playback Controls"
       >
         <button
@@ -639,7 +632,6 @@ const VolumeControl = memo(
     return (
       <div
         className="ml-1 mr-auto flex h-fit w-[90%] flex-shrink-0 flex-row-reverse items-center justify-end sm:mx-0 sm:ml-0 sm:mr-1.5 sm:mt-1.5 sm:w-auto sm:flex-row"
-        role="group"
         aria-label="Volume Control"
         data-testid="volume-controls"
       >

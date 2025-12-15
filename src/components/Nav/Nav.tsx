@@ -85,9 +85,7 @@ const PlaylistCreationButton = () => {
   const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
 
   return (
-    <div
-      role="button"
-      tabIndex={0}
+    <button
       className="flex w-full items-center justify-start p-3 py-3.5 pl-4 outline-none transition-colors hover:bg-neutral-600 focus-visible:bg-neutral-700"
       onClick={() => setRevealCreation(true)}
     >
@@ -99,7 +97,7 @@ const PlaylistCreationButton = () => {
       <p className="-mt-0.5 hidden whitespace-nowrap text-base font-normal text-white sm:block">
         New playlist
       </p>
-    </div>
+    </button>
   );
 };
 
@@ -140,10 +138,7 @@ export function RecentPlaylistsOrAlbums() {
   const playlists = useBoundStore((state) => state.library.playlists);
   const userPlaylists = useBoundStore((state) => state.library.userPlaylists);
   return (
-    <div
-      role="list"
-      className="mx-auto mt-2 flex w-[95%] flex-col items-center justify-start overflow-y-auto overflow-x-hidden pb-14 pl-1"
-    >
+    <ul className="mx-auto mt-2 flex w-[95%] flex-col items-center justify-start overflow-y-auto overflow-x-hidden pb-14 pl-1">
       {albums.map((album: AlbumById) => (
         <Link
           tabIndex={0}
@@ -209,6 +204,6 @@ export function RecentPlaylistsOrAlbums() {
           </p>
         </Link>
       ))}
-    </div>
+    </ul>
   );
 }
