@@ -7,6 +7,7 @@ import {
   TrackDetails,
   UserPlaylist,
   ArtistInSong,
+  ActivityType,
 } from "../types/GlobalTypes";
 import { immer } from "zustand/middleware/immer";
 import { produce } from "immer";
@@ -17,7 +18,7 @@ export type StoreType = {
   changeGreeting: (str: string) => void;
   recents: {
     history: TrackDetails[];
-    activity: string[];
+    activity: ActivityType[];
   };
   search: SearchType;
   nowPlaying: {
@@ -101,9 +102,16 @@ export const useBoundStore = create<StoreType>()(
       setActivity: (message: string) =>
         set(
           produce((state) => {
-            state.recents.activity = Array.from(
-              new Set([message, ...state.recents.activity]),
+            const existingIndex = state.recents.activity.findIndex(
+              ({ msg }: { msg: string }) => msg === message,
             );
+            if (existingIndex === -1) {
+              const newActivity = {
+                id: crypto.randomUUID(),
+                message: message,
+              };
+              state.recents.activity.unshift(newActivity);
+            }
           }),
         ),
       search: {

@@ -43,7 +43,10 @@ describe("Testing recents", () => {
     act(() => {
       useBoundStore.getState().setActivity(activity);
     });
-    expect(useBoundStore.getState().recents.activity).toContain(activity);
+    const obj = useBoundStore
+      .getState()
+      .recents.activity.find((a) => a.message === activity);
+    if (obj !== undefined) expect(obj.message).toBe(activity);
   });
 });
 

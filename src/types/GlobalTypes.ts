@@ -131,6 +131,7 @@ export type AlbumById = {
 };
 
 export type ActivityType = {
+  id: string;
   message: string;
 };
 
