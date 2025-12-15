@@ -16,7 +16,7 @@ import { useBoundStore } from "../../store/store";
 const obj = {
   isReplay: false,
   playCountRef: { current: 0 },
-  audioUrl: "http://audio.com/track.mp3",
+  audioUrl: "https://audio.com/track.mp3",
   duration: 180,
   volume: 0.5,
   songIndex: 0,
