@@ -7,15 +7,12 @@ import { ActivityType } from "../../types/GlobalTypes";
 const Banner = memo(() => {
   const greeting = useBoundStore((state) => state.greeting);
   return (
-    <div
-      role="banner"
-      className="flex h-12 w-full items-center justify-between bg-gradient-to-r from-neutral-800 to-black pl-2.5 pr-[18px] sm:border-b sm:border-black sm:bg-black"
-    >
+    <header className="flex h-12 w-full items-center justify-between bg-gradient-to-r from-neutral-800 to-black pl-2.5 pr-[18px] sm:border-b sm:border-black sm:bg-black">
       <p className="whitespace-nowrap px-1 text-xl font-semibold text-white sm:text-lg">
         {greeting || "Keep jamming 🎶"}
       </p>
       <NotificationButton />
-    </div>
+    </header>
   );
 });
 Banner.displayName = "Banner";
@@ -73,8 +70,8 @@ export const NotificationButton = () => {
           } right-16 top-11 z-20 flex h-52 w-[300px] flex-col items-start justify-start overflow-y-scroll rounded-b-md rounded-tl-md bg-neutral-900 p-0.5 shadow-md shadow-black`}
         >
           {recents.activity.length > 0 ? (
-            recents.activity.map((message: string, i: number) => (
-              <Activity message={message} key={i} />
+            recents.activity.map((a: ActivityType) => (
+              <Activity key={a.id} {...a} />
             ))
           ) : (
             <p className="w-full pt-20 text-center text-sm">

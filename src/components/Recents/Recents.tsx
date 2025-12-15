@@ -8,7 +8,7 @@ import { memo, useEffect, useRef } from "react";
 
 type RecentTypes = {
   history: TrackDetails[] | null;
-  activity: string[];
+  activity: ActivityType[];
 };
 
 const Recents = memo(() => {
@@ -25,7 +25,7 @@ const Recents = memo(() => {
         setHistory(h);
       }
       for (const a of activity || []) {
-        setActivity(a);
+        setActivity(a.message);
       }
     }
   }, [setActivity, setHistory]);
@@ -58,8 +58,8 @@ const Recents = memo(() => {
           data-testid="recent-activity"
           className="h-[38dvh] w-full list-none overflow-y-scroll bg-neutral-900"
         >
-          {recentActivity.map((message: string, i) => (
-            <Activity key={i} i={i} message={message} />
+          {recentActivity.map((obj, i) => (
+            <Activity key={obj.id} i={i} {...obj} />
           ))}
         </ul>
       </div>
@@ -114,7 +114,7 @@ const RecentSong = ({
   );
 };
 
-const Activity = ({ message, i }: ActivityType & { i: number }) => {
+const Activity = ({ message, id, i }: ActivityType & { i: number }) => {
   const activityEl = useRef<HTMLLIElement>(null);
 
   useEffect(() => {
@@ -129,7 +129,7 @@ const Activity = ({ message, i }: ActivityType & { i: number }) => {
 
   return (
     <li
-      data-testid={`activity-${i}`}
+      data-testid={`activity-${id}`}
       ref={activityEl}
       className="song-fadeout mb-0.5 line-clamp-1 flex h-[35px] w-full flex-shrink-0 items-center justify-start overflow-hidden text-ellipsis whitespace-nowrap bg-black px-2 duration-200 ease-in"
     >
