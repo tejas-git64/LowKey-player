@@ -229,7 +229,7 @@ const NowPlaying = memo(() => {
         />
       </div>
       {track && (
-        <optgroup
+        <section
           className="mx-auto mt-8 flex h-auto w-[90%] max-w-[500px] items-center justify-evenly sm:absolute sm:-top-[25px] sm:right-16 sm:w-[120px]"
           aria-label="Quality and Download Options"
         >
@@ -293,7 +293,7 @@ const NowPlaying = memo(() => {
               />
             </button>
           )}
-        </optgroup>
+        </section>
       )}
       {isMobilePlayer && (
         <section
