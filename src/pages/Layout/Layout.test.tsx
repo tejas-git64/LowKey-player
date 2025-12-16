@@ -74,12 +74,12 @@ describe("Layout", () => {
     });
   });
   test("should not set saves from localStorage if not available", async () => {
+    getItemMock.mockReturnValue(null);
     render(
       <MemoryRouter>
         <Layout />
       </MemoryRouter>,
     );
-    getItemMock.mockReturnValue(null);
     await waitFor(() => {
       expect(localStorage.getItem("local-library")).toBeNull();
       expect(useBoundStore.getState().library.albums.length).toBe(0);

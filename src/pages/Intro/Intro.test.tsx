@@ -12,6 +12,7 @@ import { MemoryRouter, useLocation } from "react-router-dom";
 
 afterEach(() => {
   cleanup();
+  vi.clearAllTimers();
   vi.useRealTimers();
 });
 

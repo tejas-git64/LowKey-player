@@ -71,6 +71,7 @@ afterEach(() => {
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
   cleanup();
+  vi.clearAllTimers();
 });
 
 describe("Search", () => {

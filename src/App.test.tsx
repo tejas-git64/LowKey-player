@@ -1,4 +1,4 @@
-import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import App, { routes } from "./App";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
@@ -10,9 +10,7 @@ afterEach(() => {
 
 describe("App", () => {
   test("should render", async () => {
-    act(() => {
-      render(<App />);
-    });
+    render(<App />);
     await waitFor(() => {
       const app = screen.getByText("Lowkey Music");
       expect(app).toBeInTheDocument();

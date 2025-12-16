@@ -19,10 +19,6 @@ vi.mock("../../api/requests", () => ({
   getSearchResults: vi.fn(),
 }));
 
-function skipDelay() {
-  vi.advanceTimersByTime(800);
-}
-
 afterEach(() => {
   cleanup();
   vi.useRealTimers();
@@ -50,7 +46,7 @@ describe("Searchbar", () => {
       fireEvent.change(input, inputObj);
     });
     expect(input.value).toBe("new value");
-    skipDelay();
+    vi.advanceTimersByTime(800);
     expect(api.getSearchResults).toHaveBeenCalledWith("new+value");
   });
   test("should not fetch results for empty input", async () => {
@@ -82,7 +78,7 @@ describe("Searchbar", () => {
     input = screen.getByTestId("searchinput") as HTMLInputElement;
     input.value = "user input";
     user.click(input);
-    skipDelay();
+    vi.advanceTimersByTime(800);
     waitFor(() => {
       expect(mockGetSearchResults).toHaveBeenCalledWith("user+input");
     });
@@ -94,7 +90,7 @@ describe("Searchbar", () => {
     input = screen.getByTestId("searchinput") as HTMLInputElement;
     input.value = "first";
     user.click(input);
-    skipDelay();
+    vi.advanceTimersByTime(800);
     waitFor(() => {
       expect(mockGetSearchResults).toHaveBeenCalledTimes(1);
       expect(mockGetSearchResults).toHaveBeenCalledWith("first");
