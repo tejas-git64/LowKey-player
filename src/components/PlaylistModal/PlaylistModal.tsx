@@ -66,6 +66,7 @@ export default function PlaylistModal({
         <PlaylistInput
           revealed={revealCreation}
           userPlaylists={userPlaylists}
+          setRevealCreation={setRevealCreation}
         />
         <div
           data-testid="userplaylists-container"
@@ -103,8 +104,10 @@ export default function PlaylistModal({
 const PlaylistInput = ({
   revealed,
   userPlaylists,
+  setRevealCreation,
 }: {
   revealed: boolean;
+  setRevealCreation: (isRevealed: boolean) => void;
   userPlaylists: UserPlaylist[];
 }) => {
   const [name, setName] = useState<string>("");
@@ -112,6 +115,7 @@ const PlaylistInput = ({
   const isPlaylistPresent = userPlaylists.some(
     (playlist: UserPlaylist) => playlist.name === name,
   );
+  const creationTrack = useBoundStore.getState().creationTrack;
   const createNewUserPlaylist = useBoundStore(
     (state) => state.createNewUserPlaylist,
   );
@@ -122,6 +126,7 @@ const PlaylistInput = ({
     } else if (!isPlaylistPresent && name !== "") {
       setName("");
       createNewUserPlaylist(name, Math.floor(Math.random() * 10000));
+      if (creationTrack === null) setRevealCreation(false);
     }
   };
 
