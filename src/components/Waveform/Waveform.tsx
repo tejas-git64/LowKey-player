@@ -25,7 +25,7 @@ type WaveformType = {
 
 const Progress = ({ progress }: { progress: number }) => {
   return (
-    <p className="mr-6 h-full w-[10px] text-center text-xs text-white sm:mr-4 sm:text-[10px]">
+    <p className="mr-6 h-full w-[10px] text-center text-xs text-white sm:text-[10px]">
       {secondsToHMS(progress)}
     </p>
   );
@@ -59,14 +59,13 @@ const Waveform = ({
       cursorColor: "#10B981",
       progressColor: "#10B981",
       interact: true,
-      barHeight: isMobileWidth ? 8 : 2,
+      barHeight: isMobileWidth ? 2 : 7,
       barWidth: isMobileWidth ? 3 : 2,
       height: isMobileWidth ? 50 : 10,
-      width: isMobileWidth ? 350 : 400,
+      width: isMobileWidth ? 350 : "25vw",
+      autoCenter: true,
       fillParent: true,
-      dragToSeek: true,
-      autoScroll: true,
-      normalize: true,
+      hideScrollbar: true,
     });
 
     return () => {
@@ -201,7 +200,7 @@ const Waveform = ({
         ref={waveformRef}
         id="wave"
         data-testid="waveform"
-        className="flex w-[70%] items-center justify-center overflow-hidden sm:w-[185px] lg:w-[300px] xl:max-w-[400px] 2xl:w-[500px]"
+        className="flex w-[70%] items-center justify-center overflow-hidden sm:w-[23vw] md:w-[30vw] lg:w-[40vw] xl:max-w-[400px] 2xl:w-[420px]"
       />
       <p
         data-testid="duration"
