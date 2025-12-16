@@ -37,6 +37,9 @@ export const mockedDataProps = {
   isRefetching: false,
   isStale: false,
   isLoadingError: false,
+  autoCenter: true,
+  fillParent: true,
+  hideScrollbar: true,
 };
 
 export const mockedNullDataProps = {

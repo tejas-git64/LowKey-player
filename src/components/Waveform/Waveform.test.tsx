@@ -30,10 +30,9 @@ const wavesurferOptions = {
   cursorColor: "#10B981",
   progressColor: "#10B981",
   interact: true,
+  autoCenter: true,
   fillParent: true,
-  dragToSeek: true,
-  autoScroll: true,
-  normalize: true,
+  hideScrollbar: true,
 };
 const mockOn = vi.fn();
 const mockLoad = vi.fn();
@@ -106,10 +105,10 @@ describe("Waveform", () => {
     expect(WaveSurfer.create).toHaveBeenCalledWith({
       ...wavesurferOptions,
       container: expect.any(HTMLDivElement),
-      barHeight: 2,
+      barHeight: 7,
       barWidth: 2,
       height: 10,
-      width: 400,
+      width: "25vw",
     });
   });
   test("should create a mobile specific wavesurfer instance if not isMobileWidth", () => {
@@ -118,7 +117,7 @@ describe("Waveform", () => {
     expect(WaveSurfer.create).toHaveBeenCalledWith({
       ...wavesurferOptions,
       container: expect.any(HTMLDivElement),
-      barHeight: 8,
+      barHeight: 2,
       barWidth: 3,
       height: 50,
       width: 350,
