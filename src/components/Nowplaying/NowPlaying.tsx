@@ -149,7 +149,7 @@ const NowPlaying = memo(() => {
       className={`${isMobilePlayer ? "translate-y-0" : "translate-y-[100%]"} absolute bottom-0 z-20 flex h-full w-full flex-col items-center justify-start overflow-y-scroll bg-black pb-10 outline-none transition-transform sm:h-fit sm:translate-y-0 sm:flex-row sm:items-center sm:justify-between sm:bg-black sm:pb-0 2xl:border 2xl:border-neutral-900`}
       aria-label="Now Playing Panel"
     >
-      <details
+      <div
         className="sm:h-12.5 flex h-max w-full max-w-[500px] flex-shrink-0 flex-col items-start justify-start p-2.5 sm:w-[30%] sm:max-w-[300px] sm:flex-row sm:items-center sm:justify-start"
         aria-label="Track and Artist Info"
       >
@@ -183,7 +183,7 @@ const NowPlaying = memo(() => {
         {track?.artists?.all && (
           <TrackInfo name={track?.name} artists={uniqueArtists} />
         )}
-      </details>
+      </div>
       <div
         className="mt-8 flex h-auto w-full max-w-[500px] flex-col items-center space-y-4 sm:order-1 sm:-ml-3 sm:mt-0 sm:w-auto sm:space-y-1 lg:w-[350px] xl:w-[450px] 2xl:w-[500px]"
         role="group"
@@ -318,7 +318,7 @@ export default NowPlaying;
 const TrackInfo = memo(
   ({ name, artists }: { name: string; artists: ArtistInSong[] }) => {
     return (
-      <details
+      <div
         className="z-10 flex h-fit w-full max-w-[85%] flex-col items-start justify-center overflow-hidden text-ellipsis pl-2.5 pt-1 sm:h-full sm:max-w-[250px] sm:p-0 sm:px-0"
         aria-label="Track information"
       >
@@ -339,7 +339,7 @@ const TrackInfo = memo(
             );
           })}
         </div>
-      </details>
+      </div>
     );
   },
 );
