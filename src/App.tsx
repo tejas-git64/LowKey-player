@@ -2,6 +2,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import "./App.css";
 import { preconnect } from "react-dom";
+import ErrorFallback from "./components/ErrorFallback/ErrorFallback";
 
 preconnect("https://lowkey-backend.vercel.app");
 
@@ -15,6 +16,7 @@ export const routes = [
       };
     },
     HydrateFallback: () => <div className="h-full w-full bg-transparent" />,
+    errorElement: <ErrorFallback message="Unexpected error :/" />,
     children: [
       {
         path: "/",
@@ -54,6 +56,7 @@ export const routes = [
             await import("./pages/Album/AlbumPage");
           return { Component: AlbumPage };
         },
+        errorElement: <ErrorFallback message="Uh oh...could not fetch album" />,
       },
       {
         path: "/playlists/:id",
@@ -62,6 +65,9 @@ export const routes = [
             await import("./pages/Playlist/PlaylistPage");
           return { Component: PlaylistPage };
         },
+        errorElement: (
+          <ErrorFallback message="Uh oh...could not fetch playlist" />
+        ),
       },
       {
         path: "/userplaylists/:id",
@@ -78,6 +84,9 @@ export const routes = [
             await import("./pages/Artist/ArtistPage");
           return { Component: Artists };
         },
+        errorElement: (
+          <ErrorFallback message="Uh oh...could not fetch artist details" />
+        ),
       },
       {
         path: "/library",

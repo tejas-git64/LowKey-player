@@ -92,7 +92,7 @@ export default function Home() {
 
 export const Widget = memo(
   ({ fadeOutNavigate }: { fadeOutNavigate: (str: string) => void }) => {
-    const { data, isLoading } = useQuery({
+    const { data, isLoading, error } = useQuery({
       queryKey: ["widget"],
       queryFn: getWidgetData,
       enabled: true,
@@ -120,7 +120,7 @@ export const Widget = memo(
       widgetRef.current?.classList.add("song-fadein");
     }
 
-    if (isLoading) {
+    if (isLoading || error) {
       return <Widgetfallback />;
     }
 
@@ -239,7 +239,7 @@ const WidgetButton = ({
 
 export const TimelyPlaylists = memo(
   ({ fadeOutNavigate }: { fadeOutNavigate: (str: string) => void }) => {
-    const { data, isLoading } = useQuery({
+    const { data, isLoading, error } = useQuery({
       queryKey: ["timely"],
       queryFn: getTimelyData,
       enabled: true,
@@ -260,7 +260,7 @@ export const TimelyPlaylists = memo(
       }
     }
 
-    if (isLoading) {
+    if (isLoading || error) {
       return <TimelyFallback />;
     }
 

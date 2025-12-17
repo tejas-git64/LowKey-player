@@ -36,6 +36,7 @@ export default function PlaylistPage() {
     queryKey: ["playlistPage", id],
     queryFn: () => id && getPlaylistData(id),
     enabled: !!id,
+    throwOnError: true,
     refetchOnReconnect: "always",
     _optimisticResults: "isRestoring",
     staleTime: 1000 * 60 * 10,

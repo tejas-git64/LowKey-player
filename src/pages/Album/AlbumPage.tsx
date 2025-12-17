@@ -31,11 +31,11 @@ export default function AlbumPage() {
   const { id } = useParams();
   const albumEl = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout>(null);
-
   const { data, isLoading } = useQuery({
     queryKey: ["albumPage", id],
     queryFn: () => id && getAlbumData(id),
     enabled: !!id,
+    throwOnError: true,
     refetchOnReconnect: "always",
     _optimisticResults: "isRestoring",
     staleTime: 1000 * 60 * 10,

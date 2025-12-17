@@ -16,7 +16,7 @@ const Section = memo(
     const sectionRef = useRef<HTMLDivElement | null>(null);
     const [isIntersecting, setIsIntersecting] = useState(false);
 
-    const { data, isLoading } = useQuery({
+    const { data, isLoading, error } = useQuery({
       queryKey: ["section", genre],
       queryFn: () => getPlaylist(genre),
       enabled: isIntersecting,
@@ -44,7 +44,7 @@ const Section = memo(
       }
     }, []);
 
-    if (isLoading) return <SectionLoading />;
+    if (isLoading || error) return <SectionLoading />;
 
     return (
       <div
