@@ -23,7 +23,9 @@ import {
   ArtistSongsFallback,
 } from "./Loading";
 import useClearTimer from "../../hooks/useClearTimer";
-import { preload } from "react-dom";
+import { preconnect, preload } from "react-dom";
+
+preconnect("https://lowkeymusic-v2.netlify.app");
 
 export default function ArtistPage() {
   const { id } = useParams();

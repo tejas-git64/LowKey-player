@@ -25,7 +25,9 @@ import { animateScreen } from "../../helpers/animateScreen";
 import { cleanString } from "../../helpers/cleanString";
 import ShuffleButton from "../../components/ShuffleButton/ShuffleButton";
 import useClearTimer from "../../hooks/useClearTimer";
-import { preload } from "react-dom";
+import { preconnect, preload } from "react-dom";
+
+preconnect("https://lowkeymusic-v2.netlify.app");
 
 export default function AlbumPage() {
   const { id } = useParams();

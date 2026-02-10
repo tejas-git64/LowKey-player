@@ -16,8 +16,9 @@ import { genres } from "../../utils/utils";
 import widgetfallback from "/fallbacks/widget-fallback.webp";
 import { TimelyFallback, Widgetfallback } from "./Loading";
 import useClearTimer from "../../hooks/useClearTimer";
-import { preload } from "react-dom";
+import { preconnect, preload } from "react-dom";
 
+preconnect("https://lowkeymusic-v2.netlify.app");
 preload(
   "https://c.saavncdn.com/editorial/PopHits2025English_20250708135249.jpg?bch=1752248614",
   {
