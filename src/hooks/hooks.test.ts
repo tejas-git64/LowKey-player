@@ -1,4 +1,4 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { useResponsiveLayout } from "./useResponsiveLayout";
 import { RefObject } from "react";
@@ -14,13 +14,14 @@ describe("useResponsiveLayout hook", () => {
   });
 
   test("initially sets isMobile correctly", () => {
-    globalThis.innerWidth = 500;
+    globalThis.innerWidth = 400;
     const { result } = renderHook(() => useResponsiveLayout());
-    expect(result.current).toBe(true);
+    waitFor(() => {
+      expect(result.current).toBe(true);
+    });
 
     globalThis.innerWidth = 800;
-    const { result: result2 } = renderHook(() => useResponsiveLayout());
-    expect(result2.current).toBe(false);
+    expect(result.current).toBe(false);
   });
 
   test("updates isMobile state on globalThis resize", () => {
