@@ -1,23 +1,5 @@
-import Playlist from "../../components/Playlist/Playlist";
-import RouteNav from "../../components/RouteNav/RouteNav";
-import { useBoundStore } from "../../store/store";
 import {
-  AlbumById,
-  ArtistInSong,
-  Image,
-  PlaylistById,
-  UserPlaylist,
-} from "../../types/GlobalTypes";
-import close from "/svgs/close.svg";
-import play from "/svgs/play-icon.svg";
-import pause from "/svgs/pause-icon.svg";
-import artistfallback from "/fallbacks/artist-fallback.png";
-import userplaylist from "/fallbacks/playlist-fallback.webp";
-import playlistIcon from "/svgs/playlist-icon.svg";
-import { useNavigate } from "react-router-dom";
-import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
-import { FollowButton } from "../../components/FollowButton/FollowButton";
-import {
+  lazy,
   memo,
   startTransition,
   useEffect,
@@ -25,9 +7,30 @@ import {
   useRef,
   useState,
 } from "react";
-import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
-import { animateScreen } from "../../helpers/animateScreen";
+import { useNavigate } from "react-router-dom";
+import { useBoundStore } from "../../store/store";
+import close from "/svgs/close.svg";
+import play from "/svgs/play-icon.svg";
+import pause from "/svgs/pause-icon.svg";
+import artistfallback from "/fallbacks/artist-fallback.png";
+import userplaylist from "/fallbacks/playlist-fallback.webp";
+import playlistIcon from "/svgs/playlist-icon.svg";
 import useClearTimer from "../../hooks/useClearTimer";
+import { animateScreen } from "../../helpers/animateScreen";
+import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
+import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
+import {
+  AlbumById,
+  ArtistInSong,
+  Image,
+  PlaylistById,
+  UserPlaylist,
+} from "../../types/GlobalTypes";
+const Playlist = lazy(() => import("../../components/Playlist/Playlist"));
+const RouteNav = lazy(() => import("../../components/RouteNav/RouteNav"));
+const FollowButton = lazy(
+  () => import("../../components/FollowButton/FollowButton"),
+);
 
 export default function Library() {
   const setRevealCreation = useBoundStore((state) => state.setRevealCreation);
@@ -95,10 +98,10 @@ export default function Library() {
           New playlist
         </button>
       </div>
-      {userPlaylists.length > 0 ||
-      playlists.length > 0 ||
-      albums.length > 0 ||
-      followings.length > 0 ? (
+      {userPlaylists?.length > 0 ||
+      playlists?.length > 0 ||
+      albums?.length > 0 ||
+      followings?.length > 0 ? (
         <div
           data-testid="library-container"
           className="h-auto w-full overflow-x-hidden overflow-y-scroll px-3"

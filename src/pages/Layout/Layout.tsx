@@ -1,9 +1,16 @@
-import { ComponentType, useCallback, useEffect, useRef, useState } from "react";
+import {
+  ComponentType,
+  lazy,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import PlaylistModal from "../../components/PlaylistModal/PlaylistModal";
-import { useBoundStore } from "../../store/store";
-import { LocalLibrary } from "../../types/GlobalTypes";
 import { useResponsiveLayout } from "../../hooks/useResponsiveLayout";
+const PlaylistModal = lazy(
+  () => import("../../components/PlaylistModal/PlaylistModal"),
+);
 
 type ModuleWithDefaultComponent = {
   default: ComponentType<unknown>;
@@ -15,34 +22,6 @@ const components = import.meta.glob<ModuleWithDefaultComponent>(
 export default function Layout() {
   const path = useLocation().pathname;
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const setUserPlaylist = useBoundStore((state) => state.setUserPlaylist);
-  const setLibraryPlaylist = useBoundStore((state) => state.setLibraryPlaylist);
-  const setLibraryAlbum = useBoundStore((state) => state.setLibraryAlbum);
-  const setFollowing = useBoundStore((state) => state.setFollowing);
-
-  useEffect(() => {
-    const localSaves = localStorage.getItem("local-library");
-    if (localSaves !== null) {
-      const {
-        albums: lastAlbums,
-        followings: lastFollowings,
-        playlists: lastPlaylists,
-        userPlaylists: lastUserPlaylists,
-      }: LocalLibrary = JSON.parse(localSaves);
-      for (const l of lastAlbums || []) {
-        setLibraryAlbum(l);
-      }
-      for (const l of lastUserPlaylists || []) {
-        setUserPlaylist(l);
-      }
-      for (const l of lastPlaylists || []) {
-        setLibraryPlaylist(l);
-      }
-      for (const l of lastFollowings || []) {
-        setFollowing(l);
-      }
-    }
-  }, [setFollowing, setLibraryAlbum, setLibraryPlaylist, setUserPlaylist]);
 
   return (
     <div
@@ -128,6 +107,8 @@ const ConditionalComponent = ({
           setComponent(() => mod.default);
         });
       }
+    } else {
+      setComponent(null);
     }
   }, [filePath, isMobile, path, viewPortSize]);
 

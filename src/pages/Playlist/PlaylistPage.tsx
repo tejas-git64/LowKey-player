@@ -1,6 +1,7 @@
-import { memo, startTransition, useEffect, useMemo, useRef } from "react";
+import { lazy, memo, startTransition, Suspense, useMemo, useRef } from "react";
+import { preconnect, preload } from "react-dom";
 import { useParams } from "react-router-dom";
-import { getPlaylistData } from "../../api/requests";
+import { useQuery } from "@tanstack/react-query";
 import { useBoundStore } from "../../store/store";
 import fallback from "/fallbacks/playlist-fallback.webp";
 import favorite from "/svgs/icons8-heart.svg";
@@ -9,23 +10,18 @@ import play from "/svgs/play-icon.svg";
 import pause from "/svgs/pause-icon.svg";
 import addPlaylist from "/svgs/icons8-addplaylist-28.svg";
 import addedToPlaylist from "/svgs/tick.svg";
-import Song from "../../components/Song/Song";
-import {
-  Image,
-  LocalLibrary,
-  PlaylistById,
-  TrackDetails,
-} from "../../types/GlobalTypes";
-import { useQuery } from "@tanstack/react-query";
-import ListLoading from "./Loading";
-import RouteNav from "../../components/RouteNav/RouteNav";
-import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
-import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
-import { animateScreen } from "../../helpers/animateScreen";
-import { cleanString } from "../../helpers/cleanString";
-import ShuffleButton from "../../components/ShuffleButton/ShuffleButton";
+import { Image, PlaylistById, TrackDetails } from "../../types/GlobalTypes";
+import { getPlaylistData } from "../../api/requests";
 import useClearTimer from "../../hooks/useClearTimer";
-import { preconnect, preload } from "react-dom";
+import { cleanString } from "../../helpers/cleanString";
+import { animateScreen } from "../../helpers/animateScreen";
+import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
+import ListLoading from "./Loading";
+const RouteNav = lazy(() => import("../../components/RouteNav/RouteNav"));
+const Song = lazy(() => import("../../components/Song/Song"));
+const ShuffleButton = lazy(
+  () => import("../../components/ShuffleButton/ShuffleButton"),
+);
 
 preconnect("https://lowkeymusic-v2.netlify.app");
 
@@ -34,7 +30,7 @@ export default function PlaylistPage() {
   const playEl = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout>(null);
 
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["playlistPage", id],
     queryFn: () => id && getPlaylistData(id),
     enabled: !!id,
@@ -52,35 +48,32 @@ export default function PlaylistPage() {
   useClearTimer(timerRef);
 
   return (
-    <div
-      data-testid="playlist-page"
-      ref={playEl}
-      className="home-fadeout relative h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth pb-20 duration-100 ease-in-out"
-    >
+    <Suspense fallback={<ListLoading />}>
       <div
-        className={`absolute h-full w-full ${isLoading ? "opacity-100" : "opacity-0 duration-100"} ${data ? "invisible delay-100" : "visible"} z-10 transition-opacity ease-in-out`}
+        data-testid="playlist-page"
+        ref={playEl}
+        className="home-fadeout relative h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth pb-20 duration-100 ease-in-out"
       >
-        <ListLoading />
-      </div>
-      <div className="relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 p-3 sm:h-[223px] sm:p-4">
-        <div className="absolute right-2 top-2 h-auto w-auto">
-          <RouteNav />
-        </div>
-        <PlaylistInfo
-          images={data?.image}
-          name={data?.name}
-          handleImageLoad={handleImageLoad}
-        />
-        <div className="flex h-auto w-full items-center justify-between sm:mt-2">
-          <PlaylistCount
-            followerCount={data?.followerCount}
-            songCount={data?.songCount}
+        <div className="relative flex h-auto w-full flex-col items-center justify-center bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 p-3 sm:h-[223px] sm:p-4">
+          <div className="absolute right-2 top-2 h-auto w-auto">
+            <RouteNav />
+          </div>
+          <PlaylistInfo
+            images={data?.image}
+            name={data?.name}
+            handleImageLoad={handleImageLoad}
           />
-          <PlaylistControls playlist={data} />
+          <div className="flex h-auto w-full items-center justify-between sm:mt-2">
+            <PlaylistCount
+              followerCount={data?.followerCount}
+              songCount={data?.songCount}
+            />
+            <PlaylistControls playlist={data} />
+          </div>
         </div>
+        <PlaylistTracks songs={data?.songs} />
       </div>
-      <PlaylistTracks songs={data?.songs} />
-    </div>
+    </Suspense>
   );
 }
 
@@ -129,27 +122,6 @@ const PlaylistControls = memo(({ playlist }: { playlist: PlaylistById }) => {
       }
     }
   };
-
-  useEffect(() => {
-    const localSaves = localStorage.getItem("local-library");
-    if (localSaves !== null) {
-      const { playlists }: LocalLibrary = JSON.parse(localSaves);
-      if (playlists) {
-        for (const p of playlists) {
-          setLibraryPlaylist(p);
-        }
-      }
-    }
-  }, [setLibraryPlaylist]);
-
-  useEffect(() => {
-    saveToLocalStorage("local-favorites", {
-      playlists,
-    });
-    saveToLocalStorage("local-library", {
-      playlists: libraryPlaylists,
-    });
-  }, [playlists, libraryPlaylists]);
 
   return (
     <div
