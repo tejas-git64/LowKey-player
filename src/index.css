@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: 'Outfit';
+  font-family: "Outfit";
   font-display: swap;
   font-style: normal;
   font-weight: 400;
-  src: url('/fonts/Outfit-VariableFont_wght.woff2') format('woff2');
+  src: url("/fonts/Outfit-VariableFont_wght.woff2") format("woff2");
 }
 
 :root {
@@ -52,11 +52,11 @@ h1 {
 }
 
 .card-fadeout {
-  @apply scale-95 translate-y-4 opacity-0;
+  @apply translate-y-4 scale-95 opacity-0;
 }
 
 .card-fadein {
-  @apply scale-100 translate-y-0 opacity-100;
+  @apply translate-y-0 scale-100 opacity-100;
 }
 
 .home-fadeout {
