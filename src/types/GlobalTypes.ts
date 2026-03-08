@@ -221,6 +221,11 @@ export type LocalLibrary = {
   followings: ArtistInSong[];
 };
 
+export type RecentTypes = {
+  history: TrackDetails[] | null;
+  activity: ActivityType[];
+};
+
 export type SongQueue = {
   id: string;
   name: string;
