@@ -1,4 +1,6 @@
-import SongFallback from "../../components/Song/SongFallback";
+import { lazy } from "react";
+
+const SongFallback = lazy(() => import("../../components/Song/SongFallback"));
 
 export default function ListLoading() {
   return (
@@ -7,7 +9,7 @@ export default function ListLoading() {
       id="playlist-fallback"
       className="h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth"
     >
-      <div className="flex h-auto w-full flex-col items-center justify-start border-b border-black bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 p-3 sm:h-[23.5dvh] sm:px-4">
+      <div className="flex h-auto w-full flex-col items-center justify-start border-b border-black bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 p-3 py-5 sm:px-4">
         <div className="flex h-auto w-full flex-col items-start justify-start pt-1 sm:flex-row sm:items-center sm:pt-1.5">
           <div className="mr-4 h-[150px] w-[150px] animate-pulse bg-neutral-500"></div>
           <div className="text-md mt-2 h-4 w-[60%] rounded-sm bg-neutral-500 sm:h-7 sm:w-[40%] sm:text-3xl"></div>
@@ -25,7 +27,7 @@ export default function ListLoading() {
           </div>
         </div>
       </div>
-      <ul className="flex h-auto min-h-[71.5dvh] w-full flex-col items-start justify-start bg-neutral-900 p-3 pb-28 sm:p-4 sm:pb-20">
+      <ul className="flex h-[75dvh] min-h-[71.5dvh] w-full flex-col items-start justify-start bg-neutral-900 p-3 pb-28 sm:p-4 sm:pb-20">
         {Array.from({ length: 15 }).map((_, i) => (
           <SongFallback key={i} isWidgetSong={false} />
         ))}

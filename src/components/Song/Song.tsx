@@ -8,17 +8,16 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBoundStore } from "../../store/store";
-import { cleanString } from "../../helpers/cleanString";
-import { toggleFavorite } from "../../helpers/toggleFavorite";
-import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
-import { TrackDetails, UserPlaylist } from "../../types/GlobalTypes";
-import secondsToHMS from "../../helpers/secondsToHMS";
-import fallback from "/fallbacks/song-fallback.webp";
+import tick from "/svgs/tick.svg";
 import notfav from "/svgs/icons8-heart.svg";
 import fav from "/svgs/icons8-favorited.svg";
 import playing from "/gifs/play-animation.gif";
 import add from "/svgs/icons8-addplaylist-28.svg";
-import tick from "/svgs/tick.svg";
+import fallback from "/fallbacks/song-fallback.webp";
+import { cleanString } from "../../helpers/cleanString";
+import { toggleFavorite } from "../../helpers/toggleFavorite";
+import { TrackDetails, UserPlaylist } from "../../types/GlobalTypes";
+import secondsToHMS from "../../helpers/secondsToHMS";
 
 const Song = memo(
   ({
@@ -30,7 +29,6 @@ const Song = memo(
     isWidgetSong: boolean;
     index: number;
   }) => {
-    const songs = useBoundStore((state) => state.favorites.songs);
     const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
     const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
 
@@ -63,12 +61,6 @@ const Song = memo(
       },
       [setIsPlaying, setNowPlaying],
     );
-
-    useEffect(() => {
-      saveToLocalStorage("local-favorites", {
-        favorites: songs,
-      });
-    }, [songs]);
 
     useEffect(() => {
       const timer = setTimeout(() => {
@@ -143,7 +135,7 @@ const Song = memo(
             {secondsToHMS(Number(track?.duration))}
           </p>
           <div className="mx-0 flex w-10 flex-grow-[0.08] basis-12 items-center justify-evenly space-x-3 sm:w-6 md:ml-2 lg:mx-6 lg:w-12 xlg:mx-[1vw]">
-            <FavoriteButton key={track.name} track={track} songs={songs} />
+            <FavoriteButton key={track.name} track={track} />
             <AddToPlaylistButton track={track} />
           </div>
         </div>
@@ -153,19 +145,13 @@ const Song = memo(
 );
 Song.displayName = "Song";
 
-const FavoriteButton = ({
-  songs,
-  track,
-}: {
-  songs: TrackDetails[];
-  track: TrackDetails;
-}) => {
+const FavoriteButton = ({ track }: { track: TrackDetails }) => {
   const setFavoriteSong = useBoundStore((state) => state.setFavoriteSong);
   const removeFavorite = useBoundStore((state) => state.removeFavorite);
-  const isFavorited = useMemo(
-    () => songs?.some((song) => song.id === track?.id),
-    [songs, track],
+  const isFavorited = useBoundStore((state) =>
+    state.favorites.songs?.some((s) => s.id === track.id),
   );
+
   return (
     <button
       tabIndex={0}
@@ -232,9 +218,9 @@ const AddToPlaylistButton = ({ track }: { track: TrackDetails }) => {
 };
 
 const PlayingGif = ({ track }: { track: TrackDetails }) => {
-  const currentTrack = useBoundStore((state) => state.nowPlaying.track);
-  const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
-  if (currentTrack !== null && currentTrack.id === track.id && isPlaying) {
+  const currentTrack = useBoundStore((state) => state.nowPlaying?.track);
+  const isPlaying = useBoundStore((state) => state.nowPlaying?.isPlaying);
+  if (currentTrack !== null && currentTrack?.id === track.id && isPlaying) {
     return <img src={playing} alt="playing" className="h-5 w-5" />;
   }
 };
