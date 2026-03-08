@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router-dom";
 import { useCallback, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import reactlogo from "/svgs/react.svg";
 import tailwindlogo from "/svgs/tailwindcss.svg";
 import useClearTimer from "../../hooks/useClearTimer";
@@ -50,7 +50,7 @@ export default function Intro() {
     }
     timerRef.current = setTimeout(() => {
       navigate("/home");
-    }, 150);
+    }, 100);
   }, [navigate]);
 
   useClearTimer(timerRef);
@@ -58,7 +58,7 @@ export default function Intro() {
   return (
     <div
       data-testid="intro-page"
-      className="relative flex h-full w-full items-center shadow-inner shadow-black"
+      className="relative flex h-full w-full items-center shadow-inner shadow-black duration-100 ease-in"
     >
       <img
         ref={imageRef}
@@ -68,12 +68,12 @@ export default function Intro() {
         alt="background"
         loading="eager"
         fetchPriority="high"
-        className="absolute left-0 top-0 h-full w-full animate-intro-fadein object-cover"
+        className="absolute left-0 top-0 h-full w-full animate-intro-fadein object-cover duration-200 ease-in"
       />
       <div
         ref={cardRef}
         data-testid="intro-card"
-        className="relative mx-auto flex h-auto w-[calc(100%-5%)] animate-card-fadein flex-col items-center rounded-lg border border-[#ffffff25] bg-[#0000004f] px-4 py-4 backdrop-blur-md sm:w-[430px] md:px-5"
+        className="relative mx-auto flex h-auto w-[calc(100%-5%)] animate-card-fadein flex-col items-center rounded-lg border border-[#ffffff25] bg-[#0000004f] px-4 py-4 backdrop-blur-md duration-200 ease-in sm:w-[430px] md:px-5"
       >
         <h2 className="w-full bg-gradient-to-r from-purple-400 via-teal-500 to-cyan-400 bg-clip-text pl-1.5 text-left text-3xl font-semibold text-transparent xl:text-4xl">
           Lowkey Music
@@ -155,7 +155,7 @@ export default function Intro() {
             onClick={fadeOutNavigate}
             ref={btnRef}
             aria-label="Visit home"
-            className="my-2 h-auto w-auto animate-intro-fadein rounded-sm bg-[#f8f8f836] px-6 py-2 text-sm font-semibold tracking-wide text-white transition-colors duration-200 ease-linear hover:bg-[#c74fffc2] hover:text-violet-950 focus:bg-[#c74fffc2] focus:text-purple-950"
+            className="my-2 h-auto w-auto animate-intro-fadein rounded-sm bg-[#f8f8f836] px-6 py-2 text-sm font-semibold tracking-wide text-white transition-colors duration-200 ease-in hover:bg-[#c74fffc2] hover:text-violet-950 focus:bg-[#c74fffc2] focus:text-purple-950"
           >
             Check it out
           </button>

@@ -1,9 +1,8 @@
-import { memo, useEffect, useMemo } from "react";
+import { memo, useMemo } from "react";
 import { useBoundStore } from "../../store/store";
 import { ArtistInSong } from "../../types/GlobalTypes";
-import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
 
-export const FollowButton = memo(({ artist }: { artist: ArtistInSong }) => {
+const FollowButton = memo(({ artist }: { artist: ArtistInSong }) => {
   const setFollowing = useBoundStore((state) => state.setFollowing);
   const removeFollowing = useBoundStore((state) => state.removeFollowing);
   const followings = useBoundStore((state) => state.library.followings);
@@ -23,12 +22,6 @@ export const FollowButton = memo(({ artist }: { artist: ArtistInSong }) => {
     }
   };
 
-  useEffect(() => {
-    saveToLocalStorage("local-library", {
-      followings,
-    });
-  }, [followings]);
-
   return (
     <button
       type="button"
@@ -41,3 +34,5 @@ export const FollowButton = memo(({ artist }: { artist: ArtistInSong }) => {
   );
 });
 FollowButton.displayName = "FollowButton";
+
+export default FollowButton;
