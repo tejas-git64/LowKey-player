@@ -37,6 +37,8 @@ import {
   mockedPlaylistSuccessData,
   mockedNullDataResult,
 } from "../../mocks/mocks";
+import { Suspense } from "react";
+import ListLoading from "./Loading";
 
 vi.mock("@tanstack/react-query", async (importOriginal) => {
   const actual = await importOriginal();
@@ -50,7 +52,6 @@ let id = "12234";
 const { setQueue, setIsPlaying } = useBoundStore.getState();
 
 beforeEach(() => {
-  vi.useFakeTimers();
   act(() => {
     setIsPlaying(false);
   });
@@ -62,45 +63,50 @@ beforeEach(() => {
 afterEach(() => {
   id = "12234";
   cleanup();
-  vi.useRealTimers();
   vi.resetAllMocks();
   vi.restoreAllMocks();
 });
 
 describe("PlaylistPage", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
-          <PlaylistPage />
+          <Suspense fallback={<ListLoading />}>
+            <PlaylistPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
-    expect(screen.getByTestId("playlist-page")).toBeInTheDocument();
+    const playlistPage = await screen.findByTestId("playlist-page");
+    expect(playlistPage).toBeInTheDocument();
   });
   test("should render route nav", () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
-          <PlaylistPage />
+          <Suspense fallback={<ListLoading />}>
+            <PlaylistPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
+
     expect(screen.getByTestId("route-nav")).toBeInTheDocument();
   });
 });
 describe("PlaylistCount", () => {
-  test("should render", async () => {
+  test("should render", () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
-          <PlaylistPage />
+          <Suspense fallback={<ListLoading />}>
+            <PlaylistPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
+
     expect(screen.getByTestId("playlist-count")).toBeInTheDocument();
   });
 });
@@ -109,22 +115,26 @@ describe("PlaylistInfo", () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
-          <PlaylistPage />
+          <Suspense fallback={<ListLoading />}>
+            <PlaylistPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
+
     expect(screen.getByTestId("playlist-info")).toBeInTheDocument();
   });
   test("getAlbumImage should return the image url", () => {
     const { rerender } = render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
-          <PlaylistPage />
+          <Suspense fallback={<ListLoading />}>
+            <PlaylistPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
+
     const getAlbumImage = vi.fn();
     const image = screen.getByTestId("playlist-info-image");
     waitFor(() => {
@@ -149,7 +159,9 @@ describe("PlaylistInfo", () => {
     rerender(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
-          <PlaylistPage />
+          <Suspense fallback={<ListLoading />}>
+            <PlaylistPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
@@ -163,11 +175,13 @@ describe("PlaylistInfo", () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
-          <PlaylistPage />
+          <Suspense fallback={<ListLoading />}>
+            <PlaylistPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
+
     const image = screen.getByTestId("playlist-info-image");
     fireEvent.error(image);
     expect((image as HTMLImageElement).src).toContain(fallback);
@@ -178,22 +192,26 @@ describe("PlaylistControls", () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
-          <PlaylistPage />
+          <Suspense fallback={<ListLoading />}>
+            <PlaylistPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
+
     expect(screen.getByTestId("playlist-controls")).toBeInTheDocument();
   });
   test("isPlaylistPlaying should be true/false based on if queue id matches and isPlaying", () => {
     const { rerender } = render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
-          <PlaylistPage />
+          <Suspense fallback={<ListLoading />}>
+            <PlaylistPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
+
     const isPlaylistPlaying = vi.fn();
     act(() => {
       setQueue(samplePlaylist);
@@ -207,11 +225,13 @@ describe("PlaylistControls", () => {
     rerender(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
-          <PlaylistPage />
+          <Suspense fallback={<ListLoading />}>
+            <PlaylistPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
+
     mockedUseQuery.mockReturnValue(
       mockedNullDataResult as UseQueryResult<null>,
     );
@@ -228,11 +248,13 @@ describe("PlaylistControls", () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
-          <PlaylistPage />
+          <Suspense fallback={<ListLoading />}>
+            <PlaylistPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
+
     const shuffleButton = screen.getByTitle("shuffle-button");
     expect(shuffleButton).toHaveAttribute("aria-label", "Enable shuffle");
 
@@ -247,11 +269,13 @@ describe("PlaylistControls", () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
-          <PlaylistPage />
+          <Suspense fallback={<ListLoading />}>
+            <PlaylistPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
+
     const addBtn = screen.getByTestId("add-btn");
     const addIcon = screen.getByTestId("add-icon");
 
@@ -275,11 +299,13 @@ describe("PlaylistControls", () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
-          <PlaylistPage />
+          <Suspense fallback={<ListLoading />}>
+            <PlaylistPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
+
     const favoriteBtn = screen.getByTestId("playlist-favorite-btn");
     const favoriteIcon = screen.getByTestId("favorite-icon");
 
@@ -303,11 +329,13 @@ describe("PlaylistControls", () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
-          <PlaylistPage />
+          <Suspense fallback={<ListLoading />}>
+            <PlaylistPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
+
     const playbackBtn = screen.getByTestId("playlist-playback");
     const playbackIcon = screen.getByTestId("playlist-playback-icon");
 

@@ -4,6 +4,7 @@ import {
   fireEvent,
   render,
   screen,
+  waitFor,
 } from "@testing-library/react";
 import { afterEach, describe, expect, test } from "vitest";
 import RouteNav from "./RouteNav";
@@ -34,7 +35,7 @@ describe("RouteNav", () => {
     expect(screen.getByTestId("location-display").textContent).toBe("/");
   });
 
-  test("previous button navigates back", () => {
+  test("previous button navigates back", async () => {
     render(
       <MemoryRouter initialEntries={["/search", "/library"]} initialIndex={1}>
         <Routes>
@@ -44,15 +45,17 @@ describe("RouteNav", () => {
         <LocationDisplay />
       </MemoryRouter>,
     );
-
-    expect(screen.getByTestId("location-display").textContent).toBe("/library");
+    const locationDisplay = await screen.findByTestId("location-display");
+    expect(locationDisplay.textContent).toBe("/library");
     act(() => {
       fireEvent.click(screen.getByTestId("previous-route"));
     });
-    expect(screen.getByTestId("location-display").textContent).toBe("/search");
+    await waitFor(() => {
+      expect(locationDisplay.textContent).toBe("/search");
+    });
   });
 
-  test("next button navigates forward", () => {
+  test("next button navigates forward", async () => {
     render(
       <MemoryRouter initialEntries={["/search", "/library"]} initialIndex={0}>
         <Routes>
@@ -62,11 +65,13 @@ describe("RouteNav", () => {
         <LocationDisplay />
       </MemoryRouter>,
     );
-    expect(screen.getByTestId("location-display").textContent).toBe("/search");
+    const locationDisplay = await screen.findByTestId("location-display");
+    expect(locationDisplay.textContent).toBe("/search");
     act(() => {
       fireEvent.click(screen.getByTestId("next-route"));
     });
-
-    expect(screen.getByTestId("location-display").textContent).toBe("/library");
+    await waitFor(() => {
+      expect(locationDisplay.textContent).toBe("/library");
+    });
   });
 });

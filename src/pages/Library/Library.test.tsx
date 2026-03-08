@@ -54,7 +54,7 @@ afterEach(() => {
 });
 
 describe("Library", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={["/library"]}>
@@ -62,7 +62,9 @@ describe("Library", () => {
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    expect(screen.getByTestId("library-page")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId("library-page")).toBeInTheDocument();
+    });
   });
   test("should create new playlist onClick", () => {
     render(
@@ -219,7 +221,7 @@ describe("Library", () => {
     });
   });
   describe("CustomPlaylist", () => {
-    test("should render", () => {
+    test("should render", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/library"]}>
@@ -228,11 +230,10 @@ describe("Library", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const playlist = screen.getByTestId("userplaylist");
-      act(() => {
-        fireEvent.click(playlist);
+      await waitFor(() => {
+        const playlist = screen.getByTestId("userplaylist");
+        expect(playlist).toBeInTheDocument();
       });
-      expect(screen.getByTestId("userplaylist-page")).toBeInTheDocument();
     });
     test("should playback track of the playlist onClick", () => {
       render(

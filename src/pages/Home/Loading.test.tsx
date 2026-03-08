@@ -1,17 +1,20 @@
-import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, expect, test } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import { expect, test } from "vitest";
 import { TimelyFallback, Widgetfallback } from "./Loading";
+import { describe } from "node:test";
 
-afterEach(() => {
-  cleanup();
-});
+describe("Loading component", () => {
+  test("loading UI of widget should render", async () => {
+    render(<Widgetfallback />);
+    await waitFor(() => {
+      expect(screen.getByTestId("widget-fallback")).toBeInTheDocument();
+    });
+  });
 
-test("loading UI of widget should render", () => {
-  render(<Widgetfallback />);
-  expect(screen.getByTestId("widget-fallback")).toBeInTheDocument();
-});
-
-test("loading UI of timely tracks should render", () => {
-  render(<TimelyFallback />);
-  expect(screen.getByTestId("timely-fallback")).toBeInTheDocument();
+  test("loading UI of timely tracks should render", async () => {
+    render(<TimelyFallback />);
+    await waitFor(() => {
+      expect(screen.getByTestId("timely-fallback")).toBeInTheDocument();
+    });
+  });
 });

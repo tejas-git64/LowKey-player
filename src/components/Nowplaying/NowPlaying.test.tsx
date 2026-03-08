@@ -65,6 +65,7 @@ export const instance = {
   seekTo: (v: number) => mockSeekTo(v),
 };
 const useNavigateMock = vi.fn();
+
 vi.mock("react-router-dom", async (importOriginal) => {
   const actual = (await importOriginal()) as Mock;
   return {
@@ -202,33 +203,46 @@ describe("NowPlaying", () => {
     expect(nowPlaying).toHaveClass("translate-y-[100%]");
   });
   describe("Drop down button", () => {
-    beforeAll(() => {
-      globalThis.innerWidth = 480;
+    beforeEach(() => {
+      global.innerWidth = 400;
+      window.dispatchEvent(new Event("resize"));
     });
-    test("should render if width is mobile width", () => {
-      act(() => {
-        setShowPlayer(true);
-      });
+    test("should render if width is mobile width", async () => {
       render(
         <MemoryRouter>
           <NowPlaying />
         </MemoryRouter>,
       );
-      const dropDownBtn = screen.getByTestId("drop-down-btn");
-      expect(dropDownBtn).toBeInTheDocument();
-    });
-    test("should hide player onClick", () => {
       act(() => {
         setShowPlayer(true);
+        act(() => {
+          window.dispatchEvent(new Event("resize"));
+        });
       });
+      const dropDown = screen.getByTestId("drop-down-btn");
+      await waitFor(() => {
+        expect(dropDown).toBeInTheDocument();
+      });
+    });
+    test("should hide player onClick", async () => {
       render(
         <MemoryRouter>
           <NowPlaying />
         </MemoryRouter>,
       );
+      act(() => {
+        act(() => {
+          window.dispatchEvent(new Event("resize"));
+        });
+      });
       const dropDownBtn = screen.getByTestId("drop-down-btn");
       fireEvent.click(dropDownBtn);
-      expect(useBoundStore.getState().nowPlaying.isMobilePlayer).toBe(false);
+      await waitFor(() => {
+        expect(useBoundStore.getState().nowPlaying.isMobilePlayer).toBe(false);
+        expect(screen.getByTestId("now-playing")).toHaveClass(
+          "translate-y-[100%]",
+        );
+      });
     });
   });
   describe("Song image", () => {
@@ -244,18 +258,20 @@ describe("NowPlaying", () => {
       const songImage = screen.getByTestId("song-image");
       expect((songImage as HTMLImageElement).src).toContain("image%20url");
     });
-    test("should be songfallback if not available", () => {
-      act(() => {
-        setNowPlaying(null);
-        globalThis.innerWidth = 480;
-      });
+    test("should be songfallback if not available", async () => {
       render(
         <MemoryRouter>
           <NowPlaying />
         </MemoryRouter>,
       );
-      const image = screen.getByTestId("song-image");
-      expect((image as HTMLImageElement).src).toContain(songfallback);
+      act(() => {
+        globalThis.innerWidth = 480;
+        setNowPlaying(null);
+      });
+      const songImage = (await screen.findByTestId(
+        "song-image",
+      )) as HTMLImageElement;
+      expect(songImage.src).toContain(songfallback);
     });
     test("should be songfallback onError", () => {
       render(

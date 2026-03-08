@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, test } from "vitest";
 import {
   ArtistAlbumFallback,
@@ -21,8 +21,10 @@ describe("loading UI of ArtistPage", () => {
     expect(screen.getByTestId("artist-album-fallback")).toBeInTheDocument();
   });
 
-  test("should render album fallback", () => {
+  test("should render album fallback", async () => {
     render(<ArtistSongsFallback />);
-    expect(screen.getByTestId("artist-songs-fallback")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId("artist-songs-fallback")).toBeInTheDocument();
+    });
   });
 });
