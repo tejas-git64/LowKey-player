@@ -240,6 +240,10 @@ export const samplePlaylist = {
       quality: "50x50",
       url: "image url",
     },
+    {
+      quality: "150x150",
+      url: "image url",
+    },
   ],
   url: "some url",
   songs: [sampleTrack],
