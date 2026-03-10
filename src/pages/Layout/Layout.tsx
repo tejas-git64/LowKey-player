@@ -35,7 +35,7 @@ export default function Layout() {
       <div
         data-testid="layout-inner-container"
         className={`relative flex h-full w-full flex-row items-start justify-start overflow-hidden ${
-          path === "/" ? "sm:h-full" : "sm:h-[95vh]"
+          path === "/" ? "sm:h-dvh" : "sm:h-[95vh]"
         }`}
       >
         <ConditionalComponent
@@ -45,12 +45,12 @@ export default function Layout() {
         <div
           data-testid="outlet-container"
           className={`h-full w-full overflow-x-hidden ${
-            path === "/" ? "sm:h-full" : "sm:h-[95vh]"
+            path === "/" ? "sm:h-dvh" : "sm:h-[95vh]"
           }`}
         >
           <div
             ref={containerRef}
-            className="relative h-full w-full border-x-2 border-black"
+            className="relative h-dvh w-full border-x-2 border-black"
           >
             <Outlet />
             <PlaylistModal ref={containerRef} />
