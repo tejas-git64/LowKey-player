@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 export const useResponsiveLayout = () => {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(globalThis.innerWidth < 640);
 
   useEffect(() => {
     const handleResize = () => {
