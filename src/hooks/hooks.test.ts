@@ -16,12 +16,12 @@ describe("useResponsiveLayout hook", () => {
   test("initially sets isMobile correctly", () => {
     globalThis.innerWidth = 400;
     const { result } = renderHook(() => useResponsiveLayout());
-    waitFor(() => {
-      expect(result.current).toBe(true);
-    });
+    expect(result.current).toBe(true);
 
     globalThis.innerWidth = 800;
-    expect(result.current).toBe(false);
+    waitFor(() => {
+      expect(result.current).toBe(false);
+    });
   });
 
   test("updates isMobile state on globalThis resize", () => {

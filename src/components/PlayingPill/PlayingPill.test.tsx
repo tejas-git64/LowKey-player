@@ -137,7 +137,7 @@ describe("PlayingPill", () => {
     });
     render(<PlayingPill />);
 
-    expect(screen.getByTestId("primary-artist-name").textContent).toBe("");
+    expect(screen.getByTestId("primary-artist-name").textContent).toBe("Unknown Artist");
   });
   test("should set the track to be added to a playlist and show modal on button click", () => {
     render(<PlayingPill />);
