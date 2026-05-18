@@ -1,19 +1,19 @@
-import RouteNav from "../../components/RouteNav/RouteNav";
-import Song from "../../components/Song/Song";
+import { lazy, memo, startTransition, useEffect, useMemo, useRef } from "react";
+import { preload } from "react-dom";
+import { useNavigate } from "react-router-dom";
 import { useBoundStore } from "../../store/store";
-import { AlbumById, PlaylistById, TrackDetails } from "../../types/GlobalTypes";
 import play from "/svgs/play-icon.svg";
 import pause from "/svgs/pause-icon.svg";
 import favoritesImg from "/favorites.webp";
-import { useNavigate } from "react-router-dom";
 import fallback from "/fallbacks/playlist-fallback.webp";
 import close from "/svgs/close.svg";
-import { memo, startTransition, useEffect, useMemo, useRef } from "react";
-import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
-import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
-import { animateScreen } from "../../helpers/animateScreen";
+import { AlbumById, PlaylistById, TrackDetails } from "../../types/GlobalTypes";
 import useClearTimer from "../../hooks/useClearTimer";
-import { preload } from "react-dom";
+import { animateScreen } from "../../helpers/animateScreen";
+import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
+import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
+const Song = lazy(() => import("../../components/Song/Song"));
+const RouteNav = lazy(() => import("../../components/RouteNav/RouteNav"));
 
 preload(favoritesImg, {
   as: "image",
@@ -87,12 +87,7 @@ export default function Favorites() {
 
 const FavoriteControls = memo(() => {
   const favorites = useBoundStore((state) => state.favorites);
-  const setFavoriteAlbum = useBoundStore((state) => state.setFavoriteAlbum);
-  const setFavoritePlaylist = useBoundStore(
-    (state) => state.setFavoritePlaylist,
-  );
   const queueSongs = useBoundStore((state) => state.nowPlaying.queue?.songs);
-  const setFavoriteSong = useBoundStore((state) => state.setFavoriteSong);
   const id = useBoundStore((state) => state.nowPlaying.track?.id);
   const setQueue = useBoundStore((state) => state.setQueue);
   const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
@@ -114,29 +109,6 @@ const FavoriteControls = memo(() => {
     image: false,
     songs: favorites.songs,
   };
-
-  type LocalFavorites = {
-    albums: AlbumById[];
-    playlists: PlaylistById[];
-    songs: TrackDetails[];
-  };
-
-  useEffect(() => {
-    const localSaved = localStorage.getItem("local-favorites");
-    if (localSaved !== null) {
-      const { albums, playlists, songs }: LocalFavorites =
-        JSON.parse(localSaved);
-      for (const a of albums || []) {
-        setFavoriteAlbum(a);
-      }
-      for (const p of playlists || []) {
-        setFavoritePlaylist(p);
-      }
-      for (const s of songs || []) {
-        setFavoriteSong(s);
-      }
-    }
-  }, [setFavoriteAlbum, setFavoritePlaylist, setFavoriteSong]);
 
   return (
     <div

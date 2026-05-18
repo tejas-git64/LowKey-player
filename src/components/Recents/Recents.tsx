@@ -1,15 +1,10 @@
 import history from "/svgs/icons8-history.svg";
 import activity from "/svgs/icons8-activity.svg";
 import { useBoundStore } from "../../store/store";
-import { ActivityType, TrackDetails } from "../../types/GlobalTypes";
+import { ActivityType, RecentTypes, TrackDetails } from "../../types/GlobalTypes";
 import songfallback from "/fallbacks/song-fallback.webp";
 import { cleanString } from "../../helpers/cleanString";
 import { memo, useEffect, useRef } from "react";
-
-type RecentTypes = {
-  history: TrackDetails[] | null;
-  activity: ActivityType[];
-};
 
 const Recents = memo(() => {
   const recentTracks = useBoundStore((state) => state.recents.history);
@@ -58,7 +53,7 @@ const Recents = memo(() => {
           data-testid="recent-activity"
           className="h-[38dvh] w-full list-none overflow-y-scroll bg-neutral-900"
         >
-          {recentActivity.map((obj, i) => (
+          {recentActivity?.map((obj, i) => (
             <Activity key={obj.id} i={i} {...obj} />
           ))}
         </ul>

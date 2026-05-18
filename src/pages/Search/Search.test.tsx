@@ -75,7 +75,7 @@ afterEach(() => {
 });
 
 describe("Search", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={["/search"]}>
@@ -83,7 +83,9 @@ describe("Search", () => {
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    expect(screen.getByTestId("search-page")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId("search-page")).toBeInTheDocument();
+    });
   });
   test("should render search results", () => {
     render(

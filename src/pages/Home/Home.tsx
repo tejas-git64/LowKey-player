@@ -1,22 +1,22 @@
-import { memo, useCallback, useEffect, useMemo, useRef } from "react";
-import { useBoundStore } from "../../store/store";
+import { lazy, memo, useCallback, useEffect, useMemo, useRef } from "react";
+import { preconnect, preload } from "react-dom";
 import { useNavigate } from "react-router-dom";
-import { Image, PlaylistById, TrackDetails } from "../../types/GlobalTypes";
-import Section from "../../components/Section/Section";
+import { useQuery } from "@tanstack/react-query";
+import { useBoundStore } from "../../store/store";
 import play from "/svgs/play-icon.svg";
 import pause from "/svgs/pause-icon.svg";
-import Song from "../../components/Song/Song";
+import widgetfallback from "/fallbacks/widget-fallback.webp";
 import fallbacktoday from "/fallbacks/timely/icons8-timely-today.webp";
 import fallbackweekly from "/fallbacks/timely/icons8-timely-weekly.webp";
 import fallbackmonthly from "/fallbacks/timely/icons8-timely-monthly.webp";
 import fallbackyearly from "/fallbacks/timely/icons8-timely-yearly.webp";
-import { useQuery } from "@tanstack/react-query";
+import { Image, PlaylistById, TrackDetails } from "../../types/GlobalTypes";
 import { getTimelyData, getWidgetData } from "../../api/requests";
 import { genres } from "../../utils/utils";
-import widgetfallback from "/fallbacks/widget-fallback.webp";
-import { TimelyFallback, Widgetfallback } from "./Loading";
 import useClearTimer from "../../hooks/useClearTimer";
-import { preconnect, preload } from "react-dom";
+import { TimelyFallback, Widgetfallback } from "./Loading";
+const Song = lazy(() => import("../../components/Song/Song"));
+const Section = lazy(() => import("../../components/Section/Section"));
 
 preconnect("https://lowkeymusic-v2.netlify.app");
 preload(
@@ -108,9 +108,9 @@ export const Widget = memo(
     const lcpImg =
       data?.image?.find((img: Image) => img.quality === "500x500")?.url ??
       widgetfallback;
-    const queue = useBoundStore((state) => state.nowPlaying.queue);
+    const queue = useBoundStore((state) => state.nowPlaying?.queue);
     const inQueue = useMemo(
-      () => queue !== null && queue.name === data?.name,
+      () => queue !== null && queue?.name === data?.name,
       [queue, data],
     );
 
@@ -195,7 +195,7 @@ const WidgetButton = ({
   data: PlaylistById;
   inQueue: boolean;
 }) => {
-  const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
+  const isPlaying = useBoundStore((state) => state.nowPlaying?.isPlaying);
   const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
   const setNowPlaying = useBoundStore((state) => state.setNowPlaying);
   const setQueue = useBoundStore((state) => state.setQueue);

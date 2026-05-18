@@ -26,7 +26,7 @@ export default function PlaylistModal({
   }, [revealCreation, ref]);
 
   useEffect(() => {
-    if (userPlaylists.length > 0) {
+    if (userPlaylists?.length > 0) {
       saveToLocalStorage("local-library", {
         userPlaylists,
       });
@@ -78,7 +78,7 @@ export default function PlaylistModal({
             data-testid="userplaylists"
             className="my-4 min-h-48 w-full list-none flex-col overflow-y-scroll rounded-sm border border-black bg-neutral-950"
           >
-            {userPlaylists.length > 0 ? (
+            {userPlaylists?.length > 0 ? (
               userPlaylists.map((playlist: UserPlaylist) => (
                 <CustomPlaylist
                   key={playlist.id}
@@ -112,7 +112,7 @@ const PlaylistInput = ({
 }) => {
   const [name, setName] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
-  const isPlaylistPresent = userPlaylists.some(
+  const isPlaylistPresent = userPlaylists?.some(
     (playlist: UserPlaylist) => playlist.name === name,
   );
   const creationTrack = useBoundStore.getState().creationTrack;

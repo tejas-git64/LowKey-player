@@ -1,11 +1,11 @@
+import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import nf480 from "/notfound/notfound-480px.webp";
 import nf640 from "/notfound/notfound-640px.webp";
 import nf768 from "/notfound/notfound-landscape-768px.webp";
 import nf1024 from "/notfound/notfound-landscape-1024px.webp";
 import nf1280 from "/notfound/notfound-landscape-1280px.webp";
 import nf1536 from "/notfound/notfound-landscape-1536px.webp";
-import { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
 import { animateScreen } from "../../helpers/animateScreen";
 import useClearTimer from "../../hooks/useClearTimer";
 

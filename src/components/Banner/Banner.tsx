@@ -59,7 +59,7 @@ export const NotificationButton = () => {
             className="h-6 w-6"
             fetchPriority="high"
           />
-          {recents.activity.length > 0 && !notifications && (
+          {recents?.activity?.length > 0 && !notifications && (
             <div className="absolute -top-0.5 right-0 h-2 w-2 rounded-full bg-emerald-500"></div>
           )}
         </button>
@@ -69,7 +69,7 @@ export const NotificationButton = () => {
             notifications ? "absolute" : "hidden"
           } right-16 top-11 z-20 flex h-52 w-[300px] flex-col items-start justify-start overflow-y-scroll rounded-b-md rounded-tl-md bg-neutral-900 p-0.5 shadow-md shadow-black`}
         >
-          {recents.activity.length > 0 ? (
+          {recents?.activity?.length > 0 ? (
             recents.activity.map((a: ActivityType) => (
               <Activity key={a.id} {...a} />
             ))

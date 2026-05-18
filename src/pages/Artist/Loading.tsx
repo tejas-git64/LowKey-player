@@ -1,4 +1,6 @@
-import SongFallback from "../../components/Song/SongFallback";
+import { lazy } from "react";
+
+const SongFallback = lazy(() => import("../../components/Song/SongFallback"));
 
 export const ArtistInfoFallback = () => {
   return (

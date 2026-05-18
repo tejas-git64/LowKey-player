@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useBoundStore } from "../../store/store";
 import home from "/svgs/icons8-home.svg";
 import search from "/svgs/icons8-search.svg";
 import libraryImg from "/svgs/icons8-library.svg";
@@ -6,11 +8,9 @@ import add from "/svgs/icons8-plus.svg";
 import heart from "/svgs/icons8-heart.svg";
 import online from "/icons/icons8-online-28.png";
 import offline from "/icons/icons8-offline-28.png";
-import { useEffect, useState } from "react";
-import { useBoundStore } from "../../store/store";
-import { AlbumById, PlaylistById, UserPlaylist } from "../../types/GlobalTypes";
 import playlistfallback from "/fallbacks/playlist-fallback-min.webp";
 import fallback from "/fallbacks/playlist-fallback.webp";
+import { AlbumById, PlaylistById, UserPlaylist } from "../../types/GlobalTypes";
 
 const Nav = () => {
   return (
@@ -134,12 +134,12 @@ const OnlineStatus = () => {
 };
 
 export function RecentPlaylistsOrAlbums() {
-  const albums = useBoundStore((state) => state.library.albums);
-  const playlists = useBoundStore((state) => state.library.playlists);
-  const userPlaylists = useBoundStore((state) => state.library.userPlaylists);
+  const albums = useBoundStore((state) => state.library?.albums);
+  const playlists = useBoundStore((state) => state.library?.playlists);
+  const userPlaylists = useBoundStore((state) => state.library?.userPlaylists);
   return (
     <ul className="mx-auto mt-2 flex w-[95%] flex-col items-center justify-start overflow-y-auto overflow-x-hidden pb-14 pl-1">
-      {albums.map((album: AlbumById) => (
+      {albums?.map((album: AlbumById) => (
         <Link
           tabIndex={0}
           to={`/albums/${album.id}`}
@@ -161,7 +161,7 @@ export function RecentPlaylistsOrAlbums() {
           </p>
         </Link>
       ))}
-      {playlists.map((playlist: PlaylistById) => (
+      {playlists?.map((playlist: PlaylistById) => (
         <Link
           tabIndex={0}
           to={`/playlists/${playlist.id}`}
@@ -183,7 +183,7 @@ export function RecentPlaylistsOrAlbums() {
           </p>
         </Link>
       ))}
-      {userPlaylists.map((playlist: UserPlaylist) => (
+      {userPlaylists?.map((playlist: UserPlaylist) => (
         <Link
           tabIndex={0}
           to={`/userplaylists/${playlist.id}`}

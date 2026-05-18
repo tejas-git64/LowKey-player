@@ -8,17 +8,17 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBoundStore } from "../../store/store";
-import { cleanString } from "../../helpers/cleanString";
-import { toggleFavorite } from "../../helpers/toggleFavorite";
-import { TrackDetails, UserPlaylist } from "../../types/GlobalTypes";
-import secondsToHMS from "../../helpers/secondsToHMS";
-import fallback from "/fallbacks/song-fallback.webp";
 import notfav from "/svgs/icons8-heart.svg";
 import fav from "/svgs/icons8-favorited.svg";
 import playing from "/gifs/play-animation.gif";
 import add from "/svgs/icons8-addplaylist-28.svg";
 import tick from "/svgs/tick.svg";
 import useIsFavorited from "../../hooks/useIsFavorited";
+import fallback from "/fallbacks/song-fallback.webp";
+import { cleanString } from "../../helpers/cleanString";
+import { toggleFavorite } from "../../helpers/toggleFavorite";
+import { TrackDetails, UserPlaylist } from "../../types/GlobalTypes";
+import secondsToHMS from "../../helpers/secondsToHMS";
 
 export default function Song({
   track,
@@ -221,9 +221,9 @@ const AddToPlaylistButton = ({ track }: { track: TrackDetails }) => {
 };
 
 const PlayingGif = ({ track }: { track: TrackDetails }) => {
-  const currentTrack = useBoundStore((state) => state.nowPlaying.track);
-  const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
-  if (currentTrack !== null && currentTrack.id === track.id && isPlaying) {
+  const currentTrack = useBoundStore((state) => state.nowPlaying?.track);
+  const isPlaying = useBoundStore((state) => state.nowPlaying?.isPlaying);
+  if (currentTrack !== null && currentTrack?.id === track.id && isPlaying) {
     return <img src={playing} alt="playing" className="h-5 w-5" />;
   }
 };

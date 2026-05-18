@@ -6,7 +6,7 @@ import {
   screen,
 } from "@testing-library/react";
 import { afterEach, describe, expect, test } from "vitest";
-import { FollowButton } from "./FollowButton";
+import FollowButton from "./FollowButton";
 import { sampleArtist } from "../../api/samples";
 import { useBoundStore } from "../../store/store";
 

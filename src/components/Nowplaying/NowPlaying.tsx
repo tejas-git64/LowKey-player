@@ -28,7 +28,6 @@ import tick from "/svgs/tick.svg";
 import downloadIcon from "/svgs/download-icon.svg";
 import songfallback from "/fallbacks/song-fallback.webp";
 import artistfallback from "/fallbacks/artist-fallback.png";
-import "../../App.css";
 import Waveform from "../Waveform/Waveform";
 import { toggleFavorite } from "../../helpers/toggleFavorite";
 import { PLAYER_CONSTANTS } from "../../utils/utils";
@@ -36,8 +35,7 @@ import { getTrackImage } from "../../helpers/getTrackImage";
 import { useNavigate } from "react-router-dom";
 import { cleanString } from "../../helpers/cleanString";
 import { useResponsiveLayout } from "../../hooks/useResponsiveLayout";
-import { FollowButton } from "../FollowButton/FollowButton";
-import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";
+import FollowButton from "../FollowButton/FollowButton";
 
 export type RootStateType = {
   control: {
@@ -203,17 +201,16 @@ const NowPlaying = memo(() => {
           aria-label="Waveform and Progress Bar"
         >
           {/*Waveform*/}
-          {track?.downloadUrl && track.downloadUrl.length > 0 && (
+          {track?.downloadUrl && (
             <Waveform
               isReplay={isReplay}
               playCountRef={playCountRef}
-              audioUrl={track.downloadUrl[audioIndex]?.url}
+              audioUrl={track?.downloadUrl[audioIndex]?.url || ""}
               duration={Number(track?.duration)}
               volume={volume}
               songIndex={songIndex || 0}
               queueLength={queueSongs ? queueSongs.length : 0}
               continuePlayback={continuePlayback}
-              id={track.id}
               isMobileWidth={isMobileWidth}
             />
           )}
@@ -378,7 +375,6 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
   const setFavoriteSong = useBoundStore((state) => state.setFavoriteSong);
   const setShowPlayer = useBoundStore((state) => state.setShowPlayer);
   const setHistory = useBoundStore((state) => state.setHistory);
-  const recents = useBoundStore((state) => state.recents.history);
   const removeFavorite = useBoundStore((state) => state.removeFavorite);
   const favorites = useBoundStore((state) => state.favorites);
   const isFavorited = useMemo(
@@ -398,12 +394,6 @@ const PlayerOptions = ({ track }: { track: TrackDetails | null }) => {
   useEffect(() => {
     if (track !== null) setHistory(track);
   }, [track, setHistory]);
-
-  useEffect(() => {
-    saveToLocalStorage("last-recents", {
-      history: recents,
-    });
-  }, [recents]);
 
   return (
     <div

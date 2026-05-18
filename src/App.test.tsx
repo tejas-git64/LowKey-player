@@ -124,10 +124,9 @@ describe("App", () => {
         <RouterProvider router={memoryRouter} />
       </QueryClientProvider>,
     );
-    waitFor(() => {
-      const playlist = screen.getByTestId("playlist-page");
-      expect(playlist).toBeInTheDocument();
-    });
+
+    const playlist = await screen.findByTestId("playlist-page");
+    expect(playlist).toBeInTheDocument();
   });
 
   test("renders artist page for '/artists/:id'", () => {

@@ -43,6 +43,7 @@ import {
   mockedArtistSongData,
   mockedDataProps,
 } from "../../mocks/mocks";
+import { Suspense } from "react";
 
 vi.mock("react-router-dom", async (importOriginal) => {
   const actual = await importOriginal();
@@ -63,7 +64,6 @@ const mockedUseQuery = vi.mocked(useQuery);
 const mockedUseParams = vi.mocked(useParams);
 
 beforeEach(() => {
-  vi.useFakeTimers();
   globalThis.fetch = vi.fn();
   mockedUseParams.mockReturnValue({ id: id });
   mockedUseQuery.mockImplementation((options) => {
@@ -92,12 +92,11 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup();
-  vi.useRealTimers();
   vi.restoreAllMocks();
 });
 
 describe("ArtistPage", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/artists/${id}`]}>
@@ -105,23 +104,25 @@ describe("ArtistPage", () => {
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
-    const artistPage = screen.getByTestId("artist-page");
-
+    const artistPage = await screen.findByTestId("artist-page");
     expect(artistPage).toBeInTheDocument();
-    expect(artistPage).toHaveClass("home-fadein");
-    expect(artistPage).not.toHaveClass("home-fadeout");
+    await waitFor(() => {
+      expect(artistPage).toHaveClass("home-fadein");
+      expect(artistPage).not.toHaveClass("home-fadeout");
+    });
   });
   describe("ArtistInfo", () => {
-    test("should render", () => {
+    test("should render", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={[`/artists/${id}`]}>
-            <ArtistInfo id={id} />
+            <Suspense>
+              <ArtistInfo id={id} />
+            </Suspense>
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      expect(screen.getByTestId("artist-info")).toBeInTheDocument();
+      expect(await screen.findByTestId("artist-info")).toBeInTheDocument();
     });
     test("getArtistDetails should call url and return response", async () => {
       const mockApiResponse = { data: sampleArtist };
@@ -195,19 +196,19 @@ describe("ArtistPage", () => {
           expect((image as HTMLImageElement).src).toContain(artistfallback);
         });
       });
-      test("handleImageLoad should toggle fadein classes", () => {
+      test("handleImageLoad should toggle fadein classes", async () => {
         render(
           <QueryClientProvider client={new QueryClient()}>
             <MemoryRouter initialEntries={[`/artists/${id}`]}>
-              <ArtistInfo id={id} />
+              <Suspense>
+                <ArtistInfo id={id} />
+              </Suspense>
             </MemoryRouter>
           </QueryClientProvider>,
         );
-        vi.advanceTimersByTime(150);
-
-        const artistInfo = screen.getByTestId("artist-info");
-        const artistImage = screen.getByAltText("Artist name");
-        const artistTitle = screen.getByTestId("artist-title");
+        const artistInfo = await screen.findByTestId("artist-info");
+        const artistImage = await screen.findByAltText("Artist name");
+        const artistTitle = await screen.findByTestId("artist-title");
 
         expect(artistInfo).toHaveClass("home-fadeout");
         expect(artistImage).toHaveClass("image-fadeout");
@@ -218,7 +219,7 @@ describe("ArtistPage", () => {
 
         fireEvent.load(artistImage);
 
-        waitFor(() => {
+        await waitFor(() => {
           expect(artistInfo).toHaveClass("home-fadein");
           expect(artistImage).toHaveClass("image-fadein");
           expect(artistTitle).toHaveClass("song-fadein");
@@ -232,7 +233,9 @@ describe("ArtistPage", () => {
       const { unmount } = render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={[`/artists/${id}`]}>
-            <ArtistInfo id={id} />
+            <Suspense>
+              <ArtistInfo id={id} />
+            </Suspense>
           </MemoryRouter>
         </QueryClientProvider>,
       );
@@ -249,7 +252,9 @@ describe("ArtistPage", () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={[`/artists/${id}`]}>
-            <ArtistInfo id={id} />
+            <Suspense>
+              <ArtistInfo id={id} />
+            </Suspense>
           </MemoryRouter>
         </QueryClientProvider>,
       );
@@ -264,7 +269,9 @@ describe("ArtistPage", () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={[`/artists/${id}`]}>
-            <ArtistAlbums id={id} />
+            <Suspense>
+              <ArtistAlbums id={id} />
+            </Suspense>
           </MemoryRouter>
         </QueryClientProvider>,
       );
@@ -290,7 +297,9 @@ describe("ArtistPage", () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={[`/artists/${id}`]}>
-            <ArtistAlbums id={id} />
+            <Suspense>
+              <ArtistAlbums id={id} />
+            </Suspense>
           </MemoryRouter>
         </QueryClientProvider>,
       );
@@ -304,7 +313,9 @@ describe("ArtistPage", () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={[`/artists/${id}`]} initialIndex={0}>
-            <ArtistAlbums id={id} />
+            <Suspense>
+              <ArtistAlbums id={id} />
+            </Suspense>
           </MemoryRouter>
         </QueryClientProvider>,
       );
@@ -322,7 +333,7 @@ describe("ArtistPage", () => {
         expect(path).toBe(`/albums/${id}`);
       });
     });
-    test("should not render individual Albums if data is not present", () => {
+    test("should not render individual Albums if data is not present", async () => {
       mockedUseQuery.mockReturnValue({
         ...mockedArtistAlbumData,
         data: undefined,
@@ -330,17 +341,23 @@ describe("ArtistPage", () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={[`/artists/${id}`]}>
-            <ArtistAlbums id={id} />
+            <Suspense>
+              <ArtistAlbums id={id} />
+            </Suspense>
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      expect(screen.queryByTestId("albums-container")).toBeNull();
+      expect(
+        (await screen.findByTestId("albums-container")).childElementCount,
+      ).toBe(0);
     });
     test("getAlbumImage should get the image url if available else return albumfallback", () => {
       const { unmount } = render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={[`/artists/${id}`]}>
-            <ArtistAlbums id={id} />
+            <Suspense>
+              <ArtistAlbums id={id} />
+            </Suspense>
           </MemoryRouter>
         </QueryClientProvider>,
       );
@@ -358,7 +375,9 @@ describe("ArtistPage", () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={[`/artists/${id}`]}>
-            <ArtistAlbums id={id} />
+            <Suspense>
+              <ArtistAlbums id={id} />
+            </Suspense>
           </MemoryRouter>
         </QueryClientProvider>,
       );
@@ -371,16 +390,17 @@ describe("ArtistPage", () => {
     });
   });
   describe("ArtistSongs", () => {
-    test("should render", () => {
+    test("should render", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={[`/artists/${id}`]}>
-            <ArtistSongs id={id} />
+            <Suspense>
+              <ArtistSongs id={id} />
+            </Suspense>
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      vi.advanceTimersByTime(150);
-      expect(screen.getByTestId("artist-songs")).toBeInTheDocument();
+      expect(await screen.findByTestId("artist-songs")).toBeInTheDocument();
     });
     test("getArtistSongs should call url and return response", async () => {
       const mockSongs = [sampleTrack];

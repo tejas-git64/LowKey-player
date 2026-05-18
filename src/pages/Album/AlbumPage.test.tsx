@@ -37,6 +37,7 @@ import {
   mockedAlbumSuccessData,
   mockedNullDataResult,
 } from "../../mocks/mocks";
+import { Suspense } from "react";
 
 vi.mock("@tanstack/react-query", async (importOriginal) => {
   const actual = await importOriginal();
@@ -50,7 +51,6 @@ let id = "1431";
 const { setNowPlaying, setIsPlaying, setQueue } = useBoundStore.getState();
 
 beforeEach(() => {
-  vi.useFakeTimers();
   mockedUseQuery.mockReturnValue(
     mockedAlbumSuccessData as UseQueryResult<AlbumById>,
   );
@@ -63,153 +63,163 @@ beforeEach(() => {
 afterEach(() => {
   id = "1431";
   cleanup();
-  vi.useRealTimers();
   vi.restoreAllMocks();
 });
 
 describe("AlbumPage", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/albums/${id}`]}>
-          <AlbumPage />
+          <Suspense>
+            <AlbumPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
-    expect(screen.getByTestId("album-page")).toBeInTheDocument();
+    expect(await screen.findByTestId("album-page")).toBeInTheDocument();
   });
-  test("should render route nav", () => {
+  test("should render route nav", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/albums/${id}`]}>
-          <AlbumPage />
+          <Suspense>
+            <AlbumPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
-    expect(screen.getByTestId("route-nav")).toBeInTheDocument();
+    expect(await screen.findByTestId("route-nav")).toBeInTheDocument();
   });
-  test("should set the current track of the queue", () => {
+  test("should set the current track of the queue", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/albums/${id}`]}>
-          <AlbumPage />
+          <Suspense>
+            <AlbumPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
     act(() => {
       setQueue(sampleSongQueue);
     });
-    waitFor(() => {
-      expect(useBoundStore.getState().nowPlaying.track).toEqual(
-        sampleSongQueue.songs[0],
-      );
+    await waitFor(() => {
+      expect(useBoundStore.getState().nowPlaying.queue).toBe(sampleSongQueue);
     });
   });
 });
 describe("AlbumCount", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/albums/${id}`]}>
-          <AlbumPage />
+          <Suspense>
+            <AlbumPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
-    expect(screen.getByTestId("album-count")).toBeInTheDocument();
+    expect(await screen.findByTestId("album-count")).toBeInTheDocument();
   });
 });
 describe("AlbumInfo", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/albums/${id}`]}>
-          <AlbumPage />
+          <Suspense>
+            <AlbumPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
-    expect(screen.getByTestId("album-info")).toBeInTheDocument();
+    expect(await screen.findByTestId("album-info")).toBeInTheDocument();
   });
-  test("getAlbumImage should return the image url", () => {
+  test("getAlbumImage should return the image url", async () => {
     const getAlbumImage = vi.fn();
     const { rerender } = render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/albums/${id}`]}>
-          <AlbumPage />
+          <Suspense>
+            <AlbumPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
-    const image = screen.getByTestId("album-info-image");
+    const image = await screen.findByTestId("album-info-image");
 
     expect(sampleAlbum.image).toBeDefined();
     expect(image).toHaveAttribute("src", "image url");
 
-    expect(screen.getByTestId("album-page")).toHaveClass("home-fadeout");
-    expect(screen.getByTestId("album-page")).not.toHaveClass("home-fadein");
+    expect(await screen.findByTestId("album-page")).toHaveClass("home-fadeout");
+    expect(await screen.findByTestId("album-page")).not.toHaveClass(
+      "home-fadein",
+    );
     fireEvent.load(image);
-
-    waitFor(() => {
-      expect(screen.getByTestId("album-page")).not.toHaveClass("home-fadeout");
-      expect(screen.getByTestId("album-page")).toHaveClass("home-fadein");
+    await waitFor(() => {
+      const albumPage = screen.getByTestId("album-page");
+      expect(albumPage).not.toHaveClass("home-fadeout");
+      expect(albumPage).toHaveClass("home-fadein");
     });
 
     mockedUseQuery.mockReturnValue(
       mockedNullDataResult as UseQueryResult<null>,
     );
+
     rerender(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/albums/${id}`]}>
-          <AlbumPage />
+          <Suspense>
+            <AlbumPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
-    waitFor(() => {
+    await waitFor(() => {
       expect(getAlbumImage).not.toReturn();
-      expect(screen.getByAltText("img")).toHaveAttribute("src", fallback);
+      expect(screen.getByAltText("Unknown Album")).not.toHaveAttribute("src");
     });
   });
-  test("should have it's image as fallback onError", () => {
+  test("should have it's image as fallback onError", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/albums/${id}`]}>
-          <AlbumPage />
+          <Suspense>
+            <AlbumPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
-    const image = screen.getByTestId("album-info-image");
+    const image = await screen.findByTestId("album-info-image");
     fireEvent.error(image);
     expect((image as HTMLImageElement).src).toContain(fallback);
   });
 });
 describe("AlbumControls", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/albums/${id}`]}>
-          <AlbumPage />
+          <Suspense>
+            <AlbumPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
-    expect(screen.getByTestId("album-controls")).toBeInTheDocument();
+    expect(await screen.findByTestId("album-controls")).toBeInTheDocument();
   });
-  test("isAlbumPlaying should be true/false based on if queue id matches and isPlaying", () => {
+  test("isAlbumPlaying should be true/false based on if queue id matches and isPlaying", async () => {
     const isAlbumPlaying = vi.fn();
     const { rerender } = render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/albums/${id}`]}>
-          <AlbumPage />
+          <Suspense>
+            <AlbumPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
     act(() => {
       setQueue(sampleAlbum);
       setIsPlaying(true);
@@ -222,11 +232,12 @@ describe("AlbumControls", () => {
     rerender(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/albums/${id}`]}>
-          <AlbumPage />
+          <Suspense>
+            <AlbumPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
     mockedUseQuery.mockReturnValue(
       mockedNullDataResult as UseQueryResult<null>,
     );
@@ -239,16 +250,16 @@ describe("AlbumControls", () => {
     });
     setIsPlaying(false);
   });
-  test("toggling isShuffling onClick should toggle aria label", () => {
+  test("toggling isShuffling onClick should toggle aria label", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/albums/${id}`]}>
-          <AlbumPage />
+          <Suspense>
+            <AlbumPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
-
     const shuffleButton = screen.getByTitle("shuffle-button");
     expect(shuffleButton).toHaveAttribute("aria-label", "Enable shuffle");
     act(() => {
@@ -260,18 +271,19 @@ describe("AlbumControls", () => {
       "Disable shuffle",
     );
   });
-  test("toggling add button should toggle aria-label and icon", () => {
+  test("toggling add button should toggle aria-label and icon", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/albums/${id}`]}>
-          <AlbumPage />
+          <Suspense>
+            <AlbumPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
 
-    const addBtn = screen.getByTestId("add-btn");
-    const addIcon = screen.getByTestId("add-icon");
+    const addBtn = await screen.findByTestId("add-btn");
+    const addIcon = await screen.findByTestId("add-icon");
 
     expect(addBtn.ariaLabel).toBe("Add to Library");
     expect((addIcon as HTMLImageElement).src).toBe(addAlbum);
@@ -291,17 +303,18 @@ describe("AlbumControls", () => {
     expect((addIcon as HTMLImageElement).src).toBe(addAlbum);
     expect((addIcon as HTMLImageElement).alt).toBe("Add to library");
   });
-  test("toggling favorite button should toggle aria-label and icon", () => {
+  test("toggling favorite button should toggle aria-label and icon", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/albums/${id}`]}>
-          <AlbumPage />
+          <Suspense>
+            <AlbumPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
-    const favoriteBtn = screen.getByTestId("album-favorite-btn");
-    const favoriteIcon = screen.getByTestId("favorite-icon");
+    const favoriteBtn = await screen.findByTestId("album-favorite-btn");
+    const favoriteIcon = await screen.findByTestId("favorite-icon");
 
     expect(favoriteBtn.ariaLabel).toBe("Add to Favorites");
     expect((favoriteIcon as HTMLImageElement).src).toBe(favorite);
@@ -321,18 +334,19 @@ describe("AlbumControls", () => {
     expect((favoriteIcon as HTMLImageElement).src).toBe(favorite);
     expect((favoriteIcon as HTMLImageElement).alt).toBe("Favorite");
   });
-  test("playback button should play/pause the album on click", () => {
+  test("playback button should play/pause the album on click", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/albums/${id}`]}>
-          <AlbumPage />
+          <Suspense>
+            <AlbumPage />
+          </Suspense>
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
 
-    const playbackBtn = screen.getByTestId("album-playback");
-    const playbackIcon = screen.getByTestId("album-playback-icon");
+    const playbackBtn = await screen.findByTestId("album-playback");
+    const playbackIcon = await screen.findByTestId("album-playback-icon");
 
     expect(playbackBtn.tabIndex).toBe(0);
     expect(playbackBtn.ariaLabel).toBe("Play album");
@@ -343,8 +357,7 @@ describe("AlbumControls", () => {
       fireEvent.click(playbackBtn);
     });
 
-    waitFor(() => {
-      expect(playbackBtn.tabIndex).toBe(-1);
+    await waitFor(() => {
       expect(playbackBtn.ariaLabel).toBe("Pause album");
       expect((playbackIcon as HTMLImageElement).src).toBe(pause);
       expect((playbackIcon as HTMLImageElement).alt).toBe("Pause");

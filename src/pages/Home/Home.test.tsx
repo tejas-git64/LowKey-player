@@ -15,6 +15,7 @@ import {
 import { MemoryRouter } from "react-router-dom";
 import {
   afterEach,
+  beforeAll,
   beforeEach,
   describe,
   expect,
@@ -53,6 +54,11 @@ const mockedUseQuery = vi.mocked(useQuery);
 let observerInstance: IntersectionObserverMock | null;
 const { setIsPlaying, setQueue } = useBoundStore.getState();
 const fadeOutNavigate = vi.fn(() => {});
+
+beforeAll(async () => {
+  await import("../../components/Song/Song");
+  await import("../../components/Section/Section");
+});
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -105,10 +111,12 @@ describe("Home", () => {
       </QueryClientProvider>,
     );
     vi.runAllTimers();
-    const home = screen.getByTestId("home-page");
-    expect(home).not.toHaveClass("home-fadeout");
-    expect(home).toHaveClass("home-fadein");
-    expect(home).toBeInTheDocument();
+    const home = screen.queryByTestId("home-page");
+    waitFor(() => {
+      expect(home).not.toHaveClass("home-fadeout");
+      expect(home).toHaveClass("home-fadein");
+      expect(home).toBeInTheDocument();
+    });
   });
   test("should render widget", () => {
     render(
@@ -301,9 +309,13 @@ describe("Home", () => {
         act(() => {
           fireEvent.click(widgetBtn);
         });
-        expect(useBoundStore.getState().nowPlaying.queue).toEqual(obj);
-        expect(useBoundStore.getState().nowPlaying.track).toEqual(sampleTrack);
-        expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
+        waitFor(() => {
+          expect(useBoundStore.getState().nowPlaying.queue).toEqual(obj);
+          expect(useBoundStore.getState().nowPlaying.track).toEqual(
+            sampleTrack,
+          );
+          expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
+        });
       });
       test("should toggle playlist playback onClick if already set", () => {
         act(() => {

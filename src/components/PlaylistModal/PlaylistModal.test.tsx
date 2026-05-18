@@ -54,9 +54,9 @@ describe("Playlist Modal", () => {
         <Layout />
       </MemoryRouter>,
     );
-    const playlistModal = screen.getByTestId(
+    const playlistModal = (await screen.findByTestId(
       "playlist-modal",
-    ) as HTMLDivElement;
+    )) as HTMLDivElement;
     expect(playlistModal).toHaveClass("hidden");
     act(() => {
       setRevealCreation(true);
@@ -68,13 +68,13 @@ describe("Playlist Modal", () => {
       expect(modal).toHaveClass("flex");
     });
   });
-  test("should hide the modal on clicking the close button", () => {
+  test("should hide the modal on clicking the close button", async () => {
     render(<PlaylistModal ref={ref} />);
     act(() => {
       fireEvent.click(screen.getByTestId("close-btn"));
     });
-    waitFor(() => {
-      expect(screen.getByTestId("playlist-modal")).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId("playlist-modal")).toHaveClass("hidden");
     });
   });
   describe("input element", () => {

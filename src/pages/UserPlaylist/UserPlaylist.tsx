@@ -1,20 +1,20 @@
-import RouteNav from "../../components/RouteNav/RouteNav";
-import playlistfallback from "/fallbacks/playlist-fallback.webp";
+import { lazy, memo, startTransition, useEffect, useMemo, useRef } from "react";
+import { preload } from "react-dom";
+import { useParams } from "react-router-dom";
+import { useBoundStore } from "../../store/store";
 import play from "/svgs/play-icon.svg";
 import pause from "/svgs/pause-icon.svg";
-import { useBoundStore } from "../../store/store";
-import { useParams } from "react-router-dom";
+import playlistfallback from "/fallbacks/playlist-fallback.webp";
 import {
   LocalLibrary,
   TrackDetails,
   UserPlaylist,
 } from "../../types/GlobalTypes";
-import Song from "../../components/Song/Song";
-import { memo, startTransition, useEffect, useMemo, useRef } from "react";
-import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
-import { animateScreen } from "../../helpers/animateScreen";
 import useClearTimer from "../../hooks/useClearTimer";
-import { preload } from "react-dom";
+import { animateScreen } from "../../helpers/animateScreen";
+import handleCollectionPlayback from "../../helpers/handleCollectionPlayback";
+const Song = lazy(() => import("../../components/Song/Song"));
+const RouteNav = lazy(() => import("../../components/RouteNav/RouteNav"));
 
 preload(playlistfallback, {
   as: "image",

@@ -18,6 +18,9 @@ import {
 } from "../../api/samples";
 import { useBoundStore } from "../../store/store";
 
+vi.mock("../../components/Banner/Banner", () => ({
+  default: () => <div data-testid="banner" />,
+}));
 const getItemMock: MockInstance<(key: string) => string | null> = vi.spyOn(
   Storage.prototype,
   "getItem",
@@ -42,16 +45,20 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup();
+  vi.restoreAllMocks();
+  vi.clearAllMocks();
 });
 
 describe("Layout", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(
       <MemoryRouter>
         <Layout />
       </MemoryRouter>,
     );
-    expect(screen.getByTestId("layout")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId("layout")).toBeInTheDocument();
+    });
   });
   test("should set saves from localStorage if available", () => {
     render(
@@ -73,14 +80,14 @@ describe("Layout", () => {
       ).toBeGreaterThan(0);
     });
   });
-  test("should not set saves from localStorage if not available", async () => {
+  test("should not set saves from localStorage if not available", () => {
     getItemMock.mockReturnValue(null);
     render(
       <MemoryRouter>
         <Layout />
       </MemoryRouter>,
     );
-    await waitFor(() => {
+    waitFor(() => {
       expect(localStorage.getItem("local-library")).toBeNull();
       expect(useBoundStore.getState().library.albums.length).toBe(0);
       expect(useBoundStore.getState().library.playlists.length).toBe(0);

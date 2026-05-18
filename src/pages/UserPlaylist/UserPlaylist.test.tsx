@@ -61,7 +61,7 @@ afterEach(() => {
 });
 
 describe("UserPlaylist", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={["/userplaylists/39"]}>
@@ -69,7 +69,9 @@ describe("UserPlaylist", () => {
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    expect(screen.getByTestId("userplaylist-page")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId("userplaylist-page")).toBeInTheDocument();
+    });
   });
   test("should not set the playlist from localStorage", () => {
     const sampleUserPlaylist = { id: 39, name: "My Test Playlist", songs: [] };

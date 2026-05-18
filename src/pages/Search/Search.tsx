@@ -1,5 +1,9 @@
-import Searchbar from "../../components/Searchbar/Searchbar";
+import { lazy, memo, useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useBoundStore } from "../../store/store";
+import fallback from "/fallbacks/playlist-fallback.webp";
+import songfallback from "/fallbacks/song-fallback.webp";
+import artistfallback from "/fallbacks/artist-fallback.png";
 import {
   AlbumResult,
   PlaylistResult,
@@ -7,15 +11,11 @@ import {
   SongAlbumResult,
   TrackDetails,
 } from "../../types/GlobalTypes";
-import fallback from "/fallbacks/playlist-fallback.webp";
-import songfallback from "/fallbacks/song-fallback.webp";
-import artistfallback from "/fallbacks/artist-fallback.png";
-import { Link, useNavigate } from "react-router-dom";
-import RouteNav from "../../components/RouteNav/RouteNav";
-import { memo, useEffect, useRef } from "react";
+import { defaultSearchData } from "../../utils/utils";
 import { cleanString } from "../../helpers/cleanString";
 import { animateScreen } from "../../helpers/animateScreen";
-import { defaultSearchData } from "../../utils/utils";
+const Searchbar = lazy(() => import("../../components/Searchbar/Searchbar"));
+const RouteNav = lazy(() => import("../../components/RouteNav/RouteNav"));
 
 export default function Search() {
   const search = useBoundStore((state) => state.search);

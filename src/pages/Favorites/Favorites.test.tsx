@@ -40,7 +40,7 @@ afterEach(() => {
 });
 
 describe("Favorites", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={["/favorites"]}>
@@ -48,7 +48,9 @@ describe("Favorites", () => {
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    expect(screen.getByTestId("favorites-page")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId("favorites-page")).toBeInTheDocument();
+    });
   });
   test("should have no favorites initially", () => {
     render(
@@ -69,7 +71,7 @@ describe("Favorites", () => {
       });
     });
 
-    test("should render favorite albums", () => {
+    test("should render favorite albums", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/favorites"]}>
@@ -77,10 +79,12 @@ describe("Favorites", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const favorites = screen.getByTestId("favorite-albums");
-      expect(favorites).toBeInTheDocument();
+      await waitFor(() => {
+        const favorites = screen.getByTestId("favorite-albums");
+        expect(favorites).toBeInTheDocument();
+      });
     });
-    test("should render favorite playlists", () => {
+    test("should render favorite playlists", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/favorites"]}>
@@ -88,10 +92,12 @@ describe("Favorites", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const favorites = screen.getByTestId("favorite-playlists");
-      expect(favorites).toBeInTheDocument();
+      await waitFor(() => {
+        const favorites = screen.getByTestId("favorite-playlists");
+        expect(favorites).toBeInTheDocument();
+      });
     });
-    test("should render favorite songs", () => {
+    test("should render favorite songs", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/favorites"]}>
@@ -99,8 +105,10 @@ describe("Favorites", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const favorites = screen.getByTestId("favorite-songs");
-      expect(favorites).toBeInTheDocument();
+      await waitFor(() => {
+        const favorites = screen.getByTestId("favorite-songs");
+        expect(favorites).toBeInTheDocument();
+      });
     });
   });
   describe("FavoriteControls", () => {

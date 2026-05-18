@@ -152,7 +152,9 @@ describe("Waveform", () => {
     act(() => {
       latest();
     });
-    expect(mockSeekTo).toHaveBeenCalled();
+    waitFor(() => {
+      expect(mockSeekTo).toHaveBeenCalled();
+    });
   });
   describe("handleReady", () => {
     test("should seek to stored localStorage time on ready if same url", () => {

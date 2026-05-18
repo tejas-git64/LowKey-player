@@ -62,7 +62,7 @@ const Pill = memo(({ track }: { track: TrackDetails }) => {
       <div className="flex h-full w-[87%] items-center justify-between">
         <div className="ml-3 flex h-[50px] w-[55%] flex-col items-start justify-center border-white leading-4">
           <p className="line-clamp-1 h-auto w-full text-sm text-white">
-            {track.name ? cleanString(track.name) : ""}
+            {track.name ? cleanString(track.name) : "Unknown Track"}
           </p>
           <p
             data-testid="primary-artist-name"
@@ -70,7 +70,7 @@ const Pill = memo(({ track }: { track: TrackDetails }) => {
           >
             {track.artists.primary[0]
               ? cleanString(track.artists.primary[0].name)
-              : ""}
+              : "Unknown Artist"}
           </p>
         </div>
         <div className="flex h-full w-[130px] items-center justify-around">
