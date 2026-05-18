@@ -12,6 +12,7 @@ import {
 import { immer } from "zustand/middleware/immer";
 import { produce } from "immer";
 import { devtools } from "zustand/middleware";
+import { saveToLocalStorage } from "../helpers/saveToLocalStorage";
 
 export type StoreType = {
   greeting: string;
@@ -165,6 +166,9 @@ export const useBoundStore = create<StoreType>()(
               !state.favorites.songs.some((s: TrackDetails) => s.id === song.id)
             ) {
               state.favorites.songs.push(song);
+              saveToLocalStorage("local-favorites", {
+                favorites: state.favorites.songs,
+              });
               get().setActivity(`Added ${song.name} to favorites 💘`);
             }
           }),
