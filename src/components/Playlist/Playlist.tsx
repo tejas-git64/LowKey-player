@@ -1,6 +1,6 @@
 import { PlaylistOfList } from "../../types/GlobalTypes";
 import fallback from "/fallbacks/playlist-fallback.webp";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 export default function Playlist({
   id,
@@ -11,23 +11,23 @@ export default function Playlist({
 }: PlaylistOfList & { i: number; fadeOutNavigate: (str: string) => void }) {
   const playlistImgEl = useRef<HTMLImageElement>(null);
 
-  const getPlaylistImage = () => {
+  const { newImage } = useMemo(() => {
+    let newImage = fallback;
     if (image) {
       const obj = image.find((img) => img.quality === "150x150");
-      if (obj) return obj.url;
-      else return fallback;
+      newImage = obj?.url || fallback;
     }
-    return fallback;
-  };
+    return { newImage };
+  }, [image]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      playlistImgEl.current?.classList.remove("image-fadeout");
-      playlistImgEl.current?.classList.add("image-fadein");
+      if (playlistImgEl.current) {
+        playlistImgEl.current.classList.remove("image-fadeout");
+        playlistImgEl.current.classList.add("image-fadein");
+      }
     }, i * 50);
-    return () => {
-      clearTimeout(timer);
-    };
+    return () => clearTimeout(timer);
   }, [i]);
 
   return (
@@ -39,7 +39,7 @@ export default function Playlist({
       <div className="h-[150px] w-[150px] overflow-hidden">
         <img
           ref={playlistImgEl}
-          src={getPlaylistImage()}
+          src={newImage}
           alt={name}
           loading="eager"
           fetchPriority="high"
