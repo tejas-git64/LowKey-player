@@ -1,10 +1,9 @@
 /// <reference types="vitest/config" />
-import react from "@vitejs/plugin-react-swc";
+import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import { EsLinter, linterPlugin } from "vite-plugin-linter";
 import preload from "vite-plugin-preload";
 
-export default defineConfig((config) => ({
+export default defineConfig(() => ({
   build: {
     rollupOptions: {
       external: (id) => /\.(test|spec)\.(ts|js)x?$/.test(id),
@@ -33,18 +32,6 @@ export default defineConfig((config) => ({
   },
   plugins: [
     react(),
-    linterPlugin({
-      include: ["./src/**/*.ts", "./src/**/*.tsx"],
-      linters: [
-        new EsLinter({
-          configEnv: config,
-          serveOptions: { clearCacheOnStart: true },
-        }),
-      ],
-      build: {
-        includeMode: "filesInFolder",
-      },
-    }),
     preload({
       mode: "preload",
       includeCss: true,
