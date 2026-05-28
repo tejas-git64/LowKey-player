@@ -3,11 +3,11 @@ import { describe, expect, test } from "vitest";
 import SongFallback from "./SongFallback";
 
 describe("SongFallback", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(<SongFallback isWidgetSong={true} />);
     expect(screen.getByTestId("song-fallback")).toBeInTheDocument();
   });
-  test("should contain respective classes when it is a widget song", () => {
+  test("should contain respective classes when it is a widget song", async () => {
     render(<SongFallback isWidgetSong={true} />);
     const name = screen.getByTestId("name");
     const artists = screen.getByTestId("artists");
@@ -22,7 +22,7 @@ describe("SongFallback", () => {
       "mr-[1vw] w-10 flex-shrink-0 sm:ml-[4vw] sm:mr-2 md:mx-[2vw] xmd:mx-[3vw] lg:mx-[1vw] xlg:ml-[1.5vw] xxl:mx-[0.5vw] 2xl:mx-2",
     );
   });
-  test("should contain respective classes when it is a widget song", () => {
+  test("should contain respective classes when it is a widget song", async () => {
     render(<SongFallback isWidgetSong={false} />);
     const name = screen.getByTestId("name");
     const artists = screen.getByTestId("artists");

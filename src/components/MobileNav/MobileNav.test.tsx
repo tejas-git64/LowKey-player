@@ -8,7 +8,7 @@ afterEach(() => {
 });
 
 describe("MobileNav", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(
       <MemoryRouter>
         <MobileNav />
@@ -16,7 +16,7 @@ describe("MobileNav", () => {
     );
     expect(screen.getByRole("navigation")).toBeInTheDocument();
   });
-  test("should contain navigation links", () => {
+  test("should contain navigation links", async () => {
     render(
       <MemoryRouter>
         <MobileNav />

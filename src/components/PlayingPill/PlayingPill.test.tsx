@@ -6,18 +6,23 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import PlayingPill from "./PlayingPill";
 import { useBoundStore } from "../../store/store";
 import { sampleTrack } from "../../api/samples";
-import play from "/svgs/play-icon.svg";
-import tick from "/svgs/icons8-tick.svg";
-import add from "/svgs/icons8-addplaylist-28.svg";
-import pause from "/svgs/pause-icon.svg";
-import favorite from "/svgs/icons8-heart.svg";
-import favorited from "/svgs/icons8-favorited.svg";
-import songfallback from "/fallbacks/song-fallback.webp";
+import play from "../../assets/svgs/play-icon.svg";
+import tick from "../../assets/svgs/icons8-tick.svg";
+import add from "../../assets/svgs/icons8-addplaylist-28.svg";
+import pause from "../../assets/svgs/pause-icon.svg";
+import favorite from "../../assets/svgs/icons8-heart.svg";
+import favorited from "../../assets/svgs/icons8-favorited.svg";
+const songfallback = "/fallbacks/song-fallback.webp";
 import { MemoryRouter } from "react-router-dom";
+import NowPlaying from "../Nowplaying/NowPlaying";
+
+vi.mock("../Waveform/Waveform", () => ({
+  default: () => <div data-testid="waveform-container" />,
+}));
 
 const { setNowPlaying, setToUserPlaylist, setUserPlaylist } =
   useBoundStore.getState();
@@ -44,34 +49,34 @@ function getPlaylist() {
 }
 
 describe("PlayingPill", () => {
-  test("should contain track", () => {
+  test("should contain track", async () => {
     render(<PlayingPill />);
     const track = useBoundStore.getState().nowPlaying.track;
     expect(track).toBeDefined();
   });
-  test("pill should contain track id", () => {
+  test("pill should contain track id", async () => {
     render(<PlayingPill />);
     const track = useBoundStore.getState().nowPlaying.track;
     expect(track?.id).toBeDefined();
   });
-  test("track should contain id", () => {
+  test("track should contain id", async () => {
     render(<PlayingPill />);
     const track = useBoundStore.getState().nowPlaying.track;
     expect(track?.image).toBeDefined();
   });
-  test("should contain class 'flex' if a track is currently present", () => {
+  test("should contain class 'flex' if a track is currently present", async () => {
     render(<PlayingPill />);
     expect(screen.getByTestId("playing-pill")).toBeDefined();
     expect(screen.getByTestId("playing-pill")).toHaveClass("flex");
   });
-  test("should not render if no track is playing", () => {
+  test("should not render if no track is playing", async () => {
     act(() => {
       setNowPlaying(null);
     });
     render(<PlayingPill />);
     expect(screen.queryByTestId("playing-pill")).not.toBeInTheDocument();
   });
-  test("should contain class 'hidden' if a track is currently present", () => {
+  test("should contain class 'hidden' if a track is currently present", async () => {
     act(() => {
       setNowPlaying({ ...sampleTrack, id: "" });
     });
@@ -79,53 +84,53 @@ describe("PlayingPill", () => {
     expect(screen.getByTestId("playing-pill")).toBeDefined();
     expect(screen.getByTestId("playing-pill")).toHaveClass("hidden");
   });
-  test("should find playlists that have desired track", () => {
+  test("should find playlists that have desired track", async () => {
     act(() => {
       setToUserPlaylist(sampleTrack, 12);
     });
     const playlist = getPlaylist();
     if (playlist) expect(playlist.id).toBe(12);
   });
-  test("should contain track image", () => {
+  test("should contain track image", async () => {
     render(<PlayingPill />);
     expect(screen.getByAltText("Track3")).toHaveAttribute("src", "image url");
   });
-  test("should contain songfallback if no track image", () => {
+  test("should contain songfallback if no track image", async () => {
     act(() => {
       setNowPlaying({ ...sampleTrack, image: [] });
     });
     render(<PlayingPill />);
-    waitFor(() => {
+    await waitFor(() => {
       const image = screen.getByAltText("Track3");
       expect((image as HTMLImageElement).src).toContain(songfallback);
     });
   });
-  test("should contain fallback image onError", () => {
+  test("should contain fallback image onError", async () => {
     render(<PlayingPill />);
     fireEvent.error(screen.getByAltText("Track3"));
     expect(screen.getByAltText("Track3")).toHaveAttribute("src", songfallback);
   });
-  test("should show track name if track is present", () => {
+  test("should show track name if track is present", async () => {
     render(<PlayingPill />);
     expect(screen.getByText(sampleTrack.name)).toBeInTheDocument();
   });
-  test("should not show track name if track name is not present", () => {
+  test("should not show track name if track name is not present", async () => {
     act(() => {
       setNowPlaying({ ...sampleTrack, name: "" });
     });
     render(<PlayingPill />);
-    waitFor(() => {
-      expect(screen.getByText(sampleTrack.name)).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByText(sampleTrack.name)).not.toBeInTheDocument();
     });
   });
-  test("should show primary artist name", () => {
+  test("should show primary artist name", async () => {
     render(<PlayingPill />);
     expect(sampleTrack.artists).toBeDefined();
     expect(screen.getByTestId("primary-artist-name").textContent).toBe(
       "Artist name",
     );
   });
-  test("should not show primary artist name if not present", () => {
+  test("should not show primary artist name if not present", async () => {
     act(() => {
       setNowPlaying({
         ...sampleTrack,
@@ -137,9 +142,11 @@ describe("PlayingPill", () => {
     });
     render(<PlayingPill />);
 
-    expect(screen.getByTestId("primary-artist-name").textContent).toBe("Unknown Artist");
+    expect(screen.getByTestId("primary-artist-name").textContent).toBe(
+      "Unknown Artist",
+    );
   });
-  test("should set the track to be added to a playlist and show modal on button click", () => {
+  test("should set the track to be added to a playlist and show modal on button click", async () => {
     render(<PlayingPill />);
     act(() => {
       fireEvent.click(screen.getByTestId("add-to-playlist-btn"));
@@ -147,12 +154,12 @@ describe("PlayingPill", () => {
     expect(useBoundStore.getState().creationTrack).toBe(sampleTrack);
     expect(useBoundStore.getState().revealCreation).toBe(true);
   });
-  test("should show add icon if the track is not added to a playlist", () => {
+  test("should show add icon if the track is not added to a playlist", async () => {
     render(<PlayingPill />);
     const image = screen.getByAltText("add-to-playlist");
     expect((image as HTMLImageElement).src).toContain(add);
   });
-  test("should show tick icon if the song is added to a track", () => {
+  test("should show tick icon if the song is added to a track", async () => {
     act(() => {
       setUserPlaylist({
         id: 10,
@@ -165,12 +172,12 @@ describe("PlayingPill", () => {
     const image = screen.getByAltText("add-to-playlist");
     expect((image as HTMLImageElement).src).toContain(tick);
   });
-  test("should show play icon if not playing", () => {
+  test("should show play icon if not playing", async () => {
     render(<PlayingPill />);
     expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(false);
     expect(screen.getByAltText("play-icon")).toHaveAttribute("src", play);
   });
-  test("should show pause icon if playing", () => {
+  test("should show pause icon if playing", async () => {
     render(<PlayingPill />);
     act(() => {
       fireEvent.click(screen.getByTestId("play-btn"));
@@ -179,23 +186,23 @@ describe("PlayingPill", () => {
     expect(screen.getByAltText("play-icon")).toHaveAttribute("src", pause);
   });
   test("shows mobile player on clicking it", () => {
-    act(() => {
-      globalThis.innerWidth = 450;
-      useBoundStore.getState().setNowPlaying(sampleTrack);
-    });
     render(
       <MemoryRouter initialEntries={["/search"]}>
+        <NowPlaying />
         <PlayingPill />
       </MemoryRouter>,
     );
     act(() => {
-      fireEvent.click(screen.getByTestId("playing-pill"));
+      globalThis.innerWidth = 450;
+      useBoundStore.getState().setNowPlaying(sampleTrack);
+      useBoundStore.getState().setShowPlayer(true);
     });
+    fireEvent.click(screen.getByTestId("playing-pill"));
     waitFor(() => {
       expect(screen.getByTestId("now-playing")).toBeInTheDocument();
     });
   });
-  test("should show relevant icons on calling toggleFavorite", () => {
+  test("should show relevant icons on calling toggleFavorite", async () => {
     render(<PlayingPill />);
     expect(screen.getByAltText("favorite")).toHaveAttribute("src", favorite);
     act(() => {

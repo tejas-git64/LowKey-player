@@ -6,15 +6,7 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
-import {
-  afterAll,
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  test,
-  vi,
-} from "vitest";
+import { afterAll, afterEach, describe, expect, test, vi } from "vitest";
 import PlaylistModal from "./PlaylistModal";
 import { useBoundStore } from "../../store/store";
 import { createRef } from "react";
@@ -43,7 +35,7 @@ afterAll(() => {
 });
 
 describe("Playlist Modal", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(<PlaylistModal ref={ref} />);
     expect(screen.getByTestId("playlist-modal")).toBeInTheDocument();
   });
@@ -78,7 +70,7 @@ describe("Playlist Modal", () => {
     });
   });
   describe("input element", () => {
-    test("should set the playlist name onChange", () => {
+    test("should set the playlist name onChange", async () => {
       render(<PlaylistModal ref={ref} />);
       const input = screen.getByPlaceholderText("Playlist name here..");
       (input as HTMLInputElement).value = "new name";
@@ -126,7 +118,7 @@ describe("Playlist Modal", () => {
         );
       });
     });
-    test("should not to create playlist if other keys are pressed", () => {
+    test("should not to create playlist if other keys are pressed", async () => {
       render(<PlaylistModal ref={ref} />);
       const input = screen.getByPlaceholderText("Playlist name here..");
       (input as HTMLInputElement).value = "Jukebox";
@@ -134,100 +126,82 @@ describe("Playlist Modal", () => {
       expect(useBoundStore.getState().library.userPlaylists.length).toBe(0);
     });
   });
-  test("create playlist button should create a new playlist on click", () => {
+  test("create playlist button should create a new playlist on click", async () => {
     render(<PlaylistModal ref={ref} />);
     const btn = screen.getByTestId("create-playlist-btn");
     const input = screen.getByPlaceholderText("Playlist name here..");
-    (input as HTMLInputElement).value = "new playlist";
-    act(() => {
-      fireEvent.click(btn);
-    });
-    waitFor(() => {
-      expect(useBoundStore.getState().library.userPlaylists[0].name).toBe(
-        (input as HTMLInputElement).value,
-      );
-    });
+    await userEvent.type(input, "new playlist");
+    await userEvent.click(btn);
+    const userplaylists = useBoundStore.getState().library.userPlaylists;
+    expect(userplaylists.length).toBeGreaterThan(0);
   });
   describe("userplaylists", () => {
-    test("should render container only if a creation track exists", () => {
+    test("should render container only if a creation track exists", async () => {
       render(<PlaylistModal ref={ref} />);
       act(() => {
         setCreationTrack(sampleTrack);
       });
-      waitFor(() => {
+      await waitFor(() => {
         expect(
           screen.getByTestId("userplaylists-container"),
         ).toBeInTheDocument();
       });
     });
-    test("should contain the respective playlist name", () => {
+    test("should contain the respective playlist name", async () => {
       render(<PlaylistModal ref={ref} />);
       act(() => {
         useBoundStore.getState().createNewUserPlaylist("Something", 21);
       });
-      waitFor(() => {
+      await waitFor(() => {
         expect(screen.getByText("Something")).toBeInTheDocument();
       });
     });
     describe("should have it's input checkbox", () => {
-      test("checked if the creation track is in that playlist", () => {
-        render(<PlaylistModal ref={ref} />);
+      test("checked if the creation track is in that playlist", async () => {
         act(() => {
           useBoundStore.getState().createNewUserPlaylist("Huhhhh", 121);
           setCreationTrack(sampleTrack);
         });
-        waitFor(() => {
-          const checkbox = document.getElementById(
-            "new-playlist-121",
-          ) as HTMLInputElement;
+        render(<PlaylistModal ref={ref} />);
+        act(() => {
+          useBoundStore.getState().setToUserPlaylist(sampleTrack, 121);
+        });
+        const checkbox = document.getElementById(
+          "new-playlist-121",
+        ) as HTMLInputElement;
+        await waitFor(() => {
           expect(checkbox.checked).toBe(true);
         });
       });
       describe("setPlaylist function behavior", () => {
-        const mockSetToUserPlaylist = vi.fn();
-        const mockRemoveFromUserPlaylist = vi.fn();
-        beforeEach(() => {
-          mockSetToUserPlaylist.mockClear();
-          mockRemoveFromUserPlaylist.mockClear();
-        });
-
         test("calls setToUserPlaylist when checked and creationTrack exists", async () => {
           render(<PlaylistModal ref={ref} />);
           act(() => {
             useBoundStore.getState().createNewUserPlaylist("Bruh", 12);
+            setCreationTrack(sampleTrack);
           });
-          const checkbox = document.getElementById(`new-playlist-${12}`);
-          if (checkbox) {
-            act(() => {
-              userEvent.click(checkbox);
-            });
-            waitFor(() => {
-              expect(mockSetToUserPlaylist).toHaveBeenCalledWith(
-                sampleTrack,
-                9,
-              );
-              expect(mockRemoveFromUserPlaylist).not.toHaveBeenCalled();
-              expect(checkbox).toBeChecked();
-            });
-          }
+          const checkbox = document.getElementById(
+            `new-playlist-${12}`,
+          ) as HTMLInputElement;
+          await userEvent.click(checkbox);
+
+          await waitFor(() => {
+            expect(checkbox).toBeChecked();
+          });
         });
 
         test("calls removeFromUserPlaylist when unchecked and creationTrack exists", async () => {
-          render(<PlaylistModal ref={ref} />);
           act(() => {
             useBoundStore.getState().createNewUserPlaylist("Bruh", 123);
           });
+          render(<PlaylistModal ref={ref} />);
           const checkbox = document.getElementById(
             `new-playlist-${123}`,
           ) as HTMLElement;
 
-          userEvent.click(checkbox);
-          userEvent.click(checkbox);
-          waitFor(() => {
-            expect(mockRemoveFromUserPlaylist).toHaveBeenCalledWith(
-              sampleTrack,
-              8,
-            );
+          await userEvent.click(checkbox);
+          await userEvent.click(checkbox);
+          await waitFor(() => {
             expect(checkbox).not.toBeChecked();
           });
         });
@@ -244,14 +218,12 @@ describe("Playlist Modal", () => {
           act(() => {
             userEvent.click(checkbox);
           });
-          waitFor(() => {
-            expect(mockSetToUserPlaylist).not.toHaveBeenCalled();
-            expect(mockRemoveFromUserPlaylist).not.toHaveBeenCalled();
+          await waitFor(() => {
             expect(checkbox).not.toBeChecked();
           });
         });
       });
-      test("unchecked if the creation track is in not that playlist", () => {
+      test("unchecked if the creation track is in not that playlist", async () => {
         render(<PlaylistModal ref={ref} />);
         act(() => {
           useBoundStore.getState().createNewUserPlaylist("Monday", 84);
@@ -311,13 +283,13 @@ describe("Playlist Modal", () => {
       });
     });
   });
-  test("should render all existing playlists", () => {
+  test("should render all existing playlists", async () => {
     render(<PlaylistModal ref={ref} />);
     expect(screen.getByText("No current playlists")).toBeInTheDocument();
     act(() => {
       useBoundStore.getState().createNewUserPlaylist("Finally", 100);
     });
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.getByTestId("userplaylists").childElementCount).toBe(1);
       expect(screen.getAllByTestId("custom playlist").length).toBe(1);
     });

@@ -11,7 +11,7 @@ import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import Favorites from "./Favorites";
 import { useBoundStore } from "../../store/store";
-import fallback from "/fallbacks/playlist-fallback.webp";
+const fallback = "/fallbacks/playlist-fallback.webp";
 import {
   sampleAlbum,
   samplePlaylist,
@@ -52,7 +52,7 @@ describe("Favorites", () => {
       expect(screen.getByTestId("favorites-page")).toBeInTheDocument();
     });
   });
-  test("should have no favorites initially", () => {
+  test("should have no favorites initially", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={["/favorites"]}>
@@ -112,7 +112,7 @@ describe("Favorites", () => {
     });
   });
   describe("FavoriteControls", () => {
-    test("should contain isFavoritePlaying and be true if playing and the track is present", () => {
+    test("should contain isFavoritePlaying and be true if playing and the track is present", async () => {
       const isFavoritePlaying = vi.fn();
       act(() => {
         setFavoriteSong(sampleTrack);
@@ -127,7 +127,7 @@ describe("Favorites", () => {
       );
       expect(isFavoritePlaying).toBeTruthy();
     });
-    test("shuffle button should toggle its aria label", () => {
+    test("shuffle button should toggle its aria label", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/favorites"]}>
@@ -144,7 +144,7 @@ describe("Favorites", () => {
       expect(shuffleBtn.ariaLabel).toBe("Disable shuffle");
     });
     describe("shuffle icon color", async () => {
-      test("be emerald when isShuffling is true", () => {
+      test("be emerald when isShuffling is true", async () => {
         act(() => {
           setFavoriteSong(sampleTrack);
           setNowPlaying(sampleTrack);
@@ -162,7 +162,7 @@ describe("Favorites", () => {
 
         expect(shuffleIcon).toHaveClass("fill-emerald-500");
       });
-      test("isShuffling should not be the icon color", () => {
+      test("isShuffling should not be the icon color", async () => {
         act(() => {
           setFavoriteSong(sampleTrack);
           setNowPlaying(sampleTrack);
@@ -185,7 +185,7 @@ describe("Favorites", () => {
         expect(shuffleIcon).toHaveClass("fill-white");
       });
     });
-    test("Play button should play the favorited songs", () => {
+    test("Play button should play the favorited songs", async () => {
       act(() => {
         setFavoriteSong(sampleTrack);
       });
@@ -239,7 +239,7 @@ describe("Favorites", () => {
       });
     });
     describe("should have its image", () => {
-      test("be of the album if present", () => {
+      test("be of the album if present", async () => {
         act(() => {
           setFavoriteAlbum(sampleAlbum);
         });
@@ -253,7 +253,7 @@ describe("Favorites", () => {
         const image = screen.getByAltText("album-image");
         expect((image as HTMLImageElement).src).toContain("image%20url");
       });
-      test("be fallback if not present", () => {
+      test("be fallback if not present", async () => {
         act(() => {
           useBoundStore
             .getState()
@@ -269,7 +269,7 @@ describe("Favorites", () => {
         const image = screen.getByAltText("album-image");
         expect((image as HTMLImageElement).src).toContain(fallback);
       });
-      test("be fallback onError", () => {
+      test("be fallback onError", async () => {
         act(() => {
           setFavoriteAlbum(sampleAlbum);
         });
@@ -285,7 +285,7 @@ describe("Favorites", () => {
         expect((image as HTMLImageElement).src).toContain(fallback);
       });
     });
-    test("should have its play button as Pause album id if the queue id matches and isPlaying", () => {
+    test("should have its play button as Pause album id if the queue id matches and isPlaying", async () => {
       act(() => {
         setFavoriteAlbum(sampleAlbum);
         useBoundStore
@@ -305,7 +305,7 @@ describe("Favorites", () => {
       });
       expect(playBtn.ariaLabel).toBe("Pause album");
     });
-    test("should remove album onClick", () => {
+    test("should remove album onClick", async () => {
       act(() => {
         setFavoriteAlbum(sampleAlbum);
       });
@@ -361,7 +361,7 @@ describe("Favorites", () => {
       });
     });
     describe("should have its image", () => {
-      test("be of the playlist if present", () => {
+      test("be of the playlist if present", async () => {
         act(() => {
           setFavoritePlaylist(samplePlaylist);
         });
@@ -373,11 +373,11 @@ describe("Favorites", () => {
           </QueryClientProvider>,
         );
         const image = screen.getByAltText("playlist-image");
-        waitFor(() => {
+        await waitFor(() => {
           expect((image as HTMLImageElement).src).toContain("image%20url");
         });
       });
-      test("be fallback if not present", () => {
+      test("be fallback if not present", async () => {
         act(() => {
           useBoundStore
             .getState()
@@ -393,7 +393,7 @@ describe("Favorites", () => {
         const image = screen.getByAltText("playlist-image");
         expect((image as HTMLImageElement).src).toContain(fallback);
       });
-      test("be fallback onError", () => {
+      test("be fallback onError", async () => {
         act(() => {
           setFavoritePlaylist(samplePlaylist);
         });
@@ -409,7 +409,7 @@ describe("Favorites", () => {
         expect((image as HTMLImageElement).src).toContain(fallback);
       });
     });
-    test("should have its play button as Pause album id if the queue id matches and isPlaying", () => {
+    test("should have its play button as Pause album id if the queue id matches and isPlaying", async () => {
       act(() => {
         setFavoritePlaylist(samplePlaylist);
         useBoundStore
@@ -429,7 +429,7 @@ describe("Favorites", () => {
       });
       expect(playBtn.ariaLabel).toBe("Pause playlist");
     });
-    test("should remove album onClick", () => {
+    test("should remove album onClick", async () => {
       act(() => {
         setFavoritePlaylist(samplePlaylist);
       });

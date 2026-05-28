@@ -15,13 +15,13 @@ import {
   test,
   vi,
 } from "vitest";
-import fallback from "/fallbacks/playlist-fallback.webp";
-import favorite from "/svgs/icons8-heart.svg";
-import favorited from "/svgs/icons8-favorited.svg";
-import addAlbum from "/svgs/icons8-addplaylist-28.svg";
-import addedToAlbum from "/svgs/tick.svg";
-import play from "/svgs/play-icon.svg";
-import pause from "/svgs/pause-icon.svg";
+const fallback = "/fallbacks/playlist-fallback.webp";
+import favorite from "../../assets/svgs/icons8-heart.svg";
+import favorited from "../../assets/svgs/icons8-favorited.svg";
+import addAlbum from "../../assets/svgs/icons8-addplaylist-28.svg";
+import addedToAlbum from "../../assets/svgs/tick.svg";
+import play from "../../assets/svgs/play-icon.svg";
+import pause from "../../assets/svgs/pause-icon.svg";
 import AlbumPage from "./AlbumPage";
 import {
   QueryClient,

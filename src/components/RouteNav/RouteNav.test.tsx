@@ -22,7 +22,7 @@ function LocationDisplay() {
 }
 
 describe("RouteNav", () => {
-  test("renders and shows initial path", () => {
+  test("renders and shows initial path", async () => {
     render(
       <MemoryRouter initialEntries={["/"]}>
         <Routes>

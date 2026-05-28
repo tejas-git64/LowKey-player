@@ -1,7 +1,6 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach } from "node:test";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 import Home from "../../pages/Home/Home";
 import ErrorFallback from "./ErrorFallback";
 
@@ -19,7 +18,7 @@ describe("ErrorFallback", () => {
     );
     expect(await screen.findByTestId("error-fallback")).toBeInTheDocument();
   });
-  test("reload button reloads the page", () => {
+  test("reload button reloads the page", async () => {
     const reloadMock = vi.fn();
 
     Object.defineProperty(window, "location", {

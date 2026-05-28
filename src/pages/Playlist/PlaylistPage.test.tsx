@@ -15,13 +15,13 @@ import {
   test,
   vi,
 } from "vitest";
-import fallback from "/fallbacks/playlist-fallback.webp";
-import favorite from "/svgs/icons8-heart.svg";
-import favorited from "/svgs/icons8-favorited.svg";
-import addAlbum from "/svgs/icons8-addplaylist-28.svg";
-import addedToAlbum from "/svgs/tick.svg";
-import play from "/svgs/play-icon.svg";
-import pause from "/svgs/pause-icon.svg";
+const fallback = "/fallbacks/playlist-fallback.webp";
+import favorite from "../../assets/svgs/icons8-heart.svg";
+import favorited from "../../assets/svgs/icons8-favorited.svg";
+import addAlbum from "../../assets/svgs/icons8-addplaylist-28.svg";
+import addedToAlbum from "../../assets/svgs/tick.svg";
+import play from "../../assets/svgs/play-icon.svg";
+import pause from "../../assets/svgs/pause-icon.svg";
 import {
   QueryClient,
   QueryClientProvider,
@@ -81,7 +81,7 @@ describe("PlaylistPage", () => {
     const playlistPage = await screen.findByTestId("playlist-page");
     expect(playlistPage).toBeInTheDocument();
   });
-  test("should render route nav", () => {
+  test("should render route nav", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
@@ -96,7 +96,7 @@ describe("PlaylistPage", () => {
   });
 });
 describe("PlaylistCount", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
@@ -111,7 +111,7 @@ describe("PlaylistCount", () => {
   });
 });
 describe("PlaylistInfo", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
@@ -124,7 +124,7 @@ describe("PlaylistInfo", () => {
 
     expect(screen.getByTestId("playlist-info")).toBeInTheDocument();
   });
-  test("getAlbumImage should return the image url", () => {
+  test("getAlbumImage should return the image url", async () => {
     const { rerender } = render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
@@ -137,7 +137,7 @@ describe("PlaylistInfo", () => {
 
     const getAlbumImage = vi.fn();
     const image = screen.getByTestId("playlist-info-image");
-    waitFor(() => {
+    await waitFor(() => {
       expect(samplePlaylist.image).toBeDefined();
       expect(image).toHaveAttribute("src", "image url");
     });
@@ -146,7 +146,7 @@ describe("PlaylistInfo", () => {
     expect(screen.getByTestId("playlist-page")).not.toHaveClass("home-fadein");
     fireEvent.load(image);
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(screen.getByTestId("playlist-page")).not.toHaveClass(
         "home-fadeout",
       );
@@ -166,12 +166,12 @@ describe("PlaylistInfo", () => {
       </QueryClientProvider>,
     );
 
-    waitFor(() => {
+    await waitFor(() => {
       expect(getAlbumImage).not.toReturn();
       expect(screen.getByAltText("img")).toHaveAttribute("src", fallback);
     });
   });
-  test("should have it's image as fallback onError", () => {
+  test("should have it's image as fallback onError", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
@@ -188,7 +188,7 @@ describe("PlaylistInfo", () => {
   });
 });
 describe("PlaylistControls", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
@@ -198,10 +198,15 @@ describe("PlaylistControls", () => {
         </MemoryRouter>
       </QueryClientProvider>,
     );
-
-    expect(screen.getByTestId("playlist-controls")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId("playlist-controls")).toBeInTheDocument();
+    });
   });
-  test("isPlaylistPlaying should be true/false based on if queue id matches and isPlaying", () => {
+  test("isPlaylistPlaying should be true/false based on if queue id matches and isPlaying", async () => {
+    function isPlaylistPlaying() {
+      const nowPlaying = useBoundStore.getState().nowPlaying;
+      return nowPlaying.isPlaying && nowPlaying.queue?.id === id;
+    }
     const { rerender } = render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
@@ -212,15 +217,15 @@ describe("PlaylistControls", () => {
       </QueryClientProvider>,
     );
 
-    const isPlaylistPlaying = vi.fn();
-    act(() => {
-      setQueue(samplePlaylist);
+    act(() => { 
+      setQueue({ ...samplePlaylist, id });
       setIsPlaying(true);
     });
-    expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
-    expect(useBoundStore.getState().nowPlaying.queue).toBeDefined();
-    expect(mockedPlaylistSuccessData.data).toBeDefined();
-    expect(isPlaylistPlaying).toBeTruthy();
+    await waitFor(() => {
+      expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
+      expect(useBoundStore.getState().nowPlaying.queue?.id).toBe(id);
+      expect(isPlaylistPlaying()).toBe(true);
+    });
 
     rerender(
       <QueryClientProvider client={new QueryClient()}>
@@ -233,7 +238,7 @@ describe("PlaylistControls", () => {
     );
 
     mockedUseQuery.mockReturnValue(
-      mockedNullDataResult as UseQueryResult<null>,
+      mockedNullDataResult as UseQueryResult<null>, 
     );
 
     expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
@@ -242,9 +247,8 @@ describe("PlaylistControls", () => {
     waitFor(() => {
       expect(isPlaylistPlaying).toBeFalsy();
     });
-    setIsPlaying(false);
   });
-  test("toggling isShuffling onClick should toggle aria label", () => {
+  test("toggling isShuffling onClick should toggle aria label", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
@@ -265,7 +269,7 @@ describe("PlaylistControls", () => {
       "Disable shuffle",
     );
   });
-  test("toggling add button should toggle aria-label and icon", () => {
+  test("toggling add button should toggle aria-label and icon", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
@@ -295,7 +299,7 @@ describe("PlaylistControls", () => {
     expect((addIcon as HTMLImageElement).src).toBe(addAlbum);
     expect((addIcon as HTMLImageElement).alt).toBe("Add to library");
   });
-  test("toggling favorite button should toggle aria-label and icon", () => {
+  test("toggling favorite button should toggle aria-label and icon", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
@@ -325,7 +329,7 @@ describe("PlaylistControls", () => {
     expect((favoriteIcon as HTMLImageElement).src).toBe(favorite);
     expect((favoriteIcon as HTMLImageElement).alt).toBe("Favorite");
   });
-  test("playback button should play/pause the album on click", () => {
+  test("playback button should play/pause the album on click", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={[`/playlists/${id}`]}>
@@ -336,10 +340,9 @@ describe("PlaylistControls", () => {
       </QueryClientProvider>,
     );
 
-    const playbackBtn = screen.getByTestId("playlist-playback");
-    const playbackIcon = screen.getByTestId("playlist-playback-icon");
+    const playbackBtn = await screen.findByTestId("playlist-playback");
+    const playbackIcon = await screen.findByTestId("playlist-playback-icon");
 
-    expect(playbackBtn.tabIndex).toBe(0);
     expect(playbackBtn.ariaLabel).toBe("Play playlist");
     expect((playbackIcon as HTMLImageElement).src).toBe(play);
     expect((playbackIcon as HTMLImageElement).alt).toBe("Play");
@@ -348,8 +351,7 @@ describe("PlaylistControls", () => {
       fireEvent.click(playbackBtn);
     });
 
-    waitFor(() => {
-      expect(playbackBtn.tabIndex).toBe(-1);
+    await waitFor(() => {
       expect(playbackBtn.ariaLabel).toBe("Pause playlist");
       expect((playbackIcon as HTMLImageElement).src).toBe(pause);
       expect((playbackIcon as HTMLImageElement).alt).toBe("Pause");

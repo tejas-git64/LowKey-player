@@ -1,5 +1,5 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test } from "vitest";
 import App, { routes } from "./App";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -30,8 +30,7 @@ describe("App", () => {
       expect(intro).toBeInTheDocument();
     });
   });
-  test("renders home page on '/home", () => {
-    vi.useFakeTimers();
+  test("renders home page on '/home", async () => {
     const memoryRouter = createMemoryRouter(routes, {
       initialEntries: ["/home"],
     });
@@ -40,12 +39,8 @@ describe("App", () => {
         <RouterProvider router={memoryRouter} />
       </QueryClientProvider>,
     );
-    vi.advanceTimersByTime(150);
-    waitFor(() => {
-      const home = screen.getByTestId("home-page");
-      expect(home).toBeInTheDocument();
-    });
-    vi.useRealTimers();
+    const search = await screen.findByTestId("home-page");
+    expect(search).toBeInTheDocument();
   });
 
   test("renders search page on '/search", async () => {
@@ -109,7 +104,7 @@ describe("App", () => {
         <RouterProvider router={memoryRouter} />
       </QueryClientProvider>,
     );
-    waitFor(() => {
+    await waitFor(() => {
       const album = screen.getByTestId("album-page");
       expect(album).toBeInTheDocument();
     });
@@ -129,7 +124,7 @@ describe("App", () => {
     expect(playlist).toBeInTheDocument();
   });
 
-  test("renders artist page for '/artists/:id'", () => {
+  test("renders artist page for '/artists/:id'", async () => {
     const memoryRouter = createMemoryRouter(routes, {
       initialEntries: ["/artists/413121"],
     });
@@ -138,7 +133,7 @@ describe("App", () => {
         <RouterProvider router={memoryRouter} />
       </QueryClientProvider>,
     );
-    waitFor(() => {
+    await waitFor(() => {
       const artist = screen.getByTestId("artist-page");
       expect(artist).toBeInTheDocument();
     });

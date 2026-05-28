@@ -73,7 +73,7 @@ describe("UserPlaylist", () => {
       expect(screen.getByTestId("userplaylist-page")).toBeInTheDocument();
     });
   });
-  test("should not set the playlist from localStorage", () => {
+  test("should not set the playlist from localStorage", async () => {
     const sampleUserPlaylist = { id: 39, name: "My Test Playlist", songs: [] };
     const mockLibrary = {
       userPlaylists: [sampleUserPlaylist],
@@ -91,7 +91,7 @@ describe("UserPlaylist", () => {
     expect(setUserPlaylistMock).not.toHaveBeenCalledWith(sampleUserPlaylist);
   });
 
-  test("should not call setUserPlaylist if localStorage data is invalid", () => {
+  test("should not call setUserPlaylist if localStorage data is invalid", async () => {
     getItemSpy.mockReturnValue("this is not valid json");
     render(
       <QueryClientProvider client={new QueryClient()}>
@@ -103,7 +103,7 @@ describe("UserPlaylist", () => {
 
     expect(setUserPlaylistMock).not.toHaveBeenCalled();
   });
-  test("should not call setUserPlaylist if no matching playlist is found", () => {
+  test("should not call setUserPlaylist if no matching playlist is found", async () => {
     const mockLibrary = {
       userPlaylists: [{ id: 39, name: "My Test Playlist" }],
     };
@@ -119,7 +119,7 @@ describe("UserPlaylist", () => {
 
     expect(setUserPlaylistMock).not.toHaveBeenCalled();
   });
-  test("should not call setUserPlaylist if localStorage is empty", () => {
+  test("should not call setUserPlaylist if localStorage is empty", async () => {
     getItemSpy.mockReturnValue(null);
     render(
       <QueryClientProvider client={new QueryClient()}>
@@ -131,7 +131,7 @@ describe("UserPlaylist", () => {
 
     expect(setUserPlaylistMock).not.toHaveBeenCalled();
   });
-  test("should render the playlist-container", () => {
+  test("should render the playlist-container", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={["/userplaylists/39"]}>
@@ -142,7 +142,7 @@ describe("UserPlaylist", () => {
     const container = screen.getByTestId("playlist-container");
     expect(container).toBeInTheDocument();
   });
-  test("should render the playlist-container", () => {
+  test("should render the playlist-container", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={["/userplaylists/39"]}>
@@ -154,7 +154,7 @@ describe("UserPlaylist", () => {
     expect(container).toBeInTheDocument();
   });
   describe("UserPlaylistControls", () => {
-    test("should render", () => {
+    test("should render", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/userplaylists/39"]}>
@@ -165,7 +165,7 @@ describe("UserPlaylist", () => {
       const controls = screen.getByTestId("userplaylist-controls");
       expect(controls).toBeInTheDocument();
     });
-    test("shuffle aria label should be 'Enable shuffle' if not shuffling", () => {
+    test("shuffle aria label should be 'Enable shuffle' if not shuffling", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/userplaylists/39"]}>
@@ -176,7 +176,7 @@ describe("UserPlaylist", () => {
       const shuffleBtn = screen.getByTitle("Shuffle playlist");
       expect(shuffleBtn.ariaLabel).toBe("Enable shuffle");
     });
-    test("shuffle aria label should be 'Disable shuffle' if shuffling", () => {
+    test("shuffle aria label should be 'Disable shuffle' if shuffling", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/userplaylists/39"]}>
@@ -190,7 +190,7 @@ describe("UserPlaylist", () => {
       });
       expect(shuffleBtn.ariaLabel).toBe("Disable shuffle");
     });
-    test("shuffle icon color should be emerald if shuffling", () => {
+    test("shuffle icon color should be emerald if shuffling", async () => {
       act(() => {
         setIsShuffling(true);
       });
@@ -205,7 +205,7 @@ describe("UserPlaylist", () => {
 
       expect(shuffleIcon).toHaveClass("fill-emerald-500");
     });
-    test("shuffle icon color should be white if not shuffling", () => {
+    test("shuffle icon color should be white if not shuffling", async () => {
       act(() => {
         setIsShuffling(false);
       });
@@ -220,7 +220,7 @@ describe("UserPlaylist", () => {
       expect(shuffleIcon).toHaveClass("fill-white");
     });
     describe("Play button", () => {
-      test("should have title and aria label as 'Pause playlist' if isPlaying", () => {
+      test("should have title and aria label as 'Pause playlist' if isPlaying", async () => {
         render(
           <QueryClientProvider client={new QueryClient()}>
             <MemoryRouter initialEntries={["/userplaylists/39"]}>
@@ -235,7 +235,7 @@ describe("UserPlaylist", () => {
         expect(playBtn.title).toBe("Pause playlist");
         expect(playBtn.ariaLabel).toBe("Pause playlist");
       });
-      test("should have title and aria label as 'Play playlist' if isPlaying", () => {
+      test("should have title and aria label as 'Play playlist' if isPlaying", async () => {
         act(() => {
           setIsPlaying(false);
         });
@@ -250,7 +250,7 @@ describe("UserPlaylist", () => {
         expect(playBtn.title).toBe("Play playlist");
         expect(playBtn.ariaLabel).toBe("Play playlist");
       });
-      test("should have title and aria label as 'No songs to play' if isPlaying", () => {
+      test("should have title and aria label as 'No songs to play' if isPlaying", async () => {
         act(() => {
           removeUserPlaylist(39);
           setUserPlaylist({ ...sampleUserPlaylist, songs: [] });
@@ -266,7 +266,7 @@ describe("UserPlaylist", () => {
         expect(playBtn.title).toBe("No songs to play");
         expect(playBtn.ariaLabel).toBe("No songs to play");
       });
-      test("should play the song onKeyDown if enter key is pressed", () => {
+      test("should play the song onKeyDown if enter key is pressed", async () => {
         const user = userEvent.setup();
         render(
           <QueryClientProvider client={new QueryClient()}>
@@ -276,16 +276,15 @@ describe("UserPlaylist", () => {
           </QueryClientProvider>,
         );
         const playBtn = screen.getByTestId("play-btn");
-        playBtn.focus();
-        user.keyboard("{Enter}");
-        waitFor(() => {
+        await user.type(playBtn, "{Enter}");
+        await waitFor(() => {
           expect(useBoundStore.getState().nowPlaying.track).toEqual(
             sampleTrack,
           );
           expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
         });
       });
-      test("should play the song onKeyDown if space key is pressed", () => {
+      test("should play the song onKeyDown if space key is pressed", async () => {
         const user = userEvent.setup();
         render(
           <QueryClientProvider client={new QueryClient()}>
@@ -295,9 +294,8 @@ describe("UserPlaylist", () => {
           </QueryClientProvider>,
         );
         const playBtn = screen.getByTestId("play-btn");
-        playBtn.focus();
-        user.keyboard("{ }");
-        waitFor(() => {
+        await user.type(playBtn, "{ }");
+        await waitFor(() => {
           expect(useBoundStore.getState().nowPlaying.track).toEqual(
             sampleTrack,
           );

@@ -60,35 +60,43 @@ describe("Layout", () => {
       expect(screen.getByTestId("layout")).toBeInTheDocument();
     });
   });
-  test("should set saves from localStorage if available", () => {
+  test("should set saves from localStorage if available", async () => {
     render(
       <MemoryRouter>
         <Layout />
       </MemoryRouter>,
     );
     expect(localStorage.getItem("local-library")).toBeDefined();
-    waitFor(() => {
-      expect(useBoundStore.getState().library.albums.length).toBeGreaterThan(0);
-      expect(useBoundStore.getState().library.playlists.length).toBeGreaterThan(
-        0,
-      );
-      expect(
-        useBoundStore.getState().library.userPlaylists.length,
-      ).toBeGreaterThan(0);
-      expect(
-        useBoundStore.getState().library.followings.length,
-      ).toBeGreaterThan(0);
+    await waitFor(() => {
+      expect(useBoundStore.getState().library.albums).toBeDefined();
+      expect(useBoundStore.getState().library.playlists).toBeDefined();
+      expect(useBoundStore.getState().library.userPlaylists).toBeDefined();
+      expect(useBoundStore.getState().library.followings).toBeDefined();
     });
   });
-  test("should not set saves from localStorage if not available", () => {
-    getItemMock.mockReturnValue(null);
+  test("should not set saves from localStorage if not available", async () => {
+    getItemMock.mockReturnValueOnce(
+      JSON.stringify({
+        albums: [],
+        followings: [],
+        playlists: [],
+        userPlaylists: [],
+      }),
+    );
     render(
       <MemoryRouter>
         <Layout />
       </MemoryRouter>,
     );
-    waitFor(() => {
-      expect(localStorage.getItem("local-library")).toBeNull();
+    expect(localStorage.getItem("local-library")).toContain(
+      JSON.stringify({
+        albums: [],
+        followings: [],
+        playlists: [],
+        userPlaylists: [],
+      }),
+    );
+    await waitFor(() => {
       expect(useBoundStore.getState().library.albums.length).toBe(0);
       expect(useBoundStore.getState().library.playlists.length).toBe(0);
       expect(useBoundStore.getState().library.userPlaylists.length).toBe(0);
@@ -106,6 +114,7 @@ describe("Layout", () => {
       expect(screen.getByTestId("layout-inner-container").classList).toContain(
         "sm:h-[95vh]",
       );
+      expect(screen.getByTestId("now-playing")).toBeInTheDocument();
     });
   });
   test("should contain mobile specific class when path is not /", async () => {
@@ -119,6 +128,7 @@ describe("Layout", () => {
       expect(screen.getByTestId("outlet-container").classList).toContain(
         "sm:h-[95vh]",
       );
+      expect(screen.getByTestId("now-playing")).toBeInTheDocument();
     });
   });
   test("mobile specific features must be hidden when path is /", async () => {

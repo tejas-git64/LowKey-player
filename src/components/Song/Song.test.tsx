@@ -7,11 +7,11 @@ import {
 } from "@testing-library/react";
 import { afterEach, describe, expect, Mock, test, vi } from "vitest";
 import Song from "./Song";
-import fallback from "/fallbacks/song-fallback.webp";
-import notfav from "/svgs/icons8-heart.svg";
-import fav from "/svgs/icons8-favorited.svg";
-import add from "/svgs/icons8-addplaylist-28.svg";
-import tick from "/svgs/tick.svg";
+const fallback = "/fallbacks/song-fallback.webp";
+import notfav from "../../assets/svgs/icons8-heart.svg";
+import fav from "../../assets/svgs/icons8-favorited.svg";
+import add from "../../assets/svgs/icons8-addplaylist-28.svg";
+import tick from "../../assets/svgs/tick.svg";
 import { sampleTrack, sampleUserPlaylist } from "../../api/samples";
 import { MemoryRouter } from "react-router-dom";
 import { useBoundStore } from "../../store/store";
@@ -31,7 +31,7 @@ afterEach(() => {
 });
 
 describe("Song", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(
       <MemoryRouter>
         <Song index={0} isWidgetSong={false} track={sampleTrack} />
@@ -39,7 +39,7 @@ describe("Song", () => {
     );
     expect(screen.getByTestId("song")).toBeInTheDocument();
   });
-  test("should set the track and isPlaying status onClick", () => {
+  test("should set the track and isPlaying status onClick", async () => {
     render(
       <MemoryRouter>
         <Song index={0} isWidgetSong={false} track={sampleTrack} />
@@ -52,7 +52,7 @@ describe("Song", () => {
     expect(useBoundStore.getState().nowPlaying.track).toEqual(sampleTrack);
     expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
   });
-  test("should contain the track image if available", () => {
+  test("should contain the track image if available", async () => {
     render(
       <MemoryRouter>
         <Song index={0} isWidgetSong={false} track={sampleTrack} />
@@ -61,7 +61,7 @@ describe("Song", () => {
     const image = screen.getByAltText("Track3") as HTMLImageElement;
     expect(image.src).toContain("image%20url");
   });
-  test("should contain fallback as track image if not available", () => {
+  test("should contain fallback as track image if not available", async () => {
     render(
       <MemoryRouter>
         <Song index={0} isWidgetSong={false} track={sampleTrack} />
@@ -71,7 +71,7 @@ describe("Song", () => {
     fireEvent.error(image);
     expect(image.src).toContain(fallback);
   });
-  test("should contain fallback as track image if not available", () => {
+  test("should contain fallback as track image if not available", async () => {
     render(
       <MemoryRouter>
         <Song index={0} isWidgetSong={false} track={sampleTrack} />
@@ -81,7 +81,7 @@ describe("Song", () => {
     fireEvent.error(image);
     expect(image.src).toContain(fallback);
   });
-  test("should contain respective classes when it is a widget song", () => {
+  test("should contain respective classes when it is a widget song", async () => {
     render(
       <MemoryRouter>
         <Song index={0} isWidgetSong={true} track={sampleTrack} />
@@ -104,7 +104,7 @@ describe("Song", () => {
       "mr-[1vw] w-10 flex-shrink-0 sm:ml-[4vw] sm:mr-2 md:mx-[2vw] xmd:mx-[3vw] lg:mx-[1vw] xlg:ml-[1.5vw] xxl:mx-[0.5vw] 2xl:mx-2",
     );
   });
-  test("should contain respective classes when it is a widget song", () => {
+  test("should contain respective classes when it is a widget song", async () => {
     render(
       <MemoryRouter>
         <Song index={0} isWidgetSong={false} track={sampleTrack} />
@@ -125,7 +125,7 @@ describe("Song", () => {
       "m-[3vw] w-10 max-w-14 sm:ml-4 sm:mr-[2%] sm:block md:mx-[5%] xmd:mx-4 lg:mx-0 xlg:mx-[2vw] xl:mr-4",
     );
   });
-  test("should contain track name if available", () => {
+  test("should contain track name if available", async () => {
     render(
       <MemoryRouter>
         <Song index={0} isWidgetSong={false} track={sampleTrack} />
@@ -134,7 +134,7 @@ describe("Song", () => {
     const name = screen.getByTestId("name") as HTMLParagraphElement;
     expect(name.textContent).toBe("Track3");
   });
-  test("should contain track name if available", () => {
+  test("should contain track name if available", async () => {
     render(
       <MemoryRouter>
         <Song
@@ -167,7 +167,7 @@ describe("Song", () => {
         useBoundStore.getState().removeFavorite(sampleTrack.id);
       });
     });
-    test("should contain fav as image if favorited", () => {
+    test("should contain fav as image if favorited", async () => {
       render(
         <MemoryRouter>
           <Song index={0} isWidgetSong={false} track={sampleTrack} />
@@ -186,7 +186,7 @@ describe("Song", () => {
         useBoundStore.getState().removeFavorite(sampleTrack.id);
       });
     });
-    test("should contain notFav as image if not favorited", () => {
+    test("should contain notFav as image if not favorited", async () => {
       render(
         <MemoryRouter>
           <Song index={0} isWidgetSong={false} track={sampleTrack} />
@@ -198,7 +198,7 @@ describe("Song", () => {
     });
   });
   describe("playlist button", () => {
-    test("should set the track as creation track and revealCreation to true onClick", () => {
+    test("should set the track as creation track and revealCreation to true onClick", async () => {
       render(
         <MemoryRouter>
           <Song index={0} isWidgetSong={false} track={sampleTrack} />
@@ -213,7 +213,7 @@ describe("Song", () => {
       expect(useBoundStore.getState().creationTrack).toBe(sampleTrack);
       expect(useBoundStore.getState().revealCreation).toBe(true);
     });
-    test("should contain tick as image if added to a playlist", () => {
+    test("should contain tick as image if added to a playlist", async () => {
       act(() => {
         useBoundStore.getState().setUserPlaylist(sampleUserPlaylist);
       });
@@ -230,7 +230,7 @@ describe("Song", () => {
         useBoundStore.getState().removeUserPlaylist(sampleUserPlaylist.id);
       });
     });
-    test("should contain add as image if not added to a playlist", () => {
+    test("should contain add as image if not added to a playlist", async () => {
       render(
         <MemoryRouter>
           <Song index={0} isWidgetSong={false} track={sampleTrack} />
@@ -243,7 +243,7 @@ describe("Song", () => {
     });
   });
   describe("Artist", () => {
-    test("should render", () => {
+    test("should render", async () => {
       render(
         <MemoryRouter>
           <Song index={0} isWidgetSong={false} track={sampleTrack} />
@@ -252,7 +252,7 @@ describe("Song", () => {
       const artist = screen.getByTestId("artist");
       expect(artist).toBeInTheDocument();
     });
-    test("should navigate to the artist page onClick", () => {
+    test("should navigate to the artist page onClick", async () => {
       render(
         <MemoryRouter>
           <Song index={0} isWidgetSong={false} track={sampleTrack} />
@@ -262,7 +262,7 @@ describe("Song", () => {
       fireEvent.click(artist);
       expect(useNavigateMock).toHaveBeenCalledWith("/artists/1431");
     });
-    test("should contain the artist's name", () => {
+    test("should contain the artist's name", async () => {
       render(
         <MemoryRouter>
           <Song index={0} isWidgetSong={false} track={sampleTrack} />
@@ -271,7 +271,7 @@ describe("Song", () => {
       const artist = screen.getByTestId("artist") as HTMLParagraphElement;
       expect(artist.textContent).toBe("Artist name");
     });
-    test("should contain 'Unknown Artist' as name if not available", () => {
+    test("should contain 'Unknown Artist' as name if not available", async () => {
       render(
         <MemoryRouter>
           <Song

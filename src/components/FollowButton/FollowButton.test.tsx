@@ -15,12 +15,12 @@ afterEach(() => {
 });
 
 describe("FollowButton", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(<FollowButton artist={sampleArtist} />);
     expect(screen.getByRole("button")).toBeInTheDocument();
   });
   describe("handleFollowing", () => {
-    test("should follow artist if not already", () => {
+    test("should follow artist if not already", async () => {
       render(<FollowButton artist={sampleArtist} />);
       expect(screen.getByRole("button")).toHaveTextContent("Follow");
       act(() => {
@@ -31,7 +31,7 @@ describe("FollowButton", () => {
       );
       expect(screen.getByRole("button")).toHaveTextContent("Following");
     });
-    test("should unfollow artist if already following", () => {
+    test("should unfollow artist if already following", async () => {
       render(<FollowButton artist={sampleArtist} />);
       expect(screen.getByRole("button")).toHaveTextContent("Follow");
       act(() => {

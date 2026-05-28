@@ -11,12 +11,12 @@ afterEach(() => {
 });
 
 describe("loading UI of ArtistPage", () => {
-  test("should render info fallback", () => {
+  test("should render info fallback", async () => {
     render(<ArtistInfoFallback />);
     expect(screen.getByTestId("artist-fallback")).toBeInTheDocument();
   });
 
-  test("should render album fallback", () => {
+  test("should render album fallback", async () => {
     render(<ArtistAlbumFallback />);
     expect(screen.getByTestId("artist-album-fallback")).toBeInTheDocument();
   });

@@ -1,9 +1,9 @@
-import nf480 from "/notfound/notfound-480px.webp";
-import nf640 from "/notfound/notfound-640px.webp";
-import nf768 from "/notfound/notfound-landscape-768px.webp";
-import nf1024 from "/notfound/notfound-landscape-1024px.webp";
-import nf1280 from "/notfound/notfound-landscape-1280px.webp";
-import nf1536 from "/notfound/notfound-landscape-1536px.webp";
+const nf480 = "/notfound/notfound-480px.webp";
+const nf640 = "/notfound/notfound-640px.webp";
+const nf768 = "/notfound/notfound-landscape-768px.webp";
+const nf1024 = "/notfound/notfound-landscape-1024px.webp";
+const nf1280 = "/notfound/notfound-landscape-1280px.webp";
+const nf1536 = "/notfound/notfound-landscape-1536px.webp";
 import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import NotFound from "./NotFound";
@@ -15,7 +15,7 @@ afterEach(() => {
 });
 
 describe("NotFound", () => {
-  test("it should render", () => {
+  test("it should render", async () => {
     render(
       <MemoryRouter>
         <NotFound />
@@ -29,7 +29,7 @@ describe("NotFound", () => {
       vi.clearAllMocks();
     });
 
-    test("window width of 480px", () => {
+    test("window width of 480px", async () => {
       globalThis.innerWidth = 480;
       const { getByTestId } = render(
         <MemoryRouter>
@@ -39,7 +39,7 @@ describe("NotFound", () => {
       expect(getByTestId("notfound").style.backgroundImage).toContain(nf480);
     });
 
-    test("window width of 640px", () => {
+    test("window width of 640px", async () => {
       globalThis.innerWidth = 640;
       const { getByTestId } = render(
         <MemoryRouter>
@@ -49,7 +49,7 @@ describe("NotFound", () => {
       expect(getByTestId("notfound").style.backgroundImage).toContain(nf640);
     });
 
-    test("window width of 768px", () => {
+    test("window width of 768px", async () => {
       globalThis.innerWidth = 768;
       const { getByTestId } = render(
         <MemoryRouter>
@@ -59,7 +59,7 @@ describe("NotFound", () => {
       expect(getByTestId("notfound").style.backgroundImage).toContain(nf768);
     });
 
-    test("window width of 1024px", () => {
+    test("window width of 1024px", async () => {
       globalThis.innerWidth = 1024;
       const { getByTestId } = render(
         <MemoryRouter>
@@ -69,7 +69,7 @@ describe("NotFound", () => {
       expect(getByTestId("notfound").style.backgroundImage).toContain(nf1024);
     });
 
-    test("window width of 1280px", () => {
+    test("window width of 1280px", async () => {
       globalThis.innerWidth = 1280;
       const { getByTestId } = render(
         <MemoryRouter>
@@ -79,7 +79,7 @@ describe("NotFound", () => {
       expect(getByTestId("notfound").style.backgroundImage).toContain(nf1280);
     });
 
-    test("window width of 2500px", () => {
+    test("window width of 2500px", async () => {
       globalThis.innerWidth = 2500;
       const { getByTestId } = render(
         <MemoryRouter>
@@ -89,7 +89,7 @@ describe("NotFound", () => {
       expect(getByTestId("notfound").style.backgroundImage).toContain(nf1536);
     });
 
-    test("default case", () => {
+    test("default case", async () => {
       globalThis.innerWidth = 2600;
       const { getByTestId } = render(
         <MemoryRouter>
@@ -99,7 +99,7 @@ describe("NotFound", () => {
       expect(getByTestId("notfound").style.backgroundImage).toContain(nf1024);
     });
 
-    test("calls animateScreen on load", () => {
+    test("calls animateScreen on load", async () => {
       const ref = {
         current: null as HTMLDivElement | null,
       };
@@ -126,7 +126,7 @@ describe("NotFound", () => {
       vi.useRealTimers();
     });
 
-    test("updates image on resize event", () => {
+    test("updates image on resize event", async () => {
       const { getByTestId } = render(
         <MemoryRouter>
           <NotFound />
@@ -139,7 +139,7 @@ describe("NotFound", () => {
       expect(getByTestId("notfound").style.backgroundImage).toContain(nf1536);
     });
 
-    test("cleans up event listeners on unmount", () => {
+    test("cleans up event listeners on unmount", async () => {
       const removeSpy = vi.spyOn(globalThis, "removeEventListener");
       const { unmount } = render(
         <MemoryRouter>

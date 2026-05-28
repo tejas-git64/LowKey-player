@@ -9,7 +9,7 @@ import {
   vi,
 } from "vitest";
 import Waveform from "./Waveform";
-import { sampleSongQueue } from "../../api/samples";
+import { sampleSongQueue, sampleTrack } from "../../api/samples";
 import WaveSurfer from "wavesurfer.js";
 import { useBoundStore } from "../../store/store";
 
@@ -90,16 +90,23 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup();
+  localStorage.clear();
+  for (const event of Object.keys(handlers)) {
+    delete handlers[event];
+  }
+  act(() => {
+    useBoundStore.getState().setNowPlaying(null);
+  });
   vi.clearAllMocks();
   vi.restoreAllMocks();
 });
 
 describe("Waveform", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(<Waveform {...obj} />);
     expect(screen.getByTestId("waveform-container")).toBeInTheDocument();
   });
-  test("should create a desktop/tablet specific wavesurfer instance if isMobileWidth", () => {
+  test("should create a desktop/tablet specific wavesurfer instance if isMobileWidth", async () => {
     render(<Waveform {...obj} />);
     expect(WaveSurfer.create).toHaveBeenCalled();
     expect(WaveSurfer.create).toHaveBeenCalledWith({
@@ -111,7 +118,7 @@ describe("Waveform", () => {
       width: "25vw",
     });
   });
-  test("should create a mobile specific wavesurfer instance if not isMobileWidth", () => {
+  test("should create a mobile specific wavesurfer instance if not isMobileWidth", async () => {
     render(<Waveform {...{ ...obj, isMobileWidth: true }} />);
     expect(WaveSurfer.create).toHaveBeenCalled();
     expect(WaveSurfer.create).toHaveBeenCalledWith({
@@ -137,61 +144,59 @@ describe("Waveform", () => {
 
     expect(mockSeekTo).not.toHaveBeenCalled();
   });
-  test("should use previous time on a re-render of the same track", () => {
-    mockGetCurrentTime.mockReturnValue(30);
-    const { rerender } = render(<Waveform {...obj} />);
-    expect(WaveSurfer.create).toHaveBeenCalled();
-    expect(mockOn).toHaveBeenCalledWith("ready", expect.any(Function));
-
-    rerender(<Waveform {...{ ...obj, duration: 200 }} />);
-
-    const readyHandlers = handlers["ready"] || [];
-    const latest = readyHandlers[readyHandlers.length - 1];
-    expect(latest).toBeDefined();
-
-    act(() => {
-      latest();
-    });
-    waitFor(() => {
-      expect(mockSeekTo).toHaveBeenCalled();
-    });
-  });
   describe("handleReady", () => {
-    test("should seek to stored localStorage time on ready if same url", () => {
+    test("should seek to stored localStorage time on ready if same url", async () => {
       const stored = {
         url: "https://audio.com/track.mp3",
         time: 42,
         duration: 120,
       };
       localStorage.setItem("last-waveform", JSON.stringify(stored));
+      act(() => {
+        useBoundStore
+          .getState()
+          .setNowPlaying({ ...sampleTrack, id: obj.id });
+      });
 
       render(<Waveform {...obj} />);
 
       const readyHandler = mockOn.mock.calls.find((c) => c[0] === "ready")?.[1];
       act(() => readyHandler());
-      waitFor(() => {
+      await waitFor(() => {
         expect(mockSeekTo).toHaveBeenCalledWith(
           expect.closeTo(stored.time / stored.duration, 2),
         );
       });
     });
-    test("should resume at lastTimeRef if same track", () => {
+    test("should resume at lastTimeRef if same track", async () => {
+      act(() => {
+        useBoundStore
+          .getState()
+          .setNowPlaying({ ...sampleTrack, id: obj.id });
+      });
       mockGetCurrentTime.mockReturnValue(30);
 
       const { rerender } = render(<Waveform {...obj} />);
-      rerender(<Waveform {...obj} />);
 
-      const readyHandler = mockOn.mock.calls
+      const firstReadyHandler = mockOn.mock.calls.find(
+        (c) => c[0] === "ready",
+      )?.[1];
+      act(() => firstReadyHandler());
+      mockSeekTo.mockClear();
+
+      rerender(<Waveform {...{ ...obj, duration: 200 }} />);
+
+      const latestReadyHandler = mockOn.mock.calls
         .filter((c) => c[0] === "ready")
         .pop()?.[1];
-      act(() => readyHandler());
-      waitFor(() => {
+      act(() => latestReadyHandler());
+      await waitFor(() => {
         expect(mockSeekTo).toHaveBeenCalledWith(
-          expect.closeTo(30 / obj.duration, 2),
+          expect.closeTo(30 / 200, 2),
         );
       });
     });
-    test("should update currentTime on timeupdate", () => {
+    test("should update currentTime on timeupdate", async () => {
       mockGetCurrentTime.mockReturnValue(15);
 
       render(<Waveform {...obj} />);
@@ -204,7 +209,7 @@ describe("Waveform", () => {
       });
       expect(screen.getByText("00:15")).toBeInTheDocument();
     });
-    test("should play or pause depending on isPlaying", () => {
+    test("should play or pause depending on isPlaying", async () => {
       act(() => {
         useBoundStore.getState().setIsPlaying(true);
       });
@@ -244,7 +249,7 @@ describe("Waveform", () => {
       );
     });
   });
-  test("should remove globalThis event listeners on unmount", () => {
+  test("should remove globalThis event listeners on unmount", async () => {
     const { unmount } = render(<Waveform {...obj} />);
     unmount();
 
@@ -253,11 +258,11 @@ describe("Waveform", () => {
       expect.any(Function),
     );
   });
-  test("should pause if isPlaying is false", () => {
+  test("should pause if isPlaying is false", async () => {
     render(<Waveform {...obj} />);
     expect(mockPause).toHaveBeenCalled();
   });
-  test("should play if isPlaying is true", () => {
+  test("should play if isPlaying is true", async () => {
     act(() => {
       useBoundStore.getState().setIsPlaying(true);
     });
@@ -265,7 +270,7 @@ describe("Waveform", () => {
     expect(mockPlay).toHaveBeenCalled();
   });
   describe("Waveform finish event effect", () => {
-    test("attaches and detaches finish handler", () => {
+    test("attaches and detaches finish handler", async () => {
       const { unmount } = render(<Waveform {...obj} />);
       expect(mockOn).toHaveBeenCalledWith("finish", expect.any(Function));
       unmount();
@@ -273,7 +278,7 @@ describe("Waveform", () => {
       expect(screen.queryByTestId("waveform")).not.toBeInTheDocument();
       expect(mockUn).not.toHaveBeenCalledWith("finish", expect.any(Function));
     });
-    test("replays track once if isReplay=true", () => {
+    test("replays track once if isReplay=true", async () => {
       const replayObj = {
         ...obj,
         isReplay: true,
@@ -301,10 +306,20 @@ describe("Waveform", () => {
       expect(replayObj.continuePlayback).toHaveBeenCalled();
     });
 
-    test("advances queue if not replaying", () => {
-      const setQueue = vi.fn();
+    test("advances queue if not replaying", async () => {
+      const queueWithTwoSongs = {
+        ...sampleSongQueue,
+        songs: [
+          sampleSongQueue.songs[0],
+          { ...sampleSongQueue.songs[0], id: "another-song" },
+        ],
+      };
+      const setQueueSpy = vi.spyOn(useBoundStore.getState(), "setQueue");
+      useBoundStore.getState().setQueue(queueWithTwoSongs);
+      setQueueSpy.mockClear();
+
       const continuePlayback = vi.fn();
-      render(<Waveform {...obj} />);
+      render(<Waveform {...{ ...obj, continuePlayback }} />);
 
       const finishCall = mockOn.mock.calls.find((c) => c[0] === "finish");
       if (!finishCall)
@@ -312,13 +327,18 @@ describe("Waveform", () => {
 
       const finishHandler = finishCall[1];
       act(() => finishHandler());
-      waitFor(() => {
-        expect(setQueue).toHaveBeenCalledWith(sampleSongQueue);
+      await waitFor(() => {
+        expect(setQueueSpy).toHaveBeenCalledWith({
+          ...queueWithTwoSongs,
+          songs: queueWithTwoSongs.songs.filter(
+            (_, idx) => idx !== obj.songIndex,
+          ),
+        });
         expect(continuePlayback).toHaveBeenCalled();
       });
     });
 
-    test("stops playback if last song and not replaying", () => {
+    test("stops playback if last song and not replaying", async () => {
       render(<Waveform {...obj} />);
 
       const finishCall = mockOn.mock.calls.find((c) => c[0] === "finish");
@@ -332,12 +352,12 @@ describe("Waveform", () => {
     });
   });
   describe("secondsToHMS", () => {
-    test("should convert seconds to HMS if available", () => {
+    test("should convert seconds to HMS if available", async () => {
       render(<Waveform {...obj} />);
       const seconds = screen.getByTestId("duration");
       expect(seconds.textContent).toBe("03:00");
     });
-    test("should convert seconds to HMS if available", () => {
+    test("should convert seconds to HMS if available", async () => {
       render(<Waveform {...{ ...obj, duration: 0 }} />);
       const seconds = screen.getByTestId("duration");
       expect(seconds.textContent).toBe("--:--");

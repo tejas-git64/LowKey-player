@@ -1,7 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import { TimelyFallback, Widgetfallback } from "./Loading";
-import { describe } from "node:test";
 
 describe("Loading component", () => {
   test("loading UI of widget should render", async () => {

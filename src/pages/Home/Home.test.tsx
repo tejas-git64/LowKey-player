@@ -26,14 +26,14 @@ import {
 import Home, { TimelyPlaylists, Widget } from "./Home";
 import { samplePlaylist, sampleTrack } from "../../api/samples";
 import { PlaylistById, PlaylistOfList } from "../../types/GlobalTypes";
-import widgetfallback from "/fallbacks/widget-fallback.webp";
-import play from "/svgs/play-icon.svg";
-import pause from "/svgs/pause-icon.svg";
-import fallbacktoday from "/fallbacks/timely/icons8-timely-today.webp";
-import fallbackweekly from "/fallbacks/timely/icons8-timely-weekly.webp";
-import fallbackmonthly from "/fallbacks/timely/icons8-timely-monthly.webp";
-import fallbackyearly from "/fallbacks/timely/icons8-timely-yearly.webp";
-import { IntersectionObserverMock } from "../../components/Section/Section.test";
+const widgetfallback = "/fallbacks/widget-fallback.webp";
+import play from "../../assets/svgs/play-icon.svg";
+import pause from "../../assets/svgs/pause-icon.svg";
+const fallbacktoday = "/fallbacks/timely/icons8-timely-today.webp";
+const fallbackweekly = "/fallbacks/timely/icons8-timely-weekly.webp";
+const fallbackmonthly = "/fallbacks/timely/icons8-timely-monthly.webp";
+const fallbackyearly = "/fallbacks/timely/icons8-timely-yearly.webp";
+import { IntersectionObserverMock } from "../../helpers/IntersectionObserverMock";
 import { useBoundStore } from "../../store/store";
 import {
   mockedWidgetData,
@@ -73,7 +73,7 @@ beforeEach(() => {
     });
     useBoundStore.getState().changeGreeting("");
   });
-  globalThis.IntersectionObserver = vi.fn((cb) => {
+  globalThis.IntersectionObserver = vi.fn(function (this: unknown, cb) {
     observerInstance = new IntersectionObserverMock(cb);
     return observerInstance;
   });
@@ -143,7 +143,7 @@ describe("Home", () => {
     expect(timely).toBeInTheDocument();
   });
   describe("greeting", () => {
-    test('should be "Good morning" at 9 AM', () => {
+    test('should be "Good morning" at 9 AM', async () => {
       vi.setSystemTime(new Date("2025-01-01T09:00:00"));
       render(
         <QueryClientProvider client={new QueryClient()}>
@@ -154,7 +154,7 @@ describe("Home", () => {
       );
       expect(useBoundStore.getState().greeting).toBe("Good morning");
     });
-    test('should be "Good afternoon" at 2 PM', () => {
+    test('should be "Good afternoon" at 2 PM', async () => {
       vi.setSystemTime(new Date("2025-01-01T14:00:00"));
       render(
         <QueryClientProvider client={new QueryClient()}>
@@ -165,7 +165,7 @@ describe("Home", () => {
       );
       expect(useBoundStore.getState().greeting).toBe("Good afternoon");
     });
-    test('should be "Good evening" at 5 PM', () => {
+    test('should be "Good evening" at 5 PM', async () => {
       vi.setSystemTime(new Date("2025-01-01T17:00:00"));
       render(
         <QueryClientProvider client={new QueryClient()}>
@@ -176,7 +176,7 @@ describe("Home", () => {
       );
       expect(useBoundStore.getState().greeting).toBe("Good evening");
     });
-    test('should be "Good evening" at 8 PM', () => {
+    test('should be "Good evening" at 8 PM', async () => {
       vi.setSystemTime(new Date("2025-01-01T20:00:00"));
       render(
         <QueryClientProvider client={new QueryClient()}>
@@ -187,7 +187,7 @@ describe("Home", () => {
       );
       expect(useBoundStore.getState().greeting).toBe("Good night");
     });
-    test('should be "Jump back in"', () => {
+    test('should be "Jump back in"', async () => {
       vi.setSystemTime(new Date(""));
       render(
         <QueryClientProvider client={new QueryClient()}>
@@ -200,7 +200,7 @@ describe("Home", () => {
     });
   });
   describe("Widget", () => {
-    test("should render", () => {
+    test("should render", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/home"]}>
@@ -213,7 +213,7 @@ describe("Home", () => {
       expect(timely).toBeInTheDocument();
     });
     describe("image", () => {
-      test("should render", () => {
+      test("should render", async () => {
         render(
           <QueryClientProvider client={new QueryClient()}>
             <MemoryRouter initialEntries={["/home"]}>
@@ -225,7 +225,7 @@ describe("Home", () => {
         const image = screen.getByTestId("widget-image");
         expect(image).toBeInTheDocument();
       });
-      test("should play playlist onClick", () => {
+      test("should play playlist onClick", async () => {
         render(
           <QueryClientProvider client={new QueryClient()}>
             <MemoryRouter initialEntries={["/home"]}>
@@ -238,7 +238,7 @@ describe("Home", () => {
         fireEvent.click(image);
         expect(fadeOutNavigate).toHaveBeenCalledWith("/playlists/ae5fa1Ax");
       });
-      test("should play playlist onClick", () => {
+      test("should play playlist onClick", async () => {
         render(
           <QueryClientProvider client={new QueryClient()}>
             <MemoryRouter initialEntries={["/home"]}>
@@ -258,7 +258,7 @@ describe("Home", () => {
         expect(widget).toHaveClass("song-fadein");
         expect(image).toHaveClass("widget-banner-fadein");
       });
-      test("should contain widgetfallback as image onError", () => {
+      test("should contain widgetfallback as image onError", async () => {
         render(
           <QueryClientProvider client={new QueryClient()}>
             <MemoryRouter initialEntries={["/home"]}>
@@ -273,7 +273,7 @@ describe("Home", () => {
       });
     });
     describe("play button", () => {
-      test("should have tabIndex as 0 on having data", () => {
+      test("should have tabIndex as 0 on having data", async () => {
         render(
           <QueryClientProvider client={new QueryClient()}>
             <MemoryRouter initialEntries={["/home"]}>
@@ -317,7 +317,7 @@ describe("Home", () => {
           expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
         });
       });
-      test("should toggle playlist playback onClick if already set", () => {
+      test("should toggle playlist playback onClick if already set", async () => {
         act(() => {
           setIsPlaying(true);
         });
@@ -362,7 +362,7 @@ describe("Home", () => {
           expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
         });
       });
-      test("should have icon as play if isPlaying is false", () => {
+      test("should have icon as play if isPlaying is false", async () => {
         render(
           <QueryClientProvider client={new QueryClient()}>
             <MemoryRouter initialEntries={["/home"]}>
@@ -374,7 +374,7 @@ describe("Home", () => {
         const image = screen.getByAltText("play");
         expect((image as HTMLImageElement).src).toContain(play);
       });
-      test("should have icon as pause if isPlaying is true", () => {
+      test("should have icon as pause if isPlaying is true", async () => {
         mockedUseQuery.mockReturnValue({
           ...mockedPlaylistSuccessData,
           data: { ...samplePlaylist, image: [] },
@@ -407,7 +407,7 @@ describe("Home", () => {
     });
   });
   describe("TimelyPlaylists", () => {
-    test("should render", () => {
+    test("should render", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/home"]}>
@@ -420,7 +420,7 @@ describe("Home", () => {
       expect(timely).toBeInTheDocument();
     });
     describe("Today playlist", () => {
-      test("should navigate to playlist onClick", () => {
+      test("should navigate to playlist onClick", async () => {
         render(
           <QueryClientProvider client={new QueryClient()}>
             <MemoryRouter initialEntries={["/home"]}>
@@ -436,7 +436,7 @@ describe("Home", () => {
         expect(fadeOutNavigate).toHaveBeenCalledWith("/playlists/ae5fa1Ax");
       });
       describe("should have image", () => {
-        test("call handleImageLoad onLoad", () => {
+        test("call handleImageLoad onLoad", async () => {
           render(
             <QueryClientProvider client={new QueryClient()}>
               <MemoryRouter initialEntries={["/home"]}>
@@ -451,7 +451,7 @@ describe("Home", () => {
             "song-fadeout",
           );
         });
-        test("of the playlist if avalable", () => {
+        test("of the playlist if avalable", async () => {
           render(
             <QueryClientProvider client={new QueryClient()}>
               <MemoryRouter initialEntries={["/home"]}>
@@ -463,7 +463,7 @@ describe("Home", () => {
           const today = screen.getByTestId("today-playlist-image");
           expect((today as HTMLImageElement).src).toContain("image%20url");
         });
-        test("as fallbacktoday if not available", () => {
+        test("as fallbacktoday if not available", async () => {
           mockedUseQuery.mockReturnValue({
             ...mockedPlaylistSuccessData,
             data: { ...samplePlaylist, image: [] },
@@ -479,7 +479,7 @@ describe("Home", () => {
           const today = screen.getByTestId("today-playlist-image");
           expect((today as HTMLImageElement).src).toContain(fallbacktoday);
         });
-        test("as fallbackyearly onError", () => {
+        test("as fallbackyearly onError", async () => {
           render(
             <QueryClientProvider client={new QueryClient()}>
               <MemoryRouter initialEntries={["/home"]}>
@@ -495,7 +495,7 @@ describe("Home", () => {
       });
     });
     describe("Weekly playlist", () => {
-      test("should navigate to playlist onClick", () => {
+      test("should navigate to playlist onClick", async () => {
         render(
           <QueryClientProvider client={new QueryClient()}>
             <MemoryRouter initialEntries={["/home"]}>
@@ -511,7 +511,7 @@ describe("Home", () => {
         expect(fadeOutNavigate).toHaveBeenCalledWith("/playlists/ae5fa1Ax");
       });
       describe("should have image", () => {
-        test("call handleImageLoad onLoad", () => {
+        test("call handleImageLoad onLoad", async () => {
           render(
             <QueryClientProvider client={new QueryClient()}>
               <MemoryRouter initialEntries={["/home"]}>
@@ -526,7 +526,7 @@ describe("Home", () => {
             "song-fadeout",
           );
         });
-        test("of the playlist if avalable", () => {
+        test("of the playlist if avalable", async () => {
           render(
             <QueryClientProvider client={new QueryClient()}>
               <MemoryRouter initialEntries={["/home"]}>
@@ -538,7 +538,7 @@ describe("Home", () => {
           const weekly = screen.getByTestId("weekly-playlist-image");
           expect((weekly as HTMLImageElement).src).toContain("image%20url");
         });
-        test("as fallbackweekly if not available", () => {
+        test("as fallbackweekly if not available", async () => {
           mockedUseQuery.mockReturnValue({
             ...mockedPlaylistSuccessData,
             data: { ...samplePlaylist, image: [] },
@@ -554,7 +554,7 @@ describe("Home", () => {
           const weekly = screen.getByTestId("weekly-playlist-image");
           expect((weekly as HTMLImageElement).src).toContain(fallbackweekly);
         });
-        test("as fallbackweekly onError", () => {
+        test("as fallbackweekly onError", async () => {
           render(
             <QueryClientProvider client={new QueryClient()}>
               <MemoryRouter initialEntries={["/home"]}>
@@ -570,7 +570,7 @@ describe("Home", () => {
       });
     });
     describe("Monthly playlist", () => {
-      test("should navigate to playlist onClick", () => {
+      test("should navigate to playlist onClick", async () => {
         render(
           <QueryClientProvider client={new QueryClient()}>
             <MemoryRouter initialEntries={["/home"]}>
@@ -586,7 +586,7 @@ describe("Home", () => {
         expect(fadeOutNavigate).toHaveBeenCalledWith("/playlists/ae5fa1Ax");
       });
       describe("should have image", () => {
-        test("call handleImageLoad onLoad", () => {
+        test("call handleImageLoad onLoad", async () => {
           render(
             <QueryClientProvider client={new QueryClient()}>
               <MemoryRouter initialEntries={["/home"]}>
@@ -601,7 +601,7 @@ describe("Home", () => {
             "song-fadeout",
           );
         });
-        test("of the playlist if avalable", () => {
+        test("of the playlist if avalable", async () => {
           render(
             <QueryClientProvider client={new QueryClient()}>
               <MemoryRouter initialEntries={["/home"]}>
@@ -613,7 +613,7 @@ describe("Home", () => {
           const monthly = screen.getByTestId("monthly-playlist-image");
           expect((monthly as HTMLImageElement).src).toContain("image%20url");
         });
-        test("as fallbackmonthly if not available", () => {
+        test("as fallbackmonthly if not available", async () => {
           mockedUseQuery.mockReturnValue({
             ...mockedPlaylistSuccessData,
             data: { ...samplePlaylist, image: [] },
@@ -629,7 +629,7 @@ describe("Home", () => {
           const monthly = screen.getByTestId("monthly-playlist-image");
           expect((monthly as HTMLImageElement).src).toContain(fallbackmonthly);
         });
-        test("as fallbackmonthly onError", () => {
+        test("as fallbackmonthly onError", async () => {
           render(
             <QueryClientProvider client={new QueryClient()}>
               <MemoryRouter initialEntries={["/home"]}>
@@ -645,7 +645,7 @@ describe("Home", () => {
       });
     });
     describe("Yearly playlist", () => {
-      test("should navigate to playlist onClick", () => {
+      test("should navigate to playlist onClick", async () => {
         render(
           <QueryClientProvider client={new QueryClient()}>
             <MemoryRouter initialEntries={["/home"]}>
@@ -661,7 +661,7 @@ describe("Home", () => {
         expect(fadeOutNavigate).toHaveBeenCalledWith("/playlists/ae5fa1Ax");
       });
       describe("should have image", () => {
-        test("call handleImageLoad onLoad", () => {
+        test("call handleImageLoad onLoad", async () => {
           render(
             <QueryClientProvider client={new QueryClient()}>
               <MemoryRouter initialEntries={["/home"]}>
@@ -676,7 +676,7 @@ describe("Home", () => {
             "song-fadeout",
           );
         });
-        test("of the playlist if avalable", () => {
+        test("of the playlist if avalable", async () => {
           render(
             <QueryClientProvider client={new QueryClient()}>
               <MemoryRouter initialEntries={["/home"]}>
@@ -688,7 +688,7 @@ describe("Home", () => {
           const yearly = screen.getByTestId("yearly-playlist-image");
           expect((yearly as HTMLImageElement).src).toContain("image%20url");
         });
-        test("as fallbackyearly if not available", () => {
+        test("as fallbackyearly if not available", async () => {
           mockedUseQuery.mockReturnValue({
             ...mockedPlaylistSuccessData,
             data: { ...samplePlaylist, image: [] },
@@ -704,7 +704,7 @@ describe("Home", () => {
           const yearly = screen.getByTestId("yearly-playlist-image");
           expect((yearly as HTMLImageElement).src).toContain(fallbackyearly);
         });
-        test("as fallbackyearly onError", () => {
+        test("as fallbackyearly onError", async () => {
           render(
             <QueryClientProvider client={new QueryClient()}>
               <MemoryRouter initialEntries={["/home"]}>

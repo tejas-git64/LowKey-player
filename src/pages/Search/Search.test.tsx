@@ -17,9 +17,9 @@ import {
 } from "vitest";
 import Search from "./Search";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import fallback from "/fallbacks/playlist-fallback.webp";
-import songfallback from "/fallbacks/song-fallback.webp";
-import artistfallback from "/fallbacks/artist-fallback.png";
+const fallback = "/fallbacks/playlist-fallback.webp";
+const songfallback = "/fallbacks/song-fallback.webp";
+const artistfallback = "/fallbacks/artist-fallback.png";
 import { MemoryRouter } from "react-router-dom";
 import { useBoundStore } from "../../store/store";
 import { sampleSearchResults, sampleTrack } from "../../api/samples";
@@ -41,6 +41,7 @@ const { setSearch, setNowPlaying } = useBoundStore.getState();
 let setSearchMock: ReturnType<typeof vi.spyOn>;
 
 beforeEach(() => {
+  mockedNavigate.mockClear();
   setSearchMock = vi.fn();
   act(() => {
     store.setState(initialStoreState, true);
@@ -70,6 +71,7 @@ afterEach(() => {
 
   globalThis.fetch = originalFetch;
   vi.restoreAllMocks();
+  vi.clearAllMocks();
   cleanup();
   vi.clearAllTimers();
 });
@@ -87,7 +89,7 @@ describe("Search", () => {
       expect(screen.getByTestId("search-page")).toBeInTheDocument();
     });
   });
-  test("should render search results", () => {
+  test("should render search results", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={["/search"]}>
@@ -97,7 +99,7 @@ describe("Search", () => {
     );
     expect(screen.getByTestId("results-container")).toBeInTheDocument();
   });
-  test("should render search fallback", () => {
+  test("should render search fallback", async () => {
     act(() => {
       setSearch(defaultSearchData);
     });
@@ -111,7 +113,7 @@ describe("Search", () => {
     expect(screen.getByTestId("search-fallback")).toBeInTheDocument();
   });
   describe("TopQuery", () => {
-    test("should render top query results", () => {
+    test("should render top query results", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/search"]}>
@@ -124,7 +126,7 @@ describe("Search", () => {
       expect(topQuery).toBeInTheDocument();
       expect(topQueryResults.childElementCount).toBe(1);
     });
-    test("should contain the top query's image, title and aria-label as title if available", () => {
+    test("should contain the top query's image, title and aria-label as title if available", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/search"]}>
@@ -139,7 +141,7 @@ describe("Search", () => {
       expect(topTitle.textContent).toBe("Some query result");
       expect((queryImage as HTMLImageElement).src).toContain("artist%20url");
     });
-    test("should not contain the top query's image, title and aria-label as title if not available", () => {
+    test("should not contain the top query's image, title and aria-label as title if not available", async () => {
       act(() => {
         setSearch({
           ...sampleSearchResults,
@@ -171,7 +173,7 @@ describe("Search", () => {
         "artist%20url",
       );
     });
-    test("should navigate to that route on clicking the top query result", () => {
+    test("should navigate to that route on clicking the top query result", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/search"]}>
@@ -226,7 +228,7 @@ describe("Search", () => {
         expect(mockedNavigate).toHaveBeenCalledWith("/artists/568648");
       });
     });
-    test("should not navigate to that route onKeyDown using other keys", () => {
+    test("should not navigate to that route onKeyDown using other keys", async () => {
       const user = userEvent.setup();
       render(
         <QueryClientProvider client={new QueryClient()}>
@@ -238,9 +240,7 @@ describe("Search", () => {
       const topResult = screen.getByTestId("top-result");
       expect(topResult).toBeInTheDocument();
       topResult.focus();
-      act(() => {
-        user.keyboard("{s}");
-      });
+      await user.keyboard("{s}");
       expect(mockedNavigate).not.toHaveBeenCalledWith("/artists/568648");
     });
   });
@@ -248,7 +248,7 @@ describe("Search", () => {
     afterEach(() => {
       setNowPlaying(null);
     });
-    test("should render", () => {
+    test("should render", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/search"]}>
@@ -258,7 +258,7 @@ describe("Search", () => {
       );
       expect(screen.getByTestId("query-songs")).toBeInTheDocument();
     });
-    test("should contain the top query's image, title and aria-label as title if available", () => {
+    test("should contain the top query's image, title and aria-label as title if available", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/search"]}>
@@ -275,7 +275,7 @@ describe("Search", () => {
         "song%20image%20url",
       );
     });
-    test("should not contain the top query's image, title and aria-label as title if not available", () => {
+    test("should not contain the top query's image, title and aria-label as title if not available", async () => {
       act(() => {
         setSearch({
           ...sampleSearchResults,
@@ -307,7 +307,7 @@ describe("Search", () => {
         "song%20image%20url",
       );
     });
-    test("should contain songfallback as the top query's image onError", () => {
+    test("should contain songfallback as the top query's image onError", async () => {
       act(() => {
         setSearch({
           ...sampleSearchResults,
@@ -333,7 +333,7 @@ describe("Search", () => {
       fireEvent.error(songImage);
       expect((songImage as HTMLImageElement).src).toContain(songfallback);
     });
-    test("should set the track on clicking the song result", () => {
+    test("should set the track on clicking the song result", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/search"]}>
@@ -349,7 +349,7 @@ describe("Search", () => {
       if (track) expect(track.id).toBeDefined();
     });
     describe("should set the track onKeyDown", () => {
-      test("using Enter key", () => {
+      test("using Enter key", async () => {
         globalThis.fetch = vi.fn(() =>
           Promise.resolve({
             ok: true,
@@ -371,12 +371,12 @@ describe("Search", () => {
             charCode: 13,
           });
         });
-        waitFor(() => {
+        await waitFor(() => {
           expect(useBoundStore.getState().nowPlaying.track).toBeDefined();
           expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
         });
       });
-      test("using Space key", () => {
+      test("using Space key", async () => {
         globalThis.fetch = vi.fn(() =>
           Promise.resolve({
             ok: true,
@@ -398,13 +398,13 @@ describe("Search", () => {
             charCode: 32,
           });
         });
-        waitFor(() => {
+        await waitFor(() => {
           expect(useBoundStore.getState().nowPlaying.track).toBeDefined();
           expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
         });
       });
     });
-    test("should not set the track onKeyDown using other keys", () => {
+    test("should not set the track onKeyDown using other keys", async () => {
       const user = userEvent.setup();
       render(
         <QueryClientProvider client={new QueryClient()}>
@@ -415,9 +415,7 @@ describe("Search", () => {
       );
       const querySong = screen.getByTestId("query-song");
       querySong.focus();
-      act(() => {
-        user.keyboard("{s}");
-      });
+      await user.keyboard("{s}");
       expect(useBoundStore.getState().nowPlaying.track).toBeNull();
     });
     test("should log error if the track is not found", async () => {
@@ -443,7 +441,7 @@ describe("Search", () => {
     });
   });
   describe("QueryPlaylists", () => {
-    test("should render", () => {
+    test("should render", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/search"]}>
@@ -473,7 +471,7 @@ describe("Search", () => {
       const playlists = screen.queryByTestId("query-playlists");
       expect(playlists).not.toBeInTheDocument();
     });
-    test("should contain the playlist image and title if available", () => {
+    test("should contain the playlist image and title if available", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/search"]}>
@@ -488,7 +486,7 @@ describe("Search", () => {
       expect(playlistTitle.textContent).toContain("Some title");
       expect((playlistImage as HTMLImageElement).src).toContain("some%20url");
     });
-    test("should not contain fallback as playlist image and 'Unknown playlist' as title if not available", () => {
+    test("should not contain fallback as playlist image and 'Unknown playlist' as title if not available", async () => {
       act(() => {
         setSearch({
           ...sampleSearchResults,
@@ -516,7 +514,7 @@ describe("Search", () => {
       expect(playlistTitle.textContent).toContain("Unknown playlist");
       expect((playlistImage as HTMLImageElement).src).toContain(fallback);
     });
-    test("should contain fallback as playlist image onError ", () => {
+    test("should contain fallback as playlist image onError ", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/search"]}>
@@ -531,7 +529,7 @@ describe("Search", () => {
     });
   });
   describe("QueryArtists", () => {
-    test("should render", () => {
+    test("should render", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/search"]}>
@@ -539,9 +537,13 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      expect(screen.getByTestId("query-artists")).toBeInTheDocument();
+      const searchinput = await screen.findByTestId("searchinput");
+      await userEvent.type(searchinput, "a");
+      await waitFor(() => {
+        expect(screen.queryByTestId("query-artists")).toBeInTheDocument();
+      })
     });
-    test("should contain the artist's image and title if available", () => {
+    test("should contain the artist's image and title if available", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/search"]}>
@@ -549,6 +551,8 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
+      const searchinput = await screen.findByTestId("searchinput");
+      await userEvent.type(searchinput, "a");
       const artistResult = screen.getByTestId("query-artist");
       const artistTitle = screen.getByTestId("query-artist-title");
       const artistImage = screen.getAllByAltText("Encore")[0];
@@ -556,7 +560,7 @@ describe("Search", () => {
       expect(artistTitle.textContent).toContain("Encore");
       expect((artistImage as HTMLImageElement).src).toContain("some%20url");
     });
-    test("should not contain fallback as image and 'Unknown Artist' if not available", () => {
+    test("should not contain fallback as image and 'Unknown Artist' if not available", async () => {
       act(() => {
         setSearch({
           ...sampleSearchResults,
@@ -579,12 +583,14 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
+      const searchinput = await screen.findByTestId("searchinput");
+      await userEvent.type(searchinput, "a");
       const artistTitle = screen.getByTestId("query-artist-title");
       const artistImage = screen.getByAltText("Unknown Artist");
       expect(artistTitle.textContent).toContain("Unknown Artist");
       expect((artistImage as HTMLImageElement).src).toContain(artistfallback);
     });
-    test("should contain fallback as artist image onError ", () => {
+    test("should contain fallback as artist image onError ", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/search"]}>
@@ -592,15 +598,17 @@ describe("Search", () => {
           </MemoryRouter>
         </QueryClientProvider>,
       );
-      const artistImage = screen.getAllByAltText("Encore")[0];
+      const searchinput = await screen.findByTestId("searchinput");
+      await userEvent.type(searchinput, "Encore");
+      const artistImage = screen.getAllByAltText("Encore")[1];
       fireEvent.error(artistImage);
-      waitFor(() => {
+      await waitFor(() => {
         expect((artistImage as HTMLImageElement).src).toContain(artistfallback);
       });
     });
   });
   describe("QueryAlbums", () => {
-    test("should render", () => {
+    test("should render", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/search"]}>
@@ -610,7 +618,7 @@ describe("Search", () => {
       );
       expect(screen.getByTestId("query-albums")).toBeInTheDocument();
     });
-    test("should add fadeIn animation for image of each album", () => {
+    test("should add fadeIn animation for image of each album", async () => {
       vi.useFakeTimers();
       render(
         <QueryClientProvider client={new QueryClient()}>
@@ -625,7 +633,7 @@ describe("Search", () => {
       expect(image).toHaveClass("image-fadein");
       vi.useRealTimers();
     });
-    test("should contain the album's image and title if available", () => {
+    test("should contain the album's image and title if available", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/search"]}>
@@ -640,7 +648,7 @@ describe("Search", () => {
       expect(albumTitle.textContent).toContain("Encore");
       expect((albumImage as HTMLImageElement).src).toContain("some%20url");
     });
-    test("should not contain fallback as image and 'Unknown Album' if not available", () => {
+    test("should not contain fallback as image and 'Unknown Album' if not available", async () => {
       act(() => {
         setSearch({
           ...sampleSearchResults,
@@ -668,7 +676,7 @@ describe("Search", () => {
       expect(albumTitle.textContent).toContain("Unknown Album");
       expect((albumImage as HTMLImageElement).src).toContain(fallback);
     });
-    test("should contain fallback as album image onError ", () => {
+    test("should contain fallback as album image onError ", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/search"]}>

@@ -20,16 +20,16 @@ import {
 } from "vitest";
 import NowPlaying from "./NowPlaying";
 import { useBoundStore } from "../../store/store";
-import favorite from "/svgs/icons8-heart.svg";
-import favorited from "/svgs/icons8-favorited.svg";
-import add from "/svgs/icons8-addplaylist-28.svg";
-import high from "/svgs/volume-high.svg";
-import vol from "/svgs/volume-min-svgrepo.svg";
-import mute from "/svgs/mute-svgrepo-com.svg";
-import play from "/svgs/play-icon.svg";
-import pause from "/svgs/pause-icon.svg";
-import tick from "/svgs/tick.svg";
-import songfallback from "/fallbacks/song-fallback.webp";
+import favorite from "../../assets/svgs/icons8-heart.svg";
+import favorited from "../../assets/svgs/icons8-favorited.svg";
+import add from "../../assets/svgs/icons8-addplaylist-28.svg";
+import high from "../../assets/svgs/volume-high.svg";
+import vol from "../../assets/svgs/volume-min-svgrepo.svg";
+import mute from "../../assets/svgs/mute-svgrepo-com.svg";
+import play from "../../assets/svgs/play-icon.svg";
+import pause from "../../assets/svgs/pause-icon.svg";
+import tick from "../../assets/svgs/tick.svg";
+const songfallback = "/fallbacks/song-fallback.webp";
 import { sampleTrack, sampleUserPlaylist } from "../../api/samples";
 import { MemoryRouter } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
@@ -116,6 +116,7 @@ beforeEach(() => {
     });
   setItemMock = vi.spyOn(Storage.prototype, "setItem");
   globalThis.innerWidth = innerWidth;
+  useNavigateMock.mockClear();
 });
 
 afterEach(() => {
@@ -127,10 +128,11 @@ afterEach(() => {
     setShowPlayer(false);
   });
   vi.restoreAllMocks();
+  vi.clearAllMocks();
 });
 
 describe("NowPlaying", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(
       <MemoryRouter>
         <NowPlaying />
@@ -138,7 +140,7 @@ describe("NowPlaying", () => {
     );
     expect(screen.getByTestId("now-playing")).toBeInTheDocument();
   });
-  test("should contain Waveform", () => {
+  test("should contain Waveform", async () => {
     render(
       <MemoryRouter>
         <NowPlaying />
@@ -149,7 +151,7 @@ describe("NowPlaying", () => {
     expect(waveform).toBeInTheDocument();
     expect(wave).toBeInTheDocument();
   });
-  test("should set the last track, audio quality and volume to localStorage beforeunload", () => {
+  test("should set the last track, audio quality and volume to localStorage beforeunload", async () => {
     render(
       <MemoryRouter>
         <NowPlaying />
@@ -164,7 +166,7 @@ describe("NowPlaying", () => {
     expect(setItemMock as Mock).toHaveBeenCalledWith("last-volume", "0.5");
     expect(setItemMock as Mock).toHaveBeenCalledWith("last-quality", "2");
   });
-  test("should get the last track and audio quality if stored in localStorage", () => {
+  test("should get the last track and audio quality if stored in localStorage", async () => {
     const lastAudio = localStorage.getItem("last-audio");
     const lastAudioQuality = localStorage.getItem("last-quality");
     getItemMock.mockImplementationOnce((key: string) => {
@@ -181,7 +183,7 @@ describe("NowPlaying", () => {
     expect(JSON.parse(lastAudioQuality as string)).toBe(2);
     expect(useBoundStore.getState().nowPlaying.track).toEqual(sampleTrack);
   });
-  test("should contain mobile specific classes if isMobilePlayer is set to true", () => {
+  test("should contain mobile specific classes if isMobilePlayer is set to true", async () => {
     act(() => {
       setShowPlayer(true);
     });
@@ -193,7 +195,7 @@ describe("NowPlaying", () => {
     const nowPlaying = screen.getByTestId("now-playing");
     expect(nowPlaying).toHaveClass("translate-y-0");
   });
-  test("should contain landscape specific classes if isMobilePlayer is set to false", () => {
+  test("should contain landscape specific classes if isMobilePlayer is set to false", async () => {
     render(
       <MemoryRouter>
         <NowPlaying />
@@ -249,7 +251,7 @@ describe("NowPlaying", () => {
     beforeAll(() => {
       globalThis.innerWidth = 1280;
     });
-    test("should be shown if available", () => {
+    test("should be shown if available", async () => {
       render(
         <MemoryRouter>
           <NowPlaying />
@@ -273,7 +275,7 @@ describe("NowPlaying", () => {
       )) as HTMLImageElement;
       expect(songImage.src).toContain(songfallback);
     });
-    test("should be songfallback onError", () => {
+    test("should be songfallback onError", async () => {
       render(
         <MemoryRouter>
           <NowPlaying />
@@ -283,7 +285,7 @@ describe("NowPlaying", () => {
       fireEvent.error(image);
       expect((image as HTMLImageElement).src).toContain(songfallback);
     });
-    test("should contain alt text as 'Cover art' for * if available", () => {
+    test("should contain alt text as 'Cover art' for * if available", async () => {
       render(
         <MemoryRouter>
           <NowPlaying />
@@ -293,7 +295,7 @@ describe("NowPlaying", () => {
       expect((image as HTMLImageElement).alt).toBe("Cover art for Track3");
       expect(image.ariaHidden).toBeNull();
     });
-    test("should contain alt text as 'song image 'if not available", () => {
+    test("should contain alt text as 'song image 'if not available", async () => {
       render(
         <MemoryRouter>
           <NowPlaying />
@@ -333,7 +335,7 @@ describe("NowPlaying", () => {
       const select = screen.getByTestId("quality");
       expect(select.tabIndex).toBe(0);
     });
-    test("should contain tabIndex as -1 if song urls are not available", () => {
+    test("should contain tabIndex as -1 if song urls are not available", async () => {
       act(() => {
         setNowPlaying({
           ...sampleTrack,
@@ -352,7 +354,7 @@ describe("NowPlaying", () => {
       const select = screen.getByTestId("quality");
       expect(select.tabIndex).toBe(-1);
     });
-    test("should set the audio index onClick", () => {
+    test("should set the audio index onClick", async () => {
       act(() => {
         setNowPlaying({
           ...sampleTrack,
@@ -396,7 +398,7 @@ describe("NowPlaying", () => {
         linkClickSpy,
       );
     });
-    test("should not download the track if there's no valid url", () => {
+    test("should not download the track if there's no valid url", async () => {
       const handleDownload = vi.fn();
       render(
         <MemoryRouter>
@@ -421,7 +423,7 @@ describe("NowPlaying", () => {
       expect((select as HTMLSelectElement).value).toBe("0");
 
       fireEvent.click(downloadBtn);
-      waitFor(() => {
+      await waitFor(() => {
         expect(fetch).toHaveBeenCalledWith(
           "https://aac.saavncdn.com/745/6adf5c70c94e8de892cb34bf52a77d9c_48.mp4",
         );
@@ -462,7 +464,7 @@ describe("NowPlaying", () => {
     });
   });
   describe("Play button", () => {
-    test("should render", () => {
+    test("should render", async () => {
       render(
         <MemoryRouter>
           <NowPlaying />
@@ -472,7 +474,7 @@ describe("NowPlaying", () => {
       expect(playBtn).toBeInTheDocument();
     });
     describe("Aria label", () => {
-      test("should be 'Play' if isPlaying is false", () => {
+      test("should be 'Play' if isPlaying is false", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -481,7 +483,7 @@ describe("NowPlaying", () => {
         const playBtn = screen.getByTestId("play-btn");
         expect(playBtn.ariaLabel).toBe("Play");
       });
-      test("should be 'Pause' if isPlaying is true", () => {
+      test("should be 'Pause' if isPlaying is true", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -495,7 +497,7 @@ describe("NowPlaying", () => {
       });
     });
     describe("Image", () => {
-      test("should render", () => {
+      test("should render", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -504,7 +506,7 @@ describe("NowPlaying", () => {
         const playIcon = screen.getByTestId("play-icon");
         expect(playIcon).toBeInTheDocument();
       });
-      test("should contain respective icons and alt text if isPlaying is false", () => {
+      test("should contain respective icons and alt text if isPlaying is false", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -514,7 +516,7 @@ describe("NowPlaying", () => {
         expect((playIcon as HTMLImageElement).src).toContain(play);
         expect((playIcon as HTMLImageElement).alt).toBe("Play icon");
       });
-      test("should contain respective icons and alt text if isPlaying is true", () => {
+      test("should contain respective icons and alt text if isPlaying is true", async () => {
         act(() => {
           setIsPlaying(true);
         });
@@ -530,7 +532,7 @@ describe("NowPlaying", () => {
     });
   });
   describe("PlayerOptions", () => {
-    test("should render", () => {
+    test("should render", async () => {
       render(
         <MemoryRouter>
           <NowPlaying />
@@ -543,7 +545,7 @@ describe("NowPlaying", () => {
       beforeEach(() => {
         removeUserPlaylist(sampleUserPlaylist.id);
       });
-      test("should render", () => {
+      test("should render", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -552,7 +554,7 @@ describe("NowPlaying", () => {
         const playlistBtn = screen.getByTestId("playlist-btn");
         expect(playlistBtn).toBeInTheDocument();
       });
-      test("should set the creation track, open modal and close the player onClick", () => {
+      test("should set the creation track, open modal and close the player onClick", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -566,7 +568,7 @@ describe("NowPlaying", () => {
         expect(useBoundStore.getState().nowPlaying.isMobilePlayer).toBe(false);
         expect(useBoundStore.getState().revealCreation).toBe(true);
       });
-      test("should contain the respective aria labels on not having playlist id", () => {
+      test("should contain the respective aria labels on not having playlist id", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -575,7 +577,7 @@ describe("NowPlaying", () => {
         const playlistBtn = screen.getByTestId("playlist-btn");
         expect(playlistBtn.ariaLabel).toBe("Add to Playlist");
       });
-      test("should contain the respective aria labels on having playlist id", () => {
+      test("should contain the respective aria labels on having playlist id", async () => {
         act(() => {
           setUserPlaylist(sampleUserPlaylist);
         });
@@ -587,7 +589,7 @@ describe("NowPlaying", () => {
         const playlistBtn = screen.getByTestId("playlist-btn");
         expect(playlistBtn.ariaLabel).toBe("Remove from Playlist");
       });
-      test("should contain respective icons and alt text on not having the playlist id", () => {
+      test("should contain respective icons and alt text on not having the playlist id", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -597,7 +599,7 @@ describe("NowPlaying", () => {
         expect((playlistIcon as HTMLImageElement).src).toContain(add);
         expect((playlistIcon as HTMLImageElement).alt).toBe("Add to playlist");
       });
-      test("should contain respective icons and alt text on having the playlist id", () => {
+      test("should contain respective icons and alt text on having the playlist id", async () => {
         act(() => {
           setUserPlaylist(sampleUserPlaylist);
         });
@@ -616,7 +618,7 @@ describe("NowPlaying", () => {
         removeUserPlaylist(sampleUserPlaylist.id);
         removeFavorite(sampleTrack.id);
       });
-      test("should favorite the track and show its respective icon", () => {
+      test("should favorite the track and show its respective icon", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -634,7 +636,7 @@ describe("NowPlaying", () => {
         expect((favoriteIcon as HTMLImageElement).alt).toBe("Favorited");
         expect((favoriteIcon as HTMLImageElement).src).toBe(favorited);
       });
-      test("should not favorite the track and show its respective icon", () => {
+      test("should not favorite the track and show its respective icon", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -652,7 +654,7 @@ describe("NowPlaying", () => {
     });
   });
   describe("Controls", () => {
-    test("should render", () => {
+    test("should render", async () => {
       render(
         <MemoryRouter>
           <NowPlaying />
@@ -670,7 +672,7 @@ describe("NowPlaying", () => {
           songs: [],
         });
       });
-      test("should render", () => {
+      test("should render", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -679,7 +681,7 @@ describe("NowPlaying", () => {
         const shuffleBtn = screen.getByTitle("shuffle-button");
         expect(shuffleBtn).toBeInTheDocument();
       });
-      test("should toggle shuffle status and have tabIndex as 0 if there are songs in the queue", () => {
+      test("should toggle shuffle status and have tabIndex as 0 if there are songs in the queue", async () => {
         act(() => {
           setQueue({
             id: "10",
@@ -700,7 +702,7 @@ describe("NowPlaying", () => {
         });
         expect(useBoundStore.getState().isShuffling).toBe(true);
       });
-      test("should have tabIndex as -1 if there are no songs in the queue", () => {
+      test("should have tabIndex as -1 if there are no songs in the queue", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -711,7 +713,7 @@ describe("NowPlaying", () => {
       });
     });
     describe("Previous button", () => {
-      test("should render", () => {
+      test("should render", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -742,7 +744,7 @@ describe("NowPlaying", () => {
         expect(useBoundStore.getState().nowPlaying.track).toEqual(obj);
         expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
       });
-      test("should toggle playback if queueSongs's length <= 1", () => {
+      test("should toggle playback if queueSongs's length <= 1", async () => {
         act(() => {
           setQueue({
             id: "",
@@ -764,7 +766,7 @@ describe("NowPlaying", () => {
       });
     });
     describe("Next button", () => {
-      test("should render", () => {
+      test("should render", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -773,7 +775,7 @@ describe("NowPlaying", () => {
         const previous = screen.getByTestId("previous-btn");
         expect(previous).toBeInTheDocument();
       });
-      test("should playback next track if queueSongs's length > 1", () => {
+      test("should playback next track if queueSongs's length > 1", async () => {
         const obj = { ...sampleTrack, id: "133" };
         act(() => {
           setQueue({
@@ -795,7 +797,7 @@ describe("NowPlaying", () => {
         expect(useBoundStore.getState().nowPlaying.track).toEqual(obj);
         expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
       });
-      test("should toggle playback if songIndex >= queueSongs length", () => {
+      test("should toggle playback if songIndex >= queueSongs length", async () => {
         act(() => {
           setQueue({
             id: "",
@@ -820,7 +822,7 @@ describe("NowPlaying", () => {
       beforeEach(() => {
         setIsReplay(false);
       });
-      test("should render", () => {
+      test("should render", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -831,7 +833,7 @@ describe("NowPlaying", () => {
         expect(replayBtn).toBeInTheDocument();
         expect(replayIcon).toHaveClass("text-white");
       });
-      test("should enable replay in playback", () => {
+      test("should enable replay in playback", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -847,7 +849,7 @@ describe("NowPlaying", () => {
     });
   });
   describe("VolumeControl", () => {
-    test("should render", () => {
+    test("should render", async () => {
       render(
         <MemoryRouter>
           <NowPlaying />
@@ -856,7 +858,7 @@ describe("NowPlaying", () => {
       const controls = screen.getByTestId("volume-controls");
       expect(controls).toBeInTheDocument();
     });
-    test("should vary volume onChange", () => {
+    test("should vary volume onChange", async () => {
       render(
         <MemoryRouter>
           <NowPlaying />
@@ -868,7 +870,7 @@ describe("NowPlaying", () => {
       });
       expect((slider as HTMLInputElement).value).toBe("0.3");
     });
-    test("should toggle playback onMouseUp", () => {
+    test("should toggle playback onMouseUp", async () => {
       render(
         <MemoryRouter>
           <NowPlaying />
@@ -881,7 +883,7 @@ describe("NowPlaying", () => {
       expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
     });
     describe("Volume icons according to thresholds", () => {
-      test("should be mute if vol <= 0.1", () => {
+      test("should be mute if vol <= 0.1", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -895,7 +897,7 @@ describe("NowPlaying", () => {
         expect((sliderImage as HTMLImageElement).src).toContain(mute);
         expect((sliderImage as HTMLImageElement).alt).toBe("Muted");
       });
-      test("should be vol if vol > 0.1 and < 0.75", () => {
+      test("should be vol if vol > 0.1 and < 0.75", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -909,7 +911,7 @@ describe("NowPlaying", () => {
         expect((sliderImage as HTMLImageElement).src).toContain(vol);
         expect((sliderImage as HTMLImageElement).alt).toBe("Low volume");
       });
-      test("should be vol if vol > 0.75", () => {
+      test("should be vol if vol > 0.75", async () => {
         render(
           <MemoryRouter>
             <NowPlaying />
@@ -929,7 +931,7 @@ describe("NowPlaying", () => {
     beforeEach(() => {
       setShowPlayer(true);
     });
-    test("should navigate to the artist onClick", () => {
+    test("should navigate to the artist onClick", async () => {
       render(
         <MemoryRouter>
           <NowPlaying />
@@ -953,10 +955,8 @@ describe("NowPlaying", () => {
         );
         const artist = screen.getByTestId("artist");
         artist.focus();
-        act(() => {
-          event.keyboard("{Enter}");
-        });
-        waitFor(() => {
+        await event.keyboard("{Enter}");
+        await waitFor(() => {
           expect(useBoundStore.getState().nowPlaying.isMobilePlayer).toBe(
             false,
           );
@@ -972,10 +972,8 @@ describe("NowPlaying", () => {
         );
         const artist = screen.getByTestId("artist");
         artist.focus();
-        act(() => {
-          event.keyboard("{ }");
-        });
-        waitFor(() => {
+        await event.keyboard("{ }");
+        await waitFor(() => {
           expect(useBoundStore.getState().nowPlaying.isMobilePlayer).toBe(
             false,
           );
@@ -983,7 +981,7 @@ describe("NowPlaying", () => {
         });
       });
     });
-    test("should not navigate to the artist onKeyDown using other keys", () => {
+    test("should not navigate to the artist onKeyDown using other keys", async () => {
       const event = userEvent.setup();
       render(
         <MemoryRouter>
@@ -992,13 +990,11 @@ describe("NowPlaying", () => {
       );
       const artist = screen.getByTestId("artist");
       artist.focus();
-      act(() => {
-        event.keyboard("{s}");
-      });
+      await event.keyboard("{s}");
       expect(useBoundStore.getState().nowPlaying.isMobilePlayer).toBe(true);
       expect(useNavigateMock).not.toHaveBeenCalled();
     });
-    test("should contain fallback alt text if no artist name is found", () => {
+    test("should contain fallback alt text if no artist name is found", async () => {
       getItemMock.mockImplementationOnce((key: string) => {
         if (key === "last-audio") return JSON.stringify(null);
         return store[key] || null;

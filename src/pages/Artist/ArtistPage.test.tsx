@@ -25,8 +25,8 @@ import {
 import { MemoryRouter, useLocation, useParams } from "react-router-dom";
 import { AlbumById, ArtistType, TrackDetails } from "../../types/GlobalTypes";
 import { sampleAlbum, sampleArtist, sampleTrack } from "../../api/samples";
-import artistfallback from "/fallbacks/artist-fallback.png";
-import albumfallback from "/fallbacks/playlist-fallback.webp";
+const artistfallback = "/fallbacks/artist-fallback.png";
+const albumfallback = "/fallbacks/playlist-fallback.webp";
 import ArtistPage, {
   ArtistAlbums,
   ArtistInfo,

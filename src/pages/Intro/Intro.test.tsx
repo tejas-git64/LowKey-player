@@ -14,10 +14,11 @@ afterEach(() => {
   cleanup();
   vi.clearAllTimers();
   vi.useRealTimers();
+  vi.clearAllMocks();
 });
 
 describe("Intro", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(
       <MemoryRouter initialEntries={["/"]}>
         <Intro />
@@ -25,7 +26,7 @@ describe("Intro", () => {
     );
     expect(screen.getByTestId("intro-page")).toBeInTheDocument();
   });
-  test("card should render", () => {
+  test("card should render", async () => {
     render(
       <MemoryRouter initialEntries={["/"]}>
         <Intro />
@@ -33,7 +34,7 @@ describe("Intro", () => {
     );
     expect(screen.getByTestId("intro-card")).toBeInTheDocument();
   });
-  test("'Check it out' button should render", () => {
+  test("'Check it out' button should render", async () => {
     render(
       <MemoryRouter initialEntries={["/"]}>
         <Intro />

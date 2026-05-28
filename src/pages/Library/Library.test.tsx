@@ -1,4 +1,9 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+  UseQueryResult,
+} from "@tanstack/react-query";
 import {
   act,
   cleanup,
@@ -9,18 +14,26 @@ import {
 } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import artistfallback from "/fallbacks/artist-fallback.png";
+const artistfallback = "/fallbacks/artist-fallback.png";
 import Library from "./Library";
 import { useBoundStore } from "../../store/store";
 import {
   sampleAlbum,
   sampleArtistInSong,
   samplePlaylist,
+  samplePlaylistOfList,
   sampleTrack,
   sampleUserPlaylist,
 } from "../../api/samples";
 import ArtistPage from "../Artist/ArtistPage";
 import UserPlaylistPage from "../UserPlaylist/UserPlaylist";
+import { PlaylistOfList } from "../../types/GlobalTypes";
+
+vi.mock("@tanstack/react-query", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@tanstack/react-query")>();
+  return { ...actual, useQuery: vi.fn() };
+});
+const mockedUseQuery = vi.mocked(useQuery);
 
 const {
   setUserPlaylist,
@@ -51,6 +64,7 @@ afterEach(() => {
   });
   cleanup();
   vi.restoreAllMocks();
+  vi.resetAllMocks();
 });
 
 describe("Library", () => {
@@ -66,7 +80,7 @@ describe("Library", () => {
       expect(screen.getByTestId("library-page")).toBeInTheDocument();
     });
   });
-  test("should create new playlist onClick", () => {
+  test("should create new playlist onClick", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={["/library"]}>
@@ -80,7 +94,7 @@ describe("Library", () => {
     });
     expect(useBoundStore.getState().revealCreation).toBe(true);
   });
-  test("should render the library container", () => {
+  test("should render the library container", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={["/library"]}>
@@ -91,7 +105,7 @@ describe("Library", () => {
     const container = screen.getByTestId("library-container");
     expect(container).toBeInTheDocument();
   });
-  test("should render the custom playlists", () => {
+  test("should render the custom playlists", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={["/library"]}>
@@ -102,7 +116,10 @@ describe("Library", () => {
     const container = screen.getByTestId("customplaylist-container");
     expect(container).toBeInTheDocument();
   });
-  test("should render playlists", () => {
+  test("should render playlists", async () => {
+    mockedUseQuery.mockReturnValue([
+      samplePlaylistOfList,
+    ] as unknown as UseQueryResult<PlaylistOfList[]>);
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={["/library"]}>
@@ -113,7 +130,7 @@ describe("Library", () => {
     const container = screen.getByTestId("playlists-container");
     expect(container).toBeInTheDocument();
   });
-  test("should render albums", () => {
+  test("should render albums", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={["/library"]}>
@@ -124,7 +141,7 @@ describe("Library", () => {
     const container = screen.getByTestId("albums-container");
     expect(container).toBeInTheDocument();
   });
-  test("should render followings", () => {
+  test("should render followings", async () => {
     render(
       <QueryClientProvider client={new QueryClient()}>
         <MemoryRouter initialEntries={["/library"]}>
@@ -135,7 +152,7 @@ describe("Library", () => {
     const container = screen.getByTestId("followings-container");
     expect(container).toBeInTheDocument();
   });
-  test("should render empty message if none of them are present", () => {
+  test("should render empty message if none of them are present", async () => {
     act(() => {
       removeUserPlaylist(sampleUserPlaylist.id);
       removeLibraryAlbum(sampleAlbum.id);
@@ -149,13 +166,13 @@ describe("Library", () => {
         </MemoryRouter>
       </QueryClientProvider>,
     );
-    waitFor(() => {
+    await waitFor(() => {
       const container = screen.getByTestId("empty-message");
       expect(container).toBeInTheDocument();
     });
   });
   describe("Following", () => {
-    test("should render", () => {
+    test("should render", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/library"]}>
@@ -167,7 +184,7 @@ describe("Library", () => {
       const following = screen.getByTestId("following");
       expect(following).toBeInTheDocument();
     });
-    test("should have image and name on having following data", () => {
+    test("should have image and name on having following data", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/library"]}>
@@ -179,7 +196,7 @@ describe("Library", () => {
       expect((followingImage as HTMLImageElement).src).toContain("image%20url");
       expect(screen.getByText("sample song")).toBeInTheDocument();
     });
-    test("should have artistfallback and name as 'Unknown Artist' on not having following data", () => {
+    test("should have artistfallback and name as 'Unknown Artist' on not having following data", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/library"]}>
@@ -198,7 +215,7 @@ describe("Library", () => {
       );
       expect(screen.getByText("Unknown Artist")).toBeInTheDocument();
     });
-    test("should navigate to the artist onClick", () => {
+    test("should navigate to the artist onClick", async () => {
       vi.useFakeTimers();
       render(
         <QueryClientProvider client={new QueryClient()}>
@@ -235,7 +252,7 @@ describe("Library", () => {
         expect(playlist).toBeInTheDocument();
       });
     });
-    test("should playback track of the playlist onClick", () => {
+    test("should playback track of the playlist onClick", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/library"]}>
@@ -249,7 +266,7 @@ describe("Library", () => {
       });
       expect(useBoundStore.getState().nowPlaying.track).toBe(sampleTrack);
     });
-    test("should remove custom playlist onClick", () => {
+    test("should remove custom playlist onClick", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/library"]}>
@@ -333,7 +350,7 @@ describe("Library", () => {
     });
   });
   describe("LibraryPlaylists", () => {
-    test("should render", () => {
+    test("should render", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/library"]}>
@@ -347,6 +364,9 @@ describe("Library", () => {
     test("should navigate to playlist-page onClick", () => {
       vi.useFakeTimers();
       const fadeOutNavigate = vi.fn();
+      mockedUseQuery.mockReturnValue([
+        samplePlaylistOfList,
+      ] as unknown as UseQueryResult<PlaylistOfList[]>);
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/library"]}>
@@ -364,7 +384,7 @@ describe("Library", () => {
       });
       vi.useRealTimers();
     });
-    test("should play the playlist onClick", () => {
+    test("should play the playlist onClick", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/library"]}>
@@ -379,7 +399,7 @@ describe("Library", () => {
 
       expect(useBoundStore.getState().nowPlaying.track).toEqual(sampleTrack);
     });
-    test("should remove playlist onClick", () => {
+    test("should remove playlist onClick", async () => {
       render(
         <QueryClientProvider client={new QueryClient()}>
           <MemoryRouter initialEntries={["/library"]}>

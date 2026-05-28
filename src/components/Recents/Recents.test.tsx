@@ -15,7 +15,7 @@ import {
   test,
   vi,
 } from "vitest";
-import songfallback from "/fallbacks/song-fallback.webp";
+const songfallback = "/fallbacks/song-fallback.webp";
 import { useBoundStore } from "../../store/store";
 import { sampleTrack } from "../../api/samples";
 import Recents from "./Recents";
@@ -29,39 +29,47 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  vi.resetAllMocks();
   cleanup();
 });
 
 describe("Recents", () => {
-  test("should render", () => {
+  test("should render", async () => {
     render(<Recents />);
     expect(screen.getByTestId("recents")).toBeInTheDocument();
   });
   describe("RecentComponent useEffect localStorage", () => {
-    let mockSetHistory: ReturnType<typeof vi.fn>;
-    let mockSetActivity: ReturnType<typeof vi.fn>;
+    const mockSetHistory = vi.fn();
+    const mockSetActivity = vi.fn();
     const store: Record<string, string> = {};
 
     beforeEach(() => {
-      mockSetHistory = vi.fn();
-      mockSetActivity = vi.fn();
+      mockSetHistory.mockClear();
+      mockSetActivity.mockClear();
+
+      const state = useBoundStore.getState();
+      vi.spyOn(state, "setHistory").mockImplementation(mockSetHistory);
+      vi.spyOn(state, "setActivity").mockImplementation(mockSetActivity);
 
       vi.spyOn(Storage.prototype, "getItem").mockImplementation(
-        (key: string): string | null => {
-          return store[key] || null;
-        },
+        (key: string): string | null => store[key] || null,
       );
     });
 
-    test("calls setHistory and setActivity with values from localStorage", () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    test("calls setHistory and setActivity with values from localStorage", async () => {
       const fakeData = JSON.stringify({
         history: [{ id: "h1" }, { id: "h2" }],
-        activity: ["act1", "act2"],
+        activity: [{ message: "act1" }, { message: "act2" }],
       });
-      render(<Recents />);
       (localStorage.getItem as Mock).mockReturnValue(fakeData);
 
-      waitFor(() => {
+      render(<Recents />);
+
+      await waitFor(() => {
         expect(localStorage.getItem).toHaveBeenCalledWith("last-recents");
         expect(mockSetHistory).toHaveBeenCalledTimes(2);
         expect(mockSetHistory).toHaveBeenCalledWith({ id: "h1" });
@@ -73,13 +81,14 @@ describe("Recents", () => {
       });
     });
 
-    test("does not call setHistory or setActivity if localStorage is empty", () => {
-      render(<Recents />);
-      localStorage.getItem("last-recents");
-
+    test("does not call setHistory or setActivity if localStorage is empty", async () => {
       (localStorage.getItem as Mock).mockReturnValue(null);
-      expect(mockSetHistory).not.toHaveBeenCalled();
-      expect(mockSetActivity).not.toHaveBeenCalled();
+      render(<Recents />);
+
+      await waitFor(() => {
+        expect(mockSetHistory).not.toHaveBeenCalled();
+        expect(mockSetActivity).not.toHaveBeenCalled();
+      });
     });
   });
   describe("RecentSong", () => {
@@ -88,63 +97,66 @@ describe("Recents", () => {
         setHistory(sampleTrack);
       });
     });
-    test("should render", () => {
+    test("should render", async () => {
       render(<Recents />);
-      waitFor(() => {
+      await waitFor(() => {
         expect(useBoundStore.getState().recents.history.length).toBe(1);
         expect(screen.getByTestId("recent-songs").childElementCount).toBe(1);
       });
     });
-    test("should have its image or songfallback", () => {
+    test("should have its image or songfallback", async () => {
+      act(() => {
+        useBoundStore.getState().setHistory(sampleTrack);
+      });
       render(<Recents />);
-      waitFor(() => {
-        expect(screen.getByAltText(`${sampleTrack.name}-img`)).toHaveAttribute(
+      await waitFor(() => {
+        expect(screen.getByAltText(`${sampleTrack.name}`)).toHaveAttribute(
           "src",
           sampleTrack.image[0].url,
         );
       });
     });
-    test("should have its image as songfallback", () => {
+    test("should have its image as songfallback", async () => {
       render(<Recents />);
       act(() => {
         useBoundStore
           .getState()
           .setHistory({ ...sampleTrack, name: "some track", image: [] });
       });
-      waitFor(() => {
-        expect(screen.getByAltText("some track-img")).toHaveAttribute(
+      await waitFor(() => {
+        expect(screen.getByAltText("some track")).toHaveAttribute(
           "src",
           songfallback,
         );
       });
     });
-    test("should use songfallback as image on error", () => {
+    test("should use songfallback as image on error", async () => {
       render(<Recents />);
       const image = screen.getByAltText(sampleTrack.name);
       fireEvent.error(image);
-      waitFor(() => {
-        expect(screen.getByAltText(`${sampleTrack.name}-img`)).toHaveAttribute(
+      await waitFor(() => {
+        expect(screen.getByAltText(`${sampleTrack.name}`)).toHaveAttribute(
           "src",
           songfallback,
         );
       });
     });
-    test("should have its name", () => {
+    test("should have its name", async () => {
       render(<Recents />);
       expect(screen.getByText(sampleTrack.name)).toBeInTheDocument();
     });
-    test("should have its name as Unknown track", () => {
+    test("should have its name as Unknown track", async () => {
       setHistory({ ...sampleTrack, name: "" });
       render(<Recents />);
       expect(screen.getByText("Unknown track")).toBeInTheDocument();
     });
-    test("should have its primary artist name if found", () => {
+    test("should have its primary artist name if found", async () => {
       render(<Recents />);
       expect(
         screen.getByText(sampleTrack.artists.primary[0].name),
       ).toBeInTheDocument();
     });
-    test("should have its primary artist name as Unknown Artist if not found", () => {
+    test("should have its primary artist name as Unknown Artist if not found", async () => {
       act(() => {
         setHistory({
           ...sampleTrack,
@@ -156,14 +168,17 @@ describe("Recents", () => {
     });
   });
   describe("Activity", () => {
-    test("should render", () => {
+    test("should render", async () => {
+      act(() => {
+        useBoundStore.getState().setActivity("new activity");
+      });
       render(<Recents />);
-      waitFor(() => {
-        expect(useBoundStore.getState().recents.activity.length).toBe(1);
-        expect(screen.getByTestId("recent-activity").childElementCount).toBe(1);
+      await waitFor(() => {
+        expect(useBoundStore.getState().recents.activity.length).toBe(2);
+        expect(screen.getByTestId("recent-activity").childElementCount).toBe(2);
       });
     });
-    test("should fade in with the delay based on it's index", () => {
+    test("should fade in with the delay based on it's index", async () => {
       vi.useFakeTimers();
       act(() => {
         useBoundStore
@@ -178,13 +193,13 @@ describe("Recents", () => {
       expect(screen.getByTestId("recent-song")).toHaveClass("song-fadein");
       vi.useRealTimers();
     });
-    test("should have the activity name", () => {
+    test("should have the activity name", async () => {
       render(<Recents />);
       const message = `Added ${sampleTrack.name} to a playlist 'POP'`;
       act(() => {
         setActivity(message);
       });
-      waitFor(() => {
+      await waitFor(() => {
         expect(screen.getByText(message)).toBeInTheDocument();
       });
     });
