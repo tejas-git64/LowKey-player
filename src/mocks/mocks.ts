@@ -11,7 +11,10 @@ import {
   PlaylistOfList,
   AlbumById,
   TrackDetails,
+  TimelyDataType,
+  ArtistInSong,
 } from "../types/GlobalTypes";
+import { UseQueryResult } from "@tanstack/react-query";
 
 export const mockedDataProps = {
   isEnabled: true,
@@ -68,65 +71,72 @@ export const mockedNullDataProps = {
   isInitialLoading: false,
 };
 
-export const mockedWidgetData = {
-  ...mockedDataProps,
-  data: samplePlaylist as PlaylistById,
-  promise: Promise.resolve(samplePlaylist as PlaylistById),
-  refetch: vi.fn(),
-};
 export const obj = {
   viral: samplePlaylist as PlaylistById,
   weekly: samplePlaylist as PlaylistById,
   monthly: samplePlaylist as PlaylistById,
   latest: samplePlaylist as PlaylistById,
 };
+
+export const mockedWidgetData = {
+  ...mockedDataProps,
+  data: samplePlaylist as PlaylistById,
+  promise: Promise.resolve(samplePlaylist as PlaylistById),
+  refetch: vi.fn(),
+} as UseQueryResult<PlaylistById>;
+
 export const mockedTimelyData = {
   data: obj,
   promise: Promise.resolve(obj),
   refetch: vi.fn(),
   ...mockedDataProps,
-};
+} as UseQueryResult<TimelyDataType>;
+
 export const mockedSectionData = {
   data: [samplePlaylistOfList] as PlaylistOfList[],
   promise: Promise.resolve([samplePlaylistOfList] as PlaylistOfList[]),
   refetch: vi.fn(),
   ...mockedDataProps,
-};
+} as UseQueryResult<PlaylistOfList[]>;
+
 export const mockedAlbumSuccessData = {
   data: sampleAlbum as AlbumById,
   promise: Promise.resolve(sampleAlbum as AlbumById),
   refetch: vi.fn(),
   ...mockedDataProps,
-};
+} as UseQueryResult<AlbumById>;
+
 export const mockedArtistData = {
   data: sampleArtist,
   promise: Promise.resolve(sampleArtist),
   refetch: vi.fn(),
   ...mockedDataProps,
-};
+} as UseQueryResult<ArtistInSong>;
 
 export const mockedArtistAlbumData = {
   data: [sampleAlbum] as AlbumById[],
   promise: Promise.resolve([sampleAlbum] as AlbumById[]),
   refetch: vi.fn(),
   ...mockedDataProps,
-};
+} as UseQueryResult<AlbumById[]>;
 
 export const mockedArtistSongData = {
   data: [sampleTrack] as TrackDetails[],
   promise: Promise.resolve([sampleTrack] as TrackDetails[]),
   refetch: vi.fn(),
   ...mockedDataProps,
-};
+} as UseQueryResult<TrackDetails[]>;
+
 export const mockedPlaylistSuccessData = {
   data: samplePlaylist as PlaylistById,
   promise: Promise.resolve(samplePlaylist as PlaylistById),
   refetch: vi.fn(),
   ...mockedDataProps,
-};
+} as UseQueryResult<PlaylistById>;
+
 export const mockedNullDataResult = {
   data: null,
   promise: Promise.resolve(null),
   refetch: vi.fn(),
   ...mockedNullDataProps,
-};
+} as UseQueryResult<null>;
