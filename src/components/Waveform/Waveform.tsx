@@ -45,6 +45,7 @@ const Waveform = ({
   const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
   const setIsPlaying = useBoundStore((state) => state.setIsPlaying);
   const queue = useBoundStore((state) => state.nowPlaying.queue);
+  const id = useBoundStore((state) => state.nowPlaying.track?.id);
   const setQueue = useBoundStore((state) => state.setQueue);
   const waveformRef = useRef<HTMLDivElement | null>(null);
   const [currentTime, setCurrentTime] = useState<number>(0);
@@ -75,7 +76,7 @@ const Waveform = ({
   }, [isMobileWidth]);
 
   useEffect(() => {
-    const isNewTrack = lastTrackRef.current !== audioUrl;
+    const isNewTrack = lastTrackRef.current !== id;
     const secureUrl = audioUrl.startsWith("https")
       ? audioUrl
       : audioUrl.replace("http", "https");
@@ -86,8 +87,8 @@ const Waveform = ({
     if (waveSurferRef.current) {
       waveSurferRef.current.load(secureUrl);
       const handleReady = () => {
-        if (isNewTrack) {
-          lastTrackRef.current = secureUrl;
+        if (isNewTrack && id) {
+          lastTrackRef.current = id;
           if (stored?.url === secureUrl) {
             waveSurferRef.current?.seekTo(stored.time / (stored.duration || 1));
           }
@@ -118,7 +119,7 @@ const Waveform = ({
         waveSurferRef.current?.un("ready", handleReady);
       };
     }
-  }, [audioUrl, isPlaying, trackDuration]);
+  }, [audioUrl, id, isPlaying, trackDuration]);
 
   useEffect(() => {
     const saveState = () => {

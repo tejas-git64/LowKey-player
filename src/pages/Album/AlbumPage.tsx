@@ -10,13 +10,13 @@ import {
 import { preconnect, preload } from "react-dom";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import favorite from "/svgs/icons8-heart.svg";
-import favorited from "/svgs/icons8-favorited.svg";
-import fallback from "/fallbacks/playlist-fallback.webp";
-import play from "/svgs/play-icon.svg";
-import pause from "/svgs/pause-icon.svg";
-import addAlbum from "/svgs/icons8-addplaylist-28.svg";
-import addedToAlbum from "/svgs/tick.svg";
+import favorite from "../../assets/svgs/icons8-heart.svg";
+import favorited from "../../assets/svgs/icons8-favorited.svg";
+const fallback = "/fallbacks/playlist-fallback.webp";
+import play from "../../assets/svgs/play-icon.svg";
+import pause from "../../assets/svgs/pause-icon.svg";
+import addAlbum from "../../assets/svgs/icons8-addplaylist-28.svg";
+import addedToAlbum from "../../assets/svgs/tick.svg";
 import { getAlbumData } from "../../api/requests";
 import { useBoundStore } from "../../store/store";
 import { AlbumById, Image, TrackDetails } from "../../types/GlobalTypes";
@@ -66,7 +66,7 @@ export default function AlbumPage() {
             <RouteNav />
           </div>
           <AlbumInfo
-            images={data ? data.image : []}
+            images={data?.image ?? []}
             name={data ? data.name : "Unknown Album"}
             handleImageLoad={handleImageLoad}
           />
@@ -221,7 +221,7 @@ const AlbumInfo = memo(
   }) => {
     const imgEl = useRef<HTMLImageElement>(null);
     const titleEl = useRef<HTMLParagraphElement>(null);
-    const obj = images.find((img) => img.quality === "150x150");
+    const obj = images?.find((img) => img.quality === "150x150");
 
     if (obj?.url) {
       preload(obj.url, {

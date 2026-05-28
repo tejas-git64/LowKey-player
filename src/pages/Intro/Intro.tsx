@@ -1,7 +1,8 @@
 import { useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import reactlogo from "/svgs/react.svg";
-import tailwindlogo from "/svgs/tailwindcss.svg";
+import reactlogo from "../../assets/svgs/react.svg";
+import vitelogo from "../../assets/svgs/vite.svg";
+import tailwindlogo from "../../assets/svgs/tailwindcss.svg";
 import useClearTimer from "../../hooks/useClearTimer";
 import { preload } from "react-dom";
 
@@ -140,7 +141,7 @@ export default function Intro() {
                 Vite
               </p>
               <img
-                src="/svgs/vite.svg"
+                src={vitelogo}
                 loading="eager"
                 fetchPriority="high"
                 className="h-4 w-4 saturate-0 transition-colors duration-100 ease-in group-hover:saturate-100"

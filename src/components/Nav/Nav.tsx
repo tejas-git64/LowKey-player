@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useBoundStore } from "../../store/store";
-import home from "/svgs/icons8-home.svg";
-import search from "/svgs/icons8-search.svg";
-import libraryImg from "/svgs/icons8-library.svg";
-import add from "/svgs/icons8-plus.svg";
-import heart from "/svgs/icons8-heart.svg";
-import online from "/icons/icons8-online-28.png";
-import offline from "/icons/icons8-offline-28.png";
-import playlistfallback from "/fallbacks/playlist-fallback-min.webp";
-import fallback from "/fallbacks/playlist-fallback.webp";
+import home from "../../assets/svgs/icons8-home.svg";
+import search from "../../assets/svgs/icons8-search.svg";
+import libraryImg from "../../assets/svgs/icons8-library.svg";
+import add from "../../assets/svgs/icons8-plus.svg";
+import heart from "../../assets/svgs/icons8-heart.svg";
+const online = "/icons/icons8-online-28.png";
+const offline = "/icons/icons8-offline-28.png";
+const playlistfallback = "/fallbacks/playlist-fallback-min.webp";
+const fallback = "/fallbacks/playlist-fallback.webp";
 import { AlbumById, PlaylistById, UserPlaylist } from "../../types/GlobalTypes";
 
 const Nav = () => {

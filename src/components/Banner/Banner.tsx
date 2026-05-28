@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { useBoundStore } from "../../store/store";
-import logo from "/logo/sound-waves.webp";
-import notifimg from "/svgs/bell-svgrepo-com.svg";
+const logo = "/logo/sound-waves.webp";
+import notifimg from "../../assets/svgs/bell-svgrepo-com.svg";
 import { ActivityType } from "../../types/GlobalTypes";
 
 const Banner = memo(() => {

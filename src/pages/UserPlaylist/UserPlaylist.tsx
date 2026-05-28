@@ -1,10 +1,11 @@
+/* eslint-disable no-undef */
 import { lazy, memo, startTransition, useEffect, useMemo, useRef } from "react";
 import { preload } from "react-dom";
 import { useParams } from "react-router-dom";
 import { useBoundStore } from "../../store/store";
-import play from "/svgs/play-icon.svg";
-import pause from "/svgs/pause-icon.svg";
-import playlistfallback from "/fallbacks/playlist-fallback.webp";
+import play from "../../assets/svgs/play-icon.svg";
+import pause from "../../assets/svgs/pause-icon.svg";
+const playlistfallback = "/fallbacks/playlist-fallback.webp";
 import {
   LocalLibrary,
   TrackDetails,
@@ -118,28 +119,43 @@ const UserPlaylistControls = memo(({ id, songs, name }: UserPlaylist) => {
   const isPlaying = useBoundStore((state) => state.nowPlaying.isPlaying);
   const setQueue = useBoundStore((state) => state.setQueue);
   const queueId = useBoundStore((state) => state.nowPlaying.queue?.id);
+  const nowPlayingTrack = useBoundStore((state) => state.nowPlaying.track);
   const isPlayable = songs && songs.length > 0;
   const inQueue = useMemo(() => queueId === String(id), [id, queueId]);
   const playStatus =
     id === Number(queueId) && isPlaying ? "Pause playlist" : "Play playlist";
+  const collection = {
+    id: String(id),
+    image: songs[0]?.image || false,
+    name: name,
+    songs: songs,
+  };
+  const handlePlayback = (
+    e:
+      | React.MouseEvent<HTMLButtonElement, MouseEvent>
+      | React.KeyboardEvent<Element>,
+  ) => {
+    if (inQueue && !nowPlayingTrack) {
+      e.preventDefault();
+      setNowPlaying(songs[0]);
+      setIsPlaying(!isPlaying);
+      return;
+    }
+
+    handleCollectionPlayback(
+      e,
+      collection,
+      startTransition,
+      isPlaying,
+      inQueue,
+      setQueue,
+      setNowPlaying,
+      setIsPlaying,
+    );
+  };
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      handleCollectionPlayback(
-        e,
-        {
-          id: String(id),
-          image: songs[0].image || false,
-          name: name,
-          songs: songs,
-        },
-        startTransition,
-        isPlaying,
-        inQueue,
-        setQueue,
-        setNowPlaying,
-        setIsPlaying,
-      );
+      handlePlayback(e);
     }
   };
 
@@ -190,26 +206,7 @@ const UserPlaylistControls = memo(({ id, songs, name }: UserPlaylist) => {
         aria-label={isPlayable ? playStatus : "No songs to play"}
         tabIndex={isPlayable ? 0 : -1}
         disabled={!isPlayable}
-        onClick={
-          isPlayable
-            ? (e) =>
-                handleCollectionPlayback(
-                  e,
-                  {
-                    id: String(id),
-                    image: songs[0].image || false,
-                    name: name,
-                    songs: songs,
-                  },
-                  startTransition,
-                  isPlaying,
-                  inQueue,
-                  setQueue,
-                  setNowPlaying,
-                  setIsPlaying,
-                )
-            : undefined
-        }
+        onClick={isPlayable ? handlePlayback : undefined}
         onKeyDown={handleKeyDown}
         className="rounded-full bg-emerald-400 p-1 outline-none focus:ring-4 focus:ring-black disabled:cursor-not-allowed disabled:opacity-50"
       >

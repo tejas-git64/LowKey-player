@@ -9,12 +9,12 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBoundStore } from "../../store/store";
-import close from "/svgs/close.svg";
-import play from "/svgs/play-icon.svg";
-import pause from "/svgs/pause-icon.svg";
-import artistfallback from "/fallbacks/artist-fallback.png";
-import userplaylist from "/fallbacks/playlist-fallback.webp";
-import playlistIcon from "/svgs/playlist-icon.svg";
+import close from "../../assets/svgs/close.svg";
+import play from "../../assets/svgs/play-icon.svg";
+import pause from "../../assets/svgs/pause-icon.svg";
+const artistfallback = "/fallbacks/artist-fallback.png";
+const userplaylist = "/fallbacks/playlist-fallback.webp";
+import playlistIcon from "../../assets/svgs/playlist-icon.svg";
 import useClearTimer from "../../hooks/useClearTimer";
 import { animateScreen } from "../../helpers/animateScreen";
 import { saveToLocalStorage } from "../../helpers/saveToLocalStorage";

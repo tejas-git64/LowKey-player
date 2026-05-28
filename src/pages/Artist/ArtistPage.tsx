@@ -4,12 +4,12 @@ import { preconnect, preload } from "react-dom";
 import useClearTimer from "../../hooks/useClearTimer";
 import { animateScreen } from "../../helpers/animateScreen";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import x from "/svgs/icons8-twitterx.svg";
-import meta from "/svgs/icons8-meta.svg";
-import wiki from "/svgs/icons8-wiki.svg";
-import verified from "/svgs/icons8-verified.svg";
-import artistfallback from "/fallbacks/artist-fallback.png";
-import albumfallback from "/fallbacks/playlist-fallback.webp";
+import x from "../../assets/svgs/icons8-twitterx.svg";
+import meta from "../../assets/svgs/icons8-meta.svg";
+import wiki from "../../assets/svgs/icons8-wiki.svg";
+import verified from "../../assets/svgs/icons8-verified.svg";
+const artistfallback = "/fallbacks/artist-fallback.png";
+const albumfallback = "/fallbacks/playlist-fallback.webp";
 import { AlbumById, Image, TrackDetails } from "../../types/GlobalTypes";
 import {
   ArtistAlbumFallback,
@@ -266,7 +266,8 @@ const ArtistAlbum = ({
   const albumTitleEl = useRef<HTMLParagraphElement>(null);
 
   const getAlbumImage = () => {
-    return image.length > 0 ? image[1].url : albumfallback;
+    if (!image || image.length === 0) return albumfallback;
+    return image[1]?.url ?? image[0]?.url ?? albumfallback;
   };
 
   useEffect(() => {

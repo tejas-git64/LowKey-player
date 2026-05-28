@@ -1,12 +1,13 @@
+/* eslint-disable no-undef */
 import { lazy, memo, startTransition, useEffect, useMemo, useRef } from "react";
 import { preload } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { useBoundStore } from "../../store/store";
-import play from "/svgs/play-icon.svg";
-import pause from "/svgs/pause-icon.svg";
-import favoritesImg from "/favorites.webp";
-import fallback from "/fallbacks/playlist-fallback.webp";
-import close from "/svgs/close.svg";
+import play from "../../assets/svgs/play-icon.svg";
+import pause from "../../assets/svgs/pause-icon.svg";
+const favoritesImg = "/favorites.webp";
+const fallback = "/fallbacks/playlist-fallback.webp";
+import close from "../../assets/svgs/close.svg";
 import { AlbumById, PlaylistById, TrackDetails } from "../../types/GlobalTypes";
 import useClearTimer from "../../hooks/useClearTimer";
 import { animateScreen } from "../../helpers/animateScreen";
@@ -70,7 +71,7 @@ export default function Favorites() {
       {albums.length === 0 && playlists.length === 0 && songs.length === 0 ? (
         <div
           data-testid="no-favorites"
-          className="flex min-h-[70dvh] w-full items-center justify-center bg-neutral-900"
+          className="flex min-h-[80dvh] w-full items-center justify-center bg-neutral-900"
         >
           <p className="font-normal text-neutral-500">No favorites added</p>
         </div>
@@ -217,6 +218,7 @@ const FavoriteAlbum = ({
 }: {
   album: AlbumById;
   i: number;
+  // eslint-disable-next-line no-unused-vars
   setNowPlaying: (data: TrackDetails | null) => void;
 }) => {
   const navigate = useNavigate();

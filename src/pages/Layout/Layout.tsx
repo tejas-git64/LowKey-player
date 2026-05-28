@@ -26,7 +26,7 @@ export default function Layout() {
   return (
     <div
       data-testid="layout"
-      className="relative h-full w-full overflow-hidden bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 2xl:mx-auto 2xl:max-h-[1200px] 2xl:max-w-[1600px]"
+      className="relative h-full w-full overflow-hidden bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-black via-neutral-950 to-neutral-700 2xl:mx-auto 2xl:max-h-[1600px] 2xl:max-w-[2000px]"
     >
       <ConditionalComponent
         filePath={"../../components/Banner/Banner.tsx"}

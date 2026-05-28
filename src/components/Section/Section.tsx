@@ -11,6 +11,7 @@ const Section = memo(
     fadeOutNavigate,
   }: {
     genre: string;
+    // eslint-disable-next-line no-unused-vars
     fadeOutNavigate: (str: string) => void;
   }) => {
     const sectionRef = useRef<HTMLDivElement | null>(null);
@@ -69,13 +70,7 @@ const Section = memo(
               onKeyUp={() => fadeOutNavigate(`/playlists/${playlist.id}`)}
               className="h-full w-auto"
             >
-              {playlist && (
-                <Playlist
-                  i={i}
-                  {...playlist}
-                  fadeOutNavigate={fadeOutNavigate}
-                />
-              )}
+              <Playlist i={i} {...playlist} fadeOutNavigate={fadeOutNavigate} />
             </div>
           ))}
         </div>

@@ -1,6 +1,6 @@
 import { useDeferredValue, useEffect, useRef, useState } from "react";
 import { getSearchResults } from "../../api/requests";
-import searchIcon from "/svgs/icons8-search.svg";
+import searchIcon from "../../assets/svgs/icons8-search.svg";
 import { useBoundStore } from "../../store/store";
 import { defaultSearchData } from "../../utils/utils";
 
@@ -8,6 +8,7 @@ export default function Searchbar() {
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);
   const setSearch = useBoundStore((state) => state.setSearch);
+  // eslint-disable-next-line no-undef
   const timerRef = useRef<NodeJS.Timeout>(null);
 
   useEffect(() => {
@@ -28,16 +29,16 @@ export default function Searchbar() {
   return (
     <div
       data-testid="searchbar"
-      className="mr-3 flex h-10 w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-900 2xl:ml-0"
+      className="mr-3 flex h-12 w-full items-center justify-start overflow-hidden rounded-sm bg-neutral-900 2xl:ml-0"
     >
       <img
         src={searchIcon}
         alt="search-icon"
-        width={35}
-        height={35}
+        width={20}
+        height={20}
         fetchPriority="high"
         loading="eager"
-        className="w-[35px] bg-neutral-900 py-3 pl-2 pr-1 invert-[0.2] sm:w-auto sm:p-2 sm:pr-1"
+        className="w-[40px] bg-neutral-900 py-4 px-2 pl-3 shrink-0 invert-[0.2] sm:w-auto sm:p-2.5 sm:pr-2"
       />
       <input
         type="search"

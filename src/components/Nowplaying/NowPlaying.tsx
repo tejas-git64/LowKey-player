@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import {
   useState,
   useEffect,
@@ -13,21 +14,21 @@ import {
   TrackDetails,
   UserPlaylist,
 } from "../../types/GlobalTypes";
-import favorite from "/svgs/icons8-heart.svg";
-import favorited from "/svgs/icons8-favorited.svg";
-import add from "/svgs/icons8-addplaylist-28.svg";
-import down from "/svgs/down.svg";
-import high from "/svgs/volume-high.svg";
-import vol from "/svgs/volume-min-svgrepo.svg";
-import mute from "/svgs/mute-svgrepo-com.svg";
-import previous from "/svgs/previous.svg";
-import next from "/svgs/next.svg";
-import play from "/svgs/play-icon.svg";
-import pause from "/svgs/pause-icon.svg";
-import tick from "/svgs/tick.svg";
-import downloadIcon from "/svgs/download-icon.svg";
-import songfallback from "/fallbacks/song-fallback.webp";
-import artistfallback from "/fallbacks/artist-fallback.png";
+import favorite from "../../assets/svgs/icons8-heart.svg";
+import favorited from "../../assets/svgs/icons8-favorited.svg";
+import add from "../../assets/svgs/icons8-addplaylist-28.svg";
+import down from "../../assets/svgs/down.svg";
+import high from "../../assets/svgs/volume-high.svg";
+import vol from "../../assets/svgs/volume-min-svgrepo.svg";
+import mute from "../../assets/svgs/mute-svgrepo-com.svg";
+import previous from "../../assets/svgs/previous.svg";
+import next from "../../assets/svgs/next.svg";
+import play from "../../assets/svgs/play-icon.svg";
+import pause from "../../assets/svgs/pause-icon.svg";
+import tick from "../../assets/svgs/tick.svg";
+import downloadIcon from "../../assets/svgs/download-icon.svg";
+const songfallback = "/fallbacks/song-fallback.webp";
+const artistfallback = "/fallbacks/artist-fallback.png";
 import Waveform from "../Waveform/Waveform";
 import { toggleFavorite } from "../../helpers/toggleFavorite";
 import { PLAYER_CONSTANTS } from "../../utils/utils";

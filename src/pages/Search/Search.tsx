@@ -1,9 +1,10 @@
+/* eslint-disable no-unused-vars */
 import { lazy, memo, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useBoundStore } from "../../store/store";
-import fallback from "/fallbacks/playlist-fallback.webp";
-import songfallback from "/fallbacks/song-fallback.webp";
-import artistfallback from "/fallbacks/artist-fallback.png";
+const fallback = "/fallbacks/playlist-fallback.webp";
+const songfallback = "/fallbacks/song-fallback.webp";
+const artistfallback = "/fallbacks/artist-fallback.png";
 import {
   AlbumResult,
   PlaylistResult,
@@ -25,6 +26,7 @@ export default function Search() {
   const searchEl = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { topQuery, albums, artists, playlists, songs } = search;
+  // eslint-disable-next-line no-undef
   const timerRef = useRef<NodeJS.Timeout>(null);
   const topQueryResults = topQuery !== null && topQuery.results.length > 0;
   const albumsResults = albums !== null && albums.results.length > 0;
@@ -70,13 +72,13 @@ export default function Search() {
     <div
       data-testid="search-page"
       ref={searchEl}
-      className="home-fadeout relative h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth bg-neutral-900 px-3 duration-200 ease-in"
+      className="home-fadeout h-full w-full overflow-x-hidden overflow-y-scroll scroll-smooth bg-neutral-900 px-3 duration-200 ease-in"
     >
-      <div className="fixed mx-[2.5%] flex w-[90%] items-center bg-inherit pb-6 pt-4 sm:mx-[4.5%] sm:w-[80%] md:mx-[4.5%] lg:w-[67%] xlg:mx-[5.5%] xl:w-[52.5%] 2xl:w-[875px]">
+      <div className="flex w-[95%] items-center bg-inherit pb-6 pt-4 mx-auto">
         <Searchbar />
         <RouteNav />
       </div>
-      <div className="mx-auto mt-20 flex h-[88dvh] w-full flex-col items-start justify-start rounded-md sm:h-[83dvh] lg:w-[80%]">
+      <div className="mx-auto flex h-[88dvh] w-full flex-col items-start justify-start rounded-md sm:h-[83dvh] lg:w-[80%]">
         {isResults ? (
           <div
             data-testid="results-container"
@@ -377,7 +379,9 @@ const QueryArtist = ({ id, title, image, i }: AlbumResult & { i: number }) => {
           src={image[1] ? image[1].url : artistfallback}
           alt={title ? cleanString(title) : "Unknown Artist"}
           className="image-fadeout h-[150px] w-[150px] rounded-full shadow-md shadow-black duration-200 ease-in"
-          onError={(e) => (e.currentTarget.src = artistfallback)}
+          onError={(e) => {
+            e.currentTarget.src = artistfallback;
+          }}
         />
         <p
           data-testid="query-artist-title"
