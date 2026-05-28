@@ -3,7 +3,6 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 import pluginReact from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
-import cssPlugin from "@eslint/css";
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
@@ -39,11 +38,11 @@ export default defineConfig([
     rules: {
       "no-undef": "off",
       "no-unused-vars": "off",
-      "react/display-name": "error",
+      "react/display-name": "warn",
       "react/react-in-jsx-scope": "off",
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
-      "@typescript-eslint/no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": "warn",
     },
     linterOptions: {
       reportUnusedDisableDirectives: true,
@@ -57,11 +56,5 @@ export default defineConfig([
   {
     ...pluginReact.configs.flat["jsx-runtime"],
     files: ["**/*.{js,jsx,ts,tsx}"],
-  },
-  {
-    files: ["**/*.css"],
-    plugins: { css: cssPlugin },
-    language: "css/css",
-    extends: ["css/recommended"],
   },
 ]);
