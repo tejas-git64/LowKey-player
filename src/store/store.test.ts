@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 import { useBoundStore } from "./store";
 import {
   sampleAlbum,
@@ -11,11 +11,98 @@ import {
 } from "../api/samples";
 import { act } from "@testing-library/react";
 
+afterEach(() => {
+  localStorage.clear();
+});
+
+async function importStoreWithStorage(
+  storedValues: Record<string, unknown>,
+) {
+  localStorage.clear();
+  for (const [key, value] of Object.entries(storedValues)) {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+
+  vi.resetModules();
+  const freshStoreModule = await import("./store");
+  return freshStoreModule.useBoundStore;
+}
+
+describe("Testing store localStorage hydration", () => {
+  test("hydrates library data from localStorage", async () => {
+    const freshStore = await importStoreWithStorage({
+      "local-library": {
+        albums: [sampleAlbum],
+        followings: [sampleArtistInSong],
+        playlists: [samplePlaylist],
+        userPlaylists: [sampleUserPlaylist],
+      },
+    });
+
+    expect(freshStore.getState().library.albums).toEqual([sampleAlbum]);
+    expect(freshStore.getState().library.followings).toEqual([
+      sampleArtistInSong,
+    ]);
+    expect(freshStore.getState().library.playlists).toEqual([samplePlaylist]);
+    expect(freshStore.getState().library.userPlaylists).toEqual([
+      sampleUserPlaylist,
+    ]);
+  });
+
+  test("hydrates favorites data from localStorage", async () => {
+    const freshStore = await importStoreWithStorage({
+      "local-favorites": {
+        songs: [sampleTrack],
+        albums: [sampleAlbum],
+        playlists: [samplePlaylist],
+      },
+    });
+
+    expect(freshStore.getState().favorites.songs).toEqual([sampleTrack]);
+    expect(freshStore.getState().favorites.albums).toEqual([sampleAlbum]);
+    expect(freshStore.getState().favorites.playlists).toEqual([
+      samplePlaylist,
+    ]);
+  });
+
+  test("hydrates recents data from localStorage", async () => {
+    const recentActivity = {
+      id: "activity-id",
+      message: "Added Track3 to a playlist",
+    };
+    const freshStore = await importStoreWithStorage({
+      "last-recents": {
+        history: [sampleTrack],
+        activity: [recentActivity],
+      },
+    });
+
+    expect(freshStore.getState().recents.history).toEqual([sampleTrack]);
+    expect(freshStore.getState().recents.activity).toEqual([recentActivity]);
+  });
+
+  test("keeps recents history empty if stored history is null", async () => {
+    const recentActivity = {
+      id: "activity-id",
+      message: "Added Track3 to a playlist",
+    };
+    const freshStore = await importStoreWithStorage({
+      "last-recents": {
+        history: null,
+        activity: [recentActivity],
+      },
+    });
+
+    expect(freshStore.getState().recents.history).toEqual([]);
+    expect(freshStore.getState().recents.activity).toEqual([recentActivity]);
+  });
+});
+
 describe("Testing greeting", () => {
-  test("greeting variable should be present", () => {
+  test("greeting variable should be present", async () => {
     expect(useBoundStore.getState()).toHaveProperty("greeting");
   });
-  test("changeGreeting action should set new greeting", () => {
+  test("changeGreeting action should set new greeting", async () => {
     const str = "Hello!";
     act(() => {
       useBoundStore.getState().changeGreeting(str);
@@ -25,12 +112,12 @@ describe("Testing greeting", () => {
 });
 
 describe("Testing recents", () => {
-  test("recents variable should be present", () => {
+  test("recents variable should be present", async () => {
     expect(useBoundStore.getState()).toHaveProperty("recents");
     expect(useBoundStore.getState().recents).toHaveProperty("activity");
     expect(useBoundStore.getState().recents).toHaveProperty("history");
   });
-  test("setHistory action should bring up new listening history", () => {
+  test("setHistory action should bring up new listening history", async () => {
     act(() => {
       useBoundStore.getState().setHistory(sampleTrack);
       useBoundStore.getState().setHistory({ ...sampleTrack, id: "kC25VqoDjc" });
@@ -38,7 +125,7 @@ describe("Testing recents", () => {
     });
     expect(useBoundStore.getState().recents.history[0].id).toBe("kC25VqoDjc");
   });
-  test("setActivity action should bring up the recent activity", () => {
+  test("setActivity action should bring up the recent activity", async () => {
     const activity = "Added new playlist HipHits";
     act(() => {
       useBoundStore.getState().setActivity(activity);
@@ -51,27 +138,27 @@ describe("Testing recents", () => {
 });
 
 describe("Testing search", () => {
-  test("search variable should be present", () => {
+  test("search variable should be present", async () => {
     expect(useBoundStore.getState()).toHaveProperty("search");
   });
 
-  test("topQuery variable should be present in search", () => {
+  test("topQuery variable should be present in search", async () => {
     expect(useBoundStore.getState().search).toHaveProperty("topQuery");
   });
-  test("songs variable should be present in search", () => {
+  test("songs variable should be present in search", async () => {
     expect(useBoundStore.getState().search).toHaveProperty("songs");
   });
-  test("albums variable should be present in search", () => {
+  test("albums variable should be present in search", async () => {
     expect(useBoundStore.getState().search).toHaveProperty("albums");
   });
-  test("artists variable should be present in search", () => {
+  test("artists variable should be present in search", async () => {
     expect(useBoundStore.getState().search).toHaveProperty("artists");
   });
-  test("playlists variable should be present in search", () => {
+  test("playlists variable should be present in search", async () => {
     expect(useBoundStore.getState().search).toHaveProperty("playlists");
   });
 
-  test("setSearch should set data based on query results", () => {
+  test("setSearch should set data based on query results", async () => {
     act(() => {
       useBoundStore.getState().setSearch(sampleSearchResults);
     });
@@ -80,15 +167,15 @@ describe("Testing search", () => {
 });
 
 describe("Testing nowPlaying", () => {
-  test("nowPlaying variable should be present", () => {
+  test("nowPlaying variable should be present", async () => {
     expect(useBoundStore.getState()).toHaveProperty("nowPlaying");
   });
 
   describe("Testing track and its action", () => {
-    test("track variable should be present in nowPlaying", () => {
+    test("track variable should be present in nowPlaying", async () => {
       expect(useBoundStore.getState().nowPlaying).toHaveProperty("track");
     });
-    test("setNowPlaying should set a new track", () => {
+    test("setNowPlaying should set a new track", async () => {
       act(() => {
         useBoundStore.getState().setNowPlaying(sampleTrack);
       });
@@ -99,10 +186,10 @@ describe("Testing nowPlaying", () => {
   });
 
   describe("Testing isPlaying and it's action", () => {
-    test("isPlaying variable should be present in nowPlaying", () => {
+    test("isPlaying variable should be present in nowPlaying", async () => {
       expect(useBoundStore.getState().nowPlaying).toHaveProperty("isPlaying");
     });
-    test("setIsPlaying should set a new track", () => {
+    test("setIsPlaying should set a new track", async () => {
       act(() => {
         useBoundStore.getState().setIsPlaying(true);
       });
@@ -111,12 +198,12 @@ describe("Testing nowPlaying", () => {
   });
 
   describe("Testing isMobilePlayer and it's action", () => {
-    test("isMobilePlayer variable should be present in nowPlaying", () => {
+    test("isMobilePlayer variable should be present in nowPlaying", async () => {
       expect(useBoundStore.getState().nowPlaying).toHaveProperty(
         "isMobilePlayer",
       );
     });
-    test("setShowPlayer should toggle mobile view state", () => {
+    test("setShowPlayer should toggle mobile view state", async () => {
       act(() => {
         useBoundStore.getState().setShowPlayer(true);
       });
@@ -124,16 +211,16 @@ describe("Testing nowPlaying", () => {
     });
   });
 
-  test("isFavorite variable should be present in nowPlaying", () => {
+  test("isFavorite variable should be present in nowPlaying", async () => {
     expect(useBoundStore.getState().nowPlaying).toHaveProperty("isFavorite");
   });
 
   describe("Testing queue and it's action", () => {
-    test("queue variable should be present in nowPlaying", () => {
+    test("queue variable should be present in nowPlaying", async () => {
       expect(useBoundStore.getState().nowPlaying).toHaveProperty("queue");
     });
 
-    test("setQueue should set songs of a new playlist/album into the queue", () => {
+    test("setQueue should set songs of a new playlist/album into the queue", async () => {
       act(() => {
         useBoundStore.getState().setQueue(sampleSongQueue);
       });
@@ -145,16 +232,16 @@ describe("Testing nowPlaying", () => {
 });
 
 describe("Testing favorites", () => {
-  test("favorites variable should be present", () => {
+  test("favorites variable should be present", async () => {
     expect(useBoundStore.getState()).toHaveProperty("favorites");
   });
 
   describe("Testing favorite songs and it's action", () => {
-    test("songs variable should be present in favorites", () => {
+    test("songs variable should be present in favorites", async () => {
       expect(useBoundStore.getState().favorites).toHaveProperty("songs");
     });
 
-    test("setFavoriteSong must favorite a song if the same song id doesn't exist", () => {
+    test("setFavoriteSong must favorite a song if the same song id doesn't exist", async () => {
       act(() => {
         useBoundStore.getState().setFavoriteSong(sampleTrack);
       });
@@ -169,7 +256,7 @@ describe("Testing favorites", () => {
       );
     });
 
-    test("removeFavoriteSong unfavorites the same song", () => {
+    test("removeFavoriteSong unfavorites the same song", async () => {
       act(() => {
         useBoundStore.getState().removeFavorite(sampleTrack.id);
       });
@@ -180,10 +267,10 @@ describe("Testing favorites", () => {
   });
 
   describe("Testing favorite albums and it's action", () => {
-    test("albums variable is present in favorites", () => {
+    test("albums variable is present in favorites", async () => {
       expect(useBoundStore.getState().favorites).toHaveProperty("albums");
     });
-    test("setFavoriteAlbum favorites a new album", () => {
+    test("setFavoriteAlbum favorites a new album", async () => {
       act(() => {
         useBoundStore.getState().setFavoriteAlbum(sampleAlbum);
       });
@@ -197,7 +284,7 @@ describe("Testing favorites", () => {
         sampleAlbum,
       );
     });
-    test("removeFavoriteAlbum unFavorites the same album", () => {
+    test("removeFavoriteAlbum unFavorites the same album", async () => {
       act(() => {
         useBoundStore.getState().removeFavoriteAlbum(sampleAlbum.id);
       });
@@ -208,11 +295,11 @@ describe("Testing favorites", () => {
   });
 
   describe("Testing favorite playlists and it's action", () => {
-    test("playlists variable is present in favorites", () => {
+    test("playlists variable is present in favorites", async () => {
       expect(useBoundStore.getState().favorites).toHaveProperty("playlists");
     });
 
-    test("setFavoritePlaylist favorites a new playlist", () => {
+    test("setFavoritePlaylist favorites a new playlist", async () => {
       act(() => {
         useBoundStore.getState().setFavoritePlaylist(samplePlaylist);
       });
@@ -226,7 +313,7 @@ describe("Testing favorites", () => {
         samplePlaylist,
       );
     });
-    test("removeFavoritePlaylist unfavorites the same playlist", () => {
+    test("removeFavoritePlaylist unfavorites the same playlist", async () => {
       act(() => {
         useBoundStore.getState().removeFavoritePlaylist(samplePlaylist.id);
       });
@@ -239,10 +326,10 @@ describe("Testing favorites", () => {
 
 describe("Testing library", () => {
   describe("Testing followings and it's action", () => {
-    test("followings variable is present in library", () => {
+    test("followings variable is present in library", async () => {
       expect(useBoundStore.getState().library).toHaveProperty("followings");
     });
-    test("setFollowing adds a new following", () => {
+    test("setFollowing adds a new following", async () => {
       act(() => {
         useBoundStore.getState().setFollowing(sampleArtistInSong);
       });
@@ -256,7 +343,7 @@ describe("Testing library", () => {
         sampleArtistInSong,
       );
     });
-    test("removeFollowing removes the same following", () => {
+    test("removeFollowing removes the same following", async () => {
       act(() => {
         useBoundStore.getState().removeFollowing(sampleArtistInSong.id);
       });
@@ -267,10 +354,10 @@ describe("Testing library", () => {
   });
 
   describe("Testing albums and it's action", () => {
-    test("albums variable is present in library", () => {
+    test("albums variable is present in library", async () => {
       expect(useBoundStore.getState().library).toHaveProperty("albums");
     });
-    test("setLibraryAlbum adds a new album", () => {
+    test("setLibraryAlbum adds a new album", async () => {
       act(() => {
         useBoundStore.getState().setLibraryAlbum(sampleAlbum);
       });
@@ -284,7 +371,7 @@ describe("Testing library", () => {
         sampleAlbum,
       );
     });
-    test("removeLibraryAlbum removes the same album", () => {
+    test("removeLibraryAlbum removes the same album", async () => {
       act(() => {
         useBoundStore.getState().removeLibraryAlbum(sampleAlbum.id);
       });
@@ -295,10 +382,10 @@ describe("Testing library", () => {
   });
 
   describe("Testing playlists and it's action", () => {
-    test("playlists variable is present in library", () => {
+    test("playlists variable is present in library", async () => {
       expect(useBoundStore.getState().library).toHaveProperty("playlists");
     });
-    test("setLibraryPlaylist adds a new playlist", () => {
+    test("setLibraryPlaylist adds a new playlist", async () => {
       act(() => {
         useBoundStore.getState().setLibraryPlaylist(samplePlaylist);
       });
@@ -312,7 +399,7 @@ describe("Testing library", () => {
         samplePlaylist,
       );
     });
-    test("removeLibraryPlaylist removes the same playlist", () => {
+    test("removeLibraryPlaylist removes the same playlist", async () => {
       act(() => {
         useBoundStore.getState().removeLibraryPlaylist(samplePlaylist.id);
       });
@@ -323,11 +410,11 @@ describe("Testing library", () => {
   });
 
   describe("Testing userPlaylists and it's actions", () => {
-    test("userPlaylists variable is present in library", () => {
+    test("userPlaylists variable is present in library", async () => {
       expect(useBoundStore.getState().library).toHaveProperty("userPlaylists");
     });
 
-    test("setUserPlaylist adds a custom playlist", () => {
+    test("setUserPlaylist adds a custom playlist", async () => {
       act(() => {
         useBoundStore.getState().setUserPlaylist(sampleUserPlaylist);
       });
@@ -341,7 +428,7 @@ describe("Testing library", () => {
         sampleUserPlaylist,
       );
     });
-    test("removeUserPlaylist removes the same playlist", () => {
+    test("removeUserPlaylist removes the same playlist", async () => {
       act(() => {
         useBoundStore.getState().removeUserPlaylist(sampleUserPlaylist.id);
       });
@@ -349,7 +436,7 @@ describe("Testing library", () => {
         sampleUserPlaylist,
       );
     });
-    test("setToUserPlaylist adds a track to a custom playlist", () => {
+    test("setToUserPlaylist adds a track to a custom playlist", async () => {
       act(() => {
         useBoundStore.getState().setUserPlaylist(sampleUserPlaylist);
       });
@@ -373,7 +460,7 @@ describe("Testing library", () => {
         prevUserPlaylists,
       );
     });
-    test("removeFromUserPlaylist removes the same track from the same playlist", () => {
+    test("removeFromUserPlaylist removes the same track from the same playlist", async () => {
       const customObj = { ...sampleUserPlaylist, id: 92424 };
       act(() => {
         useBoundStore.getState().setUserPlaylist(customObj);
@@ -391,7 +478,7 @@ describe("Testing library", () => {
         useBoundStore.getState().library.userPlaylists[0].songs,
       ).not.toContainEqual(customObj);
     });
-    test("createNewUserPlaylist creates new custom playlist", () => {
+    test("createNewUserPlaylist creates new custom playlist", async () => {
       act(() => {
         useBoundStore.getState().createNewUserPlaylist("Monday blues", 13);
       });
@@ -405,10 +492,10 @@ describe("Testing library", () => {
 });
 
 describe("Testing shuffle", () => {
-  test("isShuffling must be present", () => {
+  test("isShuffling must be present", async () => {
     expect(useBoundStore.getState()).toHaveProperty("isShuffling");
   });
-  test("setIsShuffling sets the shuffle status", () => {
+  test("setIsShuffling sets the shuffle status", async () => {
     act(() => {
       useBoundStore.getState().setIsShuffling(true);
     });
@@ -417,10 +504,10 @@ describe("Testing shuffle", () => {
 });
 
 describe("Testing replay", () => {
-  test("isReplay must be present", () => {
+  test("isReplay must be present", async () => {
     expect(useBoundStore.getState()).toHaveProperty("isReplay");
   });
-  test("setIsReplay sets the replay status", () => {
+  test("setIsReplay sets the replay status", async () => {
     act(() => {
       useBoundStore.getState().setIsReplay(true);
     });
@@ -429,10 +516,10 @@ describe("Testing replay", () => {
 });
 
 describe("Testing creation modal", () => {
-  test("revealCreation must be present", () => {
+  test("revealCreation must be present", async () => {
     expect(useBoundStore.getState()).toHaveProperty("revealCreation");
   });
-  test("setRevealCreation sets the modal visibility", () => {
+  test("setRevealCreation sets the modal visibility", async () => {
     act(() => {
       useBoundStore.getState().setRevealCreation(true);
     });
@@ -441,10 +528,10 @@ describe("Testing creation modal", () => {
 });
 
 describe("Testing creationTrack", () => {
-  test("creationTrack must be present", () => {
+  test("creationTrack must be present", async () => {
     expect(useBoundStore.getState()).toHaveProperty("creationTrack");
   });
-  test("setCreationTrack sets the track to be added to custom playlists", () => {
+  test("setCreationTrack sets the track to be added to custom playlists", async () => {
     act(() => {
       useBoundStore.getState().setCreationTrack(sampleTrack);
     });
@@ -453,13 +540,14 @@ describe("Testing creationTrack", () => {
 });
 
 describe("Testing notifications", () => {
-  test("notifications variable must be present", () => {
+  test("notifications variable must be present", async () => {
     expect(useBoundStore.getState()).toHaveProperty("notifications");
   });
-  test("setNotifications reveals notifications", () => {
+  test("setNotifications reveals notifications", async () => {
     act(() => {
       useBoundStore.getState().setNotifications(true);
     });
     expect(useBoundStore.getState().notifications).toBe(true);
   });
 });
+

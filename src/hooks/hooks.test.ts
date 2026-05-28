@@ -24,7 +24,7 @@ describe("useResponsiveLayout hook", () => {
     });
   });
 
-  test("updates isMobile state on globalThis resize", () => {
+  test("updates isMobile state on globalThis resize", async () => {
     const { result } = renderHook(() => useResponsiveLayout());
 
     act(() => {
@@ -42,7 +42,7 @@ describe("useResponsiveLayout hook", () => {
 });
 
 describe("useClearTimer hook", () => {
-  test("clears timeout immediately on mount when ref.current is set", () => {
+  test("clears timeout immediately on mount when ref.current is set", async () => {
     const clearTimeoutSpy = vi.spyOn(globalThis, "clearTimeout");
     const timer = setTimeout(() => {}, 1000);
     const ref: RefObject<NodeJS.Timeout | null> = { current: timer };
@@ -54,7 +54,7 @@ describe("useClearTimer hook", () => {
     expect(clearTimeoutSpy).toHaveBeenCalledWith(timer);
   });
 
-  test("does not call clearTimeout on mount when ref.current is null", () => {
+  test("does not call clearTimeout on mount when ref.current is null", async () => {
     const clearTimeoutSpy = vi.spyOn(globalThis, "clearTimeout");
     const ref: RefObject<NodeJS.Timeout | null> = { current: null };
     renderHook(({ timerRef }) => useClearTimer(timerRef), {
@@ -64,7 +64,7 @@ describe("useClearTimer hook", () => {
     expect(clearTimeoutSpy).not.toHaveBeenCalled();
   });
 
-  test("adds beforeunload listener that clears current timeout and removes it on unmount", () => {
+  test("adds beforeunload listener that clears current timeout and removes it on unmount", async () => {
     const addEventListenerSpy = vi.spyOn(globalThis, "addEventListener");
     const removeEventListenerSpy = vi.spyOn(globalThis, "removeEventListener");
     const clearTimeoutSpy = vi.spyOn(globalThis, "clearTimeout");

@@ -11,6 +11,7 @@ import { toggleFavorite } from "./toggleFavorite";
 import React from "react";
 import { act, waitFor } from "@testing-library/react";
 import secondsToHMS from "./secondsToHMS";
+import { IntersectionObserverMock } from "./IntersectionObserverMock";
 
 const initialState = useBoundStore.getState();
 
@@ -21,7 +22,7 @@ afterEach(() => {
 });
 
 describe("getTrackImage", () => {
-  test("Should resolve images", () => {
+  test("Should resolve images", async () => {
     const fallback = "/fallbacks/song-fallback.webp";
     const images = [
       {
@@ -47,9 +48,81 @@ describe("getTrackImage", () => {
 });
 
 describe("cleanString", () => {
-  test("Should sanitize strings", () => {
+  test("Should sanitize strings", async () => {
     const str = "Song title (From &quot;random artist)";
     expect(cleanString(str)).toBe("Song title (From random artist)");
+  });
+});
+
+describe("IntersectionObserverMock", () => {
+  test("sets default observer properties", async () => {
+    const callback = vi.fn();
+    const observer = new IntersectionObserverMock(callback);
+
+    expect(observer.callback).toBe(callback);
+    expect(observer.root).toBeNull();
+    expect(observer.rootMargin).toBe("");
+    expect(observer.scrollMargin).toBe("");
+    expect(observer.thresholds).toEqual([]);
+  });
+
+  test("sets rootMargin and normalizes thresholds from options", async () => {
+    const singleThreshold = new IntersectionObserverMock(vi.fn(), {
+      rootMargin: "10px",
+      threshold: 0.5,
+    });
+    const multipleThresholds = new IntersectionObserverMock(vi.fn(), {
+      threshold: [0, 0.25, 1],
+    });
+
+    expect(singleThreshold.rootMargin).toBe("10px");
+    expect(singleThreshold.thresholds).toEqual([0.5]);
+    expect(multipleThresholds.thresholds).toEqual([0, 0.25, 1]);
+  });
+
+  test("exposes mock observer methods and empty takeRecords", async () => {
+    const observer = new IntersectionObserverMock(vi.fn());
+
+    observer.observe(document.createElement("div"));
+    observer.unobserve(document.createElement("div"));
+    observer.disconnect();
+
+    expect(observer.observe).toHaveBeenCalledTimes(1);
+    expect(observer.unobserve).toHaveBeenCalledTimes(1);
+    expect(observer.disconnect).toHaveBeenCalledTimes(1);
+    expect(observer.takeRecords()).toEqual([]);
+  });
+
+  test("trigger calls the observer callback with intersection entry", async () => {
+    const callback = vi.fn();
+    const observer = new IntersectionObserverMock(callback);
+
+    observer.trigger(true);
+    observer.trigger(false);
+
+    expect(callback).toHaveBeenCalledTimes(2);
+    expect(callback).toHaveBeenNthCalledWith(
+      1,
+      [
+        expect.objectContaining({
+          isIntersecting: true,
+          intersectionRatio: 1,
+          rootBounds: null,
+        }),
+      ],
+      observer,
+    );
+    expect(callback).toHaveBeenNthCalledWith(
+      2,
+      [
+        expect.objectContaining({
+          isIntersecting: false,
+          intersectionRatio: 0,
+          rootBounds: null,
+        }),
+      ],
+      observer,
+    );
   });
 });
 
@@ -70,7 +143,7 @@ describe("saveToLocalStorage", () => {
     setItemSpy.mockClear();
   });
 
-  test("Should merge updates with existing data", () => {
+  test("Should merge updates with existing data", async () => {
     const updates = { b: 3, c: 4 };
     const expected = { a: 1, b: 3, c: 4 };
 
@@ -90,7 +163,7 @@ describe("saveToLocalStorage", () => {
     );
   });
 
-  test("Should set updates directly if JSON.parse throws an error", () => {
+  test("Should set updates directly if JSON.parse throws an error", async () => {
     const updates = { x: 5 };
 
     localStorage.setItem(storageKey, "invalid JSON");
@@ -108,7 +181,7 @@ describe("saveToLocalStorage", () => {
     );
   });
 
-  test("Should set updates if no previous data exists", () => {
+  test("Should set updates if no previous data exists", async () => {
     const updates = { key: "value" };
     act(() => {
       saveToLocalStorage(storageKey, updates);
@@ -124,7 +197,7 @@ describe("saveToLocalStorage", () => {
   });
 });
 
-test("animateScreen should animate screens", () => {
+test("animateScreen should animate screens", async () => {
   const ref = {
     current: null as HTMLDivElement | null,
   };
@@ -155,7 +228,7 @@ describe("handleCollectionPlayback", () => {
     stopPropagation: () => {},
   } as React.MouseEvent<HTMLButtonElement, MouseEvent>;
 
-  test("playback does not toggles if the track is in queue", () => {
+  test("playback does not toggles if the track is in queue", async () => {
     expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(false);
     act(() => {
       handleCollectionPlayback(
@@ -171,7 +244,7 @@ describe("handleCollectionPlayback", () => {
     });
     expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(false);
   });
-  test("should set states with transitions", () => {
+  test("should set states with transitions", async () => {
     expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(false);
     act(() => {
       handleCollectionPlayback(
@@ -188,7 +261,7 @@ describe("handleCollectionPlayback", () => {
     expect(startTransition).toHaveBeenCalledWith(expect.any(Function));
   });
   describe("changes in playback upon queue change", () => {
-    test("queue is updated on setting a new collection", () => {
+    test("queue is updated on setting a new collection", async () => {
       expect(useBoundStore.getState().nowPlaying.queue).toBeNull();
       act(() => {
         handleCollectionPlayback(
@@ -202,7 +275,7 @@ describe("handleCollectionPlayback", () => {
           setIsPlaying,
         );
       });
-      waitFor(() => {
+      await waitFor(() => {
         expect(useBoundStore.getState().nowPlaying.queue).toEqual({
           id: samplePlaylist.id,
           name: samplePlaylist.name,
@@ -211,7 +284,7 @@ describe("handleCollectionPlayback", () => {
         });
       });
     });
-    test("queue is updated with missing images on setting a new collection", () => {
+    test("queue is updated with missing images on setting a new collection", async () => {
       expect(useBoundStore.getState().nowPlaying.queue).toBeNull();
       act(() => {
         handleCollectionPlayback(
@@ -227,7 +300,7 @@ describe("handleCollectionPlayback", () => {
       });
       expect(useBoundStore.getState().nowPlaying.queue?.image).toBeFalsy();
     });
-    test("current track is set to the first track from the collection", () => {
+    test("current track is set to the first track from the collection", async () => {
       act(() => {
         handleCollectionPlayback(
           event,
@@ -240,13 +313,13 @@ describe("handleCollectionPlayback", () => {
           setIsPlaying,
         );
       });
-      waitFor(() => {
+      await waitFor(() => {
         expect(useBoundStore.getState().nowPlaying.track).toMatchObject(
           samplePlaylist.songs[0],
         );
       });
     });
-    test("playback continues but from the collection if already playing", () => {
+    test("playback continues but from the collection if already playing", async () => {
       useBoundStore.getState().setIsPlaying(true);
       act(() => {
         handleCollectionPlayback(
@@ -262,7 +335,7 @@ describe("handleCollectionPlayback", () => {
       });
       expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(true);
     });
-    test("playback pauses if a new collection is set", () => {
+    test("playback pauses if a new collection is set", async () => {
       expect(useBoundStore.getState().nowPlaying.isPlaying).toBe(false);
       act(() => {
         handleCollectionPlayback(
@@ -282,7 +355,7 @@ describe("handleCollectionPlayback", () => {
 });
 
 describe("toggleFavorite", () => {
-  test("calls startTransition and setFavoriteSong when not favorited", () => {
+  test("calls startTransition and setFavoriteSong when not favorited", async () => {
     const e = {
       stopPropagation: vi.fn(),
     } as unknown as React.MouseEvent<HTMLButtonElement>;
@@ -307,7 +380,7 @@ describe("toggleFavorite", () => {
     );
   });
 
-  test("calls removeFavorite when already favorited", () => {
+  test("calls removeFavorite when already favorited", async () => {
     const e = {
       stopPropagation: vi.fn(),
     } as unknown as React.MouseEvent<HTMLButtonElement>;
@@ -334,28 +407,28 @@ describe("toggleFavorite", () => {
 });
 
 describe("secondsToHMS", () => {
-  test("returns only seconds when less than a minute", () => {
+  test("returns only seconds when less than a minute", async () => {
     expect(secondsToHMS(5)).toBe("00:05");
     expect(secondsToHMS(59)).toBe("00:59");
   });
 
-  test("returns minutes and seconds", () => {
+  test("returns minutes and seconds", async () => {
     expect(secondsToHMS(60)).toBe("01:00");
     expect(secondsToHMS(125)).toBe("02:05");
     expect(secondsToHMS(3599)).toBe("59:59");
   });
 
-  test("returns hours, minutes, and seconds", () => {
+  test("returns hours, minutes, and seconds", async () => {
     expect(secondsToHMS(3600)).toBe("01:00:00");
     expect(secondsToHMS(3661)).toBe("01:01:01");
     expect(secondsToHMS(3725)).toBe("01:02:05");
   });
 
-  test("pads hours to two digits if less than 10", () => {
+  test("pads hours to two digits if less than 10", async () => {
     expect(secondsToHMS(36999)).toBe("10:16:39"); // 10 hours, 16 min, 39 sec
   });
 
-  test("returns correct format for zero seconds", () => {
+  test("returns correct format for zero seconds", async () => {
     expect(secondsToHMS(0)).toBe("00:00");
   });
 });

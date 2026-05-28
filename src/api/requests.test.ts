@@ -56,7 +56,7 @@ async function fetchSuccessWithData(
     json: () => Promise.resolve(mockApiResponse),
   });
   const res = await fn();
-  waitFor(() => {
+  await waitFor(() => {
     expect(res).toEqual(mockPayload);
   });
 }
@@ -109,7 +109,7 @@ describe("Testing APIs", () => {
       json: () => Promise.resolve(response),
     });
     const res = await getTimelyData();
-    waitFor(() => {
+    await waitFor(() => {
       expect(res).toMatchObject({
         viral: res?.viral,
         weekly: res?.weekly,
@@ -122,7 +122,7 @@ describe("Testing APIs", () => {
     fetchRejection(getTimelyData);
   });
 
-  test("Requesting playlists by genres response", () => {
+  test("Requesting playlists by genres response", async () => {
     fetchSuccessWithData(() => getPlaylist("pop"), samplePlaylist);
     fetchSuccessWithNull(() => getPlaylist("pop"));
   });
