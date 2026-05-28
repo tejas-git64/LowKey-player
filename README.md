@@ -28,13 +28,13 @@ This projects uses [JioSaavn API](https://saavn.dev/) to fetch resource data
 - Install dependencies
 
   ```bash
-  npm install
+  pnpm install
   ```
 
 - Run the project
 
   ```bash
-  npm run dev
+  pnpm run dev
   ```
 
 - Preview by pasting the url `http://localhost:5173` in your browser
