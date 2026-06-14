@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+ 
 import { lazy, memo, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useBoundStore } from "../../store/store";
@@ -25,8 +25,7 @@ export default function Search() {
   const setSearch = useBoundStore((state) => state.setSearch);
   const searchEl = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const { topQuery, albums, artists, playlists, songs } = search;
-  // eslint-disable-next-line no-undef
+  const { topQuery, albums, artists, playlists, songs } = search; 
   const timerRef = useRef<NodeJS.Timeout>(null);
   const topQueryResults = topQuery !== null && topQuery.results.length > 0;
   const albumsResults = albums !== null && albums.results.length > 0;

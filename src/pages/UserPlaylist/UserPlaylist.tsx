@@ -1,5 +1,4 @@
-/* eslint-disable no-undef */
-import { lazy, memo, startTransition, useEffect, useMemo, useRef } from "react";
+ import { lazy, memo, startTransition, useEffect, useMemo, useRef } from "react";
 import { preload } from "react-dom";
 import { useParams } from "react-router-dom";
 import { useBoundStore } from "../../store/store";

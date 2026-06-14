@@ -1,5 +1,4 @@
-/* eslint-disable no-undef */
-import {
+ import {
   useState,
   useEffect,
   startTransition,

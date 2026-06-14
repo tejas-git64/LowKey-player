@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { lazy, memo, startTransition, useEffect, useMemo, useRef } from "react";
 import { preload } from "react-dom";
 import { useNavigate } from "react-router-dom";
@@ -218,7 +217,7 @@ const FavoriteAlbum = ({
 }: {
   album: AlbumById;
   i: number;
-  // eslint-disable-next-line no-unused-vars
+   
   setNowPlaying: (data: TrackDetails | null) => void;
 }) => {
   const navigate = useNavigate();

@@ -8,7 +8,6 @@ export default function Searchbar() {
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);
   const setSearch = useBoundStore((state) => state.setSearch);
-  // eslint-disable-next-line no-undef
   const timerRef = useRef<NodeJS.Timeout>(null);
 
   useEffect(() => {

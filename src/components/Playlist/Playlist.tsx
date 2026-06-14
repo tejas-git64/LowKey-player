@@ -7,8 +7,7 @@ export default function Playlist({
   image,
   name,
   i,
-  fadeOutNavigate,
-  // eslint-disable-next-line no-unused-vars
+  fadeOutNavigate, 
 }: PlaylistOfList & { i: number; fadeOutNavigate: (_str: string) => void }) {
   const playlistImgEl = useRef<HTMLImageElement>(null);
 

@@ -11,7 +11,6 @@ const Section = memo(
     fadeOutNavigate,
   }: {
     genre: string;
-    // eslint-disable-next-line no-unused-vars
     fadeOutNavigate: (str: string) => void;
   }) => {
     const sectionRef = useRef<HTMLDivElement | null>(null);
