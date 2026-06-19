@@ -30,8 +30,9 @@ const wavesurferOptions = {
   cursorColor: "#10B981",
   progressColor: "#10B981",
   interact: true,
-  autoCenter: true,
-  fillParent: true,
+  dragToSeek: true,
+  normalize: true,
+  autoScroll: true,
   hideScrollbar: true,
 };
 const mockOn = vi.fn();
@@ -106,28 +107,28 @@ describe("Waveform", () => {
     render(<Waveform {...obj} />);
     expect(screen.getByTestId("waveform-container")).toBeInTheDocument();
   });
-  test("should create a desktop/tablet specific wavesurfer instance if isMobileWidth", async () => {
+  test("should create a desktop/tablet specific wavesurfer instance if not isMobileWidth", async () => {
     render(<Waveform {...obj} />);
     expect(WaveSurfer.create).toHaveBeenCalled();
     expect(WaveSurfer.create).toHaveBeenCalledWith({
       ...wavesurferOptions,
       container: expect.any(HTMLDivElement),
-      barHeight: 7,
+      barHeight: 3,
       barWidth: 2,
       height: 10,
       width: "25vw",
     });
   });
-  test("should create a mobile specific wavesurfer instance if not isMobileWidth", async () => {
+  test("should create a mobile specific wavesurfer instance if isMobileWidth", async () => {
     render(<Waveform {...{ ...obj, isMobileWidth: true }} />);
     expect(WaveSurfer.create).toHaveBeenCalled();
     expect(WaveSurfer.create).toHaveBeenCalledWith({
       ...wavesurferOptions,
       container: expect.any(HTMLDivElement),
-      barHeight: 2,
+      barHeight: 1,
       barWidth: 3,
       height: 50,
-      width: 350,
+      width: "65dvw",
     });
   });
   test("loads a new track (http -> https) and attaches 'ready' handler", async () => {
@@ -153,9 +154,7 @@ describe("Waveform", () => {
       };
       localStorage.setItem("last-waveform", JSON.stringify(stored));
       act(() => {
-        useBoundStore
-          .getState()
-          .setNowPlaying({ ...sampleTrack, id: obj.id });
+        useBoundStore.getState().setNowPlaying({ ...sampleTrack, id: obj.id });
       });
 
       render(<Waveform {...obj} />);
@@ -170,9 +169,7 @@ describe("Waveform", () => {
     });
     test("should resume at lastTimeRef if same track", async () => {
       act(() => {
-        useBoundStore
-          .getState()
-          .setNowPlaying({ ...sampleTrack, id: obj.id });
+        useBoundStore.getState().setNowPlaying({ ...sampleTrack, id: obj.id });
       });
       mockGetCurrentTime.mockReturnValue(30);
 
@@ -191,9 +188,7 @@ describe("Waveform", () => {
         .pop()?.[1];
       act(() => latestReadyHandler());
       await waitFor(() => {
-        expect(mockSeekTo).toHaveBeenCalledWith(
-          expect.closeTo(30 / 200, 2),
-        );
+        expect(mockSeekTo).toHaveBeenCalledWith(expect.closeTo(30 / 200, 2));
       });
     });
     test("should update currentTime on timeupdate", async () => {
