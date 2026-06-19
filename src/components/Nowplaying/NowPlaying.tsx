@@ -1,4 +1,4 @@
- import {
+import {
   useState,
   useEffect,
   startTransition,
@@ -298,7 +298,7 @@ const NowPlaying = memo(() => {
           data-testid="primary-artists"
           aria-label="Primary artists"
         >
-          <h2 className="text-xl font-semibold">Primary artists</h2>
+          <h2 className="text-lg font-bold">Primary artists</h2>
           <div className="mt-6 flex h-auto w-full flex-col items-start justify-start">
             {uniqueArtists.map((artist) => (
               <Artist key={artist.id} {...artist} />
@@ -314,27 +314,33 @@ export default NowPlaying;
 
 const TrackInfo = memo(
   ({ name, artists }: { name: string; artists: ArtistInSong[] }) => {
+    const isMobile = useBoundStore((state) => state.nowPlaying.isMobilePlayer);
+
     return (
       <div
-        className="z-10 flex h-fit w-full max-w-[85%] flex-col items-start justify-center overflow-hidden text-ellipsis pl-2.5 pt-1 sm:h-full sm:max-w-[250px] sm:p-0 sm:px-0"
+        className="z-10 flex h-fit w-full max-w-[85%] flex-col items-start justify-center overflow-hidden text-ellipsis pl-2.5 pt-1 sm:h-full sm:max-w-[250px] sm:px-0 sm:pt-2"
         aria-label="Track information"
       >
         <h2 className="line-clamp-1 w-[80%] flex-shrink-0 text-wrap text-xl font-bold text-white sm:w-full sm:text-sm">
           {cleanString(name)}
         </h2>
-        <div className="my-1 line-clamp-1 flex w-[80%] items-center justify-start space-x-2 overflow-hidden whitespace-nowrap sm:my-0 sm:w-auto">
-          {artists.map((artist) => {
-            const str = cleanString(artist.name);
-            return (
-              <p
-                key={artist.id}
-                className="text-sm text-neutral-400 sm:text-xs"
-                aria-label={`Artist: ${str}`}
-              >
-                {str}
-              </p>
-            );
-          })}
+        <div className={`my-1 w-[80%] overflow-x-hidden`}>
+          <div
+            className={`${isMobile && artists.length > 2 ? "animate-scroll-left" : ""} line-clamp-1 flex h-auto pb-2 w-full flex-shrink-0 items-center justify-start space-x-2 overflow-hidden whitespace-nowrap sm:my-0 sm:w-auto`}
+          >
+            {artists.map((artist) => {
+              const str = cleanString(artist.name);
+              return (
+                <p
+                  key={artist.id}
+                  className="text-sm text-neutral-400 sm:text-xs"
+                  aria-label={`Artist: ${str}`}
+                >
+                  {str}
+                </p>
+              );
+            })}
+          </div>
         </div>
       </div>
     );
@@ -362,7 +368,7 @@ const PlayButton = () => {
         data-testid="play-icon"
         src={isPlaying ? pause : play}
         alt={isPlaying ? "Pause icon" : "Play icon"}
-        className={`h-10 w-10 sm:h-7 sm:w-7`}
+        className={`h-8 w-8 sm:h-7 sm:w-7`}
       />
     </button>
   );
@@ -507,7 +513,7 @@ const Controls = memo(
             height="64px"
             viewBox="0 0 24 24"
             fill="none"
-            className="-mt-0.5 h-[43px] w-[43px] bg-transparent sm:mt-0 sm:h-[30px] sm:w-[30px]"
+            className="-mt-0.5 h-[38px] w-[38px] bg-transparent sm:mt-0 sm:h-[30px] sm:w-[30px]"
             xmlns="http://www.w3.org/2000/svg"
             aria-hidden="true"
           >
@@ -582,7 +588,7 @@ const Controls = memo(
             strokeLinejoin="round"
             color="#000000"
             data-testid="replay-icon"
-            className={`-mt-1 h-[35px] w-[35px] bg-transparent sm:-mt-0.5 sm:h-6 sm:w-6 ${isReplay ? "text-emerald-500" : "text-white"} ease duration-250 transition-colors`}
+            className={`-mt-1 h-8 w-8 bg-transparent sm:-mt-0.5 sm:h-6 sm:w-6 ${isReplay ? "text-emerald-500" : "text-white"} ease duration-250 transition-colors`}
             aria-hidden="true"
           >
             <g id="SVGRepo_bgCarrier" strokeWidth="0" />
@@ -621,7 +627,7 @@ const VolumeControl = memo(
     };
     return (
       <div
-        className="ml-1 mr-auto flex h-fit w-[90%] flex-shrink-0 flex-row-reverse items-center justify-end sm:mx-0 sm:ml-0 sm:mr-1.5 sm:mt-1.5 sm:w-auto sm:flex-row"
+        className="ml-6 mr-auto flex h-fit w-[80%] flex-shrink-0 flex-row-reverse items-center justify-end sm:mx-0 sm:ml-0 sm:mr-1.5 sm:mt-1.5 sm:w-auto sm:flex-row"
         aria-label="Volume Control"
         data-testid="volume-controls"
       >
@@ -694,7 +700,7 @@ const Artist = (artist: ArtistInSong) => {
           className="mr-4 h-[50px] w-[50px] rounded-sm"
           aria-hidden="true"
         />
-        <p className="font-thin text-white" aria-label={artist.name}>
+        <p className="font-thin text-neutral-300" aria-label={artist.name}>
           {artist.name}
         </p>
       </div>
