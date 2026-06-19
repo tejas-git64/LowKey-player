@@ -59,12 +59,13 @@ const Waveform = ({
       cursorColor: "#10B981",
       progressColor: "#10B981",
       interact: true,
-      barHeight: isMobileWidth ? 2 : 7,
+      barHeight: isMobileWidth ? 1 : 3,
       barWidth: isMobileWidth ? 3 : 2,
       height: isMobileWidth ? 50 : 10,
-      width: isMobileWidth ? 350 : "25vw",
-      autoCenter: true,
-      fillParent: true,
+      width: isMobileWidth ? "65dvw" : "25vw",
+      dragToSeek: true,
+      normalize: true,
+      autoScroll: true,
       hideScrollbar: true,
     });
 
@@ -85,7 +86,7 @@ const Waveform = ({
       ? (JSON.parse(storedStr) as WaveformType["localSave"])
       : null;
     if (waveSurferRef.current) {
-      waveSurferRef.current.load(secureUrl);
+      if (isNewTrack) waveSurferRef.current.load(secureUrl);
       const handleReady = () => {
         if (isNewTrack && id) {
           lastTrackRef.current = id;
