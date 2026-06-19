@@ -33,8 +33,8 @@ const Pill = memo(({ track }: { track: TrackDetails }) => {
   );
   const playlist: UserPlaylist | undefined = useMemo(
     () =>
-      userPlaylists.find((obj) => {
-        return obj.songs.find((song) => {
+      userPlaylists?.find((obj) => {
+        return obj.songs?.find((song) => {
           return song.id === track?.id;
         });
       }),
