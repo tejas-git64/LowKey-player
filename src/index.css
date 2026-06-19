@@ -90,3 +90,17 @@ h1 {
 .image-fadeout {
   @apply opacity-0 blur-xl;
 }
+
+.animate-scroll-left {
+  animation: scroll-left 10s linear infinite;
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(100%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
