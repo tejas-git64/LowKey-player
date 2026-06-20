@@ -90,9 +90,11 @@ jobs:
         with:
           name: app-build
           path: dist/
+          merge-multiple: true
 
       - name: Deploy to Netlify
-        run: npx netlify-cli deploy --prod --dir=dist
+        run: npx netlify-cli deploy --prod --dir=dist --no-build
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_DISABLE_TELEMETRY: 1
