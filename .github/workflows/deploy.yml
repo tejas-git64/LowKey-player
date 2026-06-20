@@ -79,20 +79,9 @@ jobs:
         with:
           name: app-build
           path: dist/
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: [changes, build]
-    if: ${{ (github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' }}
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: app-build
-          path: dist/
-          merge-multiple: true
-
+      
       - name: Deploy to Netlify
+        if: ${{ (github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' }}
         run: npx netlify-cli deploy --prod --dir=dist --no-build
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
