@@ -1,0 +1,98 @@
+name: Lowkey Build Pipeline
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Filter frontend changes
+        uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          base: ${{ github.event.repository.default_branch || 'main' }}
+          filters: |
+            frontend:
+            - 'src/**'
+            - 'package.json'
+            - 'pnpm-lock.yaml'
+            - '.github/workflows/**'
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch' }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup-project/
+
+      - name: Run linting
+        run: pnpm run lint
+
+  test:
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' || github.event_name == 'workflow_dispatch' }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup-project/
+
+      - name: Run tests
+        run: pnpm run test
+
+  build:
+    runs-on: ubuntu-latest
+    # This guarantees build ONLY runs if both lint and test succeed
+    needs: [changes, lint, test]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup-project/
+
+      - name: Build project
+        run: pnpm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: app-build
+          path: dist/
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [changes, build]
+    if: ${{ (github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' }}
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: app-build
+          path: dist/
+
+      - name: Deploy to Netlify
+        run: npx netlify-cli deploy --prod --dir=dist
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}

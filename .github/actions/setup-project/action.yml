@@ -1,0 +1,23 @@
+name: Setup Project
+description: Check out code, set up Node, pnpm, and install dependencies with caching
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v6
+      with:
+        version: 11
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: "24"
+        cache: "pnpm"
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile
+      
