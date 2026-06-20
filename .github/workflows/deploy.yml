@@ -81,9 +81,16 @@ jobs:
           path: dist/
       
       - name: Deploy to Netlify
-        if: ${{ (github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch') && github.ref == 'refs/heads/main' }}
-        run: npx netlify-cli deploy --prod --dir=dist --no-build
+        uses: nwtgck/actions-netlify@v4
+        with:
+          publish-dir: './dist'
+          production-branch: master
+          deploy-message: "Deploy from GitHub Actions"
+          enable-pull-request-comment: false
+          enable-commit-comment: true
+          overwrites-pull-request-comment: true
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           NETLIFY_DISABLE_TELEMETRY: 1
+          timeout-minutes: 1
